@@ -208,6 +208,22 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .js .tiles .tile{opacity:0;transform:rotateX(-90deg)}
 .tiles.in .tile{animation:tileIn .55s cubic-bezier(.2,.8,.3,1.25) forwards;animation-delay:calc(var(--i)*95ms + .1s)}
 @keyframes tileIn{to{opacity:1;transform:none}}
+@media (max-width:520px){.tiles{gap:5px}.tile{width:40px;height:40px;font-size:21px;border-radius:8px}.tile sup{font-size:9px;top:3px;right:4px}}
+/* Matrix kod yağmuru */
+.mx{background:#0a0a0a;border-color:#1e1e1e;padding:0;min-height:340px;color:#f4f4f2}
+.mx canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mx-top{position:absolute;top:22px;left:24px;z-index:2;color:rgba(255,255,255,.55)!important;background:rgba(10,10,10,.7);padding:3px 8px;border-radius:6px}
+.mx-prompt{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:40px 24px 22px;font:500 14px var(--mono);background:linear-gradient(transparent,rgba(10,10,10,.92) 45%);white-space:nowrap;overflow:hidden}
+.mx-user{color:var(--accent)}.mx-path{color:#7dd3fc}
+.cur{display:inline-block;width:8px;height:16px;background:#f4f4f2;vertical-align:-3px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+/* Kısaca: yatay şerit */
+.facts-row{display:flex;align-items:center;gap:28px;padding:22px 28px}
+.facts-row .facts{flex:1;display:grid;grid-template-columns:repeat(4,1fr);margin:0}
+.facts-row .facts li{flex-direction:column;justify-content:flex-start;gap:4px;border-top:0;border-left:1px solid var(--line);padding:2px 0 2px 20px}
+.facts-row .facts li span:last-child{text-align:left}
+@media (max-width:900px){.facts-row{flex-direction:column;align-items:flex-start;gap:14px}.facts-row .facts{width:100%;grid-template-columns:1fr 1fr;row-gap:14px}.facts-row .facts li:nth-child(odd){border-left:0;padding-left:0}}
+@media (prefers-reduced-motion:reduce){.cur{animation:none}}
 .tbl.collapsed li:nth-child(n+5){display:none}
 .more{margin-top:14px;width:100%;height:42px;border-radius:10px;border:1px dashed var(--line);background:transparent;color:var(--muted);font:600 14px var(--sans);cursor:pointer;transition:border-color .15s,color .15s}
 .more:hover{border-color:var(--muted);color:var(--ink)}
@@ -452,9 +468,9 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     </div>
 
     <div class="b stat s3"><div class="label" data-i18n="k1.l">Canlı</div><div><div class="n">4</div><div class="d" data-i18n="k1.d">Yayında olan proje</div></div></div>
-    <div class="b stat s3"><div class="label">Android</div><div><div class="n">8</div><div class="d" data-i18n="k2.d">Yayınlanmış oyun ve uygulama</div></div></div>
+    <div class="b stat s3"><div class="label" lang="en">Android</div><div><div class="n">8</div><div class="d" data-i18n="k2.d">Yayınlanmış oyun ve uygulama</div></div></div>
     <div class="b stat s3"><div class="label" data-i18n="k3.l">En iyi puan</div><div><div class="nrow"><div class="n">4.8</div><div class="stars" role="img" aria-label="5 üzerinden 4.8 puan"><span class="s-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="s-fg" style="width:108.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></div></div><div class="d" data-i18n="k3.d">Kelimeler: Türkçe Bulmaca</div></div></div>
-    <div class="b stat s3"><div class="label">LaunchShots</div><div><div class="n">25</div><div class="d" data-i18n="k4.d">Desteklenen dil</div></div></div>
+    <div class="b stat s3"><div class="label" lang="en">LaunchShots</div><div><div class="n">25</div><div class="d" data-i18n="k4.d">Desteklenen dil</div></div></div>
   </div>
 
   <!-- PROJECTS -->
@@ -465,7 +481,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   <div class="grid">
     <a class="b b-accent proj s7 r2" href="https://launchshots.app/" target="_blank" rel="noopener">
       <span class="arrow">→</span>
-      <div class="label">launchshots.app</div>
+      <div class="label" lang="en">launchshots.app</div>
       <h3>LaunchShots</h3>
       <p data-i18n="projects.ls.desc">App Store ve Google Play için tarayıcıda çalışan, ücretsiz ekran görüntüsü tasarım aracı. Üyelik yok, filigran yok.</p>
       <div class="lsv" aria-hidden="true"><div class="lsv-top"><span class="lang" id="lsLang">EN</span><span class="lsv-hint">25 dil · 11 cihaz</span></div><div class="lsv-row"><div class="sp sp0"><div class="cap" data-cap="0">Ship faster</div><div class="ph"><div class="ph-notch"></div><div class="ph-ui list"><i class="ux-bar w60"></i><i class="ux-row"></i><i class="ux-row"></i><i class="ux-row"></i><i class="ux-row"></i></div></div></div><div class="sp sp1"><div class="cap" data-cap="1">Look pro</div><div class="ph"><div class="ph-notch"></div><div class="ph-ui chart"><i class="ux-bar w40"></i><div class="ux-chart"><b style="--h:40%"></b><b style="--h:70%"></b><b style="--h:55%"></b><b style="--h:90%"></b><b style="--h:65%"></b></div><i class="ux-row"></i></div></div></div><div class="sp sp2"><div class="cap" data-cap="2">No sign-up</div><div class="ph"><div class="ph-notch"></div><div class="ph-ui grid"><i class="ux-bar w50"></i><div class="ux-grid"><b></b><b></b><b></b><b></b><b></b><b></b></div></div></div></div></div></div>
@@ -480,7 +496,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 
     <a class="b proj s5" href="https://www.sebze.net/" target="_blank" rel="noopener">
       <span class="arrow">→</span>
-      <div class="label">sebze.net</div>
+      <div class="label" lang="en">sebze.net</div>
       <h3 data-i18n="p.sebze.t">Sebze.net</h3>
       <p data-i18n="p.sebze">Hobi bahçeciliği ve sebze yetiştirme topluluğu. XenForo üzerine özel geliştirmeler ve kendi yazdığım görsel oylama eklentisi.</p>
       <div class="cal" aria-label="Sebze ekim takvimi"><div class="cal-head"><span class="cal-t" id="calTitle">Bu ay ekilir</span><span class="cal-note" data-i18n="cal.note">Ege iklimi · genel takvim</span></div><div class="cal-strip"><span data-m="0">O</span><span data-m="1">Ş</span><span data-m="2">M</span><span data-m="3">N</span><span data-m="4">M</span><span data-m="5">H</span><span data-m="6">T</span><span data-m="7">A</span><span data-m="8">E</span><span data-m="9">E</span><span data-m="10">K</span><span data-m="11">A</span></div><div class="cal-veg" id="calVeg"></div></div>
@@ -489,7 +505,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 
     <a class="b proj s5" href="https://www.kitaplar.org/" target="_blank" rel="noopener">
       <span class="arrow">→</span>
-      <div class="label">kitaplar.org</div>
+      <div class="label" lang="en">kitaplar.org</div>
       <h3 class="with-logo"><img src="assets/shots/kitaplar-logo.png" width="82" height="76" alt="" loading="lazy">Kitaplar.org</h3>
       <p data-i18n="p.kitap">Kitap keşfi, öneriler ve okur topluluğu bir arada. Arama, kategoriler ve içerik yönetimi.</p>
       <div class="shelf" aria-hidden="true"><div class="books"><i class="bk " style="--c:#7f1d1d;--bh:78%;--bw:18px"></i><i class="bk bd" style="--c:#1e3a5f;--bh:92%;--bw:22px"></i><i class="bk " style="--c:#c9a227;--bh:70%;--bw:16px"></i><i class="bk bd" style="--c:#3f5f3a;--bh:86%;--bw:20px"></i><i class="bk pull" style="--c:#ff5a1f;--bh:96%;--bw:24px"></i><i class="bk bd" style="--c:#e8e1d3;--bh:74%;--bw:17px"></i><i class="bk " style="--c:#4b5563;--bh:88%;--bw:21px"></i><i class="bk bd" style="--c:#0f766e;--bh:80%;--bw:19px"></i><i class="bk " style="--c:#7c2d12;--bh:94%;--bw:23px"></i><i class="bk " style="--c:#a16207;--bh:68%;--bw:15px"></i><i class="bk bd" style="--c:#334155;--bh:84%;--bw:20px"></i><i class="bk " style="--c:#9f1239;--bh:76%;--bw:18px"></i><i class="lean" style="--c:#57534e"></i></div><div class="plank"></div></div>
@@ -500,7 +516,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <a class="arrow" href="https://okutan.org/kelimeler/index.html" target="_blank" rel="noopener" aria-label="Kelimeler web sitesi">→</a>
       <div class="kel">
       <div class="kel-txt">
-      <div class="label">iPhone · Android</div>
+      <div class="label" lang="en">iPhone · Android</div>
       <h3>Kelimeler: Online Kelime Oyunu</h3>
       <p data-i18n="p.kelimeler">Türkçe'ye özgü, sosyal ve rekabetçi online kelime oyunu. 60.000+ kelime, 81 il arasında şehir savaşları, günlük bulmaca ve hızlı oyun modu. Android'de 4.8 puana ulaşan oyunumun yeni sürümü.</p>
       <div class="tags"><span>ios</span><span>android</span><span>multiplayer</span><span>word game</span></div>
@@ -521,7 +537,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   <!-- PAST + STACK -->
   <div class="sh" id="gecmis">
     <h2 data-i18n="past.title">Önceki işler</h2>
-    <span class="label">Google Play · Android</span>
+    <span class="label" lang="en">Google Play · Android</span>
   </div>
   <div class="grid">
     <div class="b s8">
@@ -560,12 +576,17 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     <h2 data-i18n="about.title">Hakkımda</h2>
   </div>
   <div class="grid">
+    <div class="b mx s4" role="img" aria-label="Matrix tarzı kod yağmuru">
+      <canvas id="mxCanvas"></canvas>
+      <div class="mx-top label" lang="en">// whoami</div>
+      <div class="mx-prompt"><span class="mx-user">sedat@okutan</span>:<span class="mx-path">~</span>$ <span class="mx-typed" id="mxTyped"></span><span class="cur"></span></div>
+    </div>
     <div class="b about s8">
-      <div class="label">// about</div>
+      <div class="label" lang="en">// about</div>
       <div class="tiles" role="img" aria-label="OKUTAN"><span class="tile" style="--i:0">O<sup>2</sup></span><span class="tile" style="--i:1">K<sup>1</sup></span><span class="tile" style="--i:2">U<sup>2</sup></span><span class="tile" style="--i:3">T<sup>1</sup></span><span class="tile" style="--i:4">A<sup>1</sup></span><span class="tile" style="--i:5">N<sup>1</sup></span></div>
       <p data-i18n-html="about.p">İzmir'de yaşayan bağımsız bir geliştiriciyim. <em>Bir ürünün tasarımından koduna, yayınından topluluğunun büyümesine kadar her adımı uçtan uca yürütüyorum.</em> Bugün odağım web; önceki yıllarda Android oyun ve uygulamaları geliştirdim.</p>
     </div>
-    <div class="b s4">
+    <div class="b s12 facts-row">
       <div class="label" data-i18n="f.t">Kısaca</div>
       <ul class="facts">
         <li><span data-i18n="f.loc">Konum</span><span>İzmir, TR</span></li>
@@ -725,6 +746,53 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   }else{targets.forEach(function(t){t.classList.remove('rv');if(t.classList.contains('tiles')||t.classList.contains('board'))t.classList.add('in','done')})}
 
 
+
+
+  // Matrix kod yağmuru (turuncu)
+  (function(){
+    var cv=document.getElementById('mxCanvas');if(!cv||!cv.getContext)return;
+    var ctx=cv.getContext('2d'),box=cv.parentNode;
+    var CH='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモ0123456789OKUTANSEDATÇĞİÖŞÜ<>/{}=+*'.split('');
+    var fs=15,cols=0,drops=[],speed=[],w=0,h=0,running=false,last=0,raf=0;
+    function size(){
+      var d=Math.min(window.devicePixelRatio||1,2);w=box.clientWidth;h=box.clientHeight;
+      cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      cols=Math.ceil(w/fs);drops=[];speed=[];
+      for(var i=0;i<cols;i++){drops[i]=Math.random()*h/fs*1.2-h/fs*.3;speed[i]=.6+Math.random()*.7}
+      ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,w,h);
+    }
+    function step(){
+      ctx.fillStyle='rgba(10,10,10,.085)';ctx.fillRect(0,0,w,h);
+      ctx.font='600 '+fs+'px "JetBrains Mono", ui-monospace, monospace';ctx.textBaseline='top';
+      for(var i=0;i<cols;i++){
+        var y=Math.floor(drops[i])*fs,x=i*fs;
+        if(y>=0){
+          ctx.fillStyle='rgba(255,90,31,.85)';ctx.fillText(CH[(Math.random()*CH.length)|0],x,y-fs);
+          ctx.fillStyle='#fff3ea';ctx.fillText(CH[(Math.random()*CH.length)|0],x,y);
+        }
+        drops[i]+=speed[i];
+        if(y>h&&Math.random()>.965){drops[i]=Math.random()*-8;speed[i]=.6+Math.random()*.7}
+      }
+    }
+    function loop(t){if(!running)return;raf=requestAnimationFrame(loop);if(t-last<55)return;last=t;step()}
+    function start(){if(running||reduce)return;running=true;raf=requestAnimationFrame(loop)}
+    function stop(){running=false;cancelAnimationFrame(raf)}
+    size();
+    for(var k=0;k<70;k++)step();
+    if('ResizeObserver' in window)new ResizeObserver(function(){if(box.clientWidth===w&&box.clientHeight===h)return;size();for(var k=0;k<70;k++)step()}).observe(box);
+    if('IntersectionObserver' in window){new IntersectionObserver(function(es){es[0].isIntersecting?start():stop()}).observe(box)}else start();
+    document.addEventListener('visibilitychange',function(){document.hidden?stop():start()});
+    // komut satırında dönen komutlar
+    var cmds=['whoami','cat ~/projeler.txt','npm run build','git push origin main','php -S localhost:8000','./kelimeler --ios --android'];
+    var el=document.getElementById('mxTyped'),ci=0,pos=0,del=false;
+    if(reduce){el.textContent=cmds[0];return}
+    (function type(){
+      var c=cmds[ci];
+      if(!del){pos++;el.textContent=c.slice(0,pos);if(pos===c.length){del=true;return setTimeout(type,1600)}}
+      else{pos--;el.textContent=c.slice(0,pos);if(pos===0){del=false;ci=(ci+1)%cmds.length;return setTimeout(type,400)}}
+      setTimeout(type,del?35:85);
+    })();
+  })();
 
   // Önceki işler: ilk 4 satır, gerisi düğmeyle
   var pl=document.getElementById('pastList'),pm=document.getElementById('pastMore');
