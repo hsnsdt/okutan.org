@@ -81,16 +81,9 @@ header {
 }
 .back-link:hover { color: var(--ink); background: var(--bg); text-decoration: none; }
 
-.okutan {
-  display: inline-flex; align-items: center;
-  font: 800 14px var(--sans); letter-spacing: -.02em; color: #fff;
-  background: #121212; border: 1px solid #121212; border-radius: 10px; padding: 6px 12px; text-decoration: none;
-  box-shadow: 0 6px 14px -8px rgba(0,0,0,.6); transition: transform .15s, background .15s;
-}
-.okutan b { color: #ff5a1f; font-weight: 800; }
-.okutan span { color: rgba(255,255,255,.6); font-weight: 600; }
-.okutan:hover { background: #000; color: #fff; transform: translateY(-1px); text-decoration: none; }
-header a.okutan, header a.okutan:hover { color: #fff; }
+.okutan { display: inline-flex; align-items: center; padding: 6px 8px; border-radius: 10px; text-decoration: none; transition: background .15s; }
+.okutan img { height: 24px; width: auto; display: block; }
+.okutan:hover { background: var(--bg); text-decoration: none; }
 
 /* TR / EN anahtarı */
 .lang-switch {
@@ -221,4 +214,4 @@ html[data-lang="en"] [data-lang-block="tr"] { display: none; }
   h2 { font-size: 20px; }
   .back-link { display: none; }
 }
-@media (max-width: 380px) { .okutan span { display: none; } }
+@media (max-width: 380px) { .okutan img { height: 20px; } }

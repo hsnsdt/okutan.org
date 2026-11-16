@@ -93,14 +93,12 @@ img{display:block;max-width:100%}
 .nav a:hover{background:var(--bg);color:var(--ink)}
 .nav .dl{background:var(--accent);color:#fff;font-weight:600;margin-left:6px}
 .nav .dl:hover{background:var(--accent-d);color:#fff}
-.okutan{display:inline-flex;align-items:center;gap:0;font:800 14px var(--sans);letter-spacing:-.02em;color:#fff;background:#121212;border:1px solid #121212;border-radius:10px;padding:7px 12px;margin-left:6px;box-shadow:0 6px 14px -8px rgba(0,0,0,.6);transition:transform .15s,background .15s}
-.okutan b{color:#ff5a1f;font-weight:800}
-.okutan span{color:rgba(255,255,255,.6);font-weight:600}
-.okutan:hover{background:#000;color:#fff;transform:translateY(-1px)}
-.nav a.okutan,.nav a.okutan:hover{color:#fff;font-weight:800;font-size:14px;padding:7px 12px}
-.nav a.okutan:hover{background:#000}
+.okutan{display:inline-flex;align-items:center;margin-left:8px;padding:6px 8px;border-radius:10px;transition:background .15s}
+.okutan img{height:24px;width:auto;display:block}
+.nav a.okutan{padding:6px 8px}
+.okutan:hover,.nav a.okutan:hover{background:var(--bg)}
 @media (max-width:860px){.nav a:not(.dl):not(.okutan){display:none}}
-@media (max-width:520px){.okutan span{display:none}.top .brand{font-size:0;gap:0}.nav .dl{padding:8px 11px}.lang-switch,.okutan{margin-left:4px}.top{padding:10px}}
+@media (max-width:520px){.okutan img{height:20px}.top .brand{font-size:0;gap:0}.nav .dl{padding:8px 11px}.lang-switch,.okutan{margin-left:4px}.top{padding:10px}}
 
 /* hero */
 .hero{padding:40px;display:flex;flex-direction:column;justify-content:center;gap:22px;min-height:560px;background:linear-gradient(160deg,#fff 0%,#f7f4ff 100%)}
@@ -369,7 +367,7 @@ img{display:block;max-width:100%}
       <a href="support.html">Destek</a>
       <a href="#download" class="dl">İndir</a>
       <div class="lang-switch" role="group" aria-label="Dil / Language"><button data-lang="tr" type="button">TR</button><button data-lang="en" type="button">EN</button></div>
-      <a href="https://okutan.org/" class="okutan" title="okutan.org"><b>o</b>kutan<span>.org</span></a>
+      <a href="https://okutan.org/" class="okutan" title="okutan.org — Sedat Okutan"><img src="../assets/logo.svg" width="88" height="24" alt="okutan.org"></a>
     </nav>
   </header>
 
