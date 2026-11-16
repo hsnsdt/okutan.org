@@ -294,6 +294,29 @@ img{display:block;max-width:100%}
 .pz-cta{align-self:flex-start}
 @media (max-width:520px){.pz-t{width:42px;height:42px;font-size:21px;border-radius:11px}.pz-word .w{width:36px;height:36px;font-size:19px}.mapfacts b{font-size:16px}.rp-p b{font-size:24px}}
 @media (prefers-reduced-motion:reduce){.js .drop .gt,.rc.t,.pz-word .w{animation:none}}
+
+/* yorumlar */
+.rst{position:relative;display:inline-block;height:var(--sz);line-height:0}
+.rst span{display:flex;gap:var(--gp);white-space:nowrap}
+.rst svg{width:var(--sz);height:var(--sz);flex:none}
+.rst-bg svg{fill:#e2ddf3}.rst-fg{position:absolute;inset:0 auto 0 0;overflow:hidden}.rst-fg svg{fill:#f5b631}
+.revsum{display:flex;flex-direction:column;gap:10px;background:linear-gradient(160deg,#fff,#f7f4ff)}
+.revsum .big{font-size:72px;font-weight:800;letter-spacing:-.05em;line-height:.9;color:var(--ink)}
+.revsum p{color:var(--muted);font-size:14px}
+.revlink{margin-top:auto;font-weight:700;color:var(--accent);font-size:15px}
+.rev{display:flex;flex-direction:column;gap:12px}
+.rev-top{display:flex;justify-content:space-between;align-items:center}
+.rev-d{font:500 12px var(--mono);color:var(--muted)}
+.rev blockquote b{display:block;font-size:17px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}
+.rev blockquote p{color:var(--text-dim,#4a4760);font-size:15px}
+.rev.s8 blockquote p{font-size:17px}
+.rev figcaption{margin-top:auto;font:600 13px var(--mono);color:var(--muted)}
+/* canlı sayaç */
+.live{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink);background:#effcf3;border:1px solid #c9f0d6;padding:7px 12px;border-radius:999px;align-self:flex-start}
+.live[hidden]{display:none}
+.live i{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:lp 2s infinite}
+.live b{font-weight:800}
+@keyframes lp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 /* reveal */
 .js .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
 .js .rv.in{opacity:1;transform:none}
@@ -333,6 +356,7 @@ img{display:block;max-width:100%}
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a1 1 0 1 1 0-2 1 1 0 0 1 0 2m-11.046 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2m11.405-6.02 1.997-3.46a.416.416 0 0 0-.72-.416l-2.022 3.502A12.6 12.6 0 0 0 12 7.896c-1.876 0-3.65.398-5.137 1.05L4.841 5.445a.416.416 0 0 0-.72.416l1.997 3.46C2.688 11.186.343 14.659 0 18.761h24c-.344-4.102-2.689-7.575-6.118-9.44"/></svg>
           <span><small>Android için</small>İndir</span></a>
       </div>
+      <div class="live" id="liveStat" hidden aria-live="polite"></div>
       <div class="chips"><span>★ Ücretsiz</span><span>Türkçe</span><span>13+ yaş</span><span>Telefon ve tablet</span></div>
     </section>
 
@@ -409,7 +433,7 @@ img{display:block;max-width:100%}
   <!-- TRY: mini bulmaca -->
   <div class="sh" id="dene">
     <h2>Bir tur dene</h2>
-    <p>Günün Bulmacası'ndan bir örnek: bu 7 harften kelime üret. Harflere dokun ya da klavyeyle yaz.</p>
+    <p>Günün Bulmacası'ndan bir örnek: bu 7 harften kelime üret. Harflere dokun ya da klavyeyle yaz. Hepsini kullanırsan +20 bonus!</p>
   </div>
   <div class="grid">
     <section class="b pz s7" aria-label="Mini bulmaca">
@@ -426,7 +450,7 @@ img{display:block;max-width:100%}
     <section class="b pz-side s5">
       <div class="label">Bulduğun kelimeler · <span id="pzCount">0</span>/<span id="pzTotal">0</span></div>
       <div class="pz-found" id="pzFound"><span class="pz-empty">Henüz yok — ilk kelimeyi bul!</span></div>
-      <p class="pz-note">Bu örnekte kısa bir kelime listesi var. Oyunda <b>60.000+ kelimelik</b> sözlükle, 3 dakikada en yüksek skoru yakalamaya çalışırsın.</p>
+      <p class="pz-note">Oyunun gerçek sözlüğüyle: bu 7 harfle <b>56 kelime</b> kurulabiliyor, 3 tanesi 7 harfin hepsini kullanıyor (+20 bonus). Oyunda her gün yeni harfler, 3 dakika ve tek hak var.</p>
       <a class="st st-and pz-cta" href="#download"><span><small>Gerçeğini oyna</small>Kelimeler'i indir</span></a>
     </section>
   </div>
@@ -441,6 +465,23 @@ img{display:block;max-width:100%}
     <figure class="b scr"><div class="phone"><img src="img/oyun-tahtasi.webp" width="645" height="1398" alt="15×15 oyun tahtası" loading="lazy" decoding="async"></div><h3>15×15 tahta</h3><p>H2 · H3 · K2 · K3 bonusları</p></figure>
     <figure class="b scr"><div class="phone"><img src="img/gunun-bulmacasi.webp" width="645" height="1398" alt="Günün Bulmacası" loading="lazy" decoding="async"></div><h3>Günün Bulmacası</h3><p>7 harf, 3 dakika, tek hak</p></figure>
     <figure class="b scr"><div class="phone"><img src="img/kelime-avi.webp" width="645" height="1398" alt="Kelime Avı" loading="lazy" decoding="async"></div><h3>Kelime Avı</h3><p>Seviye seviye kelime bul</p></figure>
+  </div>
+
+
+  <!-- REVIEWS -->
+  <div class="sh" id="yorumlar">
+    <h2>Oyuncular ne diyor?</h2>
+    <p>App Store'daki gerçek oyuncu yorumları.</p>
+  </div>
+  <div class="grid">
+    <section class="b revsum s4">
+      <div class="label">App Store puanı</div>
+      <div class="big">4,3</div>
+      <span class="rst" style="--sz:24px;--gp:4px" role="img" aria-label="5 üzerinden 4,33"><span class="rst-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="rst-fg" style="width:119.9px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></span>
+      <p>12 değerlendirme · Türkiye</p>
+      <a class="revlink" href="https://apps.apple.com/tr/app/kelimeler-online-kelime-oyunu/id6775899635?see-all=reviews" target="_blank" rel="noopener">Tüm yorumlar →</a>
+    </section>
+    <figure class="b rev s8"><div class="rev-top"><span class="rst" style="--sz:16px;--gp:2px" role="img" aria-label="5 üzerinden 5"><span class="rst-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="rst-fg" style="width:90.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></span><span class="rev-d">Haziran 2026</span></div><blockquote><b>Tek kelimeyle harika.</b><p>Uzun zamandır oynadığım en keyifli kelime oyunlarından biri. Rakiplerle karşılıklı oynamak oyunu çok daha heyecanlı hale getiriyor. Hem eğleniyor hem de yeni kelimeler öğreniyorsunuz. Kelime oyunlarını sevenler için kesinlikle tavsiye ederim.</p></blockquote><figcaption>M*** · App Store</figcaption></figure><figure class="b rev s4"><div class="rev-top"><span class="rst" style="--sz:16px;--gp:2px" role="img" aria-label="5 üzerinden 5"><span class="rst-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="rst-fg" style="width:90.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></span><span class="rev-d">Temmuz 2026</span></div><blockquote><b>Bağımlısı Oldum!</b><p>Ben bu kelime oyununu arkadaşımın tavsiyesi ile indirdim, şimdi bağımlısı oldum.</p></blockquote><figcaption>F*** · App Store</figcaption></figure><figure class="b rev s4"><div class="rev-top"><span class="rst" style="--sz:16px;--gp:2px" role="img" aria-label="5 üzerinden 5"><span class="rst-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="rst-fg" style="width:90.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></span><span class="rev-d">Temmuz 2026</span></div><blockquote><p>Bu tarz oyunları keyifle oynuyorum ve bu zamana kadar oynadığım oyunların içinde en başarılısı diyebilirim.</p></blockquote><figcaption>k*** · App Store</figcaption></figure><figure class="b rev s4"><div class="rev-top"><span class="rst" style="--sz:16px;--gp:2px" role="img" aria-label="5 üzerinden 5"><span class="rst-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="rst-fg" style="width:90.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></span><span class="rev-d">Kasım 2026</span></div><blockquote><b>Kelime Canavarı</b><p>Oyun tek kelimeyle harikaaa 👌</p></blockquote><figcaption>G*** · App Store</figcaption></figure>
   </div>
 
   <!-- FEATURES -->
@@ -476,7 +517,7 @@ img{display:block;max-width:100%}
     <article class="b prem s3"><div class="top2"><div class="ico">🚫</div><div><div class="tag">Premium</div><h3>Reklam kaldır</h3></div></div><p>Reklam yok, sınırsız ipucu, ×2 skor çarpanı, özel rozet.</p></article>
     <article class="b prem s3"><div class="top2"><div class="ico">🎯</div><div><div class="tag">Akıllı oyun</div><h3>Puan önizleme</h3></div></div><p>Tahtaya koymadan önce kelimenin canlı puanını gör.</p></article>
     <article class="b prem s3"><div class="top2"><div class="ico">🎒</div><div><div class="tag">Strateji</div><h3>Torba görüntüleme</h3></div></div><p>Kalan harf sayılarını gör, rakibin elini tahmin et.</p></article>
-    <article class="b prem s3"><div class="top2"><div class="ico">♾️</div><div><div class="tag">No limit</div><h3>Sınırsız oyun</h3></div></div><p>50 aktif oyun sınırı kalkar; tüm arkadaşlarınla aynı anda oyna.</p></article>
+    <article class="b prem s3"><div class="top2"><div class="ico">♾️</div><div><div class="tag" lang="en">No limit</div><h3>Sınırsız oyun</h3></div></div><p>50 aktif oyun sınırı kalkar; tüm arkadaşlarınla aynı anda oyna.</p></article>
     <article class="b prem s6"><div class="top2"><div class="ico">⚡</div><div><div class="tag">Adrenalin</div><h3>Hızlı Oyun (Blitz)</h3></div></div><p>2 ve 5 dakikalık sıra süreli hızlı modu aç. Hız tutkunlarının modu.</p></article>
     <article class="b prem s6"><div class="top2"><div class="ico">🪙</div><div><div class="tag">Her gün ücretsiz</div><h3>Jetonlar</h3></div></div><p>Rakibine çay, gül, baklava gönder; sohbette fotoğraf ve sesli mesaj paylaş. Her gün ücretsiz jeton kazan, istersen paket al.</p></article>
   </div>
@@ -532,6 +573,23 @@ img{display:block;max-width:100%}
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function onVisible(el,fn,leave){if(!('IntersectionObserver' in window)){fn();return}
     new IntersectionObserver(function(es){es.forEach(function(e){e.isIntersecting?fn():(leave&&leave())})},{threshold:.25}).observe(el)}
+
+
+  // --- canlı sayaç: Firestore public_stats/live (CF publishLiveStats yazar)
+  var live=document.getElementById('liveStat');
+  function loadLive(){
+    if(!window.fetch||!live)return;
+    fetch('https://firestore.googleapis.com/v1/projects/kelimelik-a8f57/databases/(default)/documents/public_stats/live',{cache:'no-store'})
+      .then(function(r){return r.ok?r.json():null})
+      .then(function(d){
+        var f=d&&d.fields;if(!f||!f.activeGames)return;
+        var a=+f.activeGames.integerValue,s=f.searching?+f.searching.integerValue:0,t=f.updatedAt?Date.parse(f.updatedAt.timestampValue):0;
+        if(!(a>0)||!t||Date.now()-t>60*60*1000){live.hidden=true;return}
+        live.innerHTML='<i></i><span><b>'+a.toLocaleString('tr-TR')+'</b> aktif oyun · <b>'+s.toLocaleString('tr-TR')+'</b> rakip arıyor</span>';
+        live.hidden=false;
+      }).catch(function(){});
+  }
+  loadLive();setInterval(function(){if(!document.hidden)loadLive()},5*60*1000);
 
   // --- oynanış videosu: hareketi azalt açıksa durdur; ekranda değilken duraklat
   var vid=document.getElementById('heroVid');
@@ -596,7 +654,7 @@ img{display:block;max-width:100%}
   // --- mini bulmaca
   var rack=document.getElementById('pzRack');
   if(rack){
-    var WORDS=['AL','AN','AY','ALA','ANA','AMA','MAL','NAL','NAM','YAN','MAYA','ALAN','LAMA','AMAN','AYNA','YAMA','ALAY','MANA','MALA','YANA','AYAN','ANLAM','YALAN','YAMAN'];
+    var WORDS=['AL','AM','AN','AY','LA','MA','MN','NA','YA','ALA','AMA','ANA','AYA','AYN','LAM','LAN','MAL','NAL','NAM','YAL','YAN','ALAN','ALAY','ALMA','AMAL','AMAN','ANAL','ANMA','AYAL','AYAN','AYLA','AYMA','AYNA','LAMA','MALA','MANA','MAYA','YAMA','ALMAN','ALYAN','ANLAM','MALYA','MAYNA','YALAN','YAMAN','YANAL','YANMA','ALANYA','ANAMAL','ANLAMA','AYLAMA','YALAMA','YALMAN','AYLANMA','YALANMA','YANLAMA']; // oyunun sözlüğünden (assets/words/turkce_kelimeler.txt) bu 7 harfle kurulabilen tüm kelimeler
     var PT={Y:3,M:2,A:1,L:1,N:1};
     var wordEl=document.getElementById('pzWord'),msg=document.getElementById('pzMsg'),foundEl=document.getElementById('pzFound');
     var scoreEl=document.getElementById('pzScore'),cnt=document.getElementById('pzCount');
@@ -616,11 +674,11 @@ img{display:block;max-width:100%}
       var w=sel.map(function(b){return b.firstChild.nodeValue}).join('');
       if(w.length<2){say('En az 2 harf seç.','#b45309');return}
       if(found.indexOf(w)>=0){wordEl.classList.add('bad');say(w+' zaten bulundu.','#b45309');release();return}
-      if(WORDS.indexOf(w)<0){wordEl.classList.add('bad');say(w+' bu örnek listede yok — oyunda 60.000 kelimeyle dene!','#b45309');release();return}
-      var p=0;for(var i=0;i<w.length;i++)p+=PT[w[i]]||1;
+      if(WORDS.indexOf(w)<0){wordEl.classList.add('bad');say(w+' sözlükte yok, başka bir kelime dene.','#b45309');release();return}
+      var p=0;for(var i=0;i<w.length;i++)p+=PT[w[i]]||1;var bingo=w.length===7;if(bingo)p+=20;
       found.push(w);score+=p;scoreEl.textContent=score;cnt.textContent=found.length;
       if(found.length===1)foundEl.innerHTML='';var s=document.createElement('span');s.textContent=w+' +'+p;foundEl.appendChild(s);
-      wordEl.classList.add('ok');say(found.length===WORDS.length?'Hepsini buldun! Şimdi gerçeğini oyna 🎉':'Harika! +'+p+' puan','#15803d');release();
+      wordEl.classList.add('ok');say(found.length===WORDS.length?'Hepsini buldun! Şimdi gerçeğini oyna 🎉':(bingo?'7 harfin hepsi! +20 bonusla +'+p+' puan 🎉':'Harika! +'+p+' puan'),'#15803d');release();
     }
     document.getElementById('pzGo').onclick=submit;
     var map2={'I':'İ'};
