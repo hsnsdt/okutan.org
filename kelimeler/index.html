@@ -151,7 +151,7 @@ img{display:block;max-width:100%}
 .vs{font:900 22px/1 var(--sans);letter-spacing:-.02em;background:linear-gradient(180deg,#ff6bb5,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent}
 
 /* screens */
-.screens{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.screens{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
 .scr{display:flex;flex-direction:column;align-items:center;gap:16px;padding:28px 18px 24px;background:linear-gradient(180deg,#fff,#f7f4ff)}
 .scr .phone{width:100%;max-width:220px;border-radius:34px;padding:7px}
 .scr .phone img{border-radius:28px}
@@ -319,6 +319,35 @@ img{display:block;max-width:100%}
 .lang-switch{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-left:6px}
 .lang-switch button{background:transparent;border:0;color:var(--muted);font:600 12px var(--mono);letter-spacing:.05em;padding:7px 10px;cursor:pointer}
 .lang-switch button.active{background:var(--accent);color:#fff}
+
+/* gerçek oyun ikonları */
+.ico img.ic{width:72%;height:72%;object-fit:contain}
+.mode .ico{width:76px;height:76px;border-radius:20px}
+.mode .ico img.ic{width:82%;height:82%}
+.mode.wide{display:flex;flex-direction:row;align-items:center;gap:22px;min-height:0}
+.mode.wide .rb{width:96px;height:auto;border-radius:22px;flex:none;box-shadow:0 12px 24px -12px rgba(0,0,0,.6)}
+.mode.wide .ico.big{width:96px;height:96px;flex:none}
+.mode.wide h3{margin-top:0}
+.feat{min-height:0}
+.feat .ico{background:var(--accent-soft)}
+.feat .ico{width:58px;height:58px;border-radius:16px}
+.feat .ico img.ic{width:80%;height:80%}
+.tileico{background:none!important}
+.gifts{display:flex;gap:6px;margin-top:6px}
+.gifts img{width:34px;height:34px;object-fit:contain;background:var(--bg);border-radius:10px;padding:4px;transition:transform .2s}
+.feat:hover .gifts img:nth-child(odd){transform:translateY(-3px) rotate(-6deg)}
+.feat:hover .gifts img:nth-child(even){transform:translateY(-3px) rotate(6deg)}
+.packbadge{position:absolute;top:22px;right:22px;width:84px;height:84px;filter:drop-shadow(0 10px 18px rgba(30,10,90,.45))}
+.prem .ico img.ic{width:78%;height:78%}
+@media (max-width:520px){
+  .mode,.mode.wide{display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:2px;align-items:start;padding:18px}
+  .mode .ico,.mode.wide .ico.big{width:58px;height:58px;border-radius:16px;grid-row:span 2}
+  .mode.wide .rb{width:58px;border-radius:14px;grid-row:span 2}
+  .mode.wide>div:not(.ico){grid-column:2}
+  .mode h3{font-size:18px;margin-top:2px}.mode p{font-size:14px}
+  .mode .badge{position:static;grid-column:2;justify-self:start;margin-bottom:4px;order:-1}
+  .packbadge{width:60px;height:60px}
+}
 /* reveal */
 .js .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
 .js .rv.in{opacity:1;transform:none}
@@ -384,14 +413,15 @@ img{display:block;max-width:100%}
     <p>Bota karşı pratik yap, arkadaşınla yarış, şehrini yükselt ya da günün bulmacasını çöz.</p>
   </div>
   <div class="grid">
-    <article class="b mode s4" style="--c:#eef4ff"><div class="ico">🤖</div><h3>Bota Karşı</h3><p>3 farklı zorluk seviyesinde yapay zeka rakibe karşı oyna. İnternet gerekmez; istediğin zaman pratik yap, becerini geliştir.</p></article>
-    <article class="b mode s4" style="--c:#fff0f3"><span class="badge">EN POPÜLER</span><div class="ico">🏙️</div><h3>Şehir Savaşları</h3><p>Şehrini seç, 81 il arasında lider tablosunda yarış. 539 yöresel kelime, haftalık şampiyonluk, aylık ödüller. Senin şehrin kazansın!</p></article>
-    <article class="b mode s4" style="--c:#fff8e6"><div class="ico">🧩</div><h3>Günün Bulmacası</h3><p>Her gün 7 harfle 3 dakikada en yüksek skoru yakala. 5+ yıl benzersiz bulmaca havuzu, global lider tablosu.</p></article>
-    <article class="b mode s4" style="--c:#fffbe9"><div class="ico">⚡</div><h3>Hızlı Oyun</h3><p>2 veya 5 dakikalık sıra süreli maçlar. Hızlı düşün, hızlı oyna — adrenalin dolu oyunlar.</p></article>
-    <article class="b mode s4" style="--c:#eaf8ef"><div class="ico">👥</div><h3>Arkadaşla Oyna</h3><p>Arkadaşını kullanıcı adı ya da davet koduyla çağır. 12, 24 veya 72 saat tur süresi; WhatsApp'tan paylaş, oynamaya başlayın.</p></article>
-    <article class="b mode dark s4"><div class="ico"><span class="vs">VS</span></div><h3>Rakip Bul</h3><p>Anlık eşleşmeyle Türkiye genelinde oyuncularla karşılaş. Klasik ya da hızlı oyun; her seviyeden rakip seni bekliyor.</p></article>
+    <article class="b mode s4" style="--c:#eef4ff"><div class="ico"><img class="ic" src="img/icons/bot.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Bota Karşı</h3><p>3 farklı zorluk seviyesinde yapay zeka rakibe karşı oyna. İnternet gerekmez; istediğin zaman pratik yap, becerini geliştir.</p></article>
+    <article class="b mode s4" style="--c:#fff8e6"><div class="ico"><img class="ic" src="img/icons/bulmaca.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Günün Bulmacası</h3><p>Her gün 7 harfle 3 dakikada en yüksek skoru yakala. 5+ yıl benzersiz bulmaca havuzu, global lider tablosu.</p></article>
+    <article class="b mode s4" style="--c:#f3efff"><div class="ico"><img class="ic" src="img/icons/lig.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Haftalık Lig</h3><p>Sıralamaya gir, her hafta yeniden yarış. Oynadıkça puanını topla, lig tablosunda yüksel.</p></article>
+    <article class="b mode s4" style="--c:#fff0f3"><div class="ico"><img class="ic" src="img/icons/kelimeavi.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Kelime Avı</h3><p>Seviye seviye kelime bul. Harfleri birleştir, gizli kelimeleri tamamla; takıldığında ipucu ve karıştır yanında.</p></article>
+    <article class="b mode s4" style="--c:#fff1ec"><span class="badge">EN POPÜLER</span><div class="ico"><img class="ic" src="img/icons/sehirsavaslari.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Şehir Savaşları</h3><p>Şehrini seç, 81 il arasında lider tablosunda yarış. 539 yöresel kelime, haftalık şampiyonluk, aylık ödüller. Senin şehrin kazansın!</p></article>
+    <article class="b mode s4" style="--c:#eaf8ef"><div class="ico"><img class="ic" src="img/icons/sehrimdekiler.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Şehrimdekiler</h3><p>Yakınındaki oyuncuları gör; aynı şehirden rakiplerle tanış, maç başlat.</p></article>
+    <article class="b mode wide dark s6"><img class="rb" src="img/icons/rakipbul.webp" width="128" height="129" alt="Rakip Bul" loading="lazy" decoding="async"><div><h3>Rakip Bul</h3><p>Anlık eşleşmeyle Türkiye genelinde oyuncularla karşılaş. Klasik ya da hızlı oyun; her seviyeden rakip seni bekliyor.</p></div></article>
+    <article class="b mode wide s6" style="--c:#fff8e6"><div class="ico big"><img class="ic" src="img/icons/arkadaslar.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><div><h3>Arkadaşla Oyna</h3><p>Arkadaşını kullanıcı adı ya da davet koduyla çağır. 12, 24 veya 72 saat tur süresi; WhatsApp'tan paylaş, oynamaya başlayın.</p></div></article>
   </div>
-
 
   <!-- MAP: Şehir Savaşları -->
   <div class="sh" id="sehirler">
@@ -463,7 +493,7 @@ img{display:block;max-width:100%}
     <p>Gerçek oyun ekranları — iPhone'dan.</p>
   </div>
   <div class="screens">
-    <figure class="b scr"><div class="phone"><img src="img/ana-ekran.webp" width="645" height="1398" alt="Ana ekran" loading="lazy" decoding="async"></div><h3>Ana ekran</h3><p>Tüm modlar tek dokunuşta</p></figure>
+    
     <figure class="b scr"><div class="phone"><img src="img/oyun-tahtasi.webp" width="645" height="1398" alt="15×15 oyun tahtası" loading="lazy" decoding="async"></div><h3>15×15 tahta</h3><p>H2 · H3 · K2 · K3 bonusları</p></figure>
     <figure class="b scr"><div class="phone"><img src="img/gunun-bulmacasi.webp" width="645" height="1398" alt="Günün Bulmacası" loading="lazy" decoding="async"></div><h3>Günün Bulmacası</h3><p>7 harf, 3 dakika, tek hak</p></figure>
     <figure class="b scr"><div class="phone"><img src="img/kelime-avi.webp" width="645" height="1398" alt="Kelime Avı" loading="lazy" decoding="async"></div><h3>Kelime Avı</h3><p>Seviye seviye kelime bul</p></figure>
@@ -492,15 +522,12 @@ img{display:block;max-width:100%}
     <p>Her detay düşünüldü, her özellik özenle hazırlandı.</p>
   </div>
   <div class="grid">
-    <article class="b feat s3"><div class="ico">📚</div><h3>60.000+ Türkçe kelime</h3><p>TDK standartlarında sürekli güncellenen sözlük ve 539 yöresel kelime.</p></article>
-    <article class="b feat s3"><div class="ico">💬</div><h3>Sohbet ve arkadaşlık</h3><p>Oyun sırasında anlık mesajlaş, arkadaş ekle, her hamlede bildirim al.</p></article>
-    <article class="b feat s3"><div class="ico">🏆</div><h3>Lider tabloları</h3><p>Global ve şehir bazlı sıralama, haftalık şampiyonluk, aylık ödüller.</p></article>
-    <article class="b feat s3"><div class="ico">🔐</div><h3>Apple ve Google ile giriş</h3><p>Tek dokunuşla güvenli giriş; istersen misafir olarak hemen başla.</p></article>
-    <article class="b feat s3"><div class="ico">🔔</div><h3>Akıllı bildirimler</h3><p>Sıran geldiğinde, davet aldığında ya da şehrin şampiyon olduğunda haberin olsun.</p></article>
-    <article class="b feat s3"><div class="ico">⭐</div><h3>Joker, bonus, BİNGO</h3><p>Joker harfler ve bonus kareler. 7 taşı birden kullan, +50 BİNGO kazan!</p>
-      <div class="mini-tiles" aria-hidden="true"><span style="background:var(--h2)">H2</span><span style="background:var(--h3)">H3</span><span style="background:var(--k2)">K2</span><span style="background:var(--k3)">K3</span></div></article>
-    <article class="b feat s3"><div class="ico">📊</div><h3>İstatistikler</h3><p>Toplam oyun, kazanma serisi, en uzun kelime, en yüksek skor — hepsi tek ekranda.</p></article>
-    <article class="b feat s3"><div class="ico">📱</div><h3>Akıcı tasarım</h3><p>Ferah arayüz, akıcı animasyonlar. Telefon ve tablet uyumlu.</p></article>
+    <article class="b feat s4"><div class="ico tileico" aria-hidden="true"><span class="gt" style="--s:40px">A<sup>1</sup></span></div><h3>60.000+ Türkçe kelime</h3><p>TDK standartlarında sürekli güncellenen sözlük ve 539 yöresel kelime.</p></article>
+    <article class="b feat s4"><div class="ico"><img class="ic" src="img/icons/akis.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Akış</h3><p>Hamlelerini, fotoğraflarını ve yazılarını toplulukla paylaş; beğen, yorum yap.</p></article>
+    <article class="b feat s4"><div class="ico"><img class="ic" src="img/icons/cay.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Sohbet ve hediyeler</h3><p>Oyun sırasında mesajlaş; rakibine çay, gül, lokum, simit gönder.</p><div class="gifts" aria-hidden="true"><img src="img/icons/cay.webp" width="128" height="128" alt="" loading="lazy" decoding="async"><img src="img/icons/gul.webp" width="128" height="128" alt="" loading="lazy" decoding="async"><img src="img/icons/lokum.webp" width="128" height="128" alt="" loading="lazy" decoding="async"><img src="img/icons/simit.webp" width="128" height="128" alt="" loading="lazy" decoding="async"><img src="img/icons/kahve.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div></article>
+    <article class="b feat s4"><div class="ico"><img class="ic" src="img/icons/siralama.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Lider tabloları</h3><p>Global ve şehir bazlı sıralama, haftalık şampiyonluk, aylık ödüller.</p></article>
+    <article class="b feat s4"><div class="ico"><img class="ic" src="img/icons/seri.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>İstatistikler</h3><p>Toplam oyun, kazanma serisi, en uzun kelime, en yüksek skor — hepsi tek ekranda.</p></article>
+    <article class="b feat s4"><div class="ico"><img class="ic" src="img/icons/bildirim.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><h3>Bildirimler ve giriş</h3><p>Sıran gelince haberin olsun. Apple, Google ya da misafir olarak tek dokunuşla başla.</p></article>
   </div>
 
   <!-- PREMIUM -->
@@ -510,18 +537,19 @@ img{display:block;max-width:100%}
   </div>
   <div class="grid">
     <article class="b pack s6 r2">
+      <img class="packbadge" src="img/icons/premium.webp" width="128" height="128" alt="" loading="lazy" decoding="async">
       <div class="label">En popüler · Tam Paket</div>
       <h3>5 özellik,<br>tek satın alma.</h3>
       <p>Tüm premium özelliklere tek seferde sahip ol.</p>
-      <ul><li>Reklamsız</li><li>Puan önizleme</li><li>Torba görüntüleme</li><li>Sınırsız oyun</li><li>Hızlı Oyun</li><li>Premium rozet</li></ul>
+      <ul><li>Reklamsız</li><li>Puan önizleme</li><li>Torba görüntüleme</li><li>Sınırsız oyun</li><li>Hızlı Oyun</li></ul>
       <span class="off">%20 indirimli</span>
     </article>
-    <article class="b prem s3"><div class="top2"><div class="ico">🚫</div><div><div class="tag">Premium</div><h3>Reklam kaldır</h3></div></div><p>Reklam yok, sınırsız ipucu, ×2 skor çarpanı, özel rozet.</p></article>
-    <article class="b prem s3"><div class="top2"><div class="ico">🎯</div><div><div class="tag">Akıllı oyun</div><h3>Puan önizleme</h3></div></div><p>Tahtaya koymadan önce kelimenin canlı puanını gör.</p></article>
-    <article class="b prem s3"><div class="top2"><div class="ico">🎒</div><div><div class="tag">Strateji</div><h3>Torba görüntüleme</h3></div></div><p>Kalan harf sayılarını gör, rakibin elini tahmin et.</p></article>
-    <article class="b prem s3"><div class="top2"><div class="ico">♾️</div><div><div class="tag" lang="en">No limit</div><h3>Sınırsız oyun</h3></div></div><p>50 aktif oyun sınırı kalkar; tüm arkadaşlarınla aynı anda oyna.</p></article>
-    <article class="b prem s6"><div class="top2"><div class="ico">⚡</div><div><div class="tag">Adrenalin</div><h3>Hızlı Oyun (Blitz)</h3></div></div><p>2 ve 5 dakikalık sıra süreli hızlı modu aç. Hız tutkunlarının modu.</p></article>
-    <article class="b prem s6"><div class="top2"><div class="ico">🪙</div><div><div class="tag">Her gün ücretsiz</div><h3>Jetonlar</h3></div></div><p>Rakibine çay, gül, baklava gönder; sohbette fotoğraf ve sesli mesaj paylaş. Her gün ücretsiz jeton kazan, istersen paket al.</p></article>
+    <article class="b prem s3"><div class="top2"><div><div class="tag">Premium</div><h3>Reklam kaldır</h3></div></div><p>Reklam yok, sınırsız ipucu, ×2 skor çarpanı, özel rozet.</p></article>
+    <article class="b prem s3"><div class="top2"><div><div class="tag">Akıllı oyun</div><h3>Puan önizleme</h3></div></div><p>Tahtaya koymadan önce kelimenin canlı puanını gör.</p></article>
+    <article class="b prem s3"><div class="top2"><div><div class="tag">Strateji</div><h3>Torba görüntüleme</h3></div></div><p>Kalan harf sayılarını gör, rakibin elini tahmin et.</p></article>
+    <article class="b prem s3"><div class="top2"><div><div class="tag" lang="en">No limit</div><h3>Sınırsız oyun</h3></div></div><p>50 aktif oyun sınırı kalkar; tüm arkadaşlarınla aynı anda oyna.</p></article>
+    <article class="b prem s6"><div class="top2"><div><div class="tag">Adrenalin</div><h3>Hızlı Oyun (Blitz)</h3></div></div><p>2 ve 5 dakikalık sıra süreli hızlı modu aç. Hız tutkunlarının modu.</p></article>
+    <article class="b prem s6"><div class="top2"><div class="ico"><img class="ic" src="img/icons/market.webp" width="128" height="128" alt="" loading="lazy" decoding="async"></div><div><div class="tag">Her gün ücretsiz</div><h3>Jetonlar</h3></div></div><p>Rakibine çay, gül, baklava gönder; sohbette fotoğraf ve sesli mesaj paylaş. Her gün ücretsiz jeton kazan, istersen paket al.</p></article>
   </div>
 
   <!-- CTA -->

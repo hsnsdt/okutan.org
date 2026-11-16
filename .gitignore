@@ -6,3 +6,10 @@ desktop.ini
 # Büyük APK dosyaları depoya girmez; sunucuda elle durur
 *.apk
 kelimeler/kelimeler.mp4
+
+# Ham ekran kayıtları / orijinal videolar depoya girmez (sitede img/oynanis.* kullanılır)
+kelimeler/*.mp4
+kelimeler/*.MP4
+kelimeler/*.mov
+kelimeler/*.MOV
+*ScreenRecording*

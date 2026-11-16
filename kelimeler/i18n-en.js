@@ -85,6 +85,18 @@
     "12 değerlendirme · Türkiye": "12 ratings · Türkiye",
     "Tüm yorumlar →": "All reviews →",
     "Haziran 2026": "June 2026", "Temmuz 2026": "July 2026", "Kasım 2026": "November 2026",
+    // yeni modlar ve özellikler (oyun ikonlarıyla)
+    "Haftalık Lig": "Weekly League",
+    "Sıralamaya gir, her hafta yeniden yarış. Oynadıkça puanını topla, lig tablosunda yüksel.": "Join the rankings and race again every week. Collect points as you play and climb the league table.",
+    "Seviye seviye kelime bul. Harfleri birleştir, gizli kelimeleri tamamla; takıldığında ipucu ve karıştır yanında.": "Find words level by level. Connect the letters to complete hidden words — hints and shuffle are there when you get stuck.",
+    "Şehrimdekiler": "In My City",
+    "Yakınındaki oyuncuları gör; aynı şehirden rakiplerle tanış, maç başlat.": "See players near you; meet opponents from your city and start a match.",
+    "Akış": "Feed",
+    "Hamlelerini, fotoğraflarını ve yazılarını toplulukla paylaş; beğen, yorum yap.": "Share your moves, photos and posts with the community; like and comment.",
+    "Sohbet ve hediyeler": "Chat and gifts",
+    "Oyun sırasında mesajlaş; rakibine çay, gül, lokum, simit gönder.": "Chat during games and send your opponent tea, a rose, Turkish delight or simit.",
+    "Bildirimler ve giriş": "Notifications and sign-in",
+    "Sıran gelince haberin olsun. Apple, Google ya da misafir olarak tek dokunuşla başla.": "Know when it's your turn. Start with one tap using Apple, Google or as a guest.",
     // özellikler
     "Neden Kelimeler?": "Why Kelimeler?",
     "Her detay düşünüldü, her özellik özenle hazırlandı.": "Every detail considered, every feature carefully crafted.",
