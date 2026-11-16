@@ -2,3 +2,6 @@
 Thumbs.db
 desktop.ini
 *.tmp
+
+# Büyük APK dosyaları depoya girmez; sunucuda elle durur
+*.apk
