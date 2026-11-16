@@ -4,7 +4,7 @@
 #   FTP_USERNAME  cPanel FTP kullanıcı adı
 #   FTP_PASSWORD  cPanel FTP şifresi
 #   FTP_DIR       örn: ./public_html/   (FTP hesabı doğrudan public_html'e açılıyorsa: ./ )
-# Not: Sunucudaki /kelimeler klasörüne ve repoda olmayan dosyalara dokunulmaz.
+# Not: Repoda olmayan dosyalara (ör. kelimeler/*.apk) dokunulmaz; APK'lar sunucuda elle güncellenir.
 name: Deploy okutan.org
 
 on:
@@ -37,4 +37,4 @@ jobs:
             github-profile/**
             README.md
             .htaccess
-            kelimeler/**
+            **/*.apk

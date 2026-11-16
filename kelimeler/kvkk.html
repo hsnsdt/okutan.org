@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title data-title-tr="KVKK Aydınlatma Metni — Kelimeler" data-title-en="KVKK Disclosure Notice — Kelimeler">KVKK Aydınlatma Metni — Kelimeler</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="../assets/fonts/InterTight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/InterTight-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8cf62'/%3E%3Cstop offset='1' stop-color='%23e3a12c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='3' y='3' width='58' height='58' rx='13' fill='url(%23g)' stroke='%23955f17' stroke-width='3'/%3E%3Ctext x='29' y='46' text-anchor='middle' font-family='Arial' font-weight='900' font-size='36' fill='%233a2408'%3EK%3C/text%3E%3Ctext x='50' y='21' text-anchor='middle' font-family='Arial' font-weight='700' font-size='12' fill='%233a2408'%3E5%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#6c5ce7">
 <link rel="stylesheet" href="site.css">
 <script src="lang.js"></script>
 </head>
@@ -14,13 +16,14 @@
 
 <header>
   <nav class="nav">
-    <a href="index.html" class="logo">KELİMELER</a>
+    <a href="index.html" class="logo"><span class="gt">K<sup>5</sup></span>Kelimeler</a>
     <div class="nav-right">
       <div class="lang-switch">
         <button data-lang="tr" type="button">TR</button>
         <button data-lang="en" type="button">EN</button>
       </div>
       <a href="index.html" class="back-link"><span data-lang-block="tr">← Ana Sayfa</span><span data-lang-block="en">← Home</span></a>
+      <a href="https://okutan.org/" class="okutan" title="okutan.org"><b>o</b>kutan<span>.org</span></a>
     </div>
   </nav>
 </header>
@@ -307,7 +310,7 @@
     <a href="child-safety.html"><span data-lang-block="tr">Çocuk Güvenliği</span><span data-lang-block="en">Child Safety</span></a>
     <a href="support.html"><span data-lang-block="tr">Destek</span><span data-lang-block="en">Support</span></a>
   </div>
-  © 2026 Okutan Apps
+  <span class="okutan-apps">© 2026 Okutan Apps · <a href="https://okutan.org/"><b>o</b>kutan.org</a></span>
 </footer>
 
 </body>

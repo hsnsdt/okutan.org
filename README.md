@@ -10,4 +10,4 @@ Sedat Okutan'ın kişisel geliştirici sitesi. Tek sayfa, framework yok: `index.
 
 **Yayın:** `main` dalına push → GitHub Actions FTP ile cPanel'e yükler (`.github/workflows/deploy.yml`).
 `.htaccess` otomatik yüklenmez; sunucudaki mevcut dosyayla elle birleştirilmeli.
-`/kelimeler` ayrı yönetilir, bu repoda değildir.
+`kelimeler/` — Kelimeler oyununun sitesi (aynı tasarım dili, oyunun lavanta/mor paleti). APK dosyaları repoda değildir; sunucuda elle güncellenir.

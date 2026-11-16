@@ -1,1284 +1,385 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Kelimeler - Türkçe kelime oyunu. iOS ve Android'de yayında. 60.000+ kelime, Şehir Savaşları, Günlük Bulmaca, Hızlı Oyun ve daha fazlası.">
-<meta name="keywords" content="kelime oyunu, türkçe kelime, kelimeler, kelimelik, scrabble türkçe, harf oyunu, kelime bulmaca, türkçe oyun, ios kelime oyunu, android kelime oyunu">
+<meta charset="utf-8">
+<script>document.documentElement.classList.add('js')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelimeler — Türkçe Kelime Oyunu | iOS ve Android</title>
+<meta name="description" content="Kelimeler — Türkçe kelime oyunu. iOS ve Android'de yayında. 60.000+ kelime, Şehir Savaşları, Günün Bulmacası, Hızlı Oyun ve daha fazlası.">
+<meta name="keywords" content="kelime oyunu, türkçe kelime, kelimeler, scrabble türkçe, harf oyunu, kelime bulmaca, türkçe oyun, ios kelime oyunu, android kelime oyunu">
 <meta name="author" content="Okutan Apps">
-<meta name="theme-color" content="#1A0F08">
-
-<!-- Open Graph -->
-<meta property="og:title" content="Kelimeler - Türkçe Kelime Oyunu">
-<meta property="og:description" content="iOS ve Android'de yayında! 60.000+ Türkçe kelime, Şehir Savaşları, Günlük Bulmaca, Hızlı Oyun. Arkadaşlarınla yarış!">
+<meta name="theme-color" content="#6c5ce7">
+<link rel="canonical" href="https://okutan.org/kelimeler/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Kelimeler · okutan.org">
+<meta property="og:title" content="Kelimeler — Türkçe Kelime Oyunu">
+<meta property="og:description" content="iOS ve Android'de yayında! 60.000+ Türkçe kelime, Şehir Savaşları, Günün Bulmacası, Hızlı Oyun. Arkadaşlarınla yarış!">
 <meta property="og:url" content="https://okutan.org/kelimeler/">
-<meta property="og:image" content="https://okutan.org/kelimeler/og-image.png">
-
-<!-- Twitter Card -->
+<meta property="og:image" content="https://okutan.org/kelimeler/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Kelimeler - Türkçe Kelime Oyunu">
-<meta name="twitter:description" content="iOS ve Android'de yayında! 60.000+ kelime, Şehir Savaşları, Günlük Bulmaca, Hızlı Oyun.">
-
-<title>Kelimeler - Türkçe Kelime Oyunu | iOS ve Android</title>
-
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+<meta name="twitter:site" content="@okutanapp">
+<meta name="twitter:title" content="Kelimeler — Türkçe Kelime Oyunu">
+<meta name="twitter:description" content="iOS ve Android'de yayında! 60.000+ kelime, Şehir Savaşları, Günün Bulmacası, Hızlı Oyun.">
+<meta name="twitter:image" content="https://okutan.org/kelimeler/img/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23f8cf62'/%3E%3Cstop offset='1' stop-color='%23e3a12c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='3' y='3' width='58' height='58' rx='13' fill='url(%23g)' stroke='%23955f17' stroke-width='3'/%3E%3Ctext x='29' y='46' text-anchor='middle' font-family='Arial' font-weight='900' font-size='36' fill='%233a2408'%3EK%3C/text%3E%3Ctext x='50' y='21' text-anchor='middle' font-family='Arial' font-weight='700' font-size='12' fill='%233a2408'%3E5%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="../assets/fonts/InterTight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/InterTight-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "name": "Kelimeler: Online Kelime Oyunu",
+  "url": "https://okutan.org/kelimeler/",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "iOS, Android",
+  "inLanguage": "tr",
+  "installUrl": "https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "publisher": { "@type": "Person", "name": "Sedat Okutan", "url": "https://okutan.org/" }
+}
+</script>
 <style>
-:root {
-    --gold-light: #F5D682;
-    --gold: #D4A847;
-    --gold-dark: #A47A2A;
-    --bg-darkest: #0F0805;
-    --bg-dark: #1A0F08;
-    --bg-mid: #2D1810;
-    --bg-light: #3D2817;
-    --text-primary: #E8DCC0;
-    --text-secondary: #C4B89A;
-    --text-muted: #8B7B5C;
-    --accent-blue: #5B9BB8;
-    --accent-purple: #B89DC8;
-    --accent-green: #8DB87E;
-    --accent-orange: #FF7B47;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-    font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
-    background: var(--bg-darkest);
-    color: var(--text-primary);
-    line-height: 1.6;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* Background pattern */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-        radial-gradient(circle at 20% 30%, rgba(212, 168, 71, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 80% 70%, rgba(184, 122, 42, 0.06) 0%, transparent 40%),
-        linear-gradient(135deg, #1A0F08 0%, #2D1810 50%, #1A0F08 100%);
-    z-index: -1;
-}
-
-::selection { background: var(--gold); color: var(--bg-dark); }
-
-/* Header */
-header {
-    padding: 18px 32px;
-    border-bottom: 1px solid rgba(212, 168, 71, 0.15);
-    background: rgba(15, 8, 5, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.nav {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-decoration: none;
-}
-
-.nav-links {
-    display: flex;
-    gap: 28px;
-    list-style: none;
-    align-items: center;
-}
-
-.nav-links a {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: color 0.2s;
-    position: relative;
-}
-
-.nav-links a:hover { color: var(--gold); }
-
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--gold);
-    transition: width 0.3s;
-}
-
-.nav-links a:hover::after { width: 100%; }
-
-.badge-new {
-    background: var(--accent-orange);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    letter-spacing: 0.5px;
-}
-
-/* Hero */
-.hero {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 80px 32px 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: center;
-    position: relative;
-}
-
-.hero-content { animation: fadeInLeft 0.8s ease-out; }
-.hero-mockup { animation: fadeInRight 0.8s ease-out; }
-
-@keyframes fadeInLeft {
-    from { opacity: 0; transform: translateX(-30px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes fadeInRight {
-    from { opacity: 0; transform: translateX(30px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-.hero-tagline {
-    display: inline-block;
-    color: var(--gold);
-    font-size: 12px;
-    letter-spacing: 4px;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border: 1px solid rgba(212, 168, 71, 0.3);
-    border-radius: 20px;
-    background: rgba(212, 168, 71, 0.05);
-}
-
-.hero-content h1 {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 64px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    background: linear-gradient(135deg, #F5D682 0%, #D4A847 50%, #A47A2A 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 12px;
-    line-height: 1.05;
-}
-
-.hero-subtitle {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 22px;
-    color: var(--text-secondary);
-    font-weight: 500;
-    letter-spacing: 4px;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-}
-
-.hero-description {
-    font-size: 17px;
-    color: var(--text-secondary);
-    margin-bottom: 32px;
-    line-height: 1.7;
-    max-width: 520px;
-}
-
-.hero-description strong {
-    color: var(--gold);
-    font-weight: 600;
-}
-
-/* Download buttons */
-.download-buttons {
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-}
-
-.store-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 22px;
-    background: #000;
-    color: white;
-    border-radius: 12px;
-    text-decoration: none;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 180px;
-}
-
-.store-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 40px rgba(212, 168, 71, 0.3);
-    border-color: var(--gold);
-}
-
-.store-btn svg {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-}
-
-.store-btn-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.store-btn-small {
-    font-size: 10px;
-    color: #C4B89A;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.store-btn-large {
-    font-size: 16px;
-    font-weight: 600;
-    color: white;
-}
-
-.hero-meta {
-    display: flex;
-    gap: 24px;
-    margin-top: 24px;
-    font-size: 13px;
-    color: var(--text-muted);
-    flex-wrap: wrap;
-}
-
-.hero-meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.hero-meta .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-green);
-    box-shadow: 0 0 8px var(--accent-green);
-}
-
-/* Hero board mockup */
-.hero-mockup {
-    position: relative;
-    perspective: 1000px;
-}
-
-.board {
-    background: linear-gradient(145deg, #4A3220, #3D2817);
-    border: 2px solid var(--gold);
-    border-radius: 20px;
-    padding: 18px;
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.6),
-        0 0 60px rgba(212, 168, 71, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    aspect-ratio: 1;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    transform: rotateY(-8deg) rotateX(4deg);
-    transition: transform 0.6s;
-}
-
-.board:hover { transform: rotateY(0deg) rotateX(0deg); }
-
-.board-cell {
-    background: #EAE5DC;
-    border-radius: 5px;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    color: white;
-    font-size: 13px;
-    position: relative;
-}
-
-.cell-empty { background: #EAE5DC; }
-.cell-h2 { background: #95B8C8; }
-.cell-h3 { background: #C8A6C8; }
-.cell-k2 { background: #9DC18F; }
-.cell-k3 { background: #D4956A; }
-.cell-star { background: linear-gradient(135deg, var(--gold-light), var(--gold-dark)); color: var(--bg-dark); font-size: 22px; }
-
-.tile {
-    background: linear-gradient(180deg, #FAF5E8, #E8DCC0);
-    color: #3D2817 !important;
-    border: 0.5px solid var(--gold-dark);
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 22px !important;
-    font-weight: 700;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.tile-pending {
-    background: linear-gradient(180deg, #FF8C5C, #B85A0C);
-    color: white !important;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-    50% { box-shadow: 0 2px 12px rgba(255, 123, 71, 0.6); }
-}
-
-.tile .score {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    font-size: 9px;
-    font-weight: 700;
-    color: #8B5A2B;
-}
-
-.tile-pending .score { color: white; }
-
-/* Sections */
-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 80px 32px;
-}
-
-.section-tag {
-    display: inline-block;
-    color: var(--gold);
-    font-size: 11px;
-    letter-spacing: 4px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.section-title {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 42px;
-    color: var(--text-primary);
-    margin-bottom: 16px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.section-title span {
-    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.section-subtitle {
-    color: var(--text-secondary);
-    font-size: 17px;
-    margin-bottom: 56px;
-    max-width: 600px;
-}
-
-.section-header-center { text-align: center; }
-.section-header-center .section-subtitle { margin-left: auto; margin-right: auto; }
-
-/* Game modes */
-.modes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-}
-
-.mode-card {
-    background: linear-gradient(145deg, rgba(45, 24, 16, 0.8), rgba(26, 15, 8, 0.6));
-    border: 1px solid rgba(212, 168, 71, 0.2);
-    border-radius: 16px;
-    padding: 28px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.mode-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(212, 168, 71, 0.1) 0%, transparent 50%);
-    opacity: 0;
-    transition: opacity 0.4s;
-}
-
-.mode-card:hover {
-    border-color: var(--gold);
-    transform: translateY(-6px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-}
-
-.mode-card:hover::before { opacity: 1; }
-
-.mode-card > * { position: relative; z-index: 1; }
-
-.mode-emoji {
-    font-size: 38px;
-    margin-bottom: 16px;
-    display: block;
-}
-
-.mode-title {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 22px;
-    color: var(--gold);
-    margin-bottom: 10px;
-    font-weight: 700;
-}
-
-.mode-description {
-    color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.mode-badge {
-    display: inline-block;
-    background: rgba(255, 123, 71, 0.2);
-    color: var(--accent-orange);
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-    border: 1px solid rgba(255, 123, 71, 0.4);
-}
-
-/* Features Grid */
-.features { padding: 60px 32px; }
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.feature-card {
-    background: rgba(45, 24, 16, 0.4);
-    border: 1px solid rgba(212, 168, 71, 0.15);
-    border-radius: 14px;
-    padding: 26px 22px;
-    transition: all 0.3s;
-    backdrop-filter: blur(10px);
-}
-
-.feature-card:hover {
-    border-color: rgba(212, 168, 71, 0.5);
-    transform: translateY(-4px);
-    background: rgba(45, 24, 16, 0.6);
-}
-
-.feature-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin-bottom: 14px;
-    box-shadow: 0 8px 24px rgba(212, 168, 71, 0.2);
-}
-
-.feature-title {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 18px;
-    color: var(--gold);
-    margin-bottom: 10px;
-    font-weight: 700;
-}
-
-.feature-description {
-    color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-/* Premium Section */
-.premium-section {
-    background: linear-gradient(180deg, rgba(212, 168, 71, 0.04), transparent);
-    border-top: 1px solid rgba(212, 168, 71, 0.15);
-    border-bottom: 1px solid rgba(212, 168, 71, 0.15);
-}
-
-.premium-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-}
-
-.premium-card {
-    background: rgba(15, 8, 5, 0.6);
-    border: 1px solid rgba(212, 168, 71, 0.2);
-    border-radius: 14px;
-    padding: 22px;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.premium-card.featured {
-    border-color: var(--gold);
-    background: linear-gradient(145deg, rgba(212, 168, 71, 0.1), rgba(45, 24, 16, 0.8));
-    box-shadow: 0 0 40px rgba(212, 168, 71, 0.15);
-}
-
-.premium-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--gold);
-}
-
-.premium-tag {
-    position: absolute;
-    top: -10px;
-    right: 16px;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
-    color: var(--bg-dark);
-    font-size: 10px;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 6px;
-    letter-spacing: 1px;
-}
-
-.premium-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-}
-
-.premium-title {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 17px;
-    color: var(--gold);
-    margin-bottom: 6px;
-    font-weight: 700;
-}
-
-.premium-price {
-    color: var(--text-primary);
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.premium-desc {
-    color: var(--text-secondary);
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-/* Stats */
-.stats-section {
-    padding: 60px 32px;
-    text-align: center;
-}
-
-.stats-grid {
-    max-width: 1000px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 24px;
-}
-
-.stat-card {
-    padding: 28px 16px;
-    background: rgba(45, 24, 16, 0.3);
-    border: 1px solid rgba(212, 168, 71, 0.15);
-    border-radius: 14px;
-    transition: all 0.3s;
-}
-
-.stat-card:hover {
-    border-color: rgba(212, 168, 71, 0.4);
-    transform: translateY(-3px);
-}
-
-.stat-number {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 42px;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 6px;
-    line-height: 1;
-}
-
-.stat-label {
-    color: var(--text-secondary);
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-/* CTA Section */
-.cta-section {
-    background:
-        radial-gradient(ellipse at center, rgba(212, 168, 71, 0.15) 0%, transparent 60%),
-        linear-gradient(135deg, rgba(212, 168, 71, 0.05), transparent);
-    padding: 90px 32px;
-    text-align: center;
-    border-top: 1px solid rgba(212, 168, 71, 0.15);
-    position: relative;
-    overflow: hidden;
-    max-width: 100%;
-}
-
-.cta-section h2 {
-    font-family: 'Cinzel', Georgia, serif;
-    font-size: 48px;
-    color: var(--gold);
-    margin-bottom: 16px;
-    letter-spacing: 4px;
-    font-weight: 900;
-}
-
-.cta-section p {
-    color: var(--text-secondary);
-    font-size: 18px;
-    margin-bottom: 36px;
-    max-width: 580px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.cta-section .download-buttons { justify-content: center; }
-
-/* Footer */
-footer {
-    background: var(--bg-darkest);
-    padding: 56px 32px 24px;
-    border-top: 1px solid rgba(212, 168, 71, 0.15);
-}
-
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 48px;
-    margin-bottom: 32px;
-}
-
-.footer-brand h3 {
-    font-family: 'Cinzel', Georgia, serif;
-    color: var(--gold);
-    font-size: 20px;
-    letter-spacing: 3px;
-    margin-bottom: 14px;
-    font-weight: 900;
-}
-
-.footer-brand p {
-    color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 1.7;
-    max-width: 340px;
-    margin-bottom: 16px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 12px;
-}
-
-.footer-social a {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: rgba(212, 168, 71, 0.1);
-    border: 1px solid rgba(212, 168, 71, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.footer-social a:hover {
-    background: var(--gold);
-    color: var(--bg-dark);
-    transform: translateY(-2px);
-}
-
-.footer-section h4 {
-    color: var(--gold);
-    font-size: 12px;
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-    font-weight: 700;
-}
-
-.footer-section a {
-    display: block;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 14px;
-    margin-bottom: 10px;
-    transition: color 0.2s;
-}
-
-.footer-section a:hover { color: var(--gold); }
-
-.footer-bottom {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-top: 24px;
-    border-top: 1px solid rgba(212, 168, 71, 0.1);
-    display: flex;
-    justify-content: space-between;
-    color: var(--text-muted);
-    font-size: 13px;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-/* Scroll reveal animation */
-.reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Responsive */
-@media (max-width: 968px) {
-    .hero {
-        grid-template-columns: 1fr;
-        padding: 48px 24px;
-        gap: 48px;
-    }
-
-    .hero-content { text-align: center; }
-    .hero-content h1 { font-size: 48px; }
-    .hero-subtitle { font-size: 18px; }
-    .hero-description { margin-left: auto; margin-right: auto; }
-    .download-buttons { justify-content: center; }
-    .hero-meta { justify-content: center; }
-    .nav-links { display: none; }
-
-    section { padding: 56px 24px; }
-    .features { padding: 40px 24px; }
-
-    .section-title { font-size: 32px; }
-    .section-subtitle { font-size: 15px; margin-bottom: 40px; }
-
-    .footer-container {
-        grid-template-columns: 1fr 1fr;
-        gap: 32px;
-    }
-
-    .footer-brand { grid-column: 1 / -1; }
-
-    .footer-bottom {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .cta-section h2 { font-size: 34px; letter-spacing: 2px; }
-    .stat-number { font-size: 36px; }
-}
-
-@media (max-width: 480px) {
-    .hero-content h1 { font-size: 38px; letter-spacing: 3px; }
-    .store-btn { min-width: 160px; }
-    .footer-container { grid-template-columns: 1fr; }
-}
+:root{
+  --bg:#f3f2fa; --block:#fff; --ink:#1e1b2e; --muted:#6b6880; --line:#e6e3f2;
+  --accent:#6c5ce7; --accent-d:#5847d8; --accent-soft:#efeafe;
+  --g1:#f8cf62; --g2:#e3a12c; --gb:#955f17; --gt:#3a2408;
+  --tile:#f4ead4; --tile-b:#cdb98f;
+  --k3:#e39a6f; --h2:#8fb7d8; --h3:#c9a3dc; --k2:#93c99d;
+  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:20px; --gap:12px; color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(color-mix(in srgb,var(--accent) 12%,transparent) 1px,transparent 1.4px);background-size:22px 22px;background-attachment:fixed}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--gap) 20px 40px}
+@media (max-width:520px){.wrap{padding:var(--gap) 16px 32px}}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap)}
+.grid>*{min-width:0}
+.b{background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:28px;position:relative;overflow:hidden}
+.s12{grid-column:span 12}.s8{grid-column:span 8}.s7{grid-column:span 7}.s6{grid-column:span 6}.s5{grid-column:span 5}.s4{grid-column:span 4}.s3{grid-column:span 3}
+.r2{grid-row:span 2}
+@media (max-width:900px){.s8,.s7,.s6,.s5,.s4{grid-column:span 12}.s3{grid-column:span 6}.r2{grid-row:auto}}
+@media (max-width:520px){.s3{grid-column:span 12}}
+.label{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* gold tile logo */
+.gl{display:inline-flex;flex-wrap:wrap;gap:var(--tg,6px);justify-content:inherit}
+.gt{--s:54px;width:var(--s);height:var(--s);border-radius:calc(var(--s)*.18);background:linear-gradient(180deg,var(--g1),var(--g2));border:calc(var(--s)*.045) solid var(--gb);
+  color:var(--gt);font:900 calc(var(--s)*.56)/1 var(--sans);display:flex;align-items:center;justify-content:center;position:relative;
+  box-shadow:inset 0 calc(var(--s)*-.06) 0 rgba(0,0,0,.14),inset 0 2px 0 rgba(255,255,255,.45),0 6px 14px -8px rgba(149,95,23,.8)}
+.gt sup{position:absolute;top:8%;right:10%;font:700 calc(var(--s)*.2) var(--sans)}
+.gl-row{display:flex;gap:inherit;justify-content:inherit;width:100%}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 18px;margin-bottom:var(--gap)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand .gt{--s:32px}
+.nav{display:flex;align-items:center;gap:2px}
+.nav a{font-size:14px;font-weight:500;padding:8px 12px;border-radius:10px;color:var(--muted)}
+.nav a:hover{background:var(--bg);color:var(--ink)}
+.nav .dl{background:var(--accent);color:#fff;font-weight:600;margin-left:6px}
+.nav .dl:hover{background:var(--accent-d);color:#fff}
+.okutan{display:inline-flex;align-items:center;gap:0;font:600 13px var(--sans);color:var(--muted);border:1px solid var(--line);border-radius:10px;padding:7px 10px;margin-left:6px}
+.okutan b{color:#ff5a1f;font-weight:800}
+.okutan:hover{color:var(--ink);border-color:var(--muted)}
+@media (max-width:860px){.nav a:not(.dl):not(.okutan){display:none}}
+@media (max-width:420px){.okutan span{display:none}}
+
+/* hero */
+.hero{padding:40px;display:flex;flex-direction:column;justify-content:center;gap:22px;min-height:560px;background:linear-gradient(160deg,#fff 0%,#f7f4ff 100%)}
+.pill{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px}
+.pill i{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.2)}
+.hero .gl{justify-content:flex-start}
+.hero .gt{--s:clamp(40px,5.4vw,64px)}
+.sub{font:600 13px var(--mono);letter-spacing:.35em;text-transform:uppercase;color:var(--muted)}
+.hero p{font-size:18px;color:var(--muted);max-width:520px}
+.hero p strong{color:var(--ink);font-weight:600}
+.stores{display:flex;flex-wrap:wrap;gap:10px}
+.st{display:inline-flex;align-items:center;gap:12px;height:56px;padding:0 20px 0 16px;border-radius:14px;font-weight:700;font-size:16px;line-height:1.1;transition:transform .15s,box-shadow .15s}
+.st small{display:block;font-size:11px;font-weight:500;opacity:.75;letter-spacing:.02em}
+.st svg{width:26px;height:26px;flex:none}
+.st:hover{transform:translateY(-2px)}
+.st-ios{background:#111;color:#fff;box-shadow:0 10px 24px -12px rgba(0,0,0,.6)}
+.st-and{background:var(--accent);color:#fff;box-shadow:0 10px 24px -12px rgba(108,92,231,.9)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:13px;font-weight:500;color:var(--muted);background:var(--bg);border:1px solid var(--line);padding:5px 12px;border-radius:999px}
+
+.showcase{background:linear-gradient(160deg,#8f7cf6,#6c5ce7 55%,#5847d8);border-color:#5847d8;display:flex;align-items:center;justify-content:center;min-height:560px;padding:0}
+.showcase::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.25),transparent 45%),radial-gradient(circle at 80% 90%,rgba(248,207,98,.35),transparent 40%)}
+.phone{width:min(250px,40vw);border-radius:40px;padding:8px;background:#141220;box-shadow:0 30px 60px -20px rgba(20,10,60,.7),inset 0 0 0 2px #2c2840;position:relative}
+.phone img{border-radius:32px;width:100%;height:auto}
+.duo{position:relative;display:flex;align-items:center;justify-content:center;padding:36px 0}
+.duo .phone:first-child{transform:rotate(-5deg) translateX(18%);z-index:2}
+.duo .phone:last-child{transform:rotate(6deg) translateX(-18%) translateY(18px);opacity:.96}
+@media (max-width:900px){.hero,.showcase{min-height:0}.phone{width:min(230px,44vw)}}
+
+/* stats strip */
+.stats{display:flex;justify-content:space-around;flex-wrap:wrap;gap:18px;padding:26px}
+.stat{text-align:center;min-width:110px}
+.stat .n{font-size:40px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--accent)}
+.stat .d{font-size:14px;color:var(--muted);margin-top:6px}
+
+/* section heads */
+.sh{display:flex;align-items:end;justify-content:space-between;gap:16px;padding:48px 6px 16px}
+.sh h2{font-size:clamp(30px,4vw,46px);font-weight:800;letter-spacing:-.035em;line-height:1}
+.sh p{color:var(--muted);max-width:420px;text-align:right;font-size:15px}
+@media (max-width:700px){.sh{flex-direction:column;align-items:flex-start}.sh p{text-align:left}}
+
+/* modes */
+.mode{display:flex;flex-direction:column;gap:10px;min-height:220px;background:var(--c,#fff);border-color:color-mix(in srgb,var(--c,#fff) 70%,#000 6%)}
+.ico{width:56px;height:56px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 6px 16px -10px rgba(30,27,46,.35)}
+.mode h3{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
+.mode p{color:var(--muted);font-size:15px}
+.badge{position:absolute;top:20px;right:20px;font:700 11px var(--mono);letter-spacing:.05em;background:var(--accent);color:#fff;padding:5px 10px;border-radius:999px}
+.mode.dark{background:linear-gradient(160deg,#2a2550,#1b1835);border-color:#2a2550;color:#fff}
+.mode.dark p{color:rgba(255,255,255,.72)}
+.mode.dark .ico{background:rgba(255,255,255,.1)}
+.vs{font:900 22px/1 var(--sans);letter-spacing:-.02em;background:linear-gradient(180deg,#ff6bb5,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* screens */
+.screens{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.scr{display:flex;flex-direction:column;align-items:center;gap:16px;padding:28px 18px 24px;background:linear-gradient(180deg,#fff,#f7f4ff)}
+.scr .phone{width:100%;max-width:220px;border-radius:34px;padding:7px}
+.scr .phone img{border-radius:28px}
+.scr h3{font-size:18px;font-weight:800;letter-spacing:-.02em;text-align:center}
+.scr p{font-size:14px;color:var(--muted);text-align:center;margin-top:-10px}
+@media (max-width:900px){.screens{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin:0 -16px;padding-left:16px;padding-right:16px}.scr{flex:0 0 72%;scroll-snap-align:center}}
+
+/* features */
+.feat{display:flex;flex-direction:column;gap:8px;min-height:190px}
+.feat .ico{width:46px;height:46px;font-size:24px;border-radius:13px;background:var(--accent-soft);box-shadow:none}
+.feat h3{font-size:17px;font-weight:800;letter-spacing:-.01em;margin-top:4px}
+.feat p{font-size:14px;color:var(--muted)}
+.mini-tiles{display:flex;gap:5px;margin-top:auto}
+.mini-tiles span{width:26px;height:26px;border-radius:6px;font:700 10px var(--sans);display:flex;align-items:center;justify-content:center;color:#fff}
+
+/* premium */
+.pack{background:linear-gradient(160deg,#7d6cf0,#5847d8);border-color:#5847d8;color:#fff;display:flex;flex-direction:column;gap:14px;padding:34px}
+.pack .label{color:rgba(255,255,255,.8)}
+.pack h3{font-size:clamp(34px,4vw,48px);font-weight:800;letter-spacing:-.04em;line-height:1}
+.pack p{color:rgba(255,255,255,.85);font-size:16px;max-width:420px}
+.pack ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.pack li{background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px}
+.pack li::before{content:"✓ ";color:var(--g1)}
+.off{align-self:flex-start;background:var(--g1);color:var(--gt);font:800 14px var(--sans);padding:6px 12px;border-radius:999px;margin-top:auto}
+.prem{display:flex;flex-direction:column;gap:6px}
+.prem .top2{display:flex;align-items:center;gap:10px}
+.prem .ico{width:42px;height:42px;font-size:22px;border-radius:12px;background:var(--accent-soft);box-shadow:none}
+.prem h3{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.prem .tag{font:600 11px var(--mono);color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+.prem p{font-size:14px;color:var(--muted)}
+
+/* rack strip */
+.rack{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:22px;background:linear-gradient(180deg,#fbf8ff,#efeafe)}
+.rt{--s:52px;width:var(--s);height:var(--s);border-radius:10px;background:linear-gradient(180deg,#fbf3e1,var(--tile));border:1px solid var(--tile-b);color:#2b2112;font:800 26px/1 var(--sans);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 -4px 0 rgba(120,90,40,.25),0 8px 14px -10px rgba(60,40,10,.6)}
+.rt sup{position:absolute;top:4px;right:6px;font:700 11px var(--sans)}
+.js .rack.rv .rt{opacity:0;transform:translateY(16px) rotate(-8deg)}
+.rack.in .rt{animation:rtIn .5s cubic-bezier(.2,.8,.3,1.3) both;animation-delay:calc(var(--i)*70ms)}
+@keyframes rtIn{from{opacity:0;transform:translateY(16px) rotate(-8deg)}to{opacity:1;transform:none}}
+@media (max-width:520px){.rt{--s:38px;font-size:19px}.rt sup{font-size:9px;top:2px;right:4px}}
+
+/* CTA */
+.cta{background:linear-gradient(160deg,#8f7cf6,#6c5ce7 60%,#5847d8);border-color:#5847d8;color:#fff;text-align:center;padding:56px 28px;display:flex;flex-direction:column;align-items:center;gap:18px;margin-top:var(--gap)}
+.cta::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.22),transparent 40%),radial-gradient(circle at 85% 85%,rgba(248,207,98,.35),transparent 40%)}
+.cta>*{position:relative}
+.cta .gl{justify-content:center}
+.cta .gt{--s:clamp(40px,6vw,64px)}
+.cta p{font-size:18px;color:rgba(255,255,255,.88);max-width:520px}
+.cta .st-and{background:#fff;color:var(--accent)}
+
+/* footer */
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px;margin-top:var(--gap)}
+@media (max-width:900px){.foot{grid-template-columns:1fr 1fr}}
+.foot h4{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.foot ul{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.foot ul a:hover{color:var(--accent)}
+.foot .about p{color:var(--muted);font-size:14px;margin-top:12px;max-width:320px}
+.foot .about .brand{font-size:18px}
+.bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 22px;margin-top:var(--gap);font:500 12px var(--mono);color:var(--muted)}
+.okutan-apps{display:flex;align-items:center;gap:10px;letter-spacing:.25em;text-transform:uppercase}
+.okutan-apps a{font:800 15px var(--sans);letter-spacing:-.02em;text-transform:none;color:var(--ink)}
+.okutan-apps a b{color:#ff5a1f}
+
+@media (max-width:520px){
+  .feat{grid-column:span 6;min-height:0;padding:18px}
+  .feat h3{font-size:15px}.feat p{font-size:13px}
+  .feat .ico{width:40px;height:40px;font-size:21px}
+  .mode{min-height:0;padding:22px}
+  .hero{padding:26px}
+}
+/* reveal */
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}.rack.in .rt,.js .rack.rv .rt{animation:none;opacity:1;transform:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<!-- Header -->
-<header>
+  <header class="b top">
+    <a href="#" class="brand" aria-label="Kelimeler"><span class="gt">K<sup>5</sup></span>Kelimeler</a>
     <nav class="nav">
-        <a href="#" class="logo">KELİMELER</a>
-        <ul class="nav-links">
-            <li><a href="#modes">Oyun Modları</a></li>
-            <li><a href="#features">Özellikler</a></li>
-            <li><a href="#premium">Premium</a></li>
-            <li><a href="#download">İndir <span class="badge-new">iOS</span></a></li>
-            <li><a href="privacy-policy.html">Gizlilik</a></li>
-            <li><a href="child-safety.html">Çocuk Güvenliği</a></li>
-        </ul>
+      <a href="#modes">Oyun Modları</a>
+      <a href="#features">Özellikler</a>
+      <a href="#premium">Premium</a>
+      <a href="support.html">Destek</a>
+      <a href="#download" class="dl">İndir</a>
+      <a href="https://okutan.org/" class="okutan" title="okutan.org"><b>o</b>kutan<span>.org</span></a>
     </nav>
-</header>
+  </header>
 
-<!-- Hero -->
-<section class="hero">
-    <div class="hero-content">
-        <span class="hero-tagline">★ iOS ve Android'de Yayında ★</span>
-        <h1>KELİMELER</h1>
-        <p class="hero-subtitle">Türkçe Kelime Oyunu</p>
-        <p class="hero-description">
-            Türkçe kelime oyununun en zengin sürümü artık <strong>iPhone</strong> ve <strong>Android</strong> cihazlarda!
-            <strong>60.000+ kelime</strong>, <strong>81 il</strong> arasında şehir savaşları,
-            günlük bulmaca ve <strong>hızlı oyun</strong> modu seni bekliyor.
-        </p>
-        <div class="download-buttons" id="download">
-            <!-- App Store Button -->
-            <a href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" class="store-btn" target="_blank" rel="noopener">
-                <svg viewBox="0 0 384 512" fill="white" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-                </svg>
-                <div class="store-btn-text">
-                    <span class="store-btn-small">App Store'dan</span>
-                    <span class="store-btn-large">İndir</span>
-                </div>
-            </a>
+  <!-- HERO -->
+  <div class="grid">
+    <section class="b hero s7">
+      <span class="pill"><i></i>iOS ve Android'de yayında</span>
+      <h1 class="gl" aria-label="KELİMELER">
+        <span class="gl-row"><span class="gt">K<sup>5</sup></span><span class="gt">E<sup>1</sup></span><span class="gt">L<sup>1</sup></span><span class="gt">İ<sup>1</sup></span><span class="gt">M<sup>3</sup></span><span class="gt">E<sup>1</sup></span></span>
+        <span class="gl-row"><span class="gt">L<sup>1</sup></span><span class="gt">E<sup>1</sup></span><span class="gt">R<sup>1</sup></span></span>
+      </h1>
+      <div class="sub">Türkçe kelime oyunu</div>
+      <p>Türkçe kelime oyununun en zengin sürümü <strong>iPhone ve Android</strong>'de. <strong>60.000+ kelime</strong>, 81 il arasında şehir savaşları, günün bulmacası ve hızlı oyun modu seni bekliyor.</p>
+      <div class="stores">
+        <a class="st st-ios" href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+          <span><small>App Store'dan</small>İndir</span></a>
+        <a class="st st-and" href="android.html">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a1 1 0 1 1 0-2 1 1 0 0 1 0 2m-11.046 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2m11.405-6.02 1.997-3.46a.416.416 0 0 0-.72-.416l-2.022 3.502A12.6 12.6 0 0 0 12 7.896c-1.876 0-3.65.398-5.137 1.05L4.841 5.445a.416.416 0 0 0-.72.416l1.997 3.46C2.688 11.186.343 14.659 0 18.761h24c-.344-4.102-2.689-7.575-6.118-9.44"/></svg>
+          <span><small>Android için</small>İndir</span></a>
+      </div>
+      <div class="chips"><span>★ Ücretsiz</span><span>Türkçe</span><span>13+ yaş</span><span>Telefon ve tablet</span></div>
+    </section>
 
-            <!-- Google Play Button -->
-            <a href="android.html" class="store-btn">
-                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#FFD400" d="M381.9 247.4L290 338.7l-15.7-15.6 89.3-89.4z"/>
-                    <path fill="#FF3333" d="M381.9 247.4l-91.9 91.3-156-156 36-36z"/>
-                    <path fill="#48FF48" d="M170 146.7L60.6 36.5C53.8 39.5 49 46.3 49 54.7v402.6c0 8.4 4.8 15.2 11.6 18.2L170 365.3z"/>
-                    <path fill="#3BCCFF" d="M170 146.7v218.6L60.6 475.5c-4.8-2.1-8.6-6.4-10.4-11.6l125.7-125.7-44-44z"/>
-                </svg>
-                <div class="store-btn-text">
-                    <span class="store-btn-small">Android için</span>
-                    <span class="store-btn-large">İndir</span>
-                </div>
-            </a>
-        </div>
-        <div class="hero-meta">
-            <span><span class="dot"></span>Yayında</span>
-            <span>★ Ücretsiz İndir</span>
-            <span>★ Türkçe</span>
-            <span>★ 13+ Yaş</span>
-        </div>
+    <section class="b showcase s5" aria-label="Oyundan ekran görüntüleri">
+      <div class="duo">
+        <div class="phone"><img src="img/ana-ekran.webp" width="645" height="1398" alt="Kelimeler ana ekranı: Hızlı Oyun modları" fetchpriority="high"></div>
+        <div class="phone"><img src="img/oyun-tahtasi.webp" width="645" height="1398" alt="Kelimeler oyun tahtası"></div>
+      </div>
+    </section>
+
+    <section class="b stats s12" aria-label="Rakamlarla Kelimeler">
+      <div class="stat"><div class="n" data-count="60">60K+</div><div class="d">Türkçe kelime</div></div>
+      <div class="stat"><div class="n">6</div><div class="d">Oyun modu</div></div>
+      <div class="stat"><div class="n">81</div><div class="d">Şehir</div></div>
+      <div class="stat"><div class="n">15×15</div><div class="d">Oyun tahtası</div></div>
+      <div class="stat"><div class="n">2</div><div class="d">Platform</div></div>
+    </section>
+  </div>
+
+  <!-- MODES -->
+  <div class="sh" id="modes">
+    <h2>Her zevke bir mod</h2>
+    <p>Bota karşı pratik yap, arkadaşınla yarış, şehrini yükselt ya da günün bulmacasını çöz.</p>
+  </div>
+  <div class="grid">
+    <article class="b mode s4" style="--c:#eef4ff"><div class="ico">🤖</div><h3>Bota Karşı</h3><p>3 farklı zorluk seviyesinde yapay zeka rakibe karşı oyna. İnternet gerekmez; istediğin zaman pratik yap, becerini geliştir.</p></article>
+    <article class="b mode s4" style="--c:#fff0f3"><span class="badge">EN POPÜLER</span><div class="ico">🏙️</div><h3>Şehir Savaşları</h3><p>Şehrini seç, 81 il arasında lider tablosunda yarış. 539 yöresel kelime, haftalık şampiyonluk, aylık ödüller. Senin şehrin kazansın!</p></article>
+    <article class="b mode s4" style="--c:#fff8e6"><div class="ico">🧩</div><h3>Günün Bulmacası</h3><p>Her gün 7 harfle 3 dakikada en yüksek skoru yakala. 5+ yıl benzersiz bulmaca havuzu, global lider tablosu.</p></article>
+    <article class="b mode s4" style="--c:#fffbe9"><div class="ico">⚡</div><h3>Hızlı Oyun</h3><p>2 veya 5 dakikalık sıra süreli maçlar. Hızlı düşün, hızlı oyna — adrenalin dolu oyunlar.</p></article>
+    <article class="b mode s4" style="--c:#eaf8ef"><div class="ico">👥</div><h3>Arkadaşla Oyna</h3><p>Arkadaşını kullanıcı adı ya da davet koduyla çağır. 12, 24 veya 72 saat tur süresi; WhatsApp'tan paylaş, oynamaya başlayın.</p></article>
+    <article class="b mode dark s4"><div class="ico"><span class="vs">VS</span></div><h3>Rakip Bul</h3><p>Anlık eşleşmeyle Türkiye genelinde oyuncularla karşılaş. Klasik ya da hızlı oyun; her seviyeden rakip seni bekliyor.</p></article>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="sh">
+    <h2>Oyundan kareler</h2>
+    <p>Gerçek oyun ekranları — iPhone'dan.</p>
+  </div>
+  <div class="screens">
+    <figure class="b scr"><div class="phone"><img src="img/ana-ekran.webp" width="645" height="1398" alt="Ana ekran" loading="lazy" decoding="async"></div><h3>Ana ekran</h3><p>Tüm modlar tek dokunuşta</p></figure>
+    <figure class="b scr"><div class="phone"><img src="img/oyun-tahtasi.webp" width="645" height="1398" alt="15×15 oyun tahtası" loading="lazy" decoding="async"></div><h3>15×15 tahta</h3><p>H2 · H3 · K2 · K3 bonusları</p></figure>
+    <figure class="b scr"><div class="phone"><img src="img/gunun-bulmacasi.webp" width="645" height="1398" alt="Günün Bulmacası" loading="lazy" decoding="async"></div><h3>Günün Bulmacası</h3><p>7 harf, 3 dakika, tek hak</p></figure>
+    <figure class="b scr"><div class="phone"><img src="img/kelime-avi.webp" width="645" height="1398" alt="Kelime Avı" loading="lazy" decoding="async"></div><h3>Kelime Avı</h3><p>Seviye seviye kelime bul</p></figure>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="sh" id="features">
+    <h2>Neden Kelimeler?</h2>
+    <p>Her detay düşünüldü, her özellik özenle hazırlandı.</p>
+  </div>
+  <div class="grid">
+    <article class="b feat s3"><div class="ico">📚</div><h3>60.000+ Türkçe kelime</h3><p>TDK standartlarında sürekli güncellenen sözlük ve 539 yöresel kelime.</p></article>
+    <article class="b feat s3"><div class="ico">💬</div><h3>Sohbet ve arkadaşlık</h3><p>Oyun sırasında anlık mesajlaş, arkadaş ekle, her hamlede bildirim al.</p></article>
+    <article class="b feat s3"><div class="ico">🏆</div><h3>Lider tabloları</h3><p>Global ve şehir bazlı sıralama, haftalık şampiyonluk, aylık ödüller.</p></article>
+    <article class="b feat s3"><div class="ico">🔐</div><h3>Apple ve Google ile giriş</h3><p>Tek dokunuşla güvenli giriş; istersen misafir olarak hemen başla.</p></article>
+    <article class="b feat s3"><div class="ico">🔔</div><h3>Akıllı bildirimler</h3><p>Sıran geldiğinde, davet aldığında ya da şehrin şampiyon olduğunda haberin olsun.</p></article>
+    <article class="b feat s3"><div class="ico">⭐</div><h3>Joker, bonus, BİNGO</h3><p>Joker harfler ve bonus kareler. 7 taşı birden kullan, +50 BİNGO kazan!</p>
+      <div class="mini-tiles" aria-hidden="true"><span style="background:var(--h2)">H2</span><span style="background:var(--h3)">H3</span><span style="background:var(--k2)">K2</span><span style="background:var(--k3)">K3</span></div></article>
+    <article class="b feat s3"><div class="ico">📊</div><h3>İstatistikler</h3><p>Toplam oyun, kazanma serisi, en uzun kelime, en yüksek skor — hepsi tek ekranda.</p></article>
+    <article class="b feat s3"><div class="ico">📱</div><h3>Akıcı tasarım</h3><p>Ferah arayüz, akıcı animasyonlar. Telefon ve tablet uyumlu.</p></article>
+  </div>
+
+  <!-- PREMIUM -->
+  <div class="sh" id="premium">
+    <h2>Oyunu yükselt</h2>
+    <p>Temel oyun tamamen ücretsiz. İstersen premium özelliklerle deneyimini geliştir.</p>
+  </div>
+  <div class="grid">
+    <article class="b pack s6 r2">
+      <div class="label">En popüler · Tam Paket</div>
+      <h3>5 özellik,<br>tek satın alma.</h3>
+      <p>Tüm premium özelliklere tek seferde sahip ol.</p>
+      <ul><li>Reklamsız</li><li>Puan önizleme</li><li>Torba görüntüleme</li><li>Sınırsız oyun</li><li>Hızlı Oyun</li><li>Premium rozet</li></ul>
+      <span class="off">%20 indirimli</span>
+    </article>
+    <article class="b prem s3"><div class="top2"><div class="ico">🚫</div><div><div class="tag">Premium</div><h3>Reklam kaldır</h3></div></div><p>Reklam yok, sınırsız ipucu, ×2 skor çarpanı, özel rozet.</p></article>
+    <article class="b prem s3"><div class="top2"><div class="ico">🎯</div><div><div class="tag">Akıllı oyun</div><h3>Puan önizleme</h3></div></div><p>Tahtaya koymadan önce kelimenin canlı puanını gör.</p></article>
+    <article class="b prem s3"><div class="top2"><div class="ico">🎒</div><div><div class="tag">Strateji</div><h3>Torba görüntüleme</h3></div></div><p>Kalan harf sayılarını gör, rakibin elini tahmin et.</p></article>
+    <article class="b prem s3"><div class="top2"><div class="ico">♾️</div><div><div class="tag">No limit</div><h3>Sınırsız oyun</h3></div></div><p>50 aktif oyun sınırı kalkar; tüm arkadaşlarınla aynı anda oyna.</p></article>
+    <article class="b prem s6"><div class="top2"><div class="ico">⚡</div><div><div class="tag">Adrenalin</div><h3>Hızlı Oyun (Blitz)</h3></div></div><p>2 ve 5 dakikalık sıra süreli hızlı modu aç. Hız tutkunlarının modu.</p></article>
+    <article class="b prem s6"><div class="top2"><div class="ico">🪙</div><div><div class="tag">Her gün ücretsiz</div><h3>Jetonlar</h3></div></div><p>Rakibine çay, gül, baklava gönder; sohbette fotoğraf ve sesli mesaj paylaş. Her gün ücretsiz jeton kazan, istersen paket al.</p></article>
+  </div>
+
+  <!-- CTA -->
+  <section class="b cta" id="download">
+    <div class="gl" aria-label="OYNA"><span class="gl-row"><span class="gt">O<sup>2</sup></span><span class="gt">Y<sup>3</sup></span><span class="gt">N<sup>1</sup></span><span class="gt">A<sup>1</sup></span></span></div>
+    <h2 style="font-size:clamp(30px,4.4vw,48px);font-weight:800;letter-spacing:-.035em;line-height:1.05">Oynamaya başla</h2>
+    <p>Türkçe kelime oyununun en zengin sürümünü ücretsiz indir. iOS ya da Android — fark etmez.</p>
+    <div class="stores" style="justify-content:center">
+      <a class="st st-ios" href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+        <span><small>App Store'dan</small>İndir</span></a>
+      <a class="st st-and" href="android.html">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a1 1 0 1 1 0-2 1 1 0 0 1 0 2m-11.046 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2m11.405-6.02 1.997-3.46a.416.416 0 0 0-.72-.416l-2.022 3.502A12.6 12.6 0 0 0 12 7.896c-1.876 0-3.65.398-5.137 1.05L4.841 5.445a.416.416 0 0 0-.72.416l1.997 3.46C2.688 11.186.343 14.659 0 18.761h24c-.344-4.102-2.689-7.575-6.118-9.44"/></svg>
+        <span><small>Android için</small>İndir</span></a>
     </div>
+  </section>
 
-    <div class="hero-mockup">
-        <div class="board">
-            <div class="board-cell cell-k3">K3</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h2">H2</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h2">H2</div>
-
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-k2">K2</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h3">H3</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell tile tile-pending">U<span class="score">2</span></div>
-            <div class="board-cell tile tile-pending">S<span class="score">2</span></div>
-            <div class="board-cell tile tile-pending">T<span class="score">1</span></div>
-            <div class="board-cell tile tile-pending">A<span class="score">1</span></div>
-            <div class="board-cell cell-empty"></div>
-
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h3">H3</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-star">★</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h3">H3</div>
-            <div class="board-cell cell-empty"></div>
-
-            <div class="board-cell cell-h2">H2</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-k2">K2</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h2">H2</div>
-
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h3">H3</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-k2">K2</div>
-            <div class="board-cell cell-empty"></div>
-
-            <div class="board-cell cell-h2">H2</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-h2">H2</div>
-            <div class="board-cell cell-empty"></div>
-            <div class="board-cell cell-k3">K3</div>
-        </div>
+  <!-- FOOTER -->
+  <footer class="b foot">
+    <div class="about">
+      <div class="brand"><span class="gt" style="--s:30px">K<sup>5</sup></span>Kelimeler</div>
+      <p>Türkçe kelime oyunu severlerin yeni adresi. Bot, arkadaş ya da rastgele rakiplerle oyna; şehrini yükselt, günün bulmacasını çöz.</p>
     </div>
-</section>
-
-<!-- Game Modes -->
-<section id="modes" class="reveal">
-    <span class="section-tag">— OYUN MODLARI —</span>
-    <h2 class="section-title">Her Zevke <span>Bir Mod</span></h2>
-    <p class="section-subtitle">Bota karşı pratik, arkadaşınla yarış, şehrini yükselt veya günlük bulmacayı çöz. Karar senin.</p>
-
-    <div class="modes-grid">
-        <div class="mode-card">
-            <span class="mode-emoji">🤖</span>
-            <h3 class="mode-title">Bota Karşı</h3>
-            <p class="mode-description">
-                3 farklı zorluk seviyesinde yapay zeka rakibe karşı oyna. İnternet gerekmez,
-                istediğin zaman pratik yap, becerini geliştir.
-            </p>
-        </div>
-
-        <div class="mode-card">
-            <span class="mode-badge">🔥 EN POPÜLER</span>
-            <span class="mode-emoji">🏙️</span>
-            <h3 class="mode-title">Şehir Savaşları</h3>
-            <p class="mode-description">
-                Şehrini seç, 81 il arasında lider tablosunda yarış. 539 yöresel kelime,
-                haftalık şampiyonluk, aylık ödüller. Bursa, İstanbul, Ankara... senin şehrin kazansın!
-            </p>
-        </div>
-
-        <div class="mode-card">
-            <span class="mode-emoji">⚡</span>
-            <h3 class="mode-title">Hızlı Oyun (Blitz)</h3>
-            <p class="mode-description">
-                2 dakika veya 5 dakikalık sıra süreli oyunlar. Hızlı düşün, hızlı oyna!
-                Adrenalin dolu maçlar için yepyeni mod.
-            </p>
-        </div>
-
-        <div class="mode-card">
-            <span class="mode-emoji">🎯</span>
-            <h3 class="mode-title">Günlük Bulmaca</h3>
-            <p class="mode-description">
-                Her gün 7 harfle 3 dakikada en yüksek skoru yakala. 5+ yıl benzersiz bulmaca havuzu,
-                global lider tablosu. Bugün ilk sıraya geçebilir misin?
-            </p>
-        </div>
-
-        <div class="mode-card">
-            <span class="mode-emoji">👥</span>
-            <h3 class="mode-title">Arkadaşla Oyna</h3>
-            <p class="mode-description">
-                Arkadaşını kullanıcı adı veya davet kodu ile çağır. 12, 24 veya 72 saat tur süresi,
-                rahat tempolu maçlar. WhatsApp'tan paylaş, oynamaya başlayın.
-            </p>
-        </div>
-
-        <div class="mode-card">
-            <span class="mode-emoji">🎲</span>
-            <h3 class="mode-title">Rakip Bul</h3>
-            <p class="mode-description">
-                Anlık matchmaking ile Türkiye genelinde oyuncularla eşleş. Klasik veya hızlı oyun,
-                her seviyeden rakip bulabilirsin.
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- Features -->
-<section id="features" class="features reveal">
-    <div class="section-header-center">
-        <span class="section-tag">— ÖZELLİKLER —</span>
-        <h2 class="section-title" style="text-align:center">Neden <span>Kelimeler?</span></h2>
-        <p class="section-subtitle">Her detay düşünüldü, her özellik özenle hazırlandı.</p>
-    </div>
-
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">📚</div>
-            <h3 class="feature-title">60.000+ Türkçe Kelime</h3>
-            <p class="feature-description">
-                Türkçe'nin en geniş kelime havuzlarından biri. TDK standartlarında sürekli güncellenen sözlük + 539 yöresel kelime.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">💬</div>
-            <h3 class="feature-title">Sohbet ve Arkadaşlık</h3>
-            <p class="feature-description">
-                Oyun sırasında anlık mesajlaş, arkadaş ekle. Push bildirim ile her hamlede haberdar ol.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">🏆</div>
-            <h3 class="feature-title">Lider Tabloları</h3>
-            <p class="feature-description">
-                Global ve şehir bazlı sıralama. Haftalık şampiyonluk, aylık ödüller, premium rozetler.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">🍎</div>
-            <h3 class="feature-title">Apple Sign-In + Google</h3>
-            <p class="feature-description">
-                Tek tıkla güvenli giriş. Apple ID, Google hesabı veya misafir olarak hızlıca başla.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">🔔</div>
-            <h3 class="feature-title">Akıllı Bildirimler</h3>
-            <p class="feature-description">
-                Sıran geldiğinde, davet aldığında, şehir şampiyonluğu kazandığında anında haberdar ol.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">⭐</div>
-            <h3 class="feature-title">Joker, Bonus, BİNGO</h3>
-            <p class="feature-description">
-                Joker harfler, H2/H3/K2/K3 bonus kareleri. 7 taşı birden kullanırsan +50 BİNGO bonusu!
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3 class="feature-title">İstatistikler</h3>
-            <p class="feature-description">
-                Toplam oyun, kazanma serisi, en uzun kelime, en yüksek skor — tüm rekorların tek ekranda.
-            </p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">🎨</div>
-            <h3 class="feature-title">Şık Tasarım</h3>
-            <p class="feature-description">
-                Premium altın temalı koyu mod, akıcı animasyonlar. Telefon ve tablet uyumlu.
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- Premium Section -->
-<section id="premium" class="premium-section">
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 32px;">
-        <div class="section-header-center">
-            <span class="section-tag">— PREMIUM ÖZELLİKLER —</span>
-            <h2 class="section-title" style="text-align:center">Oyunu <span>Yükselt</span></h2>
-            <p class="section-subtitle">Temel oyun tamamen ücretsiz. İstersen premium özelliklerle deneyimini geliştir.</p>
-        </div>
-
-        <div class="premium-grid">
-            <div class="premium-card featured">
-                <span class="premium-tag">EN POPÜLER</span>
-                <div class="premium-icon">💎</div>
-                <h3 class="premium-title">Tam Paket</h3>
-                <div class="premium-price">5 Özellik Bir Arada</div>
-                <p class="premium-desc">Tüm premium özelliklere tek satın alma ile sahip ol. %20 indirim.</p>
-            </div>
-
-            <div class="premium-card">
-                <div class="premium-icon">🚫</div>
-                <h3 class="premium-title">Reklam Kaldır</h3>
-                <div class="premium-price">Premium</div>
-                <p class="premium-desc">Reklam yok, sınırsız ipucu, skor çarpanı ×2, özel premium rozet.</p>
-            </div>
-
-            <div class="premium-card">
-                <div class="premium-icon">🎯</div>
-                <h3 class="premium-title">Puan Önizleme</h3>
-                <div class="premium-price">Akıllı Oyun</div>
-                <p class="premium-desc">Tahtaya koymadan önce kelimenin canlı puanını gör. Stratejini optimize et.</p>
-            </div>
-
-            <div class="premium-card">
-                <div class="premium-icon">🎒</div>
-                <h3 class="premium-title">Torba Görüntüleme</h3>
-                <div class="premium-price">Gelişmiş Strateji</div>
-                <p class="premium-desc">Kalan harf sayılarını gör. Rakibin elindeki harfleri tahmin et.</p>
-            </div>
-
-            <div class="premium-card">
-                <div class="premium-icon">♾️</div>
-                <h3 class="premium-title">Sınırsız Oyun</h3>
-                <div class="premium-price">No Limit</div>
-                <p class="premium-desc">50 aktif oyun limiti kalkar. İstediğin kadar oyun aç, tüm arkadaşlarınla aynı anda oyna.</p>
-            </div>
-
-            <div class="premium-card">
-                <div class="premium-icon">⚡</div>
-                <h3 class="premium-title">Hızlı Oyun (Blitz)</h3>
-                <div class="premium-price">Adrenalin</div>
-                <p class="premium-desc">2 dakika ve 5 dakikalık turn süreli hızlı modu aç. Hız tutkunlarının modu.</p>
-            </div>
-
-            <div class="premium-card">
-                <div class="premium-icon">🪙</div>
-                <h3 class="premium-title">Jetonlar</h3>
-                <div class="premium-price">Her Gün Ücretsiz</div>
-                <p class="premium-desc">Rakibine çay, gül, baklava gönder; sohbette fotoğraf ve sesli mesaj paylaş. Her gün ücretsiz jeton kazan, istersen paket al.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Stats -->
-<section class="stats-section reveal">
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">60K+</div>
-            <div class="stat-label">Türkçe Kelime</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">6</div>
-            <div class="stat-label">Oyun Modu</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">81</div>
-            <div class="stat-label">Şehir</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">2</div>
-            <div class="stat-label">Platform</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">15×15</div>
-            <div class="stat-label">Tahta</div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="cta-section">
-    <h2>OYNAMAYA BAŞLA</h2>
-    <p>Türkçe kelime oyununun en zengin sürümünü ücretsiz indir. iOS veya Android — fark etmez.</p>
-    <div class="download-buttons">
-        <a href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" class="store-btn" target="_blank" rel="noopener">
-            <svg viewBox="0 0 384 512" fill="white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-            </svg>
-            <div class="store-btn-text">
-                <span class="store-btn-small">App Store'dan</span>
-                <span class="store-btn-large">İndir</span>
-            </div>
-        </a>
-
-        <a href="android.html" class="store-btn">
-            <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#FFD400" d="M381.9 247.4L290 338.7l-15.7-15.6 89.3-89.4z"/>
-                <path fill="#FF3333" d="M381.9 247.4l-91.9 91.3-156-156 36-36z"/>
-                <path fill="#48FF48" d="M170 146.7L60.6 36.5C53.8 39.5 49 46.3 49 54.7v402.6c0 8.4 4.8 15.2 11.6 18.2L170 365.3z"/>
-                <path fill="#3BCCFF" d="M170 146.7v218.6L60.6 475.5c-4.8-2.1-8.6-6.4-10.4-11.6l125.7-125.7-44-44z"/>
-            </svg>
-            <div class="store-btn-text">
-                <span class="store-btn-small">Android için</span>
-                <span class="store-btn-large">İndir</span>
-            </div>
-        </a>
-    </div>
-</section>
-
-<!-- Footer -->
-<footer>
-    <div class="footer-container">
-        <div class="footer-brand">
-            <h3>KELİMELER</h3>
-            <p>
-                Türkçe kelime oyunu severlerin yeni adresi. iOS ve Android'de yayında.
-                Bot, arkadaş veya rastgele rakiplerle oyna, şehrini yükselt, günlük bulmacayı çöz.
-            </p>
-            <div class="footer-social">
-                <a href="mailto:sedat@okutan.org" title="Email">✉</a>
-                <a href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" title="App Store">🍎</a>
-                <a href="android.html" title="Android">▶</a>
-            </div>
-        </div>
-
-        <div class="footer-section">
-            <h4>İndir</h4>
-            <a href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" target="_blank" rel="noopener">App Store (iOS)</a>
-            <a href="android.html">Android (APK)</a>
-        </div>
-
-        <div class="footer-section">
-            <h4>Bağlantılar</h4>
-            <a href="#modes">Oyun Modları</a>
-            <a href="#features">Özellikler</a>
-            <a href="#premium">Premium</a>
-            <a href="mailto:sedat@okutan.org">İletişim</a>
-        </div>
-
-        <div class="footer-section">
-            <h4>Yasal</h4>
-            <a href="privacy-policy.html">Gizlilik Politikası</a>
-            <a href="terms-of-service.html">Kullanım Şartları</a>
-            <a href="kvkk.html">KVKK Aydınlatma Metni</a>
-            <a href="child-safety.html">Çocuk Güvenliği</a>
-            <a href="support.html">Destek</a>
-        </div>
-    </div>
-
-    <div class="footer-bottom">
-        <span>© 2026 Okutan Apps. Tüm hakları saklıdır.</span>
-        <span>sedat@okutan.org</span>
-    </div>
-</footer>
+    <div><h4>İndir</h4><ul><li><a href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" target="_blank" rel="noopener">App Store (iOS)</a></li><li><a href="android.html">Android (APK)</a></li></ul></div>
+    <div><h4>Bağlantılar</h4><ul><li><a href="#modes">Oyun modları</a></li><li><a href="#features">Özellikler</a></li><li><a href="#premium">Premium</a></li><li><a href="support.html">Destek</a></li><li><a href="mailto:sedat@okutan.org">İletişim</a></li></ul></div>
+    <div><h4>Yasal</h4><ul><li><a href="privacy-policy.html">Gizlilik Politikası</a></li><li><a href="terms-of-service.html">Kullanım Şartları</a></li><li><a href="kvkk.html">KVKK Aydınlatma Metni</a></li><li><a href="child-safety.html">Çocuk Güvenliği</a></li></ul></div>
+  </footer>
+  <div class="b bottom">
+    <span>© 2026 Okutan Apps · sedat@okutan.org</span>
+    <span class="okutan-apps">Okutan Apps · <a href="https://okutan.org/"><b>o</b>kutan.org</a></span>
+  </div>
+</div>
 
 <script>
-// Scroll reveal animation
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,targets=[];
+  document.querySelectorAll('.grid,.screens').forEach(function(g){var i=0;Array.prototype.forEach.call(g.children,function(c){c.classList.add('rv');c.style.setProperty('--d',Math.min(i++,5)*.07+'s');targets.push(c)})});
+  document.querySelectorAll('.sh,.cta,.foot,.bottom').forEach(function(c){c.classList.add('rv');targets.push(c)});
+  function show(el){el.classList.add('in');var d=parseFloat(el.style.getPropertyValue('--d'))||0;
+    if(!el.classList.contains('rack'))setTimeout(function(){el.classList.remove('rv','in')},800+d*1000)}
+  if('IntersectionObserver' in window&&!reduce){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);show(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.08});
+    targets.forEach(function(t){io.observe(t)});
+    setTimeout(function(){targets.forEach(function(t){if(t.classList.contains('rv')&&!t.classList.contains('in')){var r=t.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0){io.unobserve(t);show(t)}}})},1500);
+  }else{targets.forEach(function(t){t.classList.remove('rv')})}
+})();
 </script>
-
 </body>
 </html>
