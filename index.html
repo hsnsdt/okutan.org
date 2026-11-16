@@ -201,9 +201,6 @@ a{color:inherit;text-decoration:none}
 body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transparent) 1px,transparent 1.4px);background-size:22px 22px;background-attachment:fixed}
 .js .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
 .js .rv.in{opacity:1;transform:none}
-.hero>*{position:relative;z-index:1}
-.hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .5s;background:radial-gradient(460px circle at var(--mx,70%) var(--my,30%),rgba(255,90,31,.22),transparent 62%)}
-@media (hover:hover){.hero:hover::before{opacity:1}}
 .tiles{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0 6px;perspective:700px}
 .tile{width:50px;height:50px;border-radius:9px;background:linear-gradient(180deg,#f2913f,#d95f1a);color:#fff;font:700 26px/1 Georgia,"Times New Roman",serif;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.35),0 6px 14px -6px rgba(217,95,26,.7);transition:transform .2s}
 .tile sup{position:absolute;top:4px;right:6px;font:600 10px var(--sans);opacity:.9}
@@ -211,6 +208,14 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .js .tiles .tile{opacity:0;transform:rotateX(-90deg)}
 .tiles.in .tile{animation:tileIn .55s cubic-bezier(.2,.8,.3,1.25) forwards;animation-delay:calc(var(--i)*95ms + .1s)}
 @keyframes tileIn{to{opacity:1;transform:none}}
+.tbl.collapsed li:nth-child(n+5){display:none}
+.more{margin-top:14px;width:100%;height:42px;border-radius:10px;border:1px dashed var(--line);background:transparent;color:var(--muted);font:600 14px var(--sans);cursor:pointer;transition:border-color .15s,color .15s}
+.more:hover{border-color:var(--muted);color:var(--ink)}
+.more .chev{display:inline-block;transition:transform .2s}
+.more.open .chev{transform:rotate(180deg)}
+.stackblk{display:flex;flex-direction:column}
+.stack-note{margin-top:auto;padding-top:22px;font-size:14px;color:var(--dark-muted);border-top:1px solid var(--dark-line)}
+.stack-note b{color:var(--dark-ink);font-weight:600}
 .nrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px}
 .stars{position:relative;display:inline-block;height:20px;line-height:0;margin-top:4px}
 .stars span{display:flex;gap:3px;white-space:nowrap}
@@ -254,7 +259,7 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .cal-strip{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:12px}
 .cal-strip span{font:600 10px var(--mono);text-align:center;padding:5px 0;border-radius:6px;background:var(--bg);color:var(--muted)}
 .cal-strip span.now{background:#16a34a;color:#fff}
-.cal-strip span.past{opacity:.55}
+.cal-strip span.past{opacity:.72}
 .cal-veg{display:flex;flex-wrap:wrap;gap:6px}
 .cal-veg span{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:5px 10px 5px 8px;border-radius:999px;background:var(--block);border:1px solid var(--line)}
 .cal-veg span::before{content:"";width:8px;height:8px;border-radius:50% 0;background:#16a34a;transform:rotate(45deg)}
@@ -275,8 +280,6 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 /* Kopyalandı bildirimi */
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);font-weight:600;font-size:14px;padding:12px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-/* 3D eğim */
-.tilt{transition:transform .12s ease-out!important;will-change:transform}
 @media (prefers-reduced-motion:reduce){.cap{transition:none}.bk{transition:none}}
 .board{container-type:inline-size;perspective:600px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:10px;border-radius:16px;background:#1f1d1b;border:1px solid #33302c;box-shadow:0 24px 50px -18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.05);transform:rotate(2deg);transition:transform .35s}
 .proj.ios:hover .board{transform:rotate(0)}
@@ -489,7 +492,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="label">kitaplar.org</div>
       <h3 class="with-logo"><img src="assets/shots/kitaplar-logo.png" width="82" height="76" alt="" loading="lazy">Kitaplar.org</h3>
       <p data-i18n="p.kitap">Kitap keşfi, öneriler ve okur topluluğu bir arada. Arama, kategoriler ve içerik yönetimi.</p>
-      <div class="shelf" aria-hidden="true"><div class="books"><i class="bk " style="--c:#7f1d1d;--bh:78%;--bw:18px"></i><i class="bk bd" style="--c:#1e3a5f;--bh:92%;--bw:22px"></i><i class="bk " style="--c:#c9a227;--bh:70%;--bw:16px"></i><i class="bk bd" style="--c:#3f5f3a;--bh:86%;--bw:20px"></i><i class="bk pull" style="--c:#ff5a1f;--bh:96%;--bw:24px"></i><i class="bk bd" style="--c:#e8e1d3;--bh:74%;--bw:17px"></i><i class="bk " style="--c:#2b2b2b;--bh:88%;--bw:21px"></i><i class="bk bd" style="--c:#0f766e;--bh:80%;--bw:19px"></i><i class="bk " style="--c:#7c2d12;--bh:94%;--bw:23px"></i><i class="bk " style="--c:#a16207;--bh:68%;--bw:15px"></i><i class="bk bd" style="--c:#334155;--bh:84%;--bw:20px"></i><i class="bk " style="--c:#9f1239;--bh:76%;--bw:18px"></i><i class="lean" style="--c:#57534e"></i></div><div class="plank"></div></div>
+      <div class="shelf" aria-hidden="true"><div class="books"><i class="bk " style="--c:#7f1d1d;--bh:78%;--bw:18px"></i><i class="bk bd" style="--c:#1e3a5f;--bh:92%;--bw:22px"></i><i class="bk " style="--c:#c9a227;--bh:70%;--bw:16px"></i><i class="bk bd" style="--c:#3f5f3a;--bh:86%;--bw:20px"></i><i class="bk pull" style="--c:#ff5a1f;--bh:96%;--bw:24px"></i><i class="bk bd" style="--c:#e8e1d3;--bh:74%;--bw:17px"></i><i class="bk " style="--c:#4b5563;--bh:88%;--bw:21px"></i><i class="bk bd" style="--c:#0f766e;--bh:80%;--bw:19px"></i><i class="bk " style="--c:#7c2d12;--bh:94%;--bw:23px"></i><i class="bk " style="--c:#a16207;--bh:68%;--bw:15px"></i><i class="bk bd" style="--c:#334155;--bh:84%;--bw:20px"></i><i class="bk " style="--c:#9f1239;--bh:76%;--bw:18px"></i><i class="lean" style="--c:#57534e"></i></div><div class="plank"></div></div>
       <div class="tags"><span>php</span><span>platform</span></div>
     </a>
 
@@ -507,7 +510,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <a class="store store-alt" href="https://okutan.org/kelimeler/index.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n="p.web">Web sitesi</span></a>
       </div>
       </div>
-      <div class="kel-img"><div class="board" role="img" aria-label="Kelimeler oyun tahtası: KELİME ve OKUTAN kelimeleri"><span class="bc k3">K3</span><span class="bt" style="--i:6">O<sup>2</sup></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bc"></span><span class="bc k3">K3</span><span class="bc"></span><span class="bt" style="--i:0">K<sup>1</sup></span><span class="bt" style="--i:1">E<sup>1</sup></span><span class="bt" style="--i:2">L<sup>1</sup></span><span class="bt" style="--i:3">İ<sup>1</sup></span><span class="bt" style="--i:4">M<sup>2</sup></span><span class="bt" style="--i:5">E<sup>1</sup></span><span class="bc"></span><span class="bt" style="--i:7">U<sup>2</sup></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bt" style="--i:8">T<sup>1</sup></span><span class="bc"></span><span class="bc star">★</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bt" style="--i:9">A<sup>1</sup></span><span class="bc h3">H3</span><span class="bc k2">K2</span><span class="bc h3">H3</span><span class="bc"></span><span class="bc"></span><span class="bc"></span><span class="bt" style="--i:10">N<sup>1</sup></span><span class="bc"></span><span class="bc"></span><span class="bc"></span><span class="bc k2">K2</span><span class="bc"></span><span class="bc k3">K3</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bc"></span><span class="bc k3">K3</span></div></div>
+      <div class="kel-img"><div class="board" role="img" aria-label="Kelimeler oyun tahtası: KELİME ve TÜRKÇE kelimeleri"><span class="bc k3">K3</span><span class="bt" style="--i:6">T<sup>1</sup></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bc"></span><span class="bc k3">K3</span><span class="bc"></span><span class="bt" style="--i:7">Ü<sup>3</sup></span><span class="bc"></span><span class="bc k2">K2</span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bc"></span><span class="bt" style="--i:8">R<sup>1</sup></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bt" style="--i:0">K<sup>1</sup></span><span class="bt" style="--i:1">E<sup>1</sup></span><span class="bt" style="--i:2">L<sup>1</sup></span><span class="bt" style="--i:3">İ<sup>1</sup></span><span class="bt" style="--i:4">M<sup>2</sup></span><span class="bt" style="--i:5">E<sup>1</sup></span><span class="bc"></span><span class="bt" style="--i:9">Ç<sup>4</sup></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc"></span><span class="bc"></span><span class="bt" style="--i:10">E<sup>1</sup></span><span class="bc"></span><span class="bc k2">K2</span><span class="bc"></span><span class="bc k2">K2</span><span class="bc"></span><span class="bc k3">K3</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bc"></span><span class="bc k3">K3</span></div></div>
       </div>
     </div>
 
@@ -526,7 +529,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <span>ⓘ</span>
         <span data-i18n="past.intro">Google Play'de yayınladığım oyun ve uygulamalar. Bu uygulamalar artık mağazada bulunmuyor.</span>
       </div>
-      <ul class="tbl">
+      <ul class="tbl" id="pastList">
         <li><span class="nm"><i class="ai" style="--c:#ff5a1f">K</i>Kelimeler: Türkçe Bulmaca</span><span class="ds" data-i18n="a1">Çok oyunculu kelime oyunu · ★4.8</span><span class="kd" data-i18n="k.game">Oyun</span></li>
         <li><span class="nm"><i class="ai" style="--c:#7c3aed">W</i>WOW3: Word Connect</span><span class="ds" data-i18n="a2">Çevrimdışı kelime bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
         <li><span class="nm"><i class="ai" style="--c:#2563eb">A</i>Associations: Kelime Bul</span><span class="ds" data-i18n="a3">Kelime gruplama bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
@@ -536,8 +539,9 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <li><span class="nm"><i class="ai" style="--c:#0f766e">Z</i>Zikirmatik — Tesbih</span><span class="ds" data-i18n="a7">Dijital zikir sayacı</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
         <li><span class="nm"><i class="ai" style="--c:#475569">P</i>Photo Recovery: Pro</span><span class="ds" data-i18n="a8">Silinen fotoğrafları kurtarma</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
       </ul>
+      <button class="more" id="pastMore" type="button" hidden><span data-i18n="past.more">Tümünü göster (8)</span> <span class="chev">↓</span></button>
     </div>
-    <div class="b b-dark s4">
+    <div class="b b-dark s4 stackblk">
       <div class="label" data-i18n="stack.t">Teknolojiler</div>
       <div class="stackgrp" style="margin-top:22px">
         <div style="font-weight:700">Web</div>
@@ -547,6 +551,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <div style="font-weight:700" data-i18n="stack.m">Mobil &amp; Oyun</div>
         <div class="chips"><span>Kotlin</span><span>Flutter</span><span>Unity</span><span>LibGDX</span></div>
       </div>
+      <div class="stack-note" data-i18n-html="stack.note2">Google Play’de 8 uygulama · <b>Bugün</b> web, topluluk ve iOS</div>
     </div>
   </div>
 
@@ -651,7 +656,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     "hero.lead":"I build <strong>web platforms</strong>, <strong>online communities</strong> and <strong>developer tools</strong>, and I handle every stage from idea to launch myself.",
     "hero.cta":"See my work","hero.cta2":"Get in touch",
     "st.pill":"Open to new projects","st.time":"İzmir local time · GMT+3",
-    "k1.l":"Live","k1.d":"Live projects","l.dev":"Developer page","cal.note":"Aegean climate · general guide","p.web":"Website",
+    "k1.l":"Live","k1.d":"Live projects","l.dev":"Developer page","past.more":"Show all (8)","stack.note2":"8 apps shipped on Google Play · <b>Today</b> web, communities and iOS","cal.note":"Aegean climate · general guide","p.web":"Website",
     "p.kelimeler":"A social, competitive online word game made for Turkish: 60,000+ words, city battles across 81 provinces, a daily puzzle and quick-play mode. The new version of my 4.8-rated Android game.","k2.d":"Published games & apps","k3.l":"Top rating","k3.d":"Kelimeler: Turkish word game","k4.d":"Supported languages",
     "projects.title":"Projects","projects.note":"● All live",
     "projects.ls.desc":"A free, browser-based screenshot designer for the App Store and Google Play. No sign-up, no watermark.",
@@ -720,6 +725,13 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   }else{targets.forEach(function(t){t.classList.remove('rv');if(t.classList.contains('tiles')||t.classList.contains('board'))t.classList.add('in','done')})}
 
 
+
+  // Önceki işler: ilk 4 satır, gerisi düğmeyle
+  var pl=document.getElementById('pastList'),pm=document.getElementById('pastMore');
+  if(pl&&pm){pl.classList.add('collapsed');pm.hidden=false;
+    pm.addEventListener('click',function(){var open=pl.classList.toggle('collapsed')===false;pm.classList.toggle('open',open);
+      pm.firstElementChild.textContent=open?(lang==='en'?'Show less':'Daha az göster'):(lang==='en'?'Show all (8)':'Tümünü göster (8)')})}
+
   // Sebze ekim takvimi (bu ay)
   var VEG={tr:[['Soğan','Marul','Bezelye'],['Bezelye','Havuç','Ispanak','Soğan'],['Havuç','Marul','Maydanoz','Patates'],['Domates','Biber','Patlıcan','Salatalık'],['Salatalık','Fasulye','Kabak','Mısır'],['Fasulye','Salatalık','Kabak'],['Brokoli','Lahana','Havuç'],['Brokoli','Lahana','Marul','Roka'],['Ispanak','Roka','Marul','Sarımsak'],['Sarımsak','Bakla','Ispanak','Soğan'],['Sarımsak','Bakla','Ispanak','Bezelye'],['Bakla','Soğan','Marul']],
     en:[['Onion','Lettuce','Peas'],['Peas','Carrot','Spinach','Onion'],['Carrot','Lettuce','Parsley','Potato'],['Tomato','Pepper','Eggplant','Cucumber'],['Cucumber','Beans','Zucchini','Corn'],['Beans','Cucumber','Zucchini'],['Broccoli','Cabbage','Carrot'],['Broccoli','Cabbage','Lettuce','Arugula'],['Spinach','Arugula','Lettuce','Garlic'],['Garlic','Broad beans','Spinach','Onion'],['Garlic','Broad beans','Spinach','Peas'],['Broad beans','Onion','Lettuce']]};
@@ -752,20 +764,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     navigator.clipboard.writeText(a.dataset.copy).then(function(){say(lang==='en'?'Email copied ✓':'E-posta kopyalandı ✓')},function(){location.href=a.href});
   })});
 
-  // Kartlara 3D eğim
-  if(matchMedia('(hover: hover) and (pointer: fine)').matches&&!reduce){
-    document.querySelectorAll('.proj,.stat').forEach(function(c){
-      c.addEventListener('mousemove',function(e){if(c.classList.contains('rv'))return;var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5,k=c.classList.contains('s12')?2:4;
-        c.classList.add('tilt');c.style.transform='perspective(900px) rotateX('+(-y*k).toFixed(2)+'deg) rotateY('+(x*k).toFixed(2)+'deg) translateY(-3px)'});
-      c.addEventListener('mouseleave',function(){c.style.transform='';setTimeout(function(){c.classList.remove('tilt')},150)});
-    });
-  }
 
-  // giriş bloğunda fareyi takip eden ışık
-  var hero=document.querySelector('.hero');
-  if(hero&&matchMedia('(hover: hover)').matches){
-    hero.addEventListener('mousemove',function(e){var r=hero.getBoundingClientRect();hero.style.setProperty('--mx',(e.clientX-r.left)+'px');hero.style.setProperty('--my',(e.clientY-r.top)+'px')});
-  }
 })();
 </script>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
