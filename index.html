@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sedat Okutan — Yazılım Geliştirici</title>
+<meta name="description" content="Sedat Okutan — İzmir'de bağımsız yazılım geliştirici. Web platformları, mobil oyunlar, topluluk siteleri ve geliştirici araçları.">
+<meta name="author" content="Sedat Okutan">
+<meta name="theme-color" content="#121212">
+<link rel="canonical" href="https://okutan.org/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="okutan.org">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:title" content="Sedat Okutan — Yazılım Geliştirici">
+<meta property="og:description" content="Web platformları, mobil oyunlar, topluluk siteleri ve geliştirici araçları.">
+<meta property="og:url" content="https://okutan.org/">
+<meta property="og:image" content="https://okutan.org/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sedat Okutan — okutan.org">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@okutanapp">
+<meta name="twitter:creator" content="@okutanapp">
+<meta name="twitter:title" content="Sedat Okutan — Yazılım Geliştirici">
+<meta name="twitter:description" content="Web platformları, mobil oyunlar, topluluk siteleri ve geliştirici araçları.">
+<meta name="twitter:image" content="https://okutan.org/og.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://okutan.org/#person",
+      "name": "Sedat Okutan",
+      "url": "https://okutan.org/",
+      "image": "https://okutan.org/assets/profile/okutan-400.png",
+      "email": "mailto:sedat@okutan.org",
+      "jobTitle": "Yazılım Geliştirici",
+      "address": { "@type": "PostalAddress", "addressLocality": "İzmir", "addressCountry": "TR" },
+      "knowsAbout": ["JavaScript", "PHP", "XenForo", "Kotlin", "Flutter", "Unity", "LibGDX", "Web Development", "Mobile Game Development"],
+      "sameAs": [
+        "https://github.com/hsnsdt",
+        "https://x.com/okutanapp",
+        "https://apps.apple.com/us/developer/id6775899637"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://okutan.org/#website",
+      "url": "https://okutan.org/",
+      "name": "okutan.org",
+      "inLanguage": ["tr", "en"],
+      "publisher": { "@id": "https://okutan.org/#person" }
+    },
+    {
+      "@type": "MobileApplication",
+      "name": "Kelimeler: Online Kelime Oyunu",
+      "url": "https://okutan.org/kelimeler/",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "iOS, Android",
+      "inLanguage": "tr",
+      "installUrl": "https://apps.apple.com/us/app/kelimeler-online-kelime-oyunu/id6775899635",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@id": "https://okutan.org/#person" }
+    },
+    {
+      "@type": "WebApplication",
+      "name": "LaunchShots",
+      "url": "https://launchshots.app/",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@id": "https://okutan.org/#person" }
+    }
+  ]
+}
+</script>
+<link rel="preload" href="assets/fonts/InterTight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/InterTight-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<style>
+:root{
+  --bg:#ebebe8; --block:#ffffff; --ink:#0e0e0e; --muted:#6a6a6a; --line:#dadad6;
+  --dark:#121212; --dark-ink:#f4f4f2; --dark-muted:#9a9a9a; --dark-line:#2a2a2a;
+  --accent:#ff5a1f; --accent-ink:#ffffff; --ok:#16a34a;
+  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:18px; --gap:12px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#080808; --block:#141414; --ink:#f2f2f0; --muted:#8f8f8f; --line:#242424;
+    --dark:#1c1c1c; --dark-line:#2e2e2e; --ok:#22c55e; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080808; --block:#141414; --ink:#f2f2f0; --muted:#8f8f8f; --line:#242424;
+  --dark:#1c1c1c; --dark-line:#2e2e2e; --ok:#22c55e; color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--gap) 20px 40px}
+@media (max-width:520px){.wrap{padding:var(--gap) 16px 32px}}
+
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap)}
+.grid>*{min-width:0}
+.b{background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:28px;position:relative;overflow:hidden}
+.b-dark{background:var(--dark);color:var(--dark-ink);border-color:var(--dark-line)}
+.b-accent{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.s12{grid-column:span 12}.s8{grid-column:span 8}.s7{grid-column:span 7}.s6{grid-column:span 6}.s5{grid-column:span 5}.s4{grid-column:span 4}.s3{grid-column:span 3}
+.r2{grid-row:span 2}
+@media (max-width:900px){
+  .s8,.s7,.s6,.s5,.s4{grid-column:span 12}.s3{grid-column:span 6}.r2{grid-row:auto}
+}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.b-dark .label{color:var(--dark-muted)}
+.b-accent .label{color:rgba(255,255,255,.8)}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 14px 22px;margin-bottom:var(--gap)}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.logo{display:flex;align-items:center;color:var(--ink)}
+.logo-svg{height:28px;width:auto;display:block}
+.nav{display:flex;align-items:center;gap:4px}
+.nav a{font-size:14px;font-weight:500;padding:8px 14px;border-radius:10px;color:var(--muted)}
+.nav a:hover{background:var(--bg);color:var(--ink)}
+.ctrl{height:36px;min-width:36px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--block);color:var(--ink);font:500 12px var(--mono);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;margin-left:4px}
+.ctrl:hover{border-color:var(--muted)}
+@media (max-width:700px){.nav a{display:none}}
+
+/* hero */
+.hero{display:flex;flex-direction:column;justify-content:space-between;min-height:420px;padding:36px}
+.hero h1{font-size:clamp(48px,7.4vw,96px);font-weight:800;line-height:.95;letter-spacing:-.035em;margin:20px 0 22px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:18px;color:var(--dark-muted);max-width:560px}
+.hero p strong{color:var(--dark-ink);font-weight:600}
+.hero-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 22px;border-radius:12px;font-weight:600;font-size:15px;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-a{background:var(--accent);color:#fff}
+.btn-w{background:rgba(255,255,255,.08);color:var(--dark-ink);border:1px solid var(--dark-line)}
+
+.status{display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--ok) 12%,transparent);color:var(--ok);padding:6px 12px;border-radius:999px;align-self:flex-start}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 50%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.clock{--fw:clamp(30px,3.3vw,40px);--fh:calc(var(--fw)*1.45);display:flex;align-items:center;gap:4px;height:var(--fh);perspective:400px}
+@media (max-width:900px){.clock{--fw:clamp(30px,9.5vw,44px)}}
+.fd{position:relative;width:var(--fw);height:var(--fh);font-size:calc(var(--fw)*1.05);font-weight:700;font-variant-numeric:tabular-nums;color:#f4f4f2;border-radius:8px}
+.fd .h{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:#1c1c1c;backface-visibility:hidden}
+.fd .ft{top:0;border-radius:8px 8px 0 0;transform-origin:50% 100%;border-bottom:1px solid rgba(0,0,0,.55)}
+.fd .fb{bottom:0;border-radius:0 0 8px 8px;transform-origin:50% 0;background:#222}
+.fd .h span{position:absolute;left:0;right:0;height:var(--fh);line-height:var(--fh);text-align:center}
+.fd .fb span{top:auto;bottom:0}
+.fd .ft span{top:0}
+.proj.ios p{color:var(--dark-muted)}
+.proj.ios .arrow,.proj.ios .tags span{border-color:var(--dark-line)}
+.proj.ios:hover .arrow{background:#fff;color:#121212;border-color:#fff}
+.proj.ios:hover{border-color:var(--dark-line)}
+.stores{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.store-alt{background:transparent!important;color:#f4f4f2!important;border:1px solid var(--dark-line)}
+.store-alt:hover{border-color:#f4f4f2}
+.store:hover{transform:translateY(-2px)}
+.store{display:inline-flex;align-items:center;gap:8px;transition:transform .15s;height:44px;padding:0 18px;border-radius:12px;background:#fff;color:#121212;font-weight:600;font-size:14px}
+.store svg{width:18px;height:18px}
+.shot{margin-top:24px;border-radius:14px;overflow:hidden;box-shadow:0 18px 40px -12px rgba(0,0,0,.35);border:4px solid rgba(255,255,255,.22);max-width:560px;transform:rotate(-1.2deg);transition:transform .3s}
+.shot img{display:block;width:100%;height:auto}
+.proj:hover .shot{transform:rotate(0)}
+.kel{display:grid;grid-template-columns:1fr 280px;gap:32px;align-items:center;margin-top:8px}
+.proj.ios .arrow{z-index:3}
+.proj.ios h3{padding-right:56px}
+.kel-img{padding-top:44px}
+.thumb{margin-top:18px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.thumb img{display:block;width:100%;height:auto;transition:transform .4s}
+.proj:hover .thumb img{transform:scale(1.04)}
+.with-logo{display:flex;align-items:center;gap:12px}
+.with-logo img{width:40px;height:auto;border-radius:9px}
+.kel-txt{display:flex;flex-direction:column}
+.kel-img img{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.5));transform:rotate(2deg);transition:transform .3s}
+.proj.ios:hover .kel-img img{transform:rotate(0)}
+@media (max-width:760px){.kel{grid-template-columns:1fr}.kel-img{max-width:260px;padding-top:0}}
+.fd .fu,.fd .fl{visibility:hidden}
+.fd .fl{transform:rotateX(90deg)}
+.fd.go .fu{visibility:visible;animation:flipTop .3s ease-in forwards;z-index:2}
+.fd.go .fl{visibility:visible;animation:flipBot .3s .3s ease-out forwards;z-index:2}
+@keyframes flipTop{from{transform:rotateX(0)}to{transform:rotateX(-90deg)}}
+@keyframes flipBot{from{transform:rotateX(90deg)}to{transform:rotateX(0)}}
+.fd.sec{color:var(--accent)}
+.colon{display:flex;flex-direction:column;gap:calc(var(--fw)*.28);padding:0 3px}
+.colon i{width:5px;height:5px;border-radius:50%;background:var(--muted)}
+:root[data-theme="dark"] .fd .h{background:#262626}:root[data-theme="dark"] .fd .fb{background:#2c2c2c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fd .h{background:#262626}:root:not([data-theme="light"]) .fd .fb{background:#2c2c2c}}
+@media (prefers-reduced-motion:reduce){.fd.go .fu,.fd.go .fl{animation:none;visibility:hidden}}
+.status h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.status p{color:var(--muted);font-size:14px}
+
+.links{padding:8px}
+.lrow{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;transition:background .15s}
+.lrow:hover{background:var(--bg)}
+.lrow svg{width:22px;height:22px;flex:none}
+.lrow .t{font-weight:600;font-size:15px}
+.lrow .s{font-size:13px;color:var(--muted);font-family:var(--mono)}
+.lrow .go{margin-left:auto;color:var(--muted);transition:transform .15s}
+.lrow:hover .go{transform:translate(2px,-2px);color:var(--ink)}
+.lrow + .lrow{border-top:1px solid var(--line);border-radius:0 0 12px 12px}
+
+.stat{display:flex;flex-direction:column;justify-content:space-between;min-height:150px}
+.stat .n{font-size:48px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.stat .n small{font-size:28px;color:var(--accent)}
+.stat .d{font-size:14px;color:var(--muted);margin-top:10px}
+
+/* section heading */
+.sh{display:flex;align-items:end;justify-content:space-between;gap:16px;padding:44px 6px 16px}
+.sh h2{font-size:clamp(30px,4vw,44px);font-weight:800;letter-spacing:-.035em;line-height:1}
+.sh .label{white-space:nowrap}
+
+/* projects */
+.proj{display:flex;flex-direction:column;transition:transform .2s,border-color .2s;min-height:240px}
+.proj:hover{transform:translateY(-3px);border-color:var(--muted)}
+.proj .arrow{position:absolute;top:22px;right:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.proj:hover .arrow{background:var(--ink);color:var(--block);border-color:var(--ink);transform:rotate(-45deg)}
+.proj h3{font-size:28px;font-weight:800;letter-spacing:-.03em;margin:14px 0 8px;line-height:1.05}
+.proj p{color:var(--muted);font-size:15px;max-width:480px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:22px}
+.tags span{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.proj.b-accent p{color:rgba(255,255,255,.88)}
+.proj.b-accent .arrow{border-color:rgba(255,255,255,.4)}
+.proj.b-accent:hover .arrow{background:#fff;color:var(--accent);border-color:#fff}
+.proj.b-accent .tags span{border-color:rgba(255,255,255,.35);color:#fff}
+.proj.b-accent h3{font-size:clamp(40px,5vw,60px)}
+.proj.b-accent:hover{border-color:var(--accent)}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px;max-width:460px}
+.feats div{background:rgba(0,0,0,.14);border-radius:12px;padding:12px 14px}
+.feats b{display:block;font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.feats span{font-size:13px;color:rgba(255,255,255,.85)}
+
+/* past */
+.tbl{list-style:none;margin-top:18px}
+.tbl li{display:grid;grid-template-columns:1.2fr 1.4fr 92px;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--line);font-size:15px}
+.tbl .nm{font-weight:600}
+.tbl .ds{color:var(--muted);font-size:14px}
+.tbl .kd{justify-self:end;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:999px;background:var(--bg);color:var(--muted)}
+@media (max-width:640px){.tbl li{grid-template-columns:1fr auto}.feats{grid-template-columns:1fr 1fr}.hero{padding:26px;min-height:0}.b{padding:22px}.contact{padding:30px 22px}.tbl .ds{grid-column:1/-1;grid-row:2;margin-top:-10px}}
+.note{display:flex;gap:10px;align-items:flex-start;margin-top:6px;color:var(--muted);font-size:14px;max-width:640px}
+
+.stackgrp + .stackgrp{margin-top:22px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips span{font-size:14px;font-weight:500;padding:7px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.b-dark .chips span{background:rgba(255,255,255,.06);border-color:var(--dark-line)}
+
+/* about */
+.about p{font-size:clamp(20px,2.2vw,26px);font-weight:500;letter-spacing:-.02em;line-height:1.35;margin-top:14px}
+.about p em{font-style:normal;color:var(--muted)}
+.facts{list-style:none;margin-top:14px}
+.facts li{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-top:1px solid var(--line);font-size:15px}
+.facts li span:first-child{color:var(--muted)}
+.facts li span:last-child{font-weight:600;text-align:right}
+
+/* contact */
+.contact{padding:44px 36px;display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:end;margin-top:var(--gap)}
+@media (max-width:900px){.contact{grid-template-columns:1fr}}
+.contact h2{font-size:clamp(40px,6vw,76px);font-weight:800;letter-spacing:-.035em;line-height:1;margin-top:16px}
+.contact p{margin-top:18px;font-size:17px;color:rgba(255,255,255,.88);max-width:460px}
+.mailbox{background:rgba(0,0,0,.16);border-radius:14px;padding:22px}
+.mailbox a.m{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:clamp(20px,2.4vw,28px);font-weight:700;letter-spacing:-.02em;word-break:break-all}
+.mailbox a.m:hover .go{transform:translate(3px,-3px)}
+.mailbox .go{transition:transform .15s;flex:none}
+.mailbox .row{display:flex;gap:8px;margin-top:16px}
+.mailbox .row a{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:10px;background:rgba(255,255,255,.14);font-weight:600;font-size:14px;transition:background .15s}
+.mailbox .row a:hover{background:rgba(255,255,255,.26)}
+.mailbox .row svg{width:18px;height:18px}
+
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 22px;margin-top:var(--gap);font-family:var(--mono);font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="b top">
+    <a href="#" class="logo" aria-label="okutan.org"><svg class="logo-svg" role="img" aria-label="okutan" xmlns="http://www.w3.org/2000/svg" viewBox="-6.00 21.25 332.37 90.75"><path d="M29.55074906349182 101.01562738418579Q20.9667831659317 101.01562738418579 14.794917404651642 97.48047143220901Q8.623051643371582 93.94531548023224 5.327156186103821 87.61719018220901Q2.0312607288360596 81.28906488418579 2.0312607288360596 72.89062738418579Q2.0312607288360596 64.46289122104645 5.327156186103821 58.1298828125Q8.623051643371582 51.79687440395355 14.794917404651642 48.261718451976776Q20.9667831659317 44.7265625 29.55074906349182 44.7265625Q38.14448118209839 44.7265625 44.31634694337845 48.261718451976776Q50.48821270465851 51.79687440395355 53.78899127244949 58.1298828125Q57.08976984024048 64.46289122104645 57.08976984024048 72.89062738418579Q57.08976984024048 81.28906488418579 53.78899127244949 87.61719018220901Q50.48821270465851 93.94531548023224 44.31634694337845 97.48047143220901Q38.14448118209839 101.01562738418579 29.55074906349182 101.01562738418579ZM29.628872871398926 87.79305815696716Q32.79297351837158 87.79305815696716 34.96096432209015 85.92780828475952Q37.128955125808716 84.06255841255188 38.26177716255188 80.67874908447266Q39.394599199295044 77.29493975639343 39.394599199295044 72.81250357627869Q39.394599199295044 68.27147305011749 38.26177716255188 64.94137346744537Q37.128955125808716 61.611273884773254 34.96096432209015 59.78020280599594Q32.79297351837158 57.94913172721863 29.628872871398926 57.94913172721863Q26.445242762565613 57.94913172721863 24.218659102916718 59.78020280599594Q21.992075443267822 61.611273884773254 20.859253406524658 64.94137346744537Q19.726431369781494 68.27147305011749 19.726431369781494 72.81250357627869Q19.726431369781494 77.29493975639343 20.859253406524658 80.67874908447266Q21.992075443267822 84.06255841255188 24.218659102916718 85.92780828475952Q26.445242762565613 87.79305815696716 29.628872871398926 87.79305815696716Z" fill="var(--accent)"/><path d="M76.87685298919678 85.70303916931152 76.9940357208252 64.96101021766663H79.37683868408203L94.68946862220764 45.41015625H114.41588807106018L91.60334873199463 73.45699667930603H86.99403214454651ZM61.25197219848633 100.0V27.24609375H78.61511516571045V100.0ZM95.11917042732239 100.0 80.86125063896179 77.34368443489075 92.2869484424591 65.00003337860107 115.15809106826782 100.0Z M151.00000715255737 76.48439407348633V45.41015625H168.3631501197815V100.0H151.78124523162842V89.86329436302185H151.19530773162842Q149.39843034744263 94.83398497104645 145.0576148033142 97.78320342302322Q140.7167992591858 100.732421875 134.5937511920929 100.68359375Q128.99805521965027 100.68359375 124.7695437669754 98.14941883087158Q120.54103231430054 95.61524391174316 118.19240069389343 91.00586920976639Q115.84376907348633 86.39649450778961 115.84376907348633 80.23437261581421V45.41015625H133.20691204071045V76.85551047325134Q133.20691204071045 81.2402993440628 135.52626436948776 83.80867391824722Q137.84561669826508 86.37704849243164 141.85930705070496 86.32822036743164Q144.43744039535522 86.32822036743164 146.49312263727188 85.19051820039749Q148.54880487918854 84.05281603336334 149.77440601587296 81.8506509065628Q151.00000715255737 79.64848577976227 151.00000715255737 76.48439407348633Z M205.32803559303284 45.41015625V58.24210047721863H170.93359851837158V45.41015625ZM178.12111401557922 32.421875H195.48425698280334V82.81252384185791Q195.48425698280334 85.0293517112732 196.5389552116394 86.10846698284149Q197.59365344047546 87.18758225440979 199.91789484024048 87.18758225440979Q200.78703486919403 87.18758225440979 201.92472660541534 87.01180219650269Q203.06241834163666 86.83602213859558 203.70695614814758 86.64070963859558L206.32413053512573 99.23828840255737Q203.39446985721588 100.0683605670929 200.8700686097145 100.43457001447678Q198.34566736221313 100.80077946186066 195.89450681209564 100.80077946186066Q187.23242902755737 100.80077946186066 182.6767715215683 96.66015803813934Q178.12111401557922 92.51953661441803 178.12111401557922 84.74612236022949Z M224.8418254852295 100.95703601837158Q219.62698233127594 100.95703601837158 215.55471402406693 99.17480647563934Q211.4824457168579 97.3925769329071 209.18752086162567 93.82812082767487Q206.89259600639343 90.26366472244263 206.89259600639343 84.86327528953552Q206.89259600639343 80.33202290534973 208.47463142871857 77.2119089961052Q210.0566668510437 74.09179508686066 212.86428850889206 72.13379144668579Q215.67191016674042 70.17578780651093 219.3291379213333 69.13086920976639Q222.9863656759262 68.08595061302185 227.14651656150818 67.75391697883606Q231.81449007987976 67.35352277755737 234.6416426897049 66.89454019069672Q237.46879529953003 66.43555760383606 238.75297737121582 65.50782471895218Q240.0371594429016 64.5800918340683 240.0371594429016 62.92969584465027V62.71485090255737Q240.0371594429016 59.99020338058472 238.1767926812172 58.4911584854126Q236.31642591953278 56.99211359024048 233.12302660942078 56.99211359024048Q229.66595721244812 56.99211359024048 227.5760931968689 58.49115401506424Q225.48622918128967 59.990194439888 224.90027976036072 62.61715292930603L208.92383885383606 62.05071210861206Q209.62698590755463 57.07024335861206 212.5908626317978 53.154245018959045Q215.55473935604095 49.23824667930603 220.75491976737976 46.982404589653015Q225.95510017871857 44.7265625 233.2988007068634 44.7265625Q238.4745432138443 44.7265625 242.8690595626831 45.94237357378006Q247.2635759115219 47.15818464756012 250.5301771759987 49.49704557657242Q253.79677844047546 51.83590650558472 255.60830664634705 55.20993769168854Q257.4198348522186 58.58396887779236 257.4198348522186 62.89064288139343V100.0H241.05276894569397V92.34375357627869H240.66214394569397Q239.16801345348358 95.1562374830246 236.9121579527855 97.06541895866394Q234.6563024520874 98.97460043430328 231.65336829423904 99.96581822633743Q228.6504341363907 100.95703601837158 224.8418254852295 100.95703601837158ZM230.17379474639893 89.53131437301636Q232.966796875 89.53131437301636 235.2324394583702 88.39848935604095Q237.49808204174042 87.26566433906555 238.84574455022812 85.25881171226501Q240.19340705871582 83.25195908546448 240.19340705871582 80.58593273162842V75.44917464256287Q239.46098816394806 75.810506939888 238.40140682458878 76.14742368459702Q237.3418254852295 76.48434042930603 236.0771609544754 76.75777971744537Q234.8124964237213 77.03121900558472 233.5331855416298 77.24118083715439Q232.25387465953827 77.45114266872406 231.05270099639893 77.63668894767761Q228.56245470046997 77.99801826477051 226.8436877131462 78.83298099040985Q225.12492072582245 79.6679437160492 224.23135322332382 80.95701485872269Q223.3377857208252 82.24608600139618 223.3377857208252 84.02345180511475Q223.3377857208252 86.72855496406555 225.25675129890442 88.12993466854095Q227.17571687698364 89.53131437301636 230.17379474639893 89.53131437301636Z M281.01550579071045 68.9062237739563V100.0H263.6523628234863V45.41015625H280.80066084861755V55.488258600234985H281.26941561698914Q283.09558868408203 50.46873986721039 287.177617251873 47.597651183605194Q291.259645819664 44.7265625 297.34363198280334 44.7265625Q303.09558153152466 44.7265625 307.34362691640854 47.28515148162842Q311.5916723012924 49.843740463256836 313.9305391907692 54.467763006687164Q316.269406080246 59.09178555011749 316.269406080246 65.2539074420929V100.0H298.90626311302185V68.65230202674866Q298.90626311302185 64.13078904151917 296.59179389476776 61.547765135765076Q294.2773246765137 58.964741230010986 290.1464396715164 58.964741230010986Q287.43157625198364 58.964741230010986 285.3710123896599 60.15615612268448Q283.3104485273361 61.34757101535797 282.1629771590233 63.55461925268173Q281.01550579071045 65.7616674900055 281.01550579071045 68.9062237739563Z" fill="currentColor"/></svg></a>
+    <nav class="nav">
+      <a href="#projeler" data-i18n="nav.projects">Projeler</a>
+      <a href="#gecmis" data-i18n="nav.past">Geçmiş</a>
+      <a href="#hakkimda" data-i18n="nav.about">Hakkımda</a>
+      <a href="#iletisim" data-i18n="nav.contact">İletişim</a>
+      <button class="ctrl" id="langBtn" aria-label="Dil">EN</button>
+      <button class="ctrl" id="themeBtn" aria-label="Tema">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <div class="grid">
+    <div class="b b-dark hero s8 r2">
+      <div class="label" data-i18n="hero.label">Bağımsız yazılım geliştirici — İzmir</div>
+      <div>
+        <h1>Sedat<br>Okutan<span>.</span></h1>
+        <p data-i18n-html="hero.lead"><strong>Web platformları</strong>, <strong>topluluk siteleri</strong> ve <strong>geliştirici araçları</strong> geliştiriyorum. Fikirden yayına kadar her aşamayı kendim yürütüyorum.</p>
+        <div class="hero-btns">
+          <a href="#projeler" class="btn btn-a"><span data-i18n="hero.cta">Projelerimi gör</span> <span>↓</span></a>
+          <a href="mailto:sedat@okutan.org" class="btn btn-w" data-i18n="hero.cta2">İletişime geç</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="b status s4">
+      <span class="pill"><i></i><span data-i18n="st.pill">Yeni projelere açığım</span></span>
+      <div>
+        <div class="clock" id="clock" aria-label="İzmir saati"></div>
+        <div class="label" style="margin-top:8px" data-i18n="st.time">İzmir yerel saat · GMT+3</div>
+      </div>
+    </div>
+
+    <div class="b links s4">
+      <a class="lrow" href="https://github.com/hsnsdt" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+        <div><div class="t">GitHub</div><div class="s">@hsnsdt</div></div><span class="go">↗</span>
+      </a>
+      <a class="lrow" href="https://x.com/okutanapp" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg>
+        <div><div class="t">X</div><div class="s">@okutanapp</div></div><span class="go">↗</span>
+      </a>
+      <a class="lrow" href="mailto:sedat@okutan.org">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m22 7-10 6L2 7"/></svg>
+        <div><div class="t">E-posta</div><div class="s">sedat@okutan.org</div></div><span class="go">↗</span>
+      </a>
+      <a class="lrow" href="https://apps.apple.com/us/developer/id6775899637" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+        <div><div class="t">App Store</div><div class="s" data-i18n="l.dev">Geliştirici sayfası</div></div><span class="go">↗</span>
+      </a>
+    </div>
+
+    <div class="b stat s3"><div class="label" data-i18n="k1.l">Canlı</div><div><div class="n">4</div><div class="d" data-i18n="k1.d">Yayında olan proje</div></div></div>
+    <div class="b stat s3"><div class="label">Android</div><div><div class="n">8</div><div class="d" data-i18n="k2.d">Yayınlanmış oyun ve uygulama</div></div></div>
+    <div class="b stat s3"><div class="label" data-i18n="k3.l">En iyi puan</div><div><div class="n">4.8<small>★</small></div><div class="d" data-i18n="k3.d">Kelimeler: Türkçe Bulmaca</div></div></div>
+    <div class="b stat s3"><div class="label">LaunchShots</div><div><div class="n">25</div><div class="d" data-i18n="k4.d">Desteklenen dil</div></div></div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="sh" id="projeler">
+    <h2 data-i18n="projects.title">Projeler</h2>
+    <span class="label" data-i18n="projects.note">● Hepsi yayında</span>
+  </div>
+  <div class="grid">
+    <a class="b b-accent proj s7 r2" href="https://launchshots.app/" target="_blank" rel="noopener">
+      <span class="arrow">→</span>
+      <div class="label">launchshots.app</div>
+      <h3>LaunchShots</h3>
+      <p data-i18n="projects.ls.desc">App Store ve Google Play için tarayıcıda çalışan, ücretsiz ekran görüntüsü tasarım aracı. Üyelik yok, filigran yok.</p>
+      <div class="shot"><img src="assets/shots/launchshots.webp" width="1062" height="564" alt="LaunchShots ana sayfası" loading="lazy" decoding="async"></div>
+      <div class="feats">
+        <div><b>11</b><span data-i18n="ls.f1">Cihaz çerçevesi</span></div>
+        <div><b>25</b><span data-i18n="ls.f2">Dil desteği</span></div>
+        <div><b>ZIP</b><span data-i18n="ls.f3">Mağazaya hazır çıktı</span></div>
+        <div><b>0₺</b><span data-i18n="ls.f4">Ücretsiz, filigransız</span></div>
+      </div>
+      <div class="tags"><span>javascript</span><span>canvas</span><span>indie tool</span></div>
+    </a>
+
+    <a class="b proj s5" href="https://www.sebze.net/" target="_blank" rel="noopener">
+      <span class="arrow">→</span>
+      <div class="label">sebze.net</div>
+      <h3 data-i18n="p.sebze.t">Sebze.net</h3>
+      <p data-i18n="p.sebze">Hobi bahçeciliği ve sebze yetiştirme topluluğu. XenForo üzerine özel geliştirmeler ve kendi yazdığım görsel oylama eklentisi.</p>
+      <div class="thumb"><img src="assets/shots/sebze.webp" width="655" height="260" alt="Sebze.net makaleleri" loading="lazy" decoding="async"></div>
+      <div class="tags"><span>php</span><span>xenforo</span><span>community</span></div>
+    </a>
+
+    <a class="b proj s5" href="https://www.kitaplar.org/" target="_blank" rel="noopener">
+      <span class="arrow">→</span>
+      <div class="label">kitaplar.org</div>
+      <h3 class="with-logo"><img src="assets/shots/kitaplar-logo.png" width="82" height="76" alt="" loading="lazy">Kitaplar.org</h3>
+      <p data-i18n="p.kitap">Kitap keşfi, öneriler ve okur topluluğu bir arada. Arama, kategoriler ve içerik yönetimi.</p>
+      <div class="tags"><span>php</span><span>platform</span></div>
+    </a>
+
+    <div class="b b-dark proj s12 ios">
+      <a class="arrow" href="https://okutan.org/kelimeler/index.html" target="_blank" rel="noopener" aria-label="Kelimeler web sitesi">→</a>
+      <div class="kel">
+      <div class="kel-txt">
+      <div class="label">iPhone · Android</div>
+      <h3>Kelimeler: Online Kelime Oyunu</h3>
+      <p data-i18n="p.kelimeler">Türkçe'ye özgü, sosyal ve rekabetçi online kelime oyunu. 60.000+ kelime, 81 il arasında şehir savaşları, günlük bulmaca ve hızlı oyun modu. Android'de 4.8 puana ulaşan oyunumun yeni sürümü.</p>
+      <div class="tags"><span>ios</span><span>android</span><span>multiplayer</span><span>word game</span></div>
+      <div class="stores">
+        <a class="store" href="https://apps.apple.com/us/app/kelimeler-online-kelime-oyunu/id6775899635" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg><span>App Store</span></a>
+        <a class="store store-alt" href="https://okutan.org/kelimeler/android.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a1 1 0 1 1 0-2 1 1 0 0 1 0 2m-11.046 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2m11.405-6.02 1.997-3.46a.416.416 0 0 0-.72-.416l-2.022 3.502A12.6 12.6 0 0 0 12 7.896c-1.876 0-3.65.398-5.137 1.05L4.841 5.445a.416.416 0 0 0-.72.416l1.997 3.46C2.688 11.186.343 14.659 0 18.761h24c-.344-4.102-2.689-7.575-6.118-9.44"/></svg><span>Android</span></a>
+        <a class="store store-alt" href="https://okutan.org/kelimeler/index.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n="p.web">Web sitesi</span></a>
+      </div>
+      </div>
+      <div class="kel-img"><img src="assets/shots/kelimeler.webp" width="565" height="580" alt="Kelimeler oyun tahtası" loading="lazy" decoding="async"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAST + STACK -->
+  <div class="sh" id="gecmis">
+    <h2 data-i18n="past.title">Önceki işler</h2>
+    <span class="label">Google Play · Android</span>
+  </div>
+  <div class="grid">
+    <div class="b s8">
+      <div class="note">
+        <span>ⓘ</span>
+        <span data-i18n="past.intro">Google Play'de yayınladığım oyun ve uygulamalar. Bu uygulamalar artık mağazada bulunmuyor.</span>
+      </div>
+      <ul class="tbl">
+        <li><span class="nm">Kelimeler: Türkçe Bulmaca</span><span class="ds" data-i18n="a1">Çok oyunculu kelime oyunu · ★4.8</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm">WOW3: Word Connect</span><span class="ds" data-i18n="a2">Çevrimdışı kelime bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm">Associations: Kelime Bul</span><span class="ds" data-i18n="a3">Kelime gruplama bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm">Blokları Patlat</span><span class="ds" data-i18n="a4">Blok patlatma bulmaca oyunu</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm">Sidik Yarışı</span><span class="ds" data-i18n="a5">Eğlenceli mini oyun</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm">Ezan Vakti — Namaz &amp; Kıble</span><span class="ds" data-i18n="a6">Namaz vakitleri ve kıble pusulası</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
+        <li><span class="nm">Zikirmatik — Tesbih</span><span class="ds" data-i18n="a7">Dijital zikir sayacı</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
+        <li><span class="nm">Photo Recovery: Pro</span><span class="ds" data-i18n="a8">Silinen fotoğrafları kurtarma</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
+      </ul>
+    </div>
+    <div class="b b-dark s4">
+      <div class="label" data-i18n="stack.t">Teknolojiler</div>
+      <div class="stackgrp" style="margin-top:22px">
+        <div style="font-weight:700">Web</div>
+        <div class="chips"><span>JavaScript</span><span>PHP</span><span>XenForo</span><span>HTML / CSS</span><span>Canvas API</span><span>MySQL</span></div>
+      </div>
+      <div class="stackgrp">
+        <div style="font-weight:700" data-i18n="stack.m">Mobil &amp; Oyun</div>
+        <div class="chips"><span>Kotlin</span><span>Flutter</span><span>Unity</span><span>LibGDX</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="sh" id="hakkimda">
+    <h2 data-i18n="about.title">Hakkımda</h2>
+  </div>
+  <div class="grid">
+    <div class="b about s8">
+      <div class="label">// about</div>
+      <p data-i18n-html="about.p">İzmir'de yaşayan bağımsız bir geliştiriciyim. <em>Bir ürünün tasarımından koduna, yayınından topluluğunun büyümesine kadar her adımı uçtan uca yürütüyorum.</em> Bugün odağım web; önceki yıllarda Android oyun ve uygulamaları geliştirdim.</p>
+    </div>
+    <div class="b s4">
+      <div class="label" data-i18n="f.t">Kısaca</div>
+      <ul class="facts">
+        <li><span data-i18n="f.loc">Konum</span><span>İzmir, TR</span></li>
+        <li><span data-i18n="f.role">Rol</span><span data-i18n="f.roleV">Bağımsız geliştirici</span></li>
+        <li><span data-i18n="f.focus">Odak</span><span data-i18n="f.focusV">Web · Topluluk · Araçlar</span></li>
+        <li><span data-i18n="f.status">Durum</span><span style="color:var(--ok)" data-i18n="f.statusV">Müsait</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="b b-accent contact" id="iletisim">
+    <div>
+      <div class="label" data-i18n="c.label">İletişim</div>
+      <h2 data-i18n="c.title">Birlikte bir şey yapalım.</h2>
+      <p data-i18n="c.text">Serbest çalışma, iş birliği ya da sadece merhaba demek için yazabilirsin. Genellikle 24 saat içinde dönüş yaparım.</p>
+    </div>
+    <div class="mailbox">
+      <a class="m" href="mailto:sedat@okutan.org">sedat@okutan.org <span class="go">↗</span></a>
+      <div class="row">
+        <a href="https://github.com/hsnsdt" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</a>
+        <a href="https://x.com/okutanapp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg>X</a>
+        <a href="https://apps.apple.com/us/developer/id6775899637" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>App Store</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="b">
+    <span>© <span id="yr">2026</span> Sedat Okutan</span>
+    <span>okutan.org · İzmir, TR</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  // flip clock (İzmir time)
+  var clockEl=document.getElementById('clock'), cells=[], prev='';
+  var fmt;
+  try{fmt=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23',timeZone:'Europe/Istanbul'})}catch(e){fmt=null}
+  function nowStr(){
+    var d=new Date();
+    if(fmt){var p={};fmt.formatToParts(d).forEach(function(x){p[x.type]=x.value});return (p.hour==='24'?'00':p.hour)+p.minute+p.second}
+    var u=new Date(d.getTime()+(d.getTimezoneOffset()+180)*60000);
+    return [u.getHours(),u.getMinutes(),u.getSeconds()].map(function(n){return (n<10?'0':'')+n}).join('');
+  }
+  function mkCell(v,sec){
+    var c=document.createElement('div');c.className='fd'+(sec?' sec':'');
+    c.innerHTML='<div class="h ft u"><span></span></div><div class="h fb l"><span></span></div><div class="h ft fu"><span></span></div><div class="h fb fl"><span></span></div>';
+    var s=c.querySelectorAll('span');for(var i=0;i<4;i++)s[i].textContent=v;
+    return c;
+  }
+  function build(str){
+    clockEl.innerHTML='';cells=[];
+    for(var i=0;i<6;i++){
+      if(i===2||i===4){var col=document.createElement('div');col.className='colon';col.innerHTML='<i></i><i></i>';clockEl.appendChild(col)}
+      var c=mkCell(str[i],i>=4);cells.push(c);clockEl.appendChild(c);
+    }
+  }
+  function flip(c,oldV,newV){
+    var u=c.querySelector('.u span'),l=c.querySelector('.l span'),fu=c.querySelector('.fu span'),fl=c.querySelector('.fl span');
+    u.textContent=newV;fu.textContent=oldV;l.textContent=oldV;fl.textContent=newV;
+    c.classList.remove('go');void c.offsetWidth;c.classList.add('go');
+    clearTimeout(c._t);c._t=setTimeout(function(){l.textContent=newV;c.classList.remove('go')},620);
+  }
+  function tick(){
+    var s=nowStr();
+    if(!cells.length){build(s);prev=s;return}
+    for(var i=0;i<6;i++)if(s[i]!==prev[i])flip(cells[i],prev[i],s[i]);
+    prev=s;
+  }
+  tick();
+  (function loop(){tick();setTimeout(loop,1000-(Date.now()%1000)+5)})();
+
+  var t=get('theme'); if(t) root.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').onclick=function(){
+    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var n=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',n); set('theme',n);
+  };
+
+  var EN={
+    "nav.projects":"Projects","nav.past":"Past","nav.about":"About","nav.contact":"Contact",
+    "hero.label":"Independent software developer — İzmir",
+    "hero.lead":"I build <strong>web platforms</strong>, <strong>online communities</strong> and <strong>developer tools</strong>, and I handle every stage from idea to launch myself.",
+    "hero.cta":"See my work","hero.cta2":"Get in touch",
+    "st.pill":"Open to new projects","st.time":"İzmir local time · GMT+3",
+    "k1.l":"Live","k1.d":"Live projects","l.dev":"Developer page","p.web":"Website",
+    "p.kelimeler":"A social, competitive online word game made for Turkish: 60,000+ words, city battles across 81 provinces, a daily puzzle and quick-play mode. The new version of my 4.8-rated Android game.","k2.d":"Published games & apps","k3.l":"Top rating","k3.d":"Kelimeler: Turkish word game","k4.d":"Supported languages",
+    "projects.title":"Projects","projects.note":"● All live",
+    "projects.ls.desc":"A free, browser-based screenshot designer for the App Store and Google Play. No sign-up, no watermark.",
+    "ls.f1":"Device frames","ls.f2":"Languages","ls.f3":"Store-ready export","ls.f4":"Free, no watermark",
+    "p.sebze.t":"Sebze.net",
+    "p.sebze":"A community for hobby gardening and growing vegetables. Custom XenForo development, including my own image-rating add-on.",
+    "p.kitap":"Book discovery, recommendations and a reader community in one place, with search, categories and content management.",
+    "past.title":"Past work",
+    "past.intro":"Games and apps I published on Google Play. These apps are no longer available on the store.",
+    "a1":"Multiplayer word game · ★4.8","a2":"Offline word puzzle","a3":"Word-grouping puzzle","a4":"Block-blasting puzzle game","a5":"Fun mini game","a6":"Prayer times and qibla compass","a7":"Digital dhikr counter","a8":"Recover deleted photos",
+    "k.game":"Game","k.app":"App",
+    "stack.t":"Tech stack","stack.m":"Mobile & Games",
+    "about.title":"About",
+    "about.p":"I'm an independent developer based in İzmir. <em>I take products end to end — design, code, launch, and growing the community around them.</em> Today my focus is the web; before that I spent years building Android games and apps.",
+    "f.t":"At a glance","f.loc":"Location","f.role":"Role","f.roleV":"Independent developer","f.focus":"Focus","f.focusV":"Web · Community · Tools","f.status":"Status","f.statusV":"Available",
+    "c.label":"Contact","c.title":"Let's build something.",
+    "c.text":"Freelance work, collaboration, or just saying hi. I usually reply within 24 hours."
+  };
+  var TR={};
+  document.querySelectorAll('[data-i18n]').forEach(function(el){TR[el.dataset.i18n]=el.textContent});
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el){TR[el.dataset.i18nHtml]=el.innerHTML});
+  function apply(lang){
+    var d=lang==='en'?EN:TR;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){if(d[el.dataset.i18n]!=null)el.textContent=d[el.dataset.i18n]});
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){if(d[el.dataset.i18nHtml]!=null)el.innerHTML=d[el.dataset.i18nHtml]});
+    root.lang=lang; document.getElementById('langBtn').textContent=lang==='en'?'TR':'EN';
+    document.title=lang==='en'?'Sedat Okutan — Software Developer':'Sedat Okutan — Yazılım Geliştirici';
+  }
+  var lang=get('lang')||'tr'; if(lang==='en')apply('en');
+  document.getElementById('langBtn').onclick=function(){lang=lang==='en'?'tr':'en';apply(lang);set('lang',lang)};
+})();
+</script>
+</body>
+</html>
