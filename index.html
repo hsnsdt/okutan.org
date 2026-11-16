@@ -211,6 +211,63 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .js .tiles .tile{opacity:0;transform:rotateX(-90deg)}
 .tiles.in .tile{animation:tileIn .55s cubic-bezier(.2,.8,.3,1.25) forwards;animation-delay:calc(var(--i)*95ms + .1s)}
 @keyframes tileIn{to{opacity:1;transform:none}}
+/* LaunchShots görseli */
+.lsv{margin-top:24px;max-width:560px;background:rgba(0,0,0,.14);border-radius:16px;padding:14px;container-type:inline-size}
+.lsv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.lang{font:600 11px var(--mono);letter-spacing:.08em;background:#fff;color:var(--accent);padding:3px 8px;border-radius:6px;min-width:34px;text-align:center}
+.lsv-hint{font:500 11px var(--mono);color:rgba(255,255,255,.8);letter-spacing:.04em}
+.lsv-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sp{border-radius:12px;padding:9cqw 4cqw 0;display:flex;flex-direction:column;align-items:center;overflow:hidden;aspect-ratio:9/15.5;transition:transform .3s}
+.sp0{background:#121212;color:#fff}.sp1{background:#fff;color:#121212}.sp2{background:#ffe4d6;color:#7c2d12}
+.proj:hover .sp1{transform:translateY(-6px)}
+.cap{font-weight:800;font-size:5.2cqw;letter-spacing:-.02em;line-height:1.05;text-align:center;min-height:2.2em;transition:opacity .25s,transform .25s}
+.cap.out{opacity:0;transform:translateY(6px)}
+.ph{margin-top:5cqw;width:82%;flex:1;border-radius:4.5cqw 4.5cqw 0 0;border:1.6cqw solid #2a2a2a;border-bottom:0;background:#f6f6f4;position:relative;overflow:hidden}
+.sp0 .ph{border-color:#3a3a3a;background:#1f1f1f}
+.ph-notch{position:absolute;top:1.2cqw;left:50%;transform:translateX(-50%);width:30%;height:2.4cqw;border-radius:9px;background:#2a2a2a}
+.ph-ui{padding:6.5cqw 2.6cqw 0;display:flex;flex-direction:column;gap:1.8cqw}
+.ph-ui i,.ph-ui b{display:block}
+.ux-bar{height:2.2cqw;border-radius:4px;background:var(--accent)}
+.w60{width:60%}.w50{width:50%}.w40{width:40%}
+.ux-row{height:5cqw;border-radius:5px;background:rgba(0,0,0,.08)}
+.sp0 .ux-row{background:rgba(255,255,255,.1)}
+.ux-chart{display:flex;align-items:flex-end;gap:1.2cqw;height:16cqw}
+.ux-chart b{flex:1;height:var(--h);border-radius:3px 3px 0 0;background:linear-gradient(var(--accent),#ffa66e)}
+.ux-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6cqw}
+.ux-grid b{aspect-ratio:1;border-radius:5px;background:#ffd2bd}
+.ux-grid b:nth-child(3n){background:var(--accent)}
+/* Sebze takvimi */
+.cal{margin-top:18px;border:1px solid var(--line);border-radius:14px;padding:14px;background:color-mix(in srgb,#16a34a 5%,var(--block))}
+.cal-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+.cal-t{font-weight:700;font-size:15px}
+.cal-note{font:500 10.5px var(--mono);color:var(--muted);letter-spacing:.03em;text-align:right}
+.cal-strip{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:12px}
+.cal-strip span{font:600 10px var(--mono);text-align:center;padding:5px 0;border-radius:6px;background:var(--bg);color:var(--muted)}
+.cal-strip span.now{background:#16a34a;color:#fff}
+.cal-strip span.past{opacity:.55}
+.cal-veg{display:flex;flex-wrap:wrap;gap:6px}
+.cal-veg span{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:5px 10px 5px 8px;border-radius:999px;background:var(--block);border:1px solid var(--line)}
+.cal-veg span::before{content:"";width:8px;height:8px;border-radius:50% 0;background:#16a34a;transform:rotate(45deg)}
+/* Kitap rafı */
+.shelf{margin-top:18px;padding:0 6px}
+.books{display:flex;align-items:flex-end;gap:3px;height:92px;padding:0 4px}
+.bk{display:block;width:var(--bw);height:var(--bh);background:var(--c);border-radius:3px 3px 1px 1px;position:relative;box-shadow:inset -3px 0 0 rgba(0,0,0,.18),inset 2px 0 0 rgba(255,255,255,.12);transition:transform .35s cubic-bezier(.2,.8,.3,1.3)}
+.bk.bd::before,.bk.bd::after{content:"";position:absolute;left:3px;right:3px;height:2px;background:rgba(255,255,255,.45)}
+.bk.bd::before{top:14%}.bk.bd::after{bottom:14%}
+.bk.pull::before{content:"";position:absolute;left:50%;top:22%;width:4px;height:30%;transform:translateX(-50%);background:rgba(255,255,255,.7);border-radius:2px}
+.proj:hover .bk.pull{transform:translateY(-14px) rotate(-3deg)}
+.proj:hover .bk:nth-child(2){transform:translateY(-4px)}
+.lean{display:block;width:20px;height:78%;background:var(--c);border-radius:3px;transform:rotate(14deg);transform-origin:bottom left;margin-left:4px;box-shadow:inset -3px 0 0 rgba(0,0,0,.2)}
+.plank{height:8px;border-radius:3px;background:linear-gradient(#a8835a,#7a5a3a);box-shadow:0 6px 10px -6px rgba(0,0,0,.4)}
+/* Uygulama ikonları */
+.tbl .nm{display:flex;align-items:center;gap:10px}
+.ai{flex:none;width:28px;height:28px;border-radius:8px;background:var(--c);color:#fff;font:700 14px/28px Georgia,serif;font-style:normal;text-align:center;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2)}
+/* Kopyalandı bildirimi */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);font-weight:600;font-size:14px;padding:12px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* 3D eğim */
+.tilt{transition:transform .12s ease-out!important;will-change:transform}
+@media (prefers-reduced-motion:reduce){.cap{transition:none}.bk{transition:none}}
 .board{container-type:inline-size;perspective:600px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:10px;border-radius:16px;background:#1f1d1b;border:1px solid #33302c;box-shadow:0 24px 50px -18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.05);transform:rotate(2deg);transition:transform .35s}
 .proj.ios:hover .board{transform:rotate(0)}
 .bc,.bt{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative}
@@ -371,7 +428,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg>
         <div><div class="t">X</div><div class="s">@okutanapp</div></div><span class="go">↗</span>
       </a>
-      <a class="lrow" href="mailto:sedat@okutan.org">
+      <a class="lrow" href="mailto:sedat@okutan.org" data-copy="sedat@okutan.org">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m22 7-10 6L2 7"/></svg>
         <div><div class="t">E-posta</div><div class="s">sedat@okutan.org</div></div><span class="go">↗</span>
       </a>
@@ -398,7 +455,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="label">launchshots.app</div>
       <h3>LaunchShots</h3>
       <p data-i18n="projects.ls.desc">App Store ve Google Play için tarayıcıda çalışan, ücretsiz ekran görüntüsü tasarım aracı. Üyelik yok, filigran yok.</p>
-      <div class="shot"><img src="assets/shots/launchshots.webp" width="1062" height="564" alt="LaunchShots ana sayfası" loading="lazy" decoding="async"></div>
+      <div class="lsv" aria-hidden="true"><div class="lsv-top"><span class="lang" id="lsLang">EN</span><span class="lsv-hint">25 dil · 11 cihaz</span></div><div class="lsv-row"><div class="sp sp0"><div class="cap" data-cap="0">Ship faster</div><div class="ph"><div class="ph-notch"></div><div class="ph-ui list"><i class="ux-bar w60"></i><i class="ux-row"></i><i class="ux-row"></i><i class="ux-row"></i><i class="ux-row"></i></div></div></div><div class="sp sp1"><div class="cap" data-cap="1">Look pro</div><div class="ph"><div class="ph-notch"></div><div class="ph-ui chart"><i class="ux-bar w40"></i><div class="ux-chart"><b style="--h:40%"></b><b style="--h:70%"></b><b style="--h:55%"></b><b style="--h:90%"></b><b style="--h:65%"></b></div><i class="ux-row"></i></div></div></div><div class="sp sp2"><div class="cap" data-cap="2">No sign-up</div><div class="ph"><div class="ph-notch"></div><div class="ph-ui grid"><i class="ux-bar w50"></i><div class="ux-grid"><b></b><b></b><b></b><b></b><b></b><b></b></div></div></div></div></div></div>
       <div class="feats">
         <div><b>11</b><span data-i18n="ls.f1">Cihaz çerçevesi</span></div>
         <div><b>25</b><span data-i18n="ls.f2">Dil desteği</span></div>
@@ -413,7 +470,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="label">sebze.net</div>
       <h3 data-i18n="p.sebze.t">Sebze.net</h3>
       <p data-i18n="p.sebze">Hobi bahçeciliği ve sebze yetiştirme topluluğu. XenForo üzerine özel geliştirmeler ve kendi yazdığım görsel oylama eklentisi.</p>
-      <div class="thumb"><img src="assets/shots/sebze.webp" width="655" height="260" alt="Sebze.net makaleleri" loading="lazy" decoding="async"></div>
+      <div class="cal" aria-label="Sebze ekim takvimi"><div class="cal-head"><span class="cal-t" id="calTitle">Bu ay ekilir</span><span class="cal-note" data-i18n="cal.note">Ege iklimi · genel takvim</span></div><div class="cal-strip"><span data-m="0">O</span><span data-m="1">Ş</span><span data-m="2">M</span><span data-m="3">N</span><span data-m="4">M</span><span data-m="5">H</span><span data-m="6">T</span><span data-m="7">A</span><span data-m="8">E</span><span data-m="9">E</span><span data-m="10">K</span><span data-m="11">A</span></div><div class="cal-veg" id="calVeg"></div></div>
       <div class="tags"><span>php</span><span>xenforo</span><span>community</span></div>
     </a>
 
@@ -422,6 +479,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="label">kitaplar.org</div>
       <h3 class="with-logo"><img src="assets/shots/kitaplar-logo.png" width="82" height="76" alt="" loading="lazy">Kitaplar.org</h3>
       <p data-i18n="p.kitap">Kitap keşfi, öneriler ve okur topluluğu bir arada. Arama, kategoriler ve içerik yönetimi.</p>
+      <div class="shelf" aria-hidden="true"><div class="books"><i class="bk " style="--c:#7f1d1d;--bh:78%;--bw:18px"></i><i class="bk bd" style="--c:#1e3a5f;--bh:92%;--bw:22px"></i><i class="bk " style="--c:#c9a227;--bh:70%;--bw:16px"></i><i class="bk bd" style="--c:#3f5f3a;--bh:86%;--bw:20px"></i><i class="bk pull" style="--c:#ff5a1f;--bh:96%;--bw:24px"></i><i class="bk bd" style="--c:#e8e1d3;--bh:74%;--bw:17px"></i><i class="bk " style="--c:#2b2b2b;--bh:88%;--bw:21px"></i><i class="bk bd" style="--c:#0f766e;--bh:80%;--bw:19px"></i><i class="bk " style="--c:#7c2d12;--bh:94%;--bw:23px"></i><i class="bk " style="--c:#a16207;--bh:68%;--bw:15px"></i><i class="bk bd" style="--c:#334155;--bh:84%;--bw:20px"></i><i class="bk " style="--c:#9f1239;--bh:76%;--bw:18px"></i><i class="lean" style="--c:#57534e"></i></div><div class="plank"></div></div>
       <div class="tags"><span>php</span><span>platform</span></div>
     </a>
 
@@ -459,14 +517,14 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <span data-i18n="past.intro">Google Play'de yayınladığım oyun ve uygulamalar. Bu uygulamalar artık mağazada bulunmuyor.</span>
       </div>
       <ul class="tbl">
-        <li><span class="nm">Kelimeler: Türkçe Bulmaca</span><span class="ds" data-i18n="a1">Çok oyunculu kelime oyunu · ★4.8</span><span class="kd" data-i18n="k.game">Oyun</span></li>
-        <li><span class="nm">WOW3: Word Connect</span><span class="ds" data-i18n="a2">Çevrimdışı kelime bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
-        <li><span class="nm">Associations: Kelime Bul</span><span class="ds" data-i18n="a3">Kelime gruplama bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
-        <li><span class="nm">Blokları Patlat</span><span class="ds" data-i18n="a4">Blok patlatma bulmaca oyunu</span><span class="kd" data-i18n="k.game">Oyun</span></li>
-        <li><span class="nm">Sidik Yarışı</span><span class="ds" data-i18n="a5">Eğlenceli mini oyun</span><span class="kd" data-i18n="k.game">Oyun</span></li>
-        <li><span class="nm">Ezan Vakti — Namaz &amp; Kıble</span><span class="ds" data-i18n="a6">Namaz vakitleri ve kıble pusulası</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
-        <li><span class="nm">Zikirmatik — Tesbih</span><span class="ds" data-i18n="a7">Dijital zikir sayacı</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
-        <li><span class="nm">Photo Recovery: Pro</span><span class="ds" data-i18n="a8">Silinen fotoğrafları kurtarma</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#ff5a1f">K</i>Kelimeler: Türkçe Bulmaca</span><span class="ds" data-i18n="a1">Çok oyunculu kelime oyunu · ★4.8</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#7c3aed">W</i>WOW3: Word Connect</span><span class="ds" data-i18n="a2">Çevrimdışı kelime bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#2563eb">A</i>Associations: Kelime Bul</span><span class="ds" data-i18n="a3">Kelime gruplama bulmacası</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#dc2626">B</i>Blokları Patlat</span><span class="ds" data-i18n="a4">Blok patlatma bulmaca oyunu</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#ca8a04">S</i>Sidik Yarışı</span><span class="ds" data-i18n="a5">Eğlenceli mini oyun</span><span class="kd" data-i18n="k.game">Oyun</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#15803d">E</i>Ezan Vakti — Namaz &amp; Kıble</span><span class="ds" data-i18n="a6">Namaz vakitleri ve kıble pusulası</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#0f766e">Z</i>Zikirmatik — Tesbih</span><span class="ds" data-i18n="a7">Dijital zikir sayacı</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
+        <li><span class="nm"><i class="ai" style="--c:#475569">P</i>Photo Recovery: Pro</span><span class="ds" data-i18n="a8">Silinen fotoğrafları kurtarma</span><span class="kd" data-i18n="k.app">Uygulama</span></li>
       </ul>
     </div>
     <div class="b b-dark s4">
@@ -511,7 +569,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <p data-i18n="c.text">Serbest çalışma, iş birliği ya da sadece merhaba demek için yazabilirsin. Genellikle 24 saat içinde dönüş yaparım.</p>
     </div>
     <div class="mailbox">
-      <a class="m" href="mailto:sedat@okutan.org">sedat@okutan.org <span class="go">↗</span></a>
+      <a class="m" href="mailto:sedat@okutan.org" data-copy="sedat@okutan.org">sedat@okutan.org <span class="go" aria-hidden="true">⧉</span></a>
       <div class="row">
         <a href="https://github.com/hsnsdt" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</a>
         <a href="https://x.com/okutanapp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z"/></svg>X</a>
@@ -583,7 +641,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     "hero.lead":"I build <strong>web platforms</strong>, <strong>online communities</strong> and <strong>developer tools</strong>, and I handle every stage from idea to launch myself.",
     "hero.cta":"See my work","hero.cta2":"Get in touch",
     "st.pill":"Open to new projects","st.time":"İzmir local time · GMT+3",
-    "k1.l":"Live","k1.d":"Live projects","l.dev":"Developer page","p.web":"Website",
+    "k1.l":"Live","k1.d":"Live projects","l.dev":"Developer page","cal.note":"Aegean climate · general guide","p.web":"Website",
     "p.kelimeler":"A social, competitive online word game made for Turkish: 60,000+ words, city battles across 81 provinces, a daily puzzle and quick-play mode. The new version of my 4.8-rated Android game.","k2.d":"Published games & apps","k3.l":"Top rating","k3.d":"Kelimeler: Turkish word game","k4.d":"Supported languages",
     "projects.title":"Projects","projects.note":"● All live",
     "projects.ls.desc":"A free, browser-based screenshot designer for the App Store and Google Play. No sign-up, no watermark.",
@@ -610,6 +668,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     document.querySelectorAll('[data-i18n]').forEach(function(el){if(d[el.dataset.i18n]!=null)el.textContent=d[el.dataset.i18n]});
     document.querySelectorAll('[data-i18n-html]').forEach(function(el){if(d[el.dataset.i18nHtml]!=null)el.innerHTML=d[el.dataset.i18nHtml]});
     root.lang=lang; document.getElementById('langBtn').textContent=lang==='en'?'TR':'EN';
+    if(window.renderCal)window.renderCal(lang);
     document.title=lang==='en'?'Sedat Okutan — Software Developer':'Sedat Okutan — Yazılım Geliştirici';
   }
   var lang=get('lang')||'tr'; if(lang==='en')apply('en');
@@ -650,6 +709,48 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     })},1500);
   }else{targets.forEach(function(t){t.classList.remove('rv');if(t.classList.contains('tiles')||t.classList.contains('board'))t.classList.add('in','done')})}
 
+
+  // Sebze ekim takvimi (bu ay)
+  var VEG={tr:[['Soğan','Marul','Bezelye'],['Bezelye','Havuç','Ispanak','Soğan'],['Havuç','Marul','Maydanoz','Patates'],['Domates','Biber','Patlıcan','Salatalık'],['Salatalık','Fasulye','Kabak','Mısır'],['Fasulye','Salatalık','Kabak'],['Brokoli','Lahana','Havuç'],['Brokoli','Lahana','Marul','Roka'],['Ispanak','Roka','Marul','Sarımsak'],['Sarımsak','Bakla','Ispanak','Soğan'],['Sarımsak','Bakla','Ispanak','Bezelye'],['Bakla','Soğan','Marul']],
+    en:[['Onion','Lettuce','Peas'],['Peas','Carrot','Spinach','Onion'],['Carrot','Lettuce','Parsley','Potato'],['Tomato','Pepper','Eggplant','Cucumber'],['Cucumber','Beans','Zucchini','Corn'],['Beans','Cucumber','Zucchini'],['Broccoli','Cabbage','Carrot'],['Broccoli','Cabbage','Lettuce','Arugula'],['Spinach','Arugula','Lettuce','Garlic'],['Garlic','Broad beans','Spinach','Onion'],['Garlic','Broad beans','Spinach','Peas'],['Broad beans','Onion','Lettuce']]};
+  var MON={tr:['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],en:['January','February','March','April','May','June','July','August','September','October','November','December']};
+  var curM=(function(){try{return +new Intl.DateTimeFormat('en-GB',{month:'numeric',timeZone:'Europe/Istanbul'}).format(new Date())-1}catch(e){return new Date().getMonth()}})();
+  window.renderCal=function(lg){
+    var L=lg==='en'?'en':'tr';
+    var t=document.getElementById('calTitle'),v=document.getElementById('calVeg');if(!t||!v)return;
+    t.textContent=L==='en'?'Sow in '+MON.en[curM]:MON.tr[curM]+' ayında ekilir';
+    v.innerHTML='';VEG[L][curM].forEach(function(n){var s=document.createElement('span');s.textContent=n;v.appendChild(s)});
+    document.querySelectorAll('.cal-strip span').forEach(function(s){var m=+s.dataset.m;s.classList.toggle('now',m===curM);s.classList.toggle('past',m<curM)});
+  };
+  renderCal(lang);
+
+  // LaunchShots: başlıklar 25 dilden bazılarında döner
+  var CAPS=[['EN','Ship faster','Look pro','No sign-up'],['TR','Hızlı yayınla','Profesyonel görün','Üyelik yok'],['DE','Schneller starten','Profi-Look','Ohne Konto'],['ES','Lanza rápido','Look profesional','Sin registro'],['FR','Publiez vite','Style pro','Sans compte'],['PT','Lance rápido','Visual pro','Sem cadastro'],['JA','すぐ公開','プロの見た目','登録不要'],['IT','Pubblica prima','Look da pro','Senza account']];
+  var capEls=document.querySelectorAll('.cap'),langEl=document.getElementById('lsLang'),ci=0;
+  if(capEls.length&&!reduce){setInterval(function(){
+    if(document.hidden)return;
+    ci=(ci+1)%CAPS.length;capEls.forEach(function(c){c.classList.add('out')});
+    setTimeout(function(){var row=CAPS[ci];langEl.textContent=row[0];capEls.forEach(function(c,i){c.textContent=row[i+1];c.classList.remove('out')})},260);
+  },2400)}
+
+  // E-postayı kopyala
+  var toast=document.getElementById('toast'),tt;
+  function say(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show')},1800)}
+  document.querySelectorAll('[data-copy]').forEach(function(a){a.addEventListener('click',function(e){
+    if(!navigator.clipboard)return;
+    e.preventDefault();
+    navigator.clipboard.writeText(a.dataset.copy).then(function(){say(lang==='en'?'Email copied ✓':'E-posta kopyalandı ✓')},function(){location.href=a.href});
+  })});
+
+  // Kartlara 3D eğim
+  if(matchMedia('(hover: hover) and (pointer: fine)').matches&&!reduce){
+    document.querySelectorAll('.proj,.stat').forEach(function(c){
+      c.addEventListener('mousemove',function(e){if(c.classList.contains('rv'))return;var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5,k=c.classList.contains('s12')?2:4;
+        c.classList.add('tilt');c.style.transform='perspective(900px) rotateX('+(-y*k).toFixed(2)+'deg) rotateY('+(x*k).toFixed(2)+'deg) translateY(-3px)'});
+      c.addEventListener('mouseleave',function(){c.style.transform='';setTimeout(function(){c.classList.remove('tilt')},150)});
+    });
+  }
+
   // giriş bloğunda fareyi takip eden ışık
   var hero=document.querySelector('.hero');
   if(hero&&matchMedia('(hover: hover)').matches){
@@ -657,5 +758,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
   }
 })();
 </script>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
