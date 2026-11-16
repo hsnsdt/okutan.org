@@ -83,11 +83,14 @@ header {
 
 .okutan {
   display: inline-flex; align-items: center;
-  font: 600 13px var(--sans); color: var(--muted);
-  border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; text-decoration: none;
+  font: 800 14px var(--sans); letter-spacing: -.02em; color: #fff;
+  background: #121212; border: 1px solid #121212; border-radius: 10px; padding: 6px 12px; text-decoration: none;
+  box-shadow: 0 6px 14px -8px rgba(0,0,0,.6); transition: transform .15s, background .15s;
 }
 .okutan b { color: #ff5a1f; font-weight: 800; }
-.okutan:hover { color: var(--ink); border-color: var(--muted); text-decoration: none; }
+.okutan span { color: rgba(255,255,255,.6); font-weight: 600; }
+.okutan:hover { background: #000; color: #fff; transform: translateY(-1px); text-decoration: none; }
+header a.okutan, header a.okutan:hover { color: #fff; }
 
 /* TR / EN anahtarı */
 .lang-switch {
