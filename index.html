@@ -211,6 +211,16 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .js .tiles .tile{opacity:0;transform:rotateX(-90deg)}
 .tiles.in .tile{animation:tileIn .55s cubic-bezier(.2,.8,.3,1.25) forwards;animation-delay:calc(var(--i)*95ms + .1s)}
 @keyframes tileIn{to{opacity:1;transform:none}}
+.nrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px}
+.stars{position:relative;display:inline-block;height:20px;line-height:0;margin-top:4px}
+.stars span{display:flex;gap:3px;white-space:nowrap}
+.stars svg{width:20px;height:20px;flex:none}
+.s-bg svg{fill:color-mix(in srgb,var(--ink) 24%,transparent)}
+.s-fg{position:absolute;inset:0 auto 0 0;overflow:hidden}
+.s-fg svg{fill:var(--accent)}
+.stat.in .s-fg{animation:starFill 1.1s cubic-bezier(.3,.7,.3,1) both}
+@keyframes starFill{from{width:0}}
+@media (prefers-reduced-motion:reduce){.stat.in .s-fg{animation:none}}
 /* LaunchShots görseli */
 .lsv{margin-top:24px;max-width:560px;background:rgba(0,0,0,.14);border-radius:16px;padding:14px;container-type:inline-size}
 .lsv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -440,7 +450,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 
     <div class="b stat s3"><div class="label" data-i18n="k1.l">Canlı</div><div><div class="n">4</div><div class="d" data-i18n="k1.d">Yayında olan proje</div></div></div>
     <div class="b stat s3"><div class="label">Android</div><div><div class="n">8</div><div class="d" data-i18n="k2.d">Yayınlanmış oyun ve uygulama</div></div></div>
-    <div class="b stat s3"><div class="label" data-i18n="k3.l">En iyi puan</div><div><div class="n">4.8<small>★</small></div><div class="d" data-i18n="k3.d">Kelimeler: Türkçe Bulmaca</div></div></div>
+    <div class="b stat s3"><div class="label" data-i18n="k3.l">En iyi puan</div><div><div class="nrow"><div class="n">4.8</div><div class="stars" role="img" aria-label="5 üzerinden 4.8 puan"><span class="s-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="s-fg" style="width:108.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></div></div><div class="d" data-i18n="k3.d">Kelimeler: Türkçe Bulmaca</div></div></div>
     <div class="b stat s3"><div class="label">LaunchShots</div><div><div class="n">25</div><div class="d" data-i18n="k4.d">Desteklenen dil</div></div></div>
   </div>
 
