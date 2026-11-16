@@ -117,7 +117,7 @@ img{display:block;max-width:100%}
 .showcase{background:linear-gradient(160deg,#8f7cf6,#6c5ce7 55%,#5847d8);border-color:#5847d8;display:flex;align-items:center;justify-content:center;min-height:560px;padding:0}
 .showcase::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.25),transparent 45%),radial-gradient(circle at 80% 90%,rgba(248,207,98,.35),transparent 40%)}
 .phone{width:min(250px,40vw);border-radius:40px;padding:8px;background:#141220;box-shadow:0 30px 60px -20px rgba(20,10,60,.7),inset 0 0 0 2px #2c2840;position:relative}
-.phone img{border-radius:32px;width:100%;height:auto}
+.phone img,.phone video{border-radius:32px;width:100%;height:auto;display:block;background:#f3f2fa}
 .duo{position:relative;display:flex;align-items:center;justify-content:center;padding:36px 0}
 .duo .phone:first-child{transform:rotate(-5deg) translateX(18%);z-index:2}
 .duo .phone:last-child{transform:rotate(6deg) translateX(-18%) translateY(18px);opacity:.96}
@@ -338,8 +338,8 @@ img{display:block;max-width:100%}
 
     <section class="b showcase s5" aria-label="Oyundan ekran görüntüleri">
       <div class="duo">
+        <div class="phone"><video id="heroVid" autoplay muted loop playsinline preload="metadata" poster="img/oynanis-poster.webp" width="384" height="848" aria-label="Kelimeler oynanış videosu: tahtaya kelime yerleştirme ve puan alma"><source src="img/oynanis.webm" type="video/webm"><source src="img/oynanis.mp4" type="video/mp4"></video></div>
         <div class="phone"><img src="img/ana-ekran.webp" width="645" height="1398" alt="Kelimeler ana ekranı: Hızlı Oyun modları" fetchpriority="high"></div>
-        <div class="phone"><img src="img/oyun-tahtasi.webp" width="645" height="1398" alt="Kelimeler oyun tahtası"></div>
       </div>
     </section>
 
@@ -532,6 +532,13 @@ img{display:block;max-width:100%}
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function onVisible(el,fn,leave){if(!('IntersectionObserver' in window)){fn();return}
     new IntersectionObserver(function(es){es.forEach(function(e){e.isIntersecting?fn():(leave&&leave())})},{threshold:.25}).observe(el)}
+
+  // --- oynanış videosu: hareketi azalt açıksa durdur; ekranda değilken duraklat
+  var vid=document.getElementById('heroVid');
+  if(vid){
+    if(reduce){vid.removeAttribute('autoplay');vid.pause()}
+    else onVisible(vid,function(){var p=vid.play();if(p&&p.catch)p.catch(function(){})},function(){vid.pause()});
+  }
 
   // --- logo: ara sıra bir taş sallansın
   var tiles=document.querySelectorAll('.drop .gt');
