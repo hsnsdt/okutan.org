@@ -177,15 +177,13 @@ a{color:inherit;text-decoration:none}
 .kel{display:grid;grid-template-columns:1fr 280px;gap:32px;align-items:center;margin-top:8px}
 .proj.ios .arrow{z-index:3}
 .proj.ios h3{padding-right:56px}
-.kel-img{padding-top:44px}
+.kel-img{padding-top:44px;perspective:800px}
 .thumb{margin-top:18px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
 .thumb img{display:block;width:100%;height:auto;transition:transform .4s}
 .proj:hover .thumb img{transform:scale(1.04)}
 .with-logo{display:flex;align-items:center;gap:12px}
 .with-logo img{width:40px;height:auto;border-radius:9px}
 .kel-txt{display:flex;flex-direction:column}
-.kel-img img{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.5));transform:rotate(2deg);transition:transform .3s}
-.proj.ios:hover .kel-img img{transform:rotate(0)}
 @media (max-width:760px){.kel{grid-template-columns:1fr}.kel-img{max-width:260px;padding-top:0}}
 .fd .fu,.fd .fl{visibility:hidden}
 .fd .fl{transform:rotateX(90deg)}
@@ -213,6 +211,21 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .js .tiles .tile{opacity:0;transform:rotateX(-90deg)}
 .tiles.in .tile{animation:tileIn .55s cubic-bezier(.2,.8,.3,1.25) forwards;animation-delay:calc(var(--i)*95ms + .1s)}
 @keyframes tileIn{to{opacity:1;transform:none}}
+.board{container-type:inline-size;perspective:600px;display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:10px;border-radius:16px;background:#1f1d1b;border:1px solid #33302c;box-shadow:0 24px 50px -18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.05);transform:rotate(2deg);transition:transform .35s}
+.proj.ios:hover .board{transform:rotate(0)}
+.bc,.bt{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative}
+.bc{background:rgba(255,255,255,.055);font:600 3.6cqw var(--mono);color:rgba(255,255,255,.75);letter-spacing:0}
+.bc.h2{background:rgba(96,165,250,.22);color:#93c5fd}
+.bc.h3{background:rgba(192,132,252,.22);color:#d8b4fe}
+.bc.k2{background:rgba(74,222,128,.18);color:#86efac}
+.bc.k3{background:rgba(255,90,31,.22);color:#fdba74}
+.bc.star{background:linear-gradient(180deg,#e9c46a,#c99a2e);color:#3b2a06;font-size:6cqw}
+.bt{background:linear-gradient(180deg,#f2913f,#d95f1a);color:#fff;font:700 7.2cqw/1 Georgia,"Times New Roman",serif;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.bt sup{position:absolute;top:6%;right:9%;font:600 2.6cqw var(--sans)}
+.js .board .bt{opacity:0;transform:rotateX(-90deg)}
+.board.in .bt{animation:tileIn .5s cubic-bezier(.2,.8,.3,1.25) forwards;animation-delay:calc(var(--i)*80ms + .15s)}
+.board.done .bt{animation:none;opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .board .bt{opacity:1;transform:none;animation:none}}
 .tiles.done .tile{animation:none;opacity:1;transform:none}
 .tiles.done .tile:hover{transform:translateY(-4px) rotate(-3deg)}
 .marquee{margin-top:var(--gap);background:var(--dark);color:var(--dark-ink);border:1px solid var(--dark-line);border-radius:var(--r);overflow:hidden;padding:20px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
@@ -426,7 +439,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
         <a class="store store-alt" href="https://okutan.org/kelimeler/index.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n="p.web">Web sitesi</span></a>
       </div>
       </div>
-      <div class="kel-img"><img src="assets/shots/kelimeler.webp" width="565" height="580" alt="Kelimeler oyun tahtası" loading="lazy" decoding="async"></div>
+      <div class="kel-img"><div class="board" role="img" aria-label="Kelimeler oyun tahtası: KELİME ve OKUTAN kelimeleri"><span class="bc k3">K3</span><span class="bt" style="--i:6">O<sup>2</sup></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bc"></span><span class="bc k3">K3</span><span class="bc"></span><span class="bt" style="--i:0">K<sup>1</sup></span><span class="bt" style="--i:1">E<sup>1</sup></span><span class="bt" style="--i:2">L<sup>1</sup></span><span class="bt" style="--i:3">İ<sup>1</sup></span><span class="bt" style="--i:4">M<sup>2</sup></span><span class="bt" style="--i:5">E<sup>1</sup></span><span class="bc"></span><span class="bt" style="--i:7">U<sup>2</sup></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc h3">H3</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bt" style="--i:8">T<sup>1</sup></span><span class="bc"></span><span class="bc star">★</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bt" style="--i:9">A<sup>1</sup></span><span class="bc h3">H3</span><span class="bc k2">K2</span><span class="bc h3">H3</span><span class="bc"></span><span class="bc"></span><span class="bc"></span><span class="bt" style="--i:10">N<sup>1</sup></span><span class="bc"></span><span class="bc"></span><span class="bc"></span><span class="bc k2">K2</span><span class="bc"></span><span class="bc k3">K3</span><span class="bc"></span><span class="bc"></span><span class="bc h2">H2</span><span class="bc"></span><span class="bc"></span><span class="bc k3">K3</span></div></div>
       </div>
     </div>
 
@@ -618,9 +631,9 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     var i=0;Array.prototype.forEach.call(g.children,function(c){c.classList.add('rv');c.style.setProperty('--d',Math.min(i++,5)*0.07+'s');targets.push(c)});
   });
   document.querySelectorAll('.sh,.marquee,.contact,footer').forEach(function(c){c.classList.add('rv');targets.push(c)});
-  var tilesEl=document.querySelector('.tiles'); if(tilesEl)targets.push(tilesEl);
+  document.querySelectorAll('.tiles,.board').forEach(function(t){targets.push(t)});
   function show(el){
-    if(el.classList.contains('tiles')){el.classList.add('in');setTimeout(function(){el.classList.add('done')},1300);return}
+    if(el.classList.contains('tiles')||el.classList.contains('board')){el.classList.add('in');setTimeout(function(){el.classList.add('done')},1800);return}
     el.classList.add('in');
     var n=el.querySelector('.stat .n')||(el.classList.contains('stat')?el.querySelector('.n'):null); if(n)countUp(n);
     var d=parseFloat(el.style.getPropertyValue('--d'))||0;
@@ -632,10 +645,10 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     // güvenlik ağı: gözlemci bir sebeple tetiklenmezse ekrandaki bloklar yine de görünsün
     setTimeout(function(){targets.forEach(function(t){
       if(t.classList.contains('in')||t.classList.contains('done'))return;
-      if(!t.classList.contains('rv')&&!t.classList.contains('tiles'))return;
+      if(!t.classList.contains('rv')&&!t.classList.contains('tiles')&&!t.classList.contains('board'))return;
       var r=t.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0){io.unobserve(t);show(t)}
     })},1500);
-  }else{targets.forEach(function(t){t.classList.remove('rv');if(t.classList.contains('tiles'))t.classList.add('in','done')})}
+  }else{targets.forEach(function(t){t.classList.remove('rv');if(t.classList.contains('tiles')||t.classList.contains('board'))t.classList.add('in','done')})}
 
   // giriş bloğunda fareyi takip eden ışık
   var hero=document.querySelector('.hero');
