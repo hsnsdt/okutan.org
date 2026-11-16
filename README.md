@@ -9,5 +9,5 @@ Sedat Okutan'ın kişisel geliştirici sitesi. Tek sayfa, framework yok: `index.
 - `github-profile/` — github.com/hsnsdt profil README'si (siteye yüklenmez)
 
 **Yayın:** `main` dalına push → GitHub Actions FTP ile cPanel'e yükler (`.github/workflows/deploy.yml`).
-`.htaccess` otomatik yüklenmez; sunucudaki mevcut dosyayla elle birleştirilmeli.
+`.htaccess` otomatik yüklenmez; elle yüklenir. İçindeki yönlendirme kuralı, üst klasördeki (ana cPanel hesabı) kuralların okutan.org'u bozmasını engeller.
 `kelimeler/` — Kelimeler oyununun sitesi (aynı tasarım dili, oyunun lavanta/mor paleti). APK dosyaları repoda değildir; sunucuda elle güncellenir.

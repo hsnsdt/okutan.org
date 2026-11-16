@@ -1,5 +1,16 @@
 # okutan.org — Apache / LiteSpeed ayarları (cPanel)
 
+# http → https ve www → çıplak alan adı (tek adımda, doğru adrese).
+# Bu klasörde kendi RewriteEngine'imiz olduğu için üst klasördeki
+# (ana hesap / launchshots.app) yönlendirme kuralları buraya uygulanmaz;
+# "https://okutan.org/okutan.org/" hatası bu sayede biter.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^ https://okutan.org%{REQUEST_URI} [L,R=301]
+</IfModule>
+
 # Özel 404 sayfası
 ErrorDocument 404 /404.html
 
