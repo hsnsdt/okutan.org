@@ -1,8 +1,8 @@
 /* 101 Okey — service worker (botlara karşı oyun internetsiz de çalışır)
    - Sayfa: önce ağ, yoksa önbellek · Statik dosyalar: önbellekten, arkada tazele · API önbelleğe alınmaz
    okey.js / okey-motor.js sürümü değişince CACHE ve CORE'u da güncelle. */
-var CACHE = 'okey-v1';
-var CORE = ['./', 'okey.js?v=7', 'okey-motor.js?v=3', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
+var CACHE = 'okey-v2';
+var CORE = ['./', 'okey.js?v=8', 'okey-motor.js?v=3', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
   '/assets/fonts/InterTight-latin.woff2', '/assets/fonts/InterTight-latin-ext.woff2', '/assets/fonts/JetBrainsMono-latin.woff2',
   '/assets/logo.svg', '/assets/logo-dark.svg', '/favicon.svg'];
 self.addEventListener('install', function (e) {

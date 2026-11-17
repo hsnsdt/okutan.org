@@ -198,7 +198,7 @@ try {
     if ($a === 't_start') {
         $in = body(); $t = table_row($db, $in['code'] ?? '');
         if (!hash_equals($t['host_key'], (string)($in['hostKey'] ?? ''))) fail('unauthorized', 401);
-        for ($i = 1; $i < 4; $i++) if (!$t['seats'][$i]) $t['seats'][$i] = ['name' => ['Ayşe', 'Mehmet', 'Zeynep'][$i - 1] . ' (bot)', 'bot' => true];
+        for ($i = 1; $i < 4; $i++) if (!$t['seats'][$i]) $t['seats'][$i] = ['name' => ['Ayşe', 'Mehmet', 'Zeynep'][$i - 1], 'bot' => true];
         q($db, "UPDATE ok_tables SET status = 'play', seats = ?, updated_at = ?, host_seen = ? WHERE code = ?", [json_encode($t['seats'], JSON_UNESCAPED_UNICODE), now(), now(), $t['code']]);
         out(['ok' => true, 'seats' => public_seats($t['seats'])]);
     }

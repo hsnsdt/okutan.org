@@ -163,7 +163,8 @@
     d.setAttribute('aria-label', (t.fake ? 'Sahte okey ' : t.joker ? 'Okey ' : '') + ({ k: 'kırmızı', s: 'sarı', m: 'mavi', y: 'siyah' }[t.c]) + ' ' + t.n);
     return d;
   }
-  function names() { return game ? game.names : ['Sen'].concat(BOT_NAMES); }
+  // görünen adlar: online masada sunucunun eklediği "(bot)" ekini at (bot olduğu plakada zorlukla yazıyor)
+  function names() { return (game && game.names ? game.names : ['Sen'].concat(BOT_NAMES)).map(function (n) { return String(n || '').replace(/\s*\(bot\)$/, ''); }); }
 
   // ================= ıstaka =================
   var SLOTS = 30, ROW = 15;
