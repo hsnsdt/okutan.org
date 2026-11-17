@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Balon Patlat — okutan.org</title>
+<meta name="description" content="Ücretsiz online balon patlatma oyunu. Aynı renkten en az üç balonu birleştir, patlat, adını liderlik tablosuna yazdır.">
+<meta name="author" content="Sedat Okutan">
+<meta name="theme-color" content="#121212">
+<link rel="canonical" href="https://okutan.org/balon/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="okutan.org">
+<meta property="og:title" content="Balon Patlat — okutan.org">
+<meta property="og:description" content="Aynı renkten üç balonu birleştir, patlat, liderlik tablosuna gir.">
+<meta property="og:url" content="https://okutan.org/balon/">
+<meta property="og:image" content="https://okutan.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@okutanapp">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/InterTight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<script>
+(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();
+</script>
+<style>
+:root{
+  --bg:#ebebe8; --block:#ffffff; --ink:#0e0e0e; --muted:#6a6a6a; --line:#dadad6;
+  --dark:#121212; --dark-ink:#f4f4f2; --dark-muted:#9a9a9a; --dark-line:#2a2a2a;
+  --accent:#ff5a1f; --accent-ink:#ffffff; --ok:#16a34a; --bad:#dc2626;
+  --field:#f6f6f3; --field-dot:#dcdcd6;
+  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:18px; --gap:12px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#080808; --block:#141414; --ink:#f2f2f0; --muted:#8f8f8f; --line:#242424;
+    --dark:#1c1c1c; --dark-line:#2e2e2e; --ok:#22c55e; --bad:#f87171;
+    --field:#0e0e0e; --field-dot:#232323; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080808; --block:#141414; --ink:#f2f2f0; --muted:#8f8f8f; --line:#242424;
+  --dark:#1c1c1c; --dark-line:#2e2e2e; --ok:#22c55e; --bad:#f87171;
+  --field:#0e0e0e; --field-dot:#232323; color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--gap) 20px 40px}
+@media (max-width:520px){.wrap{padding:var(--gap) 12px 28px}}
+.b{background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative}
+.b-dark{background:var(--dark);color:var(--dark-ink);border-color:var(--dark-line)}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.b-dark .label{color:var(--dark-muted)}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 20px;margin-bottom:var(--gap)}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo{display:flex;align-items:center;color:var(--ink)}
+.logo img{height:26px;width:auto;display:block}
+:root[data-theme="dark"] .logo .l-light{display:none}
+:root:not([data-theme="dark"]) .logo .l-dark{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .logo .l-light{display:none}
+  :root:not([data-theme="light"]) .logo .l-dark{display:inline}
+}
+.crumb{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;padding-left:14px;border-left:1px solid var(--line)}
+.crumb b{color:var(--ink);font-weight:500}
+.ctrls{display:flex;gap:6px}
+.ctrl{height:36px;min-width:36px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--block);color:var(--ink);font:500 12px var(--mono);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.ctrl:hover{border-color:var(--muted)}
+.ctrl[aria-pressed="true"]{color:var(--muted)}
+@media (max-width:560px){.crumb{display:none}}
+
+/* layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--gap);align-items:start}
+@media (max-width:920px){.layout{grid-template-columns:minmax(0,1fr)}}
+.side{display:flex;flex-direction:column;gap:var(--gap)}
+@media (max-width:920px){.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.side .lb{grid-column:span 2}}
+@media (max-width:560px){.side{grid-template-columns:minmax(0,1fr)}.side .lb{grid-column:auto}}
+
+/* game block */
+.game{padding:14px;display:flex;justify-content:center;background:var(--block)}
+.stage{position:relative;width:min(100%, calc((100svh - 120px) * 512 / 640));aspect-ratio:512/640;min-width:0}
+@media (max-width:920px){.stage{width:min(100%, calc((100svh - 110px) * 512 / 640))}}
+canvas{display:block;width:100%;height:100%;border-radius:12px;background-color:var(--field);background-image:radial-gradient(var(--field-dot) 1px,transparent 1.4px);background-size:20px 20px;touch-action:none;cursor:crosshair;-webkit-tap-highlight-color:transparent;user-select:none}
+
+/* overlay */
+.ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;border-radius:12px;background:color-mix(in srgb,var(--field) 72%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s}
+.ov.show{opacity:1;pointer-events:auto}
+.card{width:100%;max-width:360px;background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:26px;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);transform:translateY(10px);transition:transform .3s}
+.ov.show .card{transform:none}
+.card h2{font-size:34px;font-weight:800;letter-spacing:-.035em;line-height:1;margin:10px 0 6px}
+.card p{color:var(--muted);font-size:15px}
+.big{font-size:56px;font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;margin:14px 0 4px}
+.big small{font:500 12px var(--mono);letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-left:6px}
+.meta{display:flex;gap:16px;font:500 12px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:18px}
+.meta b{color:var(--ink);font-weight:500}
+.newbest{display:none;font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.newbest.on{display:inline}
+.field{display:flex;gap:8px;margin-top:6px}
+.field input{flex:1;min-width:0;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px var(--sans);padding:0 14px;outline:none}
+.field input:focus{border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 18px;border-radius:12px;font-weight:600;font-size:15px;border:0;cursor:pointer;transition:transform .15s,opacity .15s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:default;transform:none}
+.btn-a{background:var(--accent);color:#fff}
+.btn-g{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.btn-w{width:100%;margin-top:10px}
+.msg{min-height:22px;font-size:14px;margin-top:10px;color:var(--muted)}
+.msg.ok{color:var(--ok)}.msg.err{color:var(--bad)}
+.howto{list-style:none;margin:16px 0 4px;display:grid;gap:8px;font-size:14px;color:var(--muted)}
+.howto li{display:flex;gap:10px;align-items:flex-start}
+.howto i{flex:none;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:600 11px var(--mono);font-style:normal;background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+
+/* score block */
+.sc{display:flex;flex-direction:column;gap:14px}
+.sc .n{font-size:54px;font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.sc .n.bump{animation:bump .3s}
+@keyframes bump{40%{transform:scale(1.06);color:var(--accent)}}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--dark-line);padding-top:14px}
+.kv div{display:flex;flex-direction:column;gap:2px}
+.kv b{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.kv span{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dark-muted)}
+
+.acts{display:flex;flex-direction:column;gap:10px}
+.acts .row{display:flex;gap:8px}
+.acts .row .btn{flex:1}
+.keys{font:500 12px var(--mono);color:var(--muted);line-height:1.8}
+.keys kbd{font:inherit;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;color:var(--ink);background:var(--bg)}
+
+/* leaderboard */
+.lb h3{font-size:22px;font-weight:800;letter-spacing:-.03em;margin:6px 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+.lb h3 small{font:500 11px var(--mono);color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px;margin-bottom:10px}
+.tabs button{border:0;background:transparent;height:32px;border-radius:9px;font:500 12px var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--block);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.list{list-style:none;min-height:120px}
+.list li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid var(--line);font-size:15px}
+.list li:last-child{border-bottom:0}
+.list .rk{font:500 12px var(--mono);color:var(--muted)}
+.list .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .pt{font-weight:700;font-variant-numeric:tabular-nums}
+.list li.p1 .rk,.list li.p2 .rk,.list li.p3 .rk{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:600}
+.list li.p1 .rk{background:var(--accent)}
+.list li.p2 .rk{background:#8a8a8a}
+.list li.p3 .rk{background:#b0793f}
+.list li.me{background:color-mix(in srgb,var(--accent) 9%,transparent);border-radius:10px}
+.list .empty{display:block;color:var(--muted);font-size:14px;padding:22px 6px;text-align:center;border:0}
+.skel{height:14px;border-radius:6px;background:var(--bg);animation:sk 1.2s infinite}
+@keyframes sk{50%{opacity:.5}}
+
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 20px;margin-top:var(--gap);font-family:var(--mono);font-size:12px;color:var(--muted)}
+footer a:hover{color:var(--ink)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="b top">
+    <div class="brand">
+      <a href="/" class="logo" aria-label="okutan.org"><img class="l-light" src="/assets/logo.svg" width="96" height="26" alt="okutan"><img class="l-dark" src="/assets/logo-dark.svg" width="96" height="26" alt="okutan"></a>
+      <span class="crumb"><span data-i18n="crumb">Oyun</span> / <b data-i18n="title">Balon Patlat</b></span>
+    </div>
+    <div class="ctrls">
+      <button class="ctrl" id="soundBtn" aria-label="Ses" aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="x" d="m16 9 6 6m0-6-6 6" style="display:none"/></svg>
+      </button>
+      <button class="ctrl" id="langBtn" aria-label="Dil">EN</button>
+      <button class="ctrl" id="themeBtn" aria-label="Tema">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="b game" aria-label="Oyun alanı">
+      <div class="stage" id="stage">
+        <canvas id="cv" width="512" height="640" aria-label="Balon patlatma oyun alanı"></canvas>
+
+        <!-- Başlangıç -->
+        <div class="ov show" id="ovStart">
+          <div class="card">
+            <div class="label" data-i18n="start.l">Ücretsiz · Online sıralama</div>
+            <h2 data-i18n="title">Balon Patlat</h2>
+            <p data-i18n="start.p">Aynı renkten en az üç balonu bir araya getir, patlat. Tavana bağlantısı kopan balonlar düşer ve çok daha fazla puan getirir.</p>
+            <ol class="howto">
+              <li><i>1</i><span data-i18n="h1">Nişan al ve tıkla (ya da dokunup bırak).</span></li>
+              <li><i>2</i><span data-i18n="h2">Duvarlardan sektirerek zor yerlere ulaş.</span></li>
+              <li><i>3</i><span data-i18n="h3">Iskalarsan sayaç azalır; bitince tavan bir sıra iner.</span></li>
+              <li><i>4</i><span data-i18n="h4">Balonlar çizgiye ulaşırsa oyun biter.</span></li>
+            </ol>
+            <button class="btn btn-a btn-w" id="playBtn" data-i18n="play">Oyna</button>
+          </div>
+        </div>
+
+        <!-- Oyun sonu -->
+        <div class="ov" id="ovEnd" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+          <div class="card">
+            <div class="label"><span data-i18n="end.l">Oyun bitti</span> <span class="newbest" id="newBest" data-i18n="end.best">· Yeni rekor!</span></div>
+            <div class="big" id="endScore">0<small data-i18n="pts">puan</small></div>
+            <div class="meta"><span><span data-i18n="lvl">Seviye</span> <b id="endLevel">1</b></span><span><span data-i18n="shots">Atış</span> <b id="endShots">0</b></span></div>
+            <h2 id="endTitle" class="sr">Skor</h2>
+            <form id="saveForm" autocomplete="off">
+              <label class="label" for="nameIn" data-i18n="end.name">Adın, liderlik tablosu için</label>
+              <div class="field">
+                <input id="nameIn" maxlength="16" minlength="2" required placeholder="Adın" data-i18n-ph="end.ph" enterkeyhint="send">
+                <button class="btn btn-a" id="saveBtn" type="submit" data-i18n="end.save">Kaydet</button>
+              </div>
+            </form>
+            <div class="msg" id="saveMsg" role="status"></div>
+            <button class="btn btn-g btn-w" id="againBtn" data-i18n="again">Tekrar oyna</button>
+          </div>
+        </div>
+
+        <!-- Duraklatıldı -->
+        <div class="ov" id="ovPause">
+          <div class="card" style="text-align:center">
+            <div class="label" data-i18n="pause.l">Duraklatıldı</div>
+            <h2 data-i18n="pause.t">Mola</h2>
+            <button class="btn btn-a btn-w" id="resumeBtn" data-i18n="resume">Devam et</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="b b-dark sc">
+        <div class="label" data-i18n="score">Skor</div>
+        <div class="n" id="score" aria-live="polite">0</div>
+        <div class="kv">
+          <div><b id="level">1</b><span data-i18n="lvl">Seviye</span></div>
+          <div><b id="shots">0</b><span data-i18n="shots">Atış</span></div>
+          <div><b id="best">0</b><span data-i18n="bestS">Rekorun</span></div>
+        </div>
+      </div>
+
+      <div class="b acts">
+        <div class="row">
+          <button class="btn btn-a" id="newBtn" data-i18n="new">Yeni oyun</button>
+          <button class="btn btn-g" id="pauseBtn" data-i18n="pause">Duraklat</button>
+        </div>
+        <div class="keys"><kbd>←</kbd> <kbd>→</kbd> <span data-i18n="k.aim">nişan</span> · <kbd>Space</kbd> <span data-i18n="k.fire">at</span> · <kbd>X</kbd> <span data-i18n="k.swap">balon değiştir</span> · <kbd>P</kbd> <span data-i18n="k.pause">duraklat</span></div>
+      </div>
+
+      <div class="b lb">
+        <div class="label" data-i18n="lb.l">Online sıralama</div>
+        <h3><span data-i18n="lb.t">Liderlik tablosu</span><small id="lbTotal"></small></h3>
+        <div class="tabs" role="tablist">
+          <button role="tab" data-p="day" aria-selected="false" data-i18n="lb.day">Bugün</button>
+          <button role="tab" data-p="week" aria-selected="true" data-i18n="lb.week">Bu hafta</button>
+          <button role="tab" data-p="all" aria-selected="false" data-i18n="lb.all">Tüm zamanlar</button>
+        </div>
+        <ol class="list" id="lbList" aria-live="polite">
+          <li><span class="skel" style="width:20px"></span><span class="skel"></span><span class="skel" style="width:50px"></span></li>
+          <li><span class="skel" style="width:20px"></span><span class="skel"></span><span class="skel" style="width:50px"></span></li>
+          <li><span class="skel" style="width:20px"></span><span class="skel"></span><span class="skel" style="width:50px"></span></li>
+        </ol>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="b">
+    <span>© <span id="yr">2026</span> Sedat Okutan</span>
+    <a href="/">← okutan.org</a>
+  </footer>
+</div>
+<script src="oyun.js?v=1"></script>
+</body>
+</html>

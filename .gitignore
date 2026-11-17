@@ -13,3 +13,6 @@ kelimeler/*.MP4
 kelimeler/*.mov
 kelimeler/*.MOV
 *ScreenRecording*
+
+# Balon Patlat veritabanı şifresi depoya girmez (sunucuya elle yüklenir)
+balon/api/config.php
