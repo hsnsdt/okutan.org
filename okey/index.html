@@ -666,6 +666,7 @@ footer nav{display:flex;gap:6px 16px;flex-wrap:wrap}
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Enter ↵</kbd><kbd class="kc w">Del</kbd></span></span><span>Seçili taşı at</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">H</kbd></span></span><span>İpucu: önerilen hamleyi göster (yeşil yanıp söner)</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">U</kbd></span></span><span>Istakadaki dizilimini geri al (Ctrl + Z da olur)</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">T</kbd></span></span><span>Online masada sohbeti aç ya da kapat (masadakilere yaz, hızlı mesaj ya da emoji gönder)</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">M</kbd></span></span><span>Sesi aç ya da kapat</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">F</kbd></span></span><span>Tam ekran</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">N</kbd></span></span><span>Yeni oyun</span></li>
@@ -678,6 +679,7 @@ footer nav{display:flex;gap:6px 16px;flex-wrap:wrap}
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="15" y="16" width="18" height="24" rx="3" fill="#efe6cf" stroke="currentColor" stroke-width="1.6"/><rect x="17" y="13" width="18" height="24" rx="3" fill="#fbf7ec" stroke="currentColor" stroke-width="1.6"/><circle cx="26" cy="46" r="3.2" fill="var(--accent)"/><circle cx="26" cy="46" r="7" fill="none" stroke="var(--accent)" stroke-width="1.6" opacity=".45"/></svg></span><span>Desteye ya da sol alttaki yan taşa dokun: taş çek</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="14" y="20" width="20" height="9" rx="3" fill="var(--accent)"/><rect x="14" y="33" width="20" height="9" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></span><span>Seri diz, Çift diz, Göster ve Bitir düğmelerine dokun</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><circle cx="24" cy="26" r="9" fill="#ffd75e"/><path d="M21 37h6M22 41h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>Üstteki İpucu ve Geri al düğmelerine dokun</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M33 30a9 9 0 0 1-13 8l-6 1.5 1.6-5.4A9 9 0 1 1 33 30z" fill="var(--accent)"/></svg></span><span>Online masada üstteki sohbet düğmesine dokun: masadakilere yaz ya da hızlı mesaj gönder</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M17 18v-4h4M31 18v-4h-4M17 40v4h4M31 40v4h-4" stroke="var(--accent)" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg></span><span>Telefonu yatay çevir ya da tam ekran düğmesine dokun: masa ekranı doldurur</span></li>
       </ul>
     </div>
@@ -802,6 +804,7 @@ footer nav{display:flex;gap:6px 16px;flex-wrap:wrap}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="motor.js?v=1" defer></script>
-<script src="oyun.js?v=2" defer></script>
+<script src="oyun.js?v=4" defer></script>
+<script src="/assets/okey-sohbet.js?v=3" defer></script>
 </body>
 </html>

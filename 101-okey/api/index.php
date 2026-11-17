@@ -15,6 +15,8 @@
 //   POST ?a=t_moves {code, hostKey, after}       → masa sahibi kuyruktaki hamleleri alır
 //   POST ?a=t_state {code, hostKey, ver, pub, priv}  → masa sahibi durumu yayınlar (her koltuğa yalnızca kendi eli)
 //   POST ?a=t_poll {code, seat, seatKey, ver}    → oyuncu yeni durumu alır
+//   POST ?a=t_say {code, seat, seatKey, text}    → masaya sohbet mesajı (140 karakter, küfür maskelenir)
+//   POST ?a=t_chat {code, seat, seatKey, after}  → yeni sohbet mesajları
 //
 // Aynı dosya düz Okey'e de hizmet eder: okey/api/index.php, OKEY_GAME = 'okey' tanımlayıp bu dosyayı çağırır.
 // Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*), böylece sıralamalar ve masalar karışmaz.
@@ -38,7 +40,7 @@ try {
     $db->exec("SET time_zone = '+00:00'");
 } catch (Throwable $e) { fail('db_unavailable', 503); }
 
-function tbl(string $sql): string { return preg_replace('/\bok_(sessions|games|tables|private|moves)\b/', $GLOBALS['PFX'] . '$1', $sql); }
+function tbl(string $sql): string { return preg_replace('/\bok_(sessions|games|tables|private|moves|chat)\b/', $GLOBALS['PFX'] . '$1', $sql); }
 function create_tables(PDO $db): void {
     $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_sessions (
         token CHAR(32) NOT NULL PRIMARY KEY, ip CHAR(64) NOT NULL, mode VARCHAR(8) NOT NULL, day DATE NULL,
@@ -62,6 +64,10 @@ function create_tables(PDO $db): void {
     $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_moves (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, code CHAR(6) NOT NULL, seat TINYINT UNSIGNED NOT NULL,
         move TEXT NOT NULL, created_at DATETIME NOT NULL, KEY ix_code (code, id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci"));
+    $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_chat (
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, code CHAR(6) NOT NULL, seat TINYINT UNSIGNED NOT NULL, name VARCHAR(20) NOT NULL,
+        text VARCHAR(160) NOT NULL, created_at DATETIME NOT NULL, KEY ix_code (code, id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci"));
 }
 function q(PDO $db, string $sql, array $a = []): PDOStatement {
@@ -87,9 +93,26 @@ function clean_name($raw): ?string {
     if ($len < 2 || $len > 16 || !preg_match('/^[\p{L}\p{N}][\p{L}\p{N} ._\-]*$/u', (string)$n)) return null;
     $flat = mb_strtolower(preg_replace('/[^\p{L}\p{N}]/u', '', (string)$n), 'UTF-8');
     $flat = strtr($flat, ['0' => 'o', '1' => 'i', '3' => 'e', '4' => 'a', '5' => 's', 'ı' => 'i']);
-    foreach (['amk', 'aminako', 'orospu', 'sikti', 'sikis', 'sikerim', 'siktir', 'yarrak', 'pezevenk', 'gavat', 'kahpe', 'ibne', 'fuck', 'shit', 'bitch', 'admin', 'moderator'] as $w)
+    foreach (array_merge(BAD_WORDS, ['admin', 'moderator']) as $w)
         if (str_contains($flat, $w)) return null;
     return (string)$n;
+}
+const BAD_WORDS = ['amk', 'aminako', 'orospu', 'sikti', 'sikis', 'sikerim', 'siktir', 'yarrak', 'pezevenk', 'gavat', 'kahpe', 'ibne', 'fuck', 'shit', 'bitch'];
+// Sohbet metni: kontrol karakterleri atılır, boşluklar sadeleşir, 140 karakter, küfür içeren kelimeler *** olur
+function clean_chat($raw): ?string {
+    if (!is_string($raw)) return null;
+    // denetim/özel karakterler ve yazı yönünü çeviren işaretler atılır; emoji birleştiricileri (ZWJ) kalır
+    $t = preg_replace('/[\p{Cc}\p{Co}\p{Cn}\x{202A}-\x{202E}\x{2066}-\x{2069}]+/u', ' ', $raw);
+    $t = trim((string)preg_replace('/\s+/u', ' ', (string)$t));
+    if ($t === '') return null;
+    $t = mb_substr($t, 0, 140, 'UTF-8');
+    foreach (BAD_WORDS as $w) $t = (string)preg_replace('/[\p{L}\p{N}]*' . preg_quote($w, '/') . '[\p{L}\p{N}]*/iu', '***', $t);
+    return $t;
+}
+function seat_auth(array $t, $seat, $key): int {
+    $seat = (int)$seat;
+    if ($seat < 0 || $seat > 3 || !$t['seats'][$seat] || !hash_equals((string)($t['seats'][$seat]['key'] ?? ''), (string)$key)) fail('unauthorized', 401);
+    return $seat;
 }
 function body(): array { $j = json_decode(file_get_contents('php://input', false, null, 0, 400000) ?: '', true); return is_array($j) ? $j : []; }
 function rand_code(): string { $a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; $s = ''; for ($i = 0; $i < 6; $i++) $s .= $a[random_int(0, strlen($a) - 1)]; return $s; }
@@ -174,6 +197,7 @@ try {
             // kod ASCII; BINARY karşılaştırma tablo karakter düzeninden bağımsız çalışır
             q($db, 'DELETE p FROM ok_private p JOIN ok_tables t ON BINARY t.code = BINARY p.code WHERE t.updated_at < ?', [$old]);
             q($db, 'DELETE m FROM ok_moves m JOIN ok_tables t ON BINARY t.code = BINARY m.code WHERE t.updated_at < ?', [$old]);
+            q($db, 'DELETE c FROM ok_chat c JOIN ok_tables t ON BINARY t.code = BINARY c.code WHERE t.updated_at < ?', [$old]);
             q($db, 'DELETE FROM ok_tables WHERE updated_at < ?', [$old]);
         }
         $hk = bin2hex(random_bytes(16)); $sk = bin2hex(random_bytes(16));
@@ -249,6 +273,25 @@ try {
             $res['priv'] = $p ? json_decode($p, true) : null;
         }
         out($res);
+    }
+    // ---------- sohbet ----------
+    if ($a === 't_say') {
+        $in = body(); $t = table_row($db, $in['code'] ?? ''); $seat = seat_auth($t, $in['seat'] ?? -1, $in['seatKey'] ?? '');
+        $text = clean_chat($in['text'] ?? null); if ($text === null) fail('empty');
+        $last = q($db, 'SELECT created_at FROM ok_chat WHERE code = ? AND seat = ? ORDER BY id DESC LIMIT 1', [$t['code'], $seat])->fetchColumn();
+        if ($last && strtotime($last . ' UTC') >= time() - 1) fail('slow', 429);
+        $n = (int)q($db, 'SELECT COUNT(*) FROM ok_chat WHERE code = ? AND seat = ? AND created_at >= ?', [$t['code'], $seat, gmdate('Y-m-d H:i:s', time() - 60)])->fetchColumn();
+        if ($n >= 20) fail('slow', 429);
+        q($db, 'INSERT INTO ok_chat (code, seat, name, text, created_at) VALUES (?,?,?,?,?)', [$t['code'], $seat, $t['seats'][$seat]['name'], $text, now()]);
+        out(['ok' => true, 'id' => (int)$db->lastInsertId(), 'text' => $text]);
+    }
+    if ($a === 't_chat') {
+        $in = body(); $t = table_row($db, $in['code'] ?? ''); seat_auth($t, $in['seat'] ?? -1, $in['seatKey'] ?? '');
+        $after = (int)($in['after'] ?? 0);
+        $rows = $after > 0
+            ? q($db, 'SELECT id, seat, name, text FROM ok_chat WHERE code = ? AND id > ? ORDER BY id LIMIT 50', [$t['code'], $after])->fetchAll()
+            : array_reverse(q($db, 'SELECT id, seat, name, text FROM ok_chat WHERE code = ? ORDER BY id DESC LIMIT 30', [$t['code']])->fetchAll());
+        out(['ok' => true, 'msgs' => array_map(fn($r) => ['id' => (int)$r['id'], 'seat' => (int)$r['seat'], 'name' => $r['name'], 'text' => $r['text']], $rows)]);
     }
     fail('unknown_action', 404);
 } catch (Throwable $e) {

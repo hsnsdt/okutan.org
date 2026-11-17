@@ -382,10 +382,10 @@
     var front = v && 'eiöü'.indexOf(v[0]) >= 0, hard = 'çfhkpsşt'.indexOf(low.slice(-1)) >= 0;
     return (hard ? 't' : 'd') + (front ? 'e' : 'a');
   }
-  function say(seat, text) {
+  function say(seat, text, ms) {
     var e = $('pl' + pos(seat)) && $('pl' + pos(seat)).querySelector('.say'); if (!e) return;
-    e.textContent = text; e.classList.add('on');
-    clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove('on'); }, 1500 * (game ? game.speed : 1) + 400);
+    e.textContent = text; e.classList.add('on'); e.classList.toggle('chatmsg', !!ms);
+    clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove('on', 'chatmsg'); }, ms || 1500 * (game ? game.speed : 1) + 400);
   }
   var toastT = 0;
   function toast(m) { var e = $('toast'); e.textContent = m; e.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function () { e.classList.remove('show'); }, 3400); }
@@ -625,7 +625,10 @@
   }
 
   // ================= botlar =================
-  function delay(ms) { return sleep(ms * game.speed); }
+  // Oyun değişince (yeni oyun / online masa) bekleyen bot turu sessizce durur
+  var gen = 0;
+  function delay(ms) { var g = gen; return sleep(ms * game.speed).then(function () { if (g !== gen || !st) throw new Error('stale'); }); }
+  function stopLocal() { gen++; st = null; V = null; busy = false; hintMark = null; sel = null; game && (game.deadline = 0); }
   async function botTurn(p) {
     var lv = game.levels[p] || 'normal', before, res;
     busy = true; render();
@@ -655,7 +658,7 @@
     if (advancing) return; advancing = true;
     try {
       save();
-      while (st && !st.over && game.levels[st.turn]) {
+      while (st && !st.over && game.levels && game.levels[st.turn]) {
         await botTurn(st.turn);
         busy = false; setDeadline(); refreshView(); render(); save();
       }
@@ -663,11 +666,12 @@
       if (st && st.over) { advancing = false; return handEnd(); }
       setDeadline(true); refreshView(); render();
       if (game.mode === 'online') publish();
-    } catch (e) { busy = false; if (window.console) console.error(e); } finally { advancing = false; }
+    } catch (e) { busy = false; if (window.console && e.message !== 'stale') console.error(e); } finally { advancing = false; }
   }
 
   // ================= el / oyun =================
   function newLocalGame(cfg) {
+    gen++;
     me = 0;
     game = { mode: cfg.mode, name: cfg.name, names: [cfg.name || 'Sen'].concat(BOT_NAMES), levels: [null, cfg.level, cfg.level, cfg.level], level: cfg.level,
       start: cfg.start, speed: cfg.speed, idx: 0, scores: [cfg.start, cfg.start, cfg.start, cfg.start], dealer: cfg.mode === 'daily' ? 3 : Math.floor(Math.random() * 4),
@@ -830,6 +834,7 @@
     try {
       var j = await post('t_create', { name: name, opts: { game: 'okey', opts: opts, start: +segStart.get() || 10, timer: +segTimer.get() || 0, speed: +segSpeed.get() || 1, level: segLevel.get() || 'normal' } });
       if (!j.ok) return toast(j.error === 'bad_name' ? 'Bu ad kullanılamaz.' : 'Masa kurulamadı.');
+      stopLocal();
       game = { mode: 'online', name: name, online: { code: j.code, hostKey: j.hostKey, seatKey: j.seatKey, seat: 0, isHost: true }, lobby: true };
       me = 0; lsSet(K_ONLINE, JSON.stringify({ v: 1, lobby: true, game: game }));
       showLobby();
@@ -839,6 +844,7 @@
     try {
       var j = await post('t_join', { code: code, name: name });
       if (!j.ok) return toast({ no_table: 'Masa bulunamadı.', full: 'Masa dolu.', started: 'Bu masada oyun başlamış.', name_taken: 'Bu ad masada var, başka bir ad seç.', bad_name: 'Bu ad kullanılamaz.' }[j.error] || 'Masaya katılınamadı.');
+      stopLocal();
       game = { mode: 'online', name: name, online: { code: j.code, seatKey: j.seatKey, seat: j.seat, isHost: false }, lobby: true };
       me = j.seat; lsSet(K_ONLINE, JSON.stringify({ v: 1, lobby: true, game: game }));
       showLobby();
@@ -1037,6 +1043,18 @@
   var installEvt = null;
   addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; $('instBtn').hidden = false; });
   $('instBtn').onclick = function () { if (!installEvt) return; installEvt.prompt(); installEvt.userChoice.finally(function () { installEvt = null; $('instBtn').hidden = true; }); };
+
+  // ================= sohbet (assets/okey-sohbet.js) =================
+  window.OkeySohbetHost = {
+    ctx: function () {
+      if (!game) return null;
+      var on = game.mode === 'online' && game.online;
+      return { online: !!on, code: on ? game.online.code : null, seat: me, seatKey: on ? game.online.seatKey : null, me: me,
+        name: names()[me] || 'Sen', names: names(), bots: game.levels || [], api: API };
+    },
+    say: function (seat, text, ms) { if (V) say(seat, text, ms); },
+    sound: function () { audio(); sfx.tick(); }
+  };
 
   // ================= açılış =================
   var params = new URLSearchParams(location.search), joinCode = (params.get('masa') || '').toUpperCase();
