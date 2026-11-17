@@ -43,7 +43,7 @@
     'nick.l': 'Your nickname', 'nick.ph': 'Type your name', 'nick.ph2': 'For the leaderboard',
     'nick.hint': 'Your scores are posted under this name.', 'nick.saved': 'Saved. Scores will be posted automatically.',
     rankW: 'Weekly rank', streakS: 'Streak', missS: 'Ceiling', 'st.plays': 'Games played', 'st.online': 'Playing now',
-    'lb.live': 'Live', 'm.auto': 'Saving as {n}…',
+    'lb.live': 'Live', 'm.prev': 'Your previous game was saved: {s} pts.', 'm.auto': 'Saving as {n}…',
     'i.l': 'Free browser game · Online leaderboard', 'i.h1': 'Bubble Pop: Free Online Bubble Shooter Game',
     'i.p': 'Bubble Pop is a bubble shooter you can play right in your browser, with no download and no sign-up. Aim, match three or more bubbles of the same color and pop them. Bubbles cut off from the ceiling fall and score far more. Enter a nickname and see your score on the daily, weekly and all-time leaderboards.',
     'i.how': 'How to play', 'i.how1': 'Aim with your mouse or finger; the bubble flies in the direction you point.',
@@ -78,7 +78,7 @@
     'm.token': 'Session expired, start a new game.', 'm.err': 'Something went wrong. Please try again.'
   };
   var TR = {
-    'nick.saved': 'Kaydedildi. Skorların otomatik yazılacak.', 'm.auto': '{n} adıyla kaydediliyor…',
+    'nick.saved': 'Kaydedildi. Skorların otomatik yazılacak.', 'm.prev': 'Önceki oyunun skoru kaydedildi: {s} puan.', 'm.auto': '{n} adıyla kaydediliyor…',
     'c.next': 'SIRADAKİ', 'c.surprise': 'SÜRPRİZ!', 'c.bomb': 'BUM!', 'c.bolt': 'ŞİMŞEK!', 'c.joker': 'JOKER', 'c.level': 'SEVİYE', 'c.streak': 'SERİ', 'c.clear': 'TEMİZLENDİ!', 'c.drop': 'TAVAN',
     'lb.empty': 'Henüz skor yok. İlk sen ol!', 'lb.off': 'Liderlik tablosuna şu an ulaşılamıyor.',
     'lb.games': 'oyun', 'm.saving': 'Kaydediliyor…',
@@ -395,11 +395,15 @@
   function startGame() {
     ensureAudio();
     // Küçük ekranda oyun alanını görünür alana oturt
-    if (innerWidth < 920) { try { $('stage').closest('.game').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
+    if (innerWidth < 1000) { try { $('stage').closest('.game').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
     if ($('ovStart').classList.contains('show') && $('startName').value.trim() && !setNick($('startName').value, true)) {
       $('startName').focus(); return;
     }
-    if (token) ping(true);
+    var prev = score;
+    if (quickSave()) {
+      var nm = $('nickMsg'); nm.className = 'nick-msg ok'; nm.textContent = t('m.prev').replace('{s}', fmt(prev));
+      setTimeout(loadBoard, 1500);
+    } else if (token) ping(true);
     level = 1; score = 0; shownScore = 0; shots = 0; gains = []; streak = 0; ball = null; fx = []; texts = []; overT = 0;
     missLimit = missLeft = calcMissLimit();
     newBoard();
@@ -424,7 +428,18 @@
       .then(function (r) { return r.json(); }).then(function (j) { if (j && j.ok) setStats(null, j.online); }).catch(function () {});
   }
   setInterval(function () { if (state === 'play' && !document.hidden) ping(false); }, 25000);
-  addEventListener('pagehide', function () { if (state === 'play' || state === 'paused') ping(true); });
+  addEventListener('pagehide', function () { if ((state === 'play' || state === 'paused') && !quickSave()) ping(true); });
+
+  // Oyun bitmeden ayrılınca (sayfayı yenileme/kapatma, oyun ortasında Yeni oyun) o ana kadarki skoru kaydet
+  function quickSave() {
+    var nk = lsGet('bp_name') || '';
+    if (!token || score <= 0 || !validName(nk) || !(state === 'play' || state === 'paused')) return false;
+    var body = JSON.stringify({ token: token, name: nk, score: score, shots: shots, level: level, gains: gains }), sent = false;
+    token = null;
+    try { sent = !!(navigator.sendBeacon && navigator.sendBeacon(API + '?a=submit', new Blob([body], { type: 'text/plain' }))); } catch (e) {}
+    if (!sent) fetch(API + '?a=submit', { method: 'POST', cache: 'no-store', body: body, keepalive: true }).catch(function () {});
+    return true;
+  }
 
   function fire() {
     var now = performance.now();
