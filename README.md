@@ -18,3 +18,5 @@ Sedat Okutan'ın kişisel geliştirici sitesi. Tek sayfa, framework yok: `index.
 - Paylaşım önizlemesi: `/balon/meydan.php?id=…` (meta etiketleri) + `/balon/api/og.php?id=…` (GD ile skor görseli; font: `balon/api/fonts/InterTight-ExtraBold.ttf`, OFL). GD yoksa genel `og.png` kullanılır.
 - Testler (yerelde PHP + MySQL açıkken): `BASE=http://127.0.0.1:8765/balon ADMIN_PASS=... node --test tests/api.test.mjs`. Canlı sitede çalıştırma.
 - Yerel sunucu: `php -d extension=gd -S 127.0.0.1:8765 -t .` (XAMPP).
+
+`101-okey/` — 101 Okey (botlara karşı). Kurallar ve botlar `101-okey/okey-motor.js` içinde (arayüzden bağımsız), arayüz `okey.js`. Motor testleri: `node --test tests/okey.test.mjs`.

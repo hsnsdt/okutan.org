@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>101 Okey Oyna — Ücretsiz Online 101 Okey | okutan.org</title>
+<meta name="description" content="Ücretsiz 101 Okey: tarayıcıda, üyeliksiz, botlara karşı oyna. 101 ile el aç, çifte git, taş işle; gösterge, okey ve cezalarıyla gerçek kahvehane kuralları.">
+<meta name="author" content="Sedat Okutan">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0f3d2e">
+<link rel="canonical" href="https://okutan.org/101-okey/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="okutan.org">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="101 Okey Oyna — Ücretsiz, Tarayıcıda">
+<meta property="og:description" content="101 ile el aç, çifte git, taş işle. Gerçek kahvehane kurallarıyla botlara karşı ücretsiz 101 Okey.">
+<meta property="og:url" content="https://okutan.org/101-okey/">
+<meta property="og:image" content="https://okutan.org/101-okey/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@okutanapp">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/InterTight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["VideoGame", "WebApplication"],
+      "@id": "https://okutan.org/101-okey/#game",
+      "name": "101 Okey",
+      "url": "https://okutan.org/101-okey/",
+      "image": "https://okutan.org/101-okey/og.png",
+      "description": "Tarayıcıda ücretsiz 101 Okey: 101 ile el açma, çifte gitme, taş işleme, gösterge ve okey kurallarıyla botlara karşı.",
+      "genre": ["Taş oyunu", "Kart oyunu", "Okey"],
+      "gamePlatform": ["Web tarayıcısı", "Masaüstü", "Mobil"],
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any",
+      "inLanguage": "tr",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TRY" },
+      "author": { "@type": "Person", "@id": "https://okutan.org/#person", "name": "Sedat Okutan", "url": "https://okutan.org/" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "okutan.org", "item": "https://okutan.org/" },
+        { "@type": "ListItem", "position": 2, "name": "101 Okey", "item": "https://okutan.org/101-okey/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "101 Okey'de el nasıl açılır?", "acceptedAnswer": { "@type": "Answer", "text": "Istakadaki perlerin (aynı renk ardışık seri ya da aynı sayı farklı renk) toplam değeri en az 101 olmalıdır. Alternatif olarak en az 5 çiftle de açılabilir." } },
+        { "@type": "Question", "name": "Okey ve gösterge nedir?", "acceptedAnswer": { "@type": "Answer", "text": "El başında açılan taş göstergedir. Göstergenin aynı renkteki bir fazlası okeydir ve her taşın yerine geçer. 13 göstergenin okeyi 1'dir. Sahte okey, okeyin kendi değeriyle oynar." } },
+        { "@type": "Question", "name": "101 Okey'de puan nasıl hesaplanır?", "acceptedAnswer": { "@type": "Answer", "text": "Eli bitiren -101 yazar. Açmayan 202, seriyle açan elinde kalan taşların toplamını, çiftle açan bu toplamın iki katını yazar. Okeyle, çiftle ya da elden bitirmek puanları ikiye katlar. Oyun sonunda en düşük toplam kazanır." } },
+        { "@type": "Question", "name": "Hangi durumlarda ceza yazılır?", "acceptedAnswer": { "@type": "Answer", "text": "Okey atmak ve masadaki bir pere işlenebilecek taşı atmak 101 ceza yazdırır. Yandan alınan taş o tur kullanılamazsa geri konur ve yine 101 ceza yazılır." } }
+      ]
+    }
+  ]
+}
+</script>
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+:root{
+  --bg:#ebebe8; --block:#ffffff; --ink:#0e0e0e; --muted:#6a6a6a; --line:#dadad6;
+  --dark:#121212; --dark-ink:#f4f4f2; --dark-muted:#9a9a9a; --dark-line:#2a2a2a;
+  --accent:#ff5a1f; --ok:#16a34a; --bad:#dc2626;
+  --felt1:#1b6b4a; --felt2:#0d3d2a; --felt-line:rgba(255,255,255,.08);
+  --wood1:#b9773f; --wood2:#8a5426;
+  --tile:#fbf8ef; --tile-edge:#d9d1bc;
+  --t-k:#d62828; --t-s:#e08a00; --t-m:#1d4ed8; --t-y:#151515;
+  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r:18px; --gap:12px; --tw:42px; --th:58px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;--dark:#1c1c1c;--dark-line:#2e2e2e;--ok:#22c55e;--bad:#f87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;--dark:#1c1c1c;--dark-line:#2e2e2e;--ok:#22c55e;--bad:#f87171;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--gap) 16px 40px}
+.b{background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 20px;margin-bottom:var(--gap)}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo img{height:26px;width:auto;display:block}
+:root[data-theme="dark"] .logo .l-light{display:none}
+:root:not([data-theme="dark"]) .logo .l-dark{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo .l-light{display:none}:root:not([data-theme="light"]) .logo .l-dark{display:inline}}
+.crumb{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;padding-left:14px;border-left:1px solid var(--line)}
+.crumb b{color:var(--ink);font-weight:500}
+.ctrls{display:flex;gap:6px}
+.ctrl{height:36px;min-width:36px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--block);color:var(--ink);font:500 12px var(--mono);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.ctrl:hover{border-color:var(--muted)}
+@media (max-width:560px){.crumb{display:none}}
+
+/* ---- masa ---- */
+.table{position:relative;border-radius:22px;padding:14px;background:radial-gradient(120% 90% at 50% 40%,var(--felt1),var(--felt2));box-shadow:inset 0 0 0 10px #5b3a1d,inset 0 0 0 12px #3e2611,inset 0 20px 60px rgba(0,0,0,.35),0 30px 60px -40px rgba(0,0,0,.6);color:#f4f4f2;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.table::before{content:"";position:absolute;inset:12px;border-radius:14px;background-image:radial-gradient(var(--felt-line) 1px,transparent 1.4px);background-size:16px 16px;pointer-events:none}
+.table > *{position:relative}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 10px 10px}
+.bar .info{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--mono);padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.12)}
+.chip b{color:#ffd166}
+.grid3{display:grid;grid-template-columns:150px minmax(0,1fr) 150px;gap:10px;align-items:stretch}
+.seat{border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.1);padding:10px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;transition:box-shadow .2s,border-color .2s}
+.seat.turn{border-color:#ffd166;box-shadow:0 0 0 2px rgba(255,209,102,.5),0 0 30px -6px rgba(255,209,102,.7)}
+.seat .av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 17px var(--sans);color:#fff;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.5),transparent 45%),var(--c,#555);box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.seat .nm{font-weight:800;font-size:14px;line-height:1.1}
+.seat .meta{font:500 11px var(--mono);color:rgba(255,255,255,.7)}
+.seat .st{font:700 10.5px var(--mono);letter-spacing:.05em;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.12)}
+.seat .st.open{background:#ffd166;color:#3a2a00}
+.backs{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:100%}
+.backs i{width:9px;height:13px;border-radius:2px;background:linear-gradient(#efe6cf,#d6c9a6);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.seat.top{flex-direction:row;justify-content:center;gap:14px;padding:8px 14px}
+.seat.top .who{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left}
+.say{position:absolute;z-index:5;left:50%;top:-8px;transform:translate(-50%,-100%);background:#fff;color:#111;font:700 12px var(--sans);padding:5px 10px;border-radius:10px;white-space:nowrap;box-shadow:0 8px 20px -8px rgba(0,0,0,.5);opacity:0;transition:opacity .2s;pointer-events:none}
+.say.on{opacity:1}
+.seat{position:relative}
+
+.center{display:flex;flex-direction:column;gap:10px;min-height:300px}
+.melds{flex:1;border-radius:14px;background:rgba(0,0,0,.14);border:1px dashed rgba(255,255,255,.14);padding:10px;display:flex;flex-direction:column;gap:8px;overflow:auto;max-height:340px}
+.melds .empty{margin:auto;color:rgba(255,255,255,.55);font-size:14px;text-align:center}
+.mrow{display:flex;align-items:flex-start;gap:8px}
+.mrow .own{flex:none;width:58px;font:700 10.5px var(--mono);color:rgba(255,255,255,.7);padding-top:6px;text-transform:uppercase;letter-spacing:.04em}
+.mrow .ms{display:flex;flex-wrap:wrap;gap:8px}
+.meld{display:flex;gap:1px;padding:3px;border-radius:8px;background:rgba(0,0,0,.18);border:1px solid transparent;transition:border-color .15s,background .15s}
+.meld.drop,.meld.can{border-color:#ffd166;background:rgba(255,209,102,.18)}
+.meld .tile{--tw:26px;--th:36px;font-size:15px}
+.mid{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.pile{display:flex;flex-direction:column;align-items:center;gap:4px;font:600 10.5px var(--mono);color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.05em}
+.deck{position:relative;width:var(--tw);height:var(--th);border-radius:7px;background:linear-gradient(#efe6cf,#cfc19b);box-shadow:0 3px 0 #a8996f,0 6px 0 #9a8b62,0 10px 18px -6px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font:800 15px var(--mono);color:#6b5a2e;cursor:default}
+.deck.live,.side.live .tile{cursor:pointer;animation:glow 1.3s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 3px #ffd166,0 0 24px 2px rgba(255,209,102,.8)}}
+.slot-empty{width:var(--tw);height:var(--th);border-radius:7px;border:2px dashed rgba(255,255,255,.25)}
+.discard-zone{width:calc(var(--tw) + 14px);height:calc(var(--th) + 14px);border-radius:10px;border:2px dashed rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.discard-zone.drop,.discard-zone.can{border-color:#ffd166;background:rgba(255,209,102,.18)}
+
+/* ---- taş ---- */
+.tile{position:relative;width:var(--tw);height:var(--th);border-radius:7px;background:linear-gradient(180deg,#fffdf6,var(--tile));box-shadow:inset 0 -3px 0 var(--tile-edge),0 2px 0 rgba(0,0,0,.25),0 4px 8px -4px rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:calc(var(--th) * .12);font:900 calc(var(--th) * .42)/1 var(--sans);letter-spacing:-.04em;flex:none;transition:transform .12s}
+.tile::after{content:"";width:calc(var(--tw) * .22);height:calc(var(--tw) * .22);border-radius:50%;margin-top:auto;margin-bottom:calc(var(--th) * .14);background:currentColor;opacity:.85}
+.tile.k{color:var(--t-k)}.tile.s{color:var(--t-s)}.tile.m{color:var(--t-m)}.tile.y{color:var(--t-y)}
+.tile.fake::before{content:"★";position:absolute;top:calc(var(--th) * .08);font-size:calc(var(--th) * .46);color:#2a7a4f}
+.tile.fake span{visibility:hidden}
+.tile.joker{box-shadow:inset 0 -3px 0 var(--tile-edge),0 0 0 2px #ffd166,0 4px 10px -2px rgba(255,209,102,.7)}
+.tile.joker .jk{position:absolute;top:2px;right:3px;font-size:calc(var(--th) * .18);color:#d4a100}
+.tile.sel{transform:translateY(-8px);box-shadow:inset 0 -3px 0 var(--tile-edge),0 0 0 2px var(--accent),0 10px 16px -6px rgba(0,0,0,.6)}
+.tile.ghost{position:fixed;z-index:100;pointer-events:none;transform:scale(1.08) rotate(-3deg);box-shadow:0 18px 30px -10px rgba(0,0,0,.6)}
+.tile.dim{opacity:.35}
+.tile.new{animation:pop .35s ease}
+@keyframes pop{from{transform:translateY(-14px) scale(.8);opacity:0}}
+
+/* ---- ıstaka ---- */
+.rackwrap{margin-top:12px;padding:10px 12px 12px;border-radius:16px;background:linear-gradient(180deg,var(--wood1),var(--wood2));box-shadow:inset 0 2px 0 rgba(255,255,255,.25),inset 0 -4px 0 rgba(0,0,0,.25),0 18px 30px -18px rgba(0,0,0,.7)}
+.rackhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;color:#fff3e2}
+.meter{font:700 12.5px var(--mono);padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.25)}
+.meter b{color:#ffd166}.meter.ok b{color:#86efac}
+.rack{display:grid;grid-template-columns:repeat(15,var(--tw));grid-auto-rows:var(--th);gap:4px;justify-content:center;padding:6px;border-radius:10px;background:rgba(0,0,0,.18);box-shadow:inset 0 3px 8px rgba(0,0,0,.35)}
+.rack .slot{width:var(--tw);height:var(--th);border-radius:7px;background:rgba(0,0,0,.12)}
+.rack .slot.over{background:rgba(255,209,102,.35)}
+.rack .tile{cursor:grab}
+.acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 14px;border-radius:11px;font-weight:700;font-size:14px;border:0;cursor:pointer;transition:transform .12s,opacity .12s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn-a{background:var(--accent);color:#fff}
+.btn-g{background:#fff3e2;color:#3a2410}
+.btn-y{background:#ffd166;color:#3a2a00}
+.btn-d{background:rgba(0,0,0,.3);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.hint{text-align:center;font-size:13.5px;color:#fff3e2;margin-top:8px;min-height:20px}
+
+/* ---- pencereler ---- */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.mcard{width:100%;max-width:480px;background:var(--block);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:26px;box-shadow:0 30px 70px -30px rgba(0,0,0,.6)}
+.mcard h2{font-size:30px;font-weight:800;letter-spacing:-.035em;line-height:1.05;margin:8px 0 10px}
+.mcard p{color:var(--muted);font-size:15px}
+.mcard .btn{height:46px}
+.field{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.field input{height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px var(--sans);padding:0 14px;outline:none}
+.field input:focus{border-color:var(--accent)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.seg button{height:40px;border-radius:11px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--block);border-color:var(--ink)}
+.res{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+.res th{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+.res td{padding:8px 4px;border-bottom:1px solid var(--line)}
+.res td.n{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.res tr.win td{color:var(--ok)}
+.res small{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
+.row2{display:flex;gap:8px;margin-top:14px}
+.row2 .btn{flex:1}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--dark);color:var(--dark-ink);border:1px solid var(--dark-line);padding:12px 18px;border-radius:14px;font-weight:600;font-size:14px;box-shadow:0 20px 40px -18px rgba(0,0,0,.6);transition:opacity .25s,transform .25s;z-index:80;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.rot{display:none;text-align:center;font-size:13px;color:#fff3e2;margin-bottom:8px}
+
+/* ---- bilgi ---- */
+.info{margin-top:var(--gap);display:grid;gap:var(--gap)}
+.intro{padding:30px}
+.intro h1{font-size:clamp(30px,4.2vw,46px);font-weight:800;letter-spacing:-.035em;line-height:1.05;margin:12px 0 14px;max-width:820px}
+.intro p{color:var(--muted);font-size:17px;max-width:760px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+@media (max-width:820px){.cols{grid-template-columns:1fr}}
+.info h2{font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px}
+.rules{list-style:none;display:grid;gap:9px;color:var(--muted);font-size:15px}
+.rules li{padding-left:18px;position:relative}
+.rules li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.rules b{color:var(--ink)}
+.faq details{border-top:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:500 18px var(--mono);color:var(--muted)}
+.faq details[open] summary::after{content:"−"}
+.faq details p{color:var(--muted);font-size:15px;margin-top:8px}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 20px;margin-top:var(--gap);font-family:var(--mono);font-size:12px;color:var(--muted)}
+footer nav{display:flex;gap:16px}
+
+/* ---- dar ekran ---- */
+@media (max-width:900px){
+  :root{--tw:clamp(20px,calc((100vw - 92px) / 15),40px);--th:calc(var(--tw) * 1.38)}
+  .grid3{grid-template-columns:96px minmax(0,1fr) 96px;gap:6px}
+  .seat{padding:8px 4px}
+  .seat .av{width:32px;height:32px;font-size:14px}
+  .seat .nm{font-size:12px}
+  .backs i{width:6px;height:9px}
+  .melds{max-height:240px}
+  .meld .tile{--tw:20px;--th:28px;font-size:12px}
+  .mrow .own{width:40px;font-size:9px}
+}
+@media (max-width:600px){
+  .wrap{padding:8px 8px 30px}
+  .table{padding:10px 8px;border-radius:16px}
+  .grid3{grid-template-columns:62px minmax(0,1fr) 62px}
+  .seat .backs{display:none}
+  .rackwrap{padding:8px 6px 10px}
+  .rack{gap:2px;padding:4px}
+  .btn{height:36px;padding:0 10px;font-size:13px}
+  .rot{display:block}
+}
+/* yatay telefon: başlığı gizle, masayı sıkılaştır */
+@media (max-height:520px) and (orientation:landscape){
+  .wrap{padding:6px 8px 20px}
+  .top{display:none}
+  .rot{display:none!important}
+  :root{--tw:clamp(20px,calc((100vw - 120px) / 15),36px);--th:calc(var(--tw) * 1.3)}
+  .bar{padding:2px 6px 6px}
+  .seat.top{padding:4px 10px}
+  .seat .backs,.seat .meta + .tile{display:none}
+  .center{min-height:0}
+  .melds{max-height:110px}
+  .rackwrap{margin-top:6px;padding:6px 8px 8px}
+  .rackhead{margin-bottom:4px}
+  .acts{margin-top:6px}
+  .btn{height:32px;font-size:12.5px}
+  .hint{margin-top:4px;font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="b top">
+    <div class="brand">
+      <a href="/" class="logo" aria-label="okutan.org"><img class="l-light" src="/assets/logo.svg" width="96" height="26" alt="okutan"><img class="l-dark" src="/assets/logo-dark.svg" width="96" height="26" alt="okutan"></a>
+      <span class="crumb">Oyun / <b>101 Okey</b></span>
+    </div>
+    <div class="ctrls">
+      <button class="ctrl" id="soundBtn" aria-label="Ses" aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="x" d="m16 9 6 6m0-6-6 6" style="display:none"/></svg>
+      </button>
+      <button class="ctrl" id="newBtn">Yeni oyun</button>
+      <button class="ctrl" id="themeBtn" aria-label="Tema"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    </div>
+  </header>
+
+  <main class="table" id="table" aria-label="101 Okey masası">
+    <div class="rot">📱 Telefonu yatay çevirirsen taşlar büyür.</div>
+    <div class="bar">
+      <div class="info">
+        <span class="chip" id="handChip">El 1/5</span>
+        <span class="chip">Gösterge <span id="indMini"></span></span>
+        <span class="chip">Okey <span id="okeyMini"></span></span>
+      </div>
+      <div class="info" id="scoreChips"></div>
+    </div>
+
+    <div class="seat top" id="seat2"></div>
+    <div class="grid3" style="margin-top:10px">
+      <div class="seat" id="seat3"></div>
+      <div class="center">
+        <div class="melds" id="melds"><p class="empty">Masada henüz per yok.<br>101'e ulaşan ilk oyuncu elini açar.</p></div>
+        <div class="mid">
+          <div class="pile"><span>Yandan</span><div class="side" id="sidePile"></div></div>
+          <div class="pile"><span>Deste</span><div class="deck" id="deck">0</div></div>
+          <div class="pile"><span>Gösterge</span><div id="indPile"></div></div>
+          <div class="pile"><span>At</span><div class="discard-zone" id="discardZone"></div></div>
+        </div>
+      </div>
+      <div class="seat" id="seat1"></div>
+    </div>
+
+    <div class="rackwrap">
+      <div class="rackhead">
+        <span class="meter" id="meterSeri">Seri: <b>0</b> / 101</span>
+        <span class="meter" id="meterCift">Çift: <b>0</b> / 5</span>
+        <span class="meter" id="youInfo"></span>
+      </div>
+      <div class="rack" id="rack" aria-label="Istaka"></div>
+      <div class="acts">
+        <button class="btn btn-g" id="sortSeri">Seri diz</button>
+        <button class="btn btn-g" id="sortCift">Çift diz</button>
+        <button class="btn btn-y" id="openSeri">Seri aç</button>
+        <button class="btn btn-y" id="openCift">Çift aç</button>
+        <button class="btn btn-y" id="layBtn" hidden>Per ekle</button>
+        <button class="btn btn-a" id="discardBtn">Seçili taşı at</button>
+        <button class="btn btn-d" id="returnBtn" hidden>Yan taşı geri koy (+101)</button>
+      </div>
+      <div class="hint" id="hint"></div>
+    </div>
+  </main>
+
+  <section class="info" aria-labelledby="pageTitle">
+    <div class="b intro">
+      <div class="label">Ücretsiz · Tarayıcıda · Üyeliksiz</div>
+      <h1 id="pageTitle">101 Okey Oyna: Gerçek Kahvehane Kurallarıyla, Ücretsiz</h1>
+      <p>101 Okey'i tarayıcında, indirme ve üyelik olmadan üç bilgisayar rakibe karşı oyna. Taşlarını ıstakada sürükleyerek diz, 101 puanla elini aç ya da çifte git, masadaki perlere taş işle ve elini ilk bitiren ol. Oyun sonunda en düşük puan kazanır.</p>
+    </div>
+    <div class="cols">
+      <div class="b">
+        <h2>Nasıl oynanır?</h2>
+        <ul class="rules">
+          <li><b>Sıran gelince</b> desteden ya da soldaki rakibin attığı taşı (yandan) çek, sonra bir taş at.</li>
+          <li><b>Taşları ıstakada sürükle.</b> Yan yana duran taşlar bir grup sayılır; aralarına boşluk bırakarak perlerini ayır.</li>
+          <li><b>Seri diz / Çift diz</b> düğmeleri taşlarını en iyi şekilde senin için dizer.</li>
+          <li>Göstergedeki sayaç 101'e (ya da 5 çifte) ulaşınca <b>Seri aç</b> veya <b>Çift aç</b> ile elini aç.</li>
+          <li>Açtıktan sonra yeni perlerini <b>Per ekle</b> ile masaya koy; tek taşı masadaki bir perin üstüne sürükleyerek <b>işle</b>.</li>
+          <li>Taş atmak için atma alanına sürükle ya da taşa dokunup <b>Seçili taşı at</b>'a bas.</li>
+        </ul>
+      </div>
+      <div class="b">
+        <h2>Kurallar ve puanlama</h2>
+        <ul class="rules">
+          <li><b>Okey:</b> göstergenin aynı renkteki bir fazlası; her taşın yerine geçer. Sahte okey (★) okeyin değeriyle oynar.</li>
+          <li><b>Açma:</b> perlerin toplamı en az 101 ya da en az 5 çift. Başa dönen seri (12-13-1) yoktur.</li>
+          <li><b>Yandan alınan taş</b> o tur kullanılmalı; kullanılamazsa geri konur, 101 ceza yazılır.</li>
+          <li><b>Ceza (+101):</b> okey atmak, masaya işlenebilecek taşı atmak.</li>
+          <li><b>Bitiren −101</b> yazar. Açmayan 202; seriyle açan elinde kalanların toplamını, çiftle açan iki katını yazar. Elde kalan okey 101 sayılır.</li>
+          <li><b>Okeyle, çiftle ya da elden bitirmek</b> puanları ikiye katlar. Oyun sonunda en düşük toplam kazanır.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="b faq">
+      <h2>Sık sorulan sorular</h2>
+      <details><summary>101 Okey'de el nasıl açılır?</summary><p>Istakadaki perlerin (aynı renk ardışık seri ya da aynı sayı farklı renk) toplam değeri en az 101 olmalıdır. Alternatif olarak en az 5 çiftle de açılabilir.</p></details>
+      <details><summary>Okey ve gösterge nedir?</summary><p>El başında açılan taş göstergedir. Göstergenin aynı renkteki bir fazlası okeydir ve her taşın yerine geçer. 13 göstergenin okeyi 1'dir. Sahte okey, okeyin kendi değeriyle oynar.</p></details>
+      <details><summary>101 Okey'de puan nasıl hesaplanır?</summary><p>Eli bitiren -101 yazar. Açmayan 202, seriyle açan elinde kalan taşların toplamını, çiftle açan bu toplamın iki katını yazar. Okeyle, çiftle ya da elden bitirmek puanları ikiye katlar. Oyun sonunda en düşük toplam kazanır.</p></details>
+      <details><summary>Hangi durumlarda ceza yazılır?</summary><p>Okey atmak ve masadaki bir pere işlenebilecek taşı atmak 101 ceza yazdırır. Yandan alınan taş o tur kullanılamazsa geri konur ve yine 101 ceza yazılır.</p></details>
+    </div>
+  </section>
+
+  <footer class="b">
+    <span>© <span id="yr">2026</span> Sedat Okutan</span>
+    <nav aria-label="Diğer oyunlar"><a href="/">okutan.org</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
+  </footer>
+</div>
+
+<!-- Başlangıç -->
+<div class="modal" id="startModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="startTitle">
+    <div class="label">Ücretsiz · 3 bilgisayar rakip</div>
+    <h2 id="startTitle">101 Okey</h2>
+    <p>Kahvehane kurallarıyla 101. Taşlarını diz, 101 ile aç ya da çifte git, elini ilk bitiren ol.</p>
+    <div class="field"><label class="label" for="nameIn">Adın</label><input id="nameIn" maxlength="16" placeholder="Sen" autocomplete="nickname"></div>
+    <div class="field"><span class="label">El sayısı</span><div class="seg" id="handsSeg"><button data-h="1">1</button><button data-h="3">3</button><button data-h="5" aria-pressed="true">5</button><button data-h="9">9</button></div></div>
+    <div class="field"><span class="label">Rakip hızı</span><div class="seg" id="speedSeg" style="grid-template-columns:repeat(3,1fr)"><button data-s="1.6">Yavaş</button><button data-s="1" aria-pressed="true">Normal</button><button data-s="0.45">Hızlı</button></div></div>
+    <div class="row2"><button class="btn btn-a" id="startBtn">Oyuna başla</button></div>
+    <p id="resumeNote" style="margin-top:10px;font-size:13px" hidden></p>
+  </div>
+</div>
+
+<!-- El sonu -->
+<div class="modal" id="endModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <div class="label" id="endLabel">El bitti</div>
+    <h2 id="endTitle">—</h2>
+    <p id="endSub"></p>
+    <table class="res"><thead><tr><th>Oyuncu</th><th style="text-align:right">Bu el</th><th style="text-align:right">Toplam</th></tr></thead><tbody id="endRows"></tbody></table>
+    <div class="row2"><button class="btn btn-a" id="nextBtn">Sonraki el</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="okey-motor.js?v=1" defer></script>
+<script src="okey.js?v=1" defer></script>
+</body>
+</html>
