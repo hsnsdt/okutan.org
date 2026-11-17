@@ -65,6 +65,14 @@
     m1: 'Drag your finger across the board to aim', m2: 'Lift your finger to shoot', m3: 'Tap the next bubble (bottom left) to swap',
     m4: 'Tap the New game, Pause and sound buttons',
     'lb.l': 'Online ranking', 'lb.t': 'Leaderboard', 'lb.day': 'Today', 'lb.week': 'This week', 'lb.all': 'All time',
+    'c.record': 'NEW RECORD!', 'p.1': 'GREAT!', 'p.2': 'AMAZING!', 'p.3': 'LEGENDARY!',
+    'r.togo': '{n} pts to beat your record', 'r.new': 'New record! Previous: {n}', 'r.first': 'Your first record!',
+    'sh.text': 'I scored {s} in Bubble Pop! Can you beat me?', 'sh.saved': 'Image downloaded',
+    'toast.pass': '{n} just passed you! Weekly rank: #{r}', 'toast.pass2': 'Someone passed you! Weekly rank: #{r}',
+    'bdg.crown': 'All-time #1', 'bdg.fire': 'Today\'s best', 'fs': 'Full screen',
+    'skin.l': 'Appearance', 'sk.glass': 'Glass', 'sk.flat': 'Matte', 'sk.shapes': 'Shapes', 'sk.neon': 'Neon',
+    'r.pop': 'Popped', 'r.drop': 'Dropped', 'r.big': 'Biggest blast', 'r.streak': 'Best streak', share: 'Share',
+    c10: 'Toggle full screen',
     'c.next': 'NEXT', 'c.surprise': 'SURPRISE!', 'c.bomb': 'BOOM!', 'c.bolt': 'ZAP!', 'c.joker': 'JOKER',
     'i.sp': 'Surprise bubbles', 'i.sp1': 'Bomb: explodes on impact and destroys bubbles up to two rings around it.',
     'i.sp2': 'Joker: turns into whichever color makes the biggest match where it lands.',
@@ -79,6 +87,11 @@
   };
   var TR = {
     'nick.saved': 'Kaydedildi. Skorların otomatik yazılacak.', 'm.prev': 'Önceki oyunun skoru kaydedildi: {s} puan.', 'm.auto': '{n} adıyla kaydediliyor…',
+    'c.record': 'YENİ REKOR!', 'p.1': 'HARİKA!', 'p.2': 'MÜKEMMEL!', 'p.3': 'EFSANE!',
+    'r.togo': 'Rekoruna {n} puan kaldı', 'r.new': 'Yeni rekor! Önceki: {n}', 'r.first': 'İlk rekorun bu!',
+    'sh.text': 'Balon Patlat\'ta {s} puan yaptım! Beni geçebilir misin?', 'sh.saved': 'Görsel indirildi',
+    'toast.pass': '{n} seni geçti! Haftalık sıran: #{r}', 'toast.pass2': 'Biri seni geçti! Haftalık sıran: #{r}',
+    'bdg.crown': 'Tüm zamanların birincisi', 'bdg.fire': 'Bugünün en iyisi', 'fs': 'Tam ekran',
     'c.next': 'SIRADAKİ', 'c.surprise': 'SÜRPRİZ!', 'c.bomb': 'BUM!', 'c.bolt': 'ŞİMŞEK!', 'c.joker': 'JOKER', 'c.level': 'SEVİYE', 'c.streak': 'SERİ', 'c.clear': 'TEMİZLENDİ!', 'c.drop': 'TAVAN',
     'lb.empty': 'Henüz skor yok. İlk sen ol!', 'lb.off': 'Liderlik tablosuna şu an ulaşılamıyor.',
     'lb.games': 'oyun', 'm.saving': 'Kaydediliyor…',
@@ -170,25 +183,67 @@
     over: function () { [392, 330, 262, 196].forEach(function (f, i) { tone(f, 0.3, 'triangle', 0.09, null, i * 0.16); }); },
     boom: function () { noise(0.5, 0.35, 180); noise(0.25, 0.2, 900); tone(90, 0.45, 'sawtooth', 0.12, 40); },
     zap: function () { for (var i = 0; i < 5; i++) noise(0.05, 0.18, 3000 + i * 400, i * 0.03); tone(1400, 0.25, 'square', 0.04, 200); },
-    warn: function () { tone(880, 0.06, 'square', 0.03); }
+    warn: function () { tone(880, 0.06, 'square', 0.03); },
+    praise: function (lv) { [659, 784, 988, 1319].slice(0, lv + 1).forEach(function (f, i) { tone(f, 0.16, 'triangle', 0.08, null, 0.05 + i * 0.07); }); },
+    record: function () { [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.2, 'square', 0.04, null, i * 0.08); tone(f * 2, 0.2, 'sine', 0.04, null, i * 0.08); }); }
   };
 
   // ---------- Çizim: ölçek ve balon görselleri ----------
   var scale = 1, sprites = [], graySprite = null;
-  function makeSprite(p) {
+  // Balon görünümü: glass (cam), flat (mat), shapes (renk körü dostu şekiller), neon
+  var SKINS = ['glass', 'flat', 'shapes', 'neon'], skin = SKINS.indexOf(lsGet('bp_skin')) >= 0 ? lsGet('bp_skin') : 'glass';
+  function drawSymbol(g, idx, m, r) {
+    var k = r * 0.42;
+    g.save(); g.translate(m, m); g.beginPath();
+    if (idx === 0) g.arc(0, 0, k * 0.85, 0, Math.PI * 2);
+    else if (idx === 1) { g.moveTo(0, -k); g.lineTo(k * 0.95, k * 0.75); g.lineTo(-k * 0.95, k * 0.75); g.closePath(); }
+    else if (idx === 2) g.rect(-k * 0.78, -k * 0.78, k * 1.56, k * 1.56);
+    else if (idx === 3) { g.moveTo(0, -k); g.lineTo(k, 0); g.lineTo(0, k); g.lineTo(-k, 0); g.closePath(); }
+    else if (idx === 4) { for (var j = 0; j < 10; j++) { var a = j * Math.PI / 5 - Math.PI / 2, rr = j % 2 ? k * 0.45 : k; g.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } g.closePath(); }
+    else { var w = k * 0.36; g.rect(-w, -k, w * 2, k * 2); g.rect(-k, -w, k * 2, w * 2); }
+    g.fillStyle = 'rgba(255,255,255,.95)'; g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = Math.max(1, r * 0.08);
+    g.stroke(); g.fill(); g.restore();
+  }
+  function makeSprite(p, idx) {
     var s = Math.ceil(D * scale) + 4, c = document.createElement('canvas');
     c.width = c.height = s;
-    var g = c.getContext('2d'), m = s / 2, r = D * scale / 2 - 0.5;
-    var grd = g.createRadialGradient(m - r * 0.35, m - r * 0.4, r * 0.1, m, m, r);
-    grd.addColorStop(0, p.h); grd.addColorStop(0.42, p.b); grd.addColorStop(1, p.l);
-    g.beginPath(); g.arc(m, m, r, 0, Math.PI * 2); g.fillStyle = grd; g.fill();
-    g.lineWidth = Math.max(1, scale * 0.8); g.strokeStyle = 'rgba(0,0,0,.18)'; g.stroke();
-    // parlama
-    g.beginPath(); g.ellipse(m - r * 0.32, m - r * 0.42, r * 0.36, r * 0.22, -0.6, 0, Math.PI * 2);
-    g.fillStyle = 'rgba(255,255,255,.62)'; g.fill();
-    g.beginPath(); g.arc(m + r * 0.38, m + r * 0.42, r * 0.12, 0, Math.PI * 2);
-    g.fillStyle = 'rgba(255,255,255,.22)'; g.fill();
+    var g = c.getContext('2d'), m = s / 2, r = D * scale / 2 - 0.5, grd;
+    if (skin === 'flat') {
+      g.beginPath(); g.arc(m, m, r, 0, Math.PI * 2); g.fillStyle = p.b; g.fill();
+      g.save(); g.clip(); g.beginPath(); g.arc(m, m + r * 1.25, r * 1.05, 0, Math.PI * 2); g.fillStyle = 'rgba(0,0,0,.14)'; g.fill(); g.restore();
+      g.beginPath(); g.arc(m - r * 0.38, m - r * 0.38, r * 0.17, 0, Math.PI * 2); g.fillStyle = 'rgba(255,255,255,.55)'; g.fill();
+    } else if (skin === 'neon') {
+      grd = g.createRadialGradient(m, m, r * 0.1, m, m, r);
+      grd.addColorStop(0, 'rgba(10,10,14,.92)'); grd.addColorStop(0.7, 'rgba(10,10,14,.92)'); grd.addColorStop(1, p.l);
+      g.beginPath(); g.arc(m, m, r * 0.96, 0, Math.PI * 2); g.fillStyle = grd; g.fill();
+      g.shadowColor = p.b; g.shadowBlur = 7 * scale;
+      g.beginPath(); g.arc(m, m, r * 0.74, 0, Math.PI * 2); g.lineWidth = r * 0.2; g.strokeStyle = p.b; g.stroke();
+      g.shadowBlur = 0;
+      g.beginPath(); g.arc(m, m, r * 0.74, 0, Math.PI * 2); g.lineWidth = r * 0.06; g.strokeStyle = p.h; g.stroke();
+      grd = g.createRadialGradient(m, m, 0, m, m, r * 0.6);
+      grd.addColorStop(0, p.b + '66'); grd.addColorStop(1, 'rgba(0,0,0,0)');
+      g.beginPath(); g.arc(m, m, r * 0.6, 0, Math.PI * 2); g.fillStyle = grd; g.fill();
+    } else {
+      grd = g.createRadialGradient(m - r * 0.35, m - r * 0.4, r * 0.1, m, m, r);
+      grd.addColorStop(0, p.h); grd.addColorStop(0.42, p.b); grd.addColorStop(1, p.l);
+      g.beginPath(); g.arc(m, m, r, 0, Math.PI * 2); g.fillStyle = grd; g.fill();
+      g.lineWidth = Math.max(1, scale * 0.8); g.strokeStyle = 'rgba(0,0,0,.18)'; g.stroke();
+      // parlama
+      g.beginPath(); g.ellipse(m - r * 0.32, m - r * 0.42, r * 0.36, r * 0.22, -0.6, 0, Math.PI * 2);
+      g.fillStyle = 'rgba(255,255,255,.62)'; g.fill();
+      g.beginPath(); g.arc(m + r * 0.38, m + r * 0.42, r * 0.12, 0, Math.PI * 2);
+      g.fillStyle = 'rgba(255,255,255,.22)'; g.fill();
+    }
+    if (skin === 'shapes' && idx != null) drawSymbol(g, idx, m, r);
     return c;
+  }
+  function buildSprites() {
+    sprites = PALETTE.map(function (p, i) { return makeSprite(p, i); }); graySprite = makeSprite(GRAY);
+  }
+  function setSkin(k) {
+    if (SKINS.indexOf(k) < 0) return;
+    skin = k; lsSet('bp_skin', k); buildSprites();
+    document.querySelectorAll('.skins button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.skin === k ? 'true' : 'false'); });
   }
   // Sürpriz balonlar: 10 bomba, 11 joker (gökkuşağı), 12 yıldırım
   var BOMB = 10, JOKER = 11, BOLT = 12, specialSprites = [];
@@ -243,7 +298,7 @@
     var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
     cv.width = Math.round(rect.width * dpr); cv.height = Math.round(rect.width * dpr * H / W);
     scale = cv.width / W;
-    sprites = PALETTE.map(makeSprite); graySprite = makeSprite(GRAY);
+    buildSprites();
     specialSprites = [makeSpecial(BOMB), makeSpecial(JOKER), makeSpecial(BOLT)];
   }
   if (window.ResizeObserver) new ResizeObserver(resize).observe(cv); else addEventListener('resize', resize);
@@ -379,7 +434,13 @@
   // ---------- Oyun durumu ----------
   var state = 'idle', level = 1, score = 0, shots = 0, gains = [], streak = 0, missLimit = 6, missLeft = 6;
   var cur = 0, nxt = 1, ball = null, angle = -Math.PI / 2, lastShot = 0, holdUntil = 0, overT = 0;
-  var shake = 0;
+  var shake = 0, recoil = 0, loadT = 1, praise = null, confetti = [], recordBroken = false, gs = {};
+  function resetStats() { gs = { popped: 0, dropped: 0, biggest: 0, maxStreak: 0, bomb: 0, joker: 0, bolt: 0 }; }
+  resetStats();
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
   var fx = [], texts = [], banner = null, token = null, best = +(lsGet('bp_best') || 0);
   var shownScore = 0;
 
@@ -387,6 +448,7 @@
   function updateHud(bump) {
     $('level').textContent = level; $('shots').textContent = shots; $('best').textContent = fmt(Math.max(best, score));
     var sk = $('streak'); sk.textContent = '×' + Math.max(1, Math.min(streak, 5)); sk.classList.toggle('hot', streak > 1);
+    $('scCard').classList.toggle('fire', streak >= 3 && state === 'play');
     var ms = $('miss'); ms.textContent = missLeft + '/' + missLimit; ms.classList.toggle('hot', missLeft === 1 && state === 'play');
     if (bump) { var n = $('score'); n.classList.remove('bump'); void n.offsetWidth; n.classList.add('bump'); }
   }
@@ -405,6 +467,8 @@
       setTimeout(loadBoard, 1500);
     } else if (token) ping(true);
     level = 1; score = 0; shownScore = 0; shots = 0; gains = []; streak = 0; ball = null; fx = []; texts = []; overT = 0;
+    praise = null; confetti = []; recordBroken = false; recoil = 0; loadT = 1; resetStats();
+    $('scCard').classList.remove('record', 'fire');
     missLimit = missLeft = calcMissLimit();
     newBoard();
     cur = randColor(); nxt = randColor();
@@ -447,6 +511,8 @@
     lastShot = now;
     ball = { x: SH_X, y: SH_Y, vx: Math.cos(angle), vy: Math.sin(angle), color: cur };
     cur = nxt; nxt = nextBall();
+    recoil = 1; loadT = 0;
+    fx.push({ k: 'flash', x: SH_X + Math.cos(angle) * 50, y: SH_Y + Math.sin(angle) * 50, t: 0, life: 0.15, r: 14 });
     sfx.shoot();
   }
   var sinceSpecial = 0;
@@ -486,6 +552,14 @@
     var k = fl.length;
     gain += 20 * k * (1 + Math.floor(k / 10));
     if (k) sfx.drop(k);
+    gs.popped += cells.length; gs.dropped += k;
+    var total = cells.length + k;
+    if (total > gs.biggest) gs.biggest = total;
+    if (total >= 10) {
+      var lv = total >= 25 ? 3 : total >= 15 ? 2 : 1;
+      praise = { text: t('p.' + lv), t: 0, lv: lv };
+      sfx.praise(lv);
+    }
     addText(ox, oy, '+' + gain, false);
     if (mult > 1) addText(ox, oy + 22, t('c.streak') + ' ×' + mult, false, C.accent);
     if (boardEmpty()) {
@@ -533,18 +607,20 @@
         sfx.zap();
         banner = { text: t('c.bolt'), t: 0.4 };
       }
+      gs[color === BOMB ? 'bomb' : 'bolt']++;
       if (cells.length) { streak++; gain = blast(cells, r, c, Math.min(streak, 5)); sfx.pop(Math.min(cells.length, 8), streak); }
       else miss();
     } else {
       if (color === JOKER) {
+        gs.joker++;
         // komşulardaki renkler arasından en büyük eşleşmeyi veren renk
-        var best = -1, bestN = 0, n = neighbors(r, c);
+        var bestCol = -1, bestN = 0, n = neighbors(r, c);
         n.forEach(function (p) {
           var col = grid[p[0]][p[1]]; if (col < 0) return;
           grid[r][c] = col; var size = flood(r, c, true).length; grid[r][c] = -1;
-          if (size > bestN) { bestN = size; best = col; }
+          if (size > bestN) { bestN = size; bestCol = col; }
         });
-        color = best >= 0 ? best : randColor();
+        color = bestCol >= 0 ? bestCol : randColor();
         fx.push({ k: 'ring', x: cx(r, c), y: cy(r), t: 0, col: '#ffffff', max: D * 1.4 });
         addText(cx(r, c), cy(r) - 24, t('c.joker'), false, C.accent);
       }
@@ -558,12 +634,29 @@
       } else miss();
     }
     gains.push(gain); score += gain;
+    if (streak > gs.maxStreak) gs.maxStreak = streak;
     if (gain) updateHud(true); else updateHud();
     if (state !== 'play') return;
+    // 6) oyun içinde rekor kırıldı
+    if (!recordBroken && best > 0 && score > best) celebrateRecord();
     var p = presentColors();
     if (p.length) {
       if (!isSpecial(cur) && p.indexOf(cur) < 0) cur = randColor();
       if (!isSpecial(nxt) && p.indexOf(nxt) < 0) nxt = randColor();
+    }
+  }
+
+  function celebrateRecord() {
+    recordBroken = true;
+    banner = { text: t('c.record'), t: 0 };
+    sfx.record();
+    var card = $('scCard'); card.classList.remove('record'); void card.offsetWidth; card.classList.add('record');
+    for (var i = 0; i < 90; i++) {
+      confetti.push({
+        x: Math.random() * W, y: -10 - Math.random() * 160, vx: (Math.random() - 0.5) * 80, vy: 90 + Math.random() * 140,
+        rot: Math.random() * 6, vr: (Math.random() - 0.5) * 10, w: 5 + Math.random() * 4, h: 8 + Math.random() * 6,
+        c: PALETTE[i % PALETTE.length].b
+      });
     }
   }
 
@@ -578,13 +671,15 @@
 
   function gameOver() {
     state = 'over'; overT = 0; ball = null; sfx.over();
-    var isBest = score > best;
+    $('scCard').classList.remove('fire');
+    var prevBest = best, isBest = score > best;
     if (isBest) { best = score; lsSet('bp_best', String(best)); }
     updateHud();
     setTimeout(function () {
       $('endScore').firstChild.nodeValue = fmt(score);
       $('endLevel').textContent = level; $('endShots').textContent = shots;
       $('newBest').classList.toggle('on', isBest && score > 0);
+      fillReport(isBest, prevBest);
       var m = $('saveMsg'); m.className = 'msg'; m.textContent = '';
       var form = $('saveForm');
       form.style.display = score > 0 ? '' : 'none';
@@ -600,6 +695,119 @@
       }
     }, 1300);
   }
+
+  function fillReport(isBest, prevBest) {
+    $('rPop').textContent = fmt(gs.popped); $('rDrop').textContent = fmt(gs.dropped);
+    $('rBig').textContent = fmt(gs.biggest); $('rStreak').textContent = '×' + Math.max(1, Math.min(gs.maxStreak, 5));
+    var sp = [];
+    if (gs.bomb) sp.push('<span class="mini bomb"></span>' + gs.bomb);
+    if (gs.joker) sp.push('<span class="mini joker"></span>' + gs.joker);
+    if (gs.bolt) sp.push('<span class="mini bolt"></span>' + gs.bolt);
+    $('rSp').innerHTML = sp.join(''); $('rSp').hidden = !sp.length;
+    var tg = $('rToGo');
+    if (score <= 0) tg.textContent = '';
+    else if (isBest) tg.textContent = prevBest > 0 ? t('r.new').replace('{n}', fmt(prevBest)) : t('r.first');
+    else tg.textContent = t('r.togo').replace('{n}', fmt(best - score + 10));
+    tg.classList.toggle('win', isBest && score > 0);
+    $('shareRow').hidden = score <= 0;
+  }
+
+  // ---------- Paylaşım görseli ----------
+  var SHARE_URL = 'https://okutan.org/balon/';
+  function shareBall(g, x, y, r, p) {
+    var grd = g.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r);
+    grd.addColorStop(0, p.h); grd.addColorStop(0.42, p.b); grd.addColorStop(1, p.l);
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = grd; g.fill();
+    g.beginPath(); g.ellipse(x - r * 0.32, y - r * 0.42, r * 0.36, r * 0.22, -0.6, 0, Math.PI * 2);
+    g.fillStyle = 'rgba(255,255,255,.6)'; g.fill();
+  }
+  function makeShareImage() {
+    var c = document.createElement('canvas'); c.width = 1200; c.height = 630;
+    var g = c.getContext('2d');
+    g.fillStyle = '#121212'; g.fillRect(0, 0, 1200, 630);
+    g.fillStyle = '#262626';
+    for (var yy = 12; yy < 630; yy += 24) for (var xx = 12; xx < 1200; xx += 24) { g.beginPath(); g.arc(xx, yy, 1.3, 0, 6.3); g.fill(); }
+    // balon kümesi (sağ)
+    var rr = 26, rh = rr * Math.sqrt(3);
+    for (var row = 0; row < 7; row++) for (var col = 0; col < 8; col++) {
+      if (row > 3 && (col + row) % 3 === 0) continue;
+      if (row === 6 && col > 4) continue;
+      shareBall(g, 760 + col * rr * 2 + (row % 2 ? rr : 0), 70 + row * rh, rr - 1, PALETTE[(row * 3 + col * 5) % 6]);
+    }
+    g.textBaseline = 'alphabetic';
+    g.fillStyle = '#9a9a9a'; g.font = '500 20px "JetBrains Mono", monospace';
+    g.fillText('OKUTAN.ORG/BALON', 72, 92);
+    g.font = '800 64px "Inter Tight", sans-serif'; g.fillStyle = '#f4f4f2'; g.fillText('Balon', 72, 168);
+    g.fillStyle = '#ff5a1f'; g.fillText('Patlat', 72 + g.measureText('Balon ').width, 168);
+    g.font = '800 150px "Inter Tight", sans-serif'; g.fillStyle = '#f4f4f2';
+    var sc = fmt(score); g.fillText(sc, 66, 330);
+    var sw = g.measureText(sc).width;
+    g.font = '500 22px "JetBrains Mono", monospace'; g.fillStyle = '#9a9a9a';
+    g.fillText(lang === 'en' ? 'PTS' : 'PUAN', 76 + sw, 330);
+    var nk = lsGet('bp_name') || '';
+    g.font = '700 30px "Inter Tight", sans-serif'; g.fillStyle = '#f4f4f2';
+    g.fillText((nk ? nk + ' · ' : '') + (lang === 'en' ? 'Level ' : 'Seviye ') + level, 72, 382);
+    var stats = [[gs.popped, t('r.pop')], [gs.dropped, t('r.drop')], [gs.biggest, t('r.big')], ['×' + Math.max(1, Math.min(gs.maxStreak, 5)), t('r.streak')]];
+    stats.forEach(function (st, i) {
+      var x = 72 + i * 170;
+      g.fillStyle = 'rgba(255,255,255,.06)'; g.strokeStyle = '#2a2a2a'; g.lineWidth = 2;
+      g.beginPath(); if (g.roundRect) g.roundRect(x, 420, 156, 92, 14); else g.rect(x, 420, 156, 92); g.fill(); g.stroke();
+      g.fillStyle = '#f4f4f2'; g.font = '800 34px "Inter Tight", sans-serif'; g.fillText(typeof st[0] === 'number' ? fmt(st[0]) : st[0], x + 16, 466);
+      g.fillStyle = '#9a9a9a'; g.font = '500 14px "JetBrains Mono", monospace'; g.fillText(String(st[1]).toUpperCase().slice(0, 16), x + 16, 494);
+    });
+    g.fillStyle = '#ff5a1f'; g.font = '700 26px "Inter Tight", sans-serif';
+    g.fillText(lang === 'en' ? 'Can you beat me? → okutan.org/balon' : 'Beni geçebilir misin? → okutan.org/balon', 72, 572);
+    return c;
+  }
+  function shareText() { return t('sh.text').replace('{s}', fmt(score)); }
+  function downloadImage(c) {
+    var a = document.createElement('a'); a.download = 'balon-patlat-' + score + '.png'; a.href = c.toDataURL('image/png');
+    document.body.appendChild(a); a.click(); a.remove(); showToast(t('sh.saved'));
+  }
+  $('shareBtn').onclick = function () {
+    var c = makeShareImage(), txt = shareText();
+    c.toBlob(function (blob) {
+      var file = null;
+      try { file = new File([blob], 'balon-patlat.png', { type: 'image/png' }); } catch (e) {}
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], text: txt + ' ' + SHARE_URL }).catch(function () {});
+      } else if (navigator.share) {
+        navigator.share({ text: txt, url: SHARE_URL }).catch(function () {});
+      } else downloadImage(c);
+    }, 'image/png');
+  };
+  $('dlBtn').onclick = function () { downloadImage(makeShareImage()); };
+  $('waBtn').onclick = function () { window.open('https://wa.me/?text=' + encodeURIComponent(shareText() + ' ' + SHARE_URL), '_blank', 'noopener'); };
+  $('xBtn').onclick = function () { window.open('https://x.com/intent/post?text=' + encodeURIComponent(shareText()) + '&url=' + encodeURIComponent(SHARE_URL), '_blank', 'noopener'); };
+
+  // ---------- Bildirim (toast) ----------
+  var toastTimer = 0;
+  function showToast(msg) {
+    var el = $('toast'); el.textContent = msg; el.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.classList.remove('show'); }, 4200);
+  }
+
+  // ---------- 9) Tam ekran ----------
+  var gameBox = $('stage').closest('.game');
+  var fsOK = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  if (!fsOK) $('fsBtn').hidden = true;
+  function isFs() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function toggleFs() {
+    if (!fsOK) return;
+    try {
+      var pr = isFs() ? (document.exitFullscreen || document.webkitExitFullscreen).call(document)
+        : (gameBox.requestFullscreen || gameBox.webkitRequestFullscreen).call(gameBox);
+      if (pr && pr.catch) pr.catch(function () {});
+    } catch (e) {}
+  }
+  $('fsBtn').onclick = toggleFs;
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) {
+    document.addEventListener(ev, function () { $('fsBtn').setAttribute('aria-pressed', isFs() ? 'true' : 'false'); });
+  });
+
+  // ---------- Görünüm seçici ----------
+  document.querySelectorAll('.skins button').forEach(function (b) { b.onclick = function () { setSkin(b.dataset.skin); }; });
+  setSkin(skin);
 
   function showOv(id) {
     ['ovStart', 'ovEnd', 'ovPause'].forEach(function (o) { $(o).classList.toggle('show', o === id); });
@@ -647,6 +855,7 @@
     else if (k === ' ' || k === 'ArrowUp') { e.preventDefault(); if (state === 'play') { ensureAudio(); fire(); } }
     else if (k === 'x' || k === 'X') swap();
     else if (k === 'm' || k === 'M') $('soundBtn').click();
+    else if (k === 'f' || k === 'F') toggleFs();
     else if (k === 'p' || k === 'P' || k === 'Escape') { state === 'play' ? pause() : resume(); }
     else if (k === 'Enter' && $('ovStart').classList.contains('show')) startGame();
   });
@@ -686,11 +895,20 @@
       else if (f.k === 'fall') { f.vy += 1500 * dt; f.x += f.vx * dt; f.y += f.vy * dt; if (f.y > H + D) fx.splice(j, 1); }
       else if (f.k === 'ring' || f.k === 'bolt') { if (f.t > 0.45) fx.splice(j, 1); }
       else if (f.k === 'spark') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 300 * dt; if (f.t > f.life) fx.splice(j, 1); }
+      else if (f.k === 'shard') { f.vy += 900 * dt; f.x += f.vx * dt; f.y += f.vy * dt; f.rot += f.vr * dt; if (f.t > f.life) fx.splice(j, 1); }
+      else if (f.k === 'flash') { if (f.t > f.life) fx.splice(j, 1); }
     }
     for (var q = texts.length - 1; q >= 0; q--) { texts[q].t += dt; if (texts[q].t > 1.1) texts.splice(q, 1); }
     if (banner) { banner.t += dt; if (banner.t > 1.6) banner = null; }
     if (state === 'over') overT += dt;
     if (shake > 0) shake = Math.max(0, shake - dt);
+    if (recoil > 0) recoil = Math.max(0, recoil - dt * 6);
+    if (loadT < 1) loadT = Math.min(1, loadT + dt * 4);
+    if (praise) { praise.t += dt; if (praise.t > 1.3) praise = null; }
+    for (var ci = confetti.length - 1; ci >= 0; ci--) {
+      var cf = confetti[ci]; cf.x += cf.vx * dt; cf.y += cf.vy * dt; cf.rot += cf.vr * dt; cf.vx += Math.sin(cf.y / 30) * 6 * dt;
+      if (cf.y > H + 20) confetti.splice(ci, 1);
+    }
     if (shownScore !== score) {
       shownScore += Math.max(1, (score - shownScore) * Math.min(1, dt * 10));
       if (shownScore > score) shownScore = score;
@@ -717,6 +935,23 @@
     ctx.clearRect(0, 0, W, H);
     if (shake > 0) { var sa = shake * 18; ctx.translate((Math.random() - 0.5) * sa, (Math.random() - 0.5) * sa); }
 
+    // 5) seviyeye göre zemin tonu
+    var TINTS = [null, '#ff5a1f', '#3366ff', '#22b35e', '#a845e8', '#12b4c8', '#ffc21a'];
+    var tc = state !== 'idle' ? TINTS[(level - 1) % TINTS.length] : null;
+    if (tc) {
+      var tg = ctx.createLinearGradient(0, 0, 0, H);
+      tg.addColorStop(0, hexA(tc, 0.13)); tg.addColorStop(0.7, hexA(tc, 0.03)); tg.addColorStop(1, hexA(tc, 0));
+      ctx.fillStyle = tg; ctx.fillRect(0, 0, W, H);
+    }
+    // 4) tehlike: balonlar çizgiye yaklaştıkça alttan kırmızı nabız
+    var dr = state === 'play' ? dangerRows() : 99;
+    if (dr <= 3) {
+      var inten = (4 - dr) / 4, puls = 0.5 + 0.5 * Math.sin(now / (dr <= 0 ? 70 : dr <= 1 ? 110 : 170));
+      var dg = ctx.createLinearGradient(0, DEAD_Y - 200, 0, H);
+      dg.addColorStop(0, 'rgba(220,38,38,0)'); dg.addColorStop(0.55, 'rgba(220,38,38,' + (0.06 + 0.16 * inten * puls) + ')');
+      dg.addColorStop(1, 'rgba(220,38,38,' + (0.1 + 0.2 * inten * puls) + ')');
+      ctx.fillStyle = dg; ctx.fillRect(0, DEAD_Y - 200, W, H - DEAD_Y + 200);
+    }
     // ölüm çizgisi
     var danger = state === 'play' && dangerRows() <= 2;
     ctx.save();
@@ -743,6 +978,11 @@
         if (f.t < 0) { drawBall(f.c, f.x, f.y); return; }
         if (!f.burst) {
           f.burst = 1;
+          fx.push({ k: 'flash', x: f.x, y: f.y, t: 0, life: 0.18, r: R * 1.5 });
+          for (var h = 0; h < 2; h++) {
+            var dir = h ? 1 : -1;
+            fx.push({ k: 'shard', x: f.x + dir * 3, y: f.y, c: f.c, side: h, vx: dir * (70 + Math.random() * 90), vy: -90 - Math.random() * 110, rot: 0, vr: dir * (4 + Math.random() * 5), t: 0, life: 0.55 });
+          }
           for (var i = 0; i < 6; i++) {
             var a = Math.random() * Math.PI * 2, sp = 80 + Math.random() * 160;
             fx.push({ k: 'spark', x: f.x, y: f.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, c: f.c, t: 0, life: 0.35 + Math.random() * 0.25 });
@@ -768,6 +1008,16 @@
         ctx.globalAlpha = Math.max(0, 0.25 - qb * 0.5); ctx.fillStyle = '#ffd43b';
         ctx.fillRect(0, Math.min(f.y, f.y2) - R, W, Math.abs(f.y - f.y2) + D);
         ctx.globalAlpha = 1;
+      } else if (f.k === 'shard') {
+        var qa = f.t / f.life, pc = PALETTE[f.c] || GRAY;
+        ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot); ctx.globalAlpha = Math.max(0, 1 - qa);
+        ctx.beginPath(); ctx.arc(0, 0, R * 0.9, f.side ? -Math.PI / 2 : Math.PI / 2, f.side ? Math.PI / 2 : Math.PI * 1.5); ctx.closePath();
+        ctx.fillStyle = pc.b; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = pc.h; ctx.stroke();
+        ctx.restore();
+      } else if (f.k === 'flash') {
+        var qf = f.t / f.life, fg = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * (0.6 + qf));
+        fg.addColorStop(0, 'rgba(255,255,255,' + (0.85 * (1 - qf)) + ')'); fg.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (0.6 + qf), 0, Math.PI * 2); ctx.fill();
       } else if (f.k === 'spark') {
         ctx.globalAlpha = Math.max(0, 1 - f.t / f.life);
         ctx.fillStyle = PALETTE[f.c] ? PALETTE[f.c].b : C.ink;
@@ -794,21 +1044,34 @@
     // uçan balon
     if (ball) drawBall(ball.color, ball.x, ball.y);
 
-    // alt panel: atıcı
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = C.line; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(SH_X, SH_Y, 28, 0, Math.PI * 2); ctx.stroke();
-    ctx.strokeStyle = C.ink; ctx.lineWidth = 6;
-    ctx.beginPath(); ctx.moveTo(SH_X + Math.cos(angle) * 18, SH_Y + Math.sin(angle) * 18);
-    ctx.lineTo(SH_X + Math.cos(angle) * 44, SH_Y + Math.sin(angle) * 44); ctx.stroke();
-    if (playing || state === 'idle') drawBall(cur, SH_X, SH_Y);
+    // alt panel: top namlusu (geri tepme + sıradaki balonun yuvarlanarak dolması)
+    var rc = recoil * 9;
+    ctx.save(); ctx.translate(SH_X, SH_Y); ctx.rotate(angle);
+    ctx.fillStyle = C.ink;
+    ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(8 - rc, -10, 46, 20, 6); else ctx.rect(8 - rc, -10, 46, 20); ctx.fill();
+    ctx.fillStyle = C.accent; ctx.fillRect(36 - rc, -10, 6, 20);
+    ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(50 - rc, -12.5, 9, 25, 3); else ctx.rect(50 - rc, -12.5, 9, 25); ctx.fillStyle = C.ink; ctx.fill();
+    ctx.restore();
+    // gövde
+    ctx.beginPath(); ctx.arc(SH_X, SH_Y, 27, 0, Math.PI * 2); ctx.fillStyle = C.block; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = C.ink; ctx.stroke();
+    ctx.beginPath(); ctx.arc(SH_X, SH_Y, 27, Math.PI * 0.15, Math.PI * 0.85); ctx.lineWidth = 3; ctx.strokeStyle = C.accent; ctx.stroke();
+    // tekerlekler
+    ctx.fillStyle = C.ink;
+    [-1, 1].forEach(function (sd) { ctx.beginPath(); ctx.arc(SH_X + sd * 22, SH_Y + 24, 6, 0, Math.PI * 2); ctx.fill(); });
+    if (playing || state === 'idle') {
+      if (loadT < 1) {
+        var e = 1 - Math.pow(1 - loadT, 3);
+        drawBall(cur, NEXT_X + (SH_X - NEXT_X) * e, NEXT_Y + (SH_Y - NEXT_Y) * e - Math.sin(e * Math.PI) * 34, 0.8 + 0.2 * e);
+      } else drawBall(cur, SH_X, SH_Y);
+    }
 
     // sıradaki
     ctx.font = '500 10px "JetBrains Mono", monospace'; ctx.fillStyle = C.muted; ctx.textAlign = 'center';
     ctx.fillText(t('c.next'), NEXT_X, NEXT_Y - 26);
     ctx.strokeStyle = C.line; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.arc(NEXT_X, NEXT_Y, 19, 0, Math.PI * 2); ctx.stroke();
-    if (playing || state === 'idle') drawBall(nxt, NEXT_X, NEXT_Y, 0.8);
+    if ((playing || state === 'idle') && loadT >= 0.6) drawBall(nxt, NEXT_X, NEXT_Y, 0.8 * Math.min(1, (loadT - 0.6) / 0.4));
 
     // ıska sayacı (tavan inişi)
     ctx.textAlign = 'right'; ctx.fillStyle = C.muted;
@@ -834,6 +1097,20 @@
       ctx.fillStyle = tx.color || C.ink; ctx.fillText(tx.s, tx.x, tx.y - k * 40);
     });
     ctx.globalAlpha = 1;
+    if (praise && state !== 'over') {
+      var pk = praise.t / 1.3, sc2 = pk < 0.18 ? 0.4 + (pk / 0.18) * 0.75 : pk < 0.28 ? 1.15 - (pk - 0.18) * 1.5 : 1;
+      ctx.save(); ctx.translate(W / 2, 220); ctx.rotate(-0.06); ctx.scale(sc2, sc2);
+      ctx.globalAlpha = pk > 0.75 ? Math.max(0, (1 - pk) / 0.25) : 1;
+      ctx.font = '900 ' + (36 + praise.lv * 8) + 'px "Inter Tight", sans-serif';
+      ctx.lineWidth = 10; ctx.strokeStyle = C.ink; ctx.lineJoin = 'round'; ctx.strokeText(praise.text, 0, 0);
+      ctx.fillStyle = praise.lv >= 3 ? '#ffc21a' : C.accent; ctx.fillText(praise.text, 0, 0);
+      ctx.restore(); ctx.globalAlpha = 1;
+    }
+    confetti.forEach(function (cf) {
+      ctx.save(); ctx.translate(cf.x, cf.y); ctx.rotate(cf.rot); ctx.fillStyle = cf.c;
+      ctx.fillRect(-cf.w / 2, -cf.h / 2 * Math.abs(Math.cos(cf.rot * 1.3)), cf.w, cf.h * Math.abs(Math.cos(cf.rot * 1.3)) + 1);
+      ctx.restore();
+    });
     if (banner && state !== 'over') {
       var bk = banner.t / 1.6, a = bk < 0.15 ? bk / 0.15 : bk > 0.8 ? (1 - bk) / 0.2 : 1;
       ctx.globalAlpha = a;
@@ -883,14 +1160,22 @@
     var rows = lb[period] || [];
     var me = (lsGet('bp_name') || '').toLocaleLowerCase('tr');
     var isMe = function (r) { return !!me && r.name.toLocaleLowerCase('tr') === me; };
+    var low = function (n) { return n.toLocaleLowerCase('tr'); };
+    var king = lb.all && lb.all[0] ? low(lb.all[0].name) : '', hot = lb.day && lb.day[0] ? low(lb.day[0].name) : '';
+    var badges = function (n) {
+      var l = low(n), b = '';
+      if (l === king) b += '<span class="bdg" title="' + esc(t('bdg.crown')) + '">👑</span>';
+      if (l === hot) b += '<span class="bdg" title="' + esc(t('bdg.fire')) + '">🔥</span>';
+      return b;
+    };
     if (!rows.length) { pod.innerHTML = ''; el.innerHTML = '<li class="empty">' + esc(t('lb.empty')) + '</li>'; }
     else {
       pod.innerHTML = [1, 0, 2].map(function (i) {
         var r = rows[i]; if (!r) return '<div class="pd"></div>';
-        return '<div class="pd r' + (i + 1) + (isMe(r) ? ' me' : '') + '"><div class="ball">' + esc(initial(r.name)) + '</div><div class="who">' + esc(r.name) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
+        return '<div class="pd r' + (i + 1) + (isMe(r) ? ' me' : '') + '"><div class="pdb">' + badges(r.name) + '</div><div class="ball">' + esc(initial(r.name)) + '</div><div class="who">' + esc(r.name) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
       }).join('');
       el.innerHTML = rows.slice(3).map(function (r, i) {
-        return '<li class="' + (isMe(r) ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + esc(r.name) + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
+        return '<li class="' + (isMe(r) ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + esc(r.name) + badges(r.name) + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
       }).join('');
     }
     // Oyuncunun kendi satırı (listede yoksa)
@@ -902,11 +1187,24 @@
     $('myRank').textContent = m && m.rank.week ? '#' + m.rank.week : '—';
     if (m && m.best > best) { best = m.best; lsSet('bp_best', String(best)); $('best').textContent = fmt(best); }
   }
+  // Haftalık sıran düştüyse kimin geçtiğini bildir
+  function weekKey() { var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.toDateString(); }
+  function checkPassed() {
+    var m = lb && lb.me, nk = (lsGet('bp_name') || '').toLocaleLowerCase('tr');
+    if (!m || !m.rank || !m.rank.week || m.name.toLocaleLowerCase('tr') !== nk) return;
+    var prev = null; try { prev = JSON.parse(lsGet('bp_rk') || 'null'); } catch (e) {}
+    var wk = weekKey(), r = m.rank.week;
+    if (prev && prev.wk === wk && prev.n === nk && r > prev.r) {
+      var above = lb.week && lb.week[r - 2];
+      showToast(above ? t('toast.pass').replace('{n}', above.name).replace('{r}', r) : t('toast.pass2').replace('{r}', r));
+    }
+    lsSet('bp_rk', JSON.stringify({ wk: wk, n: nk, r: r }));
+  }
   function loadBoard() {
     var nk = lsGet('bp_name');
     return fetch(API + '?a=top' + (nk ? '&me=' + encodeURIComponent(nk) : ''), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw 0; lb = j; lbErr = false; setStats(j.plays, j.online); renderBoard(); })
+      .then(function (j) { if (!j || !j.ok) throw 0; lb = j; lbErr = false; setStats(j.plays, j.online); renderBoard(); checkPassed(); })
       .catch(function () { lbErr = true; renderBoard(); });
   }
   loadBoard();
@@ -920,7 +1218,7 @@
   // Takma ad (oyuncu kartı + başlangıç ekranı)
   function setNick(raw, silent) {
     var n = (raw || '').replace(/\s+/g, ' ').trim(), msg = $('nickMsg'), inp = $('nick');
-    if (!n) { lsSet('bp_name', ''); syncNick(); msg.className = 'nick-msg'; msg.textContent = t('nick.hint'); loadBoard(); return true; }
+    if (!n) { lsSet('bp_name', ''); syncNick(); msg.className = 'nick-msg'; msg.textContent = ''; loadBoard(); return true; }
     if (!validName(n)) { inp.classList.add('bad'); msg.className = 'nick-msg err'; msg.textContent = t('m.name'); return false; }
     var changed = n !== lsGet('bp_name');
     lsSet('bp_name', n); syncNick();
