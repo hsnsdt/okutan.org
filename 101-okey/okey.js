@@ -157,10 +157,11 @@
   // ================= taş görünümü =================
   function tileEl(t, cls) {
     var d = document.createElement('div');
-    d.className = 'tile ' + t.c + (t.joker ? ' joker' : '') + (t.fake ? ' fake' : '') + (cls ? ' ' + cls : '');
+    // Gerçek okey ters dönük taş gibi görünür (sayısı yok, her taşın yerine geçer); sahte okey okeyin sayısıyla, köşesinde yıldızla
+    d.className = 'tile ' + (t.joker ? 'okeyt' : t.c) + (t.joker ? ' joker' : '') + (t.fake ? ' fake2' : '') + (cls ? ' ' + cls : '');
     d.dataset.id = t.id;
-    d.innerHTML = '<span>' + t.n + '</span>' + (t.joker ? '<i class="jk" aria-hidden="true">★</i>' : '');
-    d.setAttribute('aria-label', (t.fake ? 'Sahte okey ' : t.joker ? 'Okey ' : '') + ({ k: 'kırmızı', s: 'sarı', m: 'mavi', y: 'siyah' }[t.c]) + ' ' + t.n);
+    d.innerHTML = t.joker ? '<b class="om" aria-hidden="true"><i>★</i>OKEY</b>' : '<span>' + t.n + '</span>' + (t.fake ? '<i class="fk" aria-hidden="true">★</i>' : '');
+    d.setAttribute('aria-label', t.joker ? 'Okey: her taşın yerine geçer' : (t.fake ? 'Sahte okey: ' : '') + ({ k: 'kırmızı', s: 'sarı', m: 'mavi', y: 'siyah' }[t.c]) + ' ' + t.n);
     return d;
   }
   // görünen adlar: online masada sunucunun eklediği "(bot)" ekini at (bot olduğu plakada zorlukla yazıyor)

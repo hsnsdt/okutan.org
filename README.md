@@ -21,3 +21,4 @@ Sedat Okutan'ın kişisel geliştirici sitesi. Tek sayfa, framework yok: `index.
 
 `101-okey/` — 101 Okey (botlara karşı). Kurallar ve botlar `101-okey/okey-motor.js` içinde (arayüzden bağımsız), arayüz `okey.js`. Motor testleri: `node --test tests/okey.test.mjs`.
 101 Okey API: `101-okey/api/` (veritabanı ayarı Balon ile ortak, `balon/api/config.php`). Online masada oyunu masa sahibinin tarayıcısı yönetir; sunucu hamleleri ve durumu aktarır. API testleri: `node --test tests/okey-api.test.mjs`. PWA: `101-okey/manifest.json`, `101-okey/sw.js` (okey.js sürümü değişince CACHE/CORE güncellenir).
+Okey (düz): `okey/` — kural motoru `okey/motor.js` (testler: `node --test tests/duz-okey.test.mjs`), arayüz `okey/oyun.js`. API `okey/api/index.php` 101 Okey API'sini `OKEY_GAME=okey` ile çağırır; tablolar ayrı (`oy_*`). PWA: `okey/manifest.json`, `okey/sw.js` (oyun.js sürümü değişince CACHE/CORE güncellenir).

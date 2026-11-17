@@ -15,7 +15,12 @@
 //   POST ?a=t_moves {code, hostKey, after}       → masa sahibi kuyruktaki hamleleri alır
 //   POST ?a=t_state {code, hostKey, ver, pub, priv}  → masa sahibi durumu yayınlar (her koltuğa yalnızca kendi eli)
 //   POST ?a=t_poll {code, seat, seatKey, ver}    → oyuncu yeni durumu alır
+//
+// Aynı dosya düz Okey'e de hizmet eder: okey/api/index.php, OKEY_GAME = 'okey' tanımlayıp bu dosyayı çağırır.
+// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*), böylece sıralamalar ve masalar karışmaz.
 declare(strict_types=1);
+$GAME = defined('OKEY_GAME') ? OKEY_GAME : '101';
+$PFX = $GAME === 'okey' ? 'oy_' : 'ok_';
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -33,32 +38,34 @@ try {
     $db->exec("SET time_zone = '+00:00'");
 } catch (Throwable $e) { fail('db_unavailable', 503); }
 
+function tbl(string $sql): string { return preg_replace('/\bok_(sessions|games|tables|private|moves)\b/', $GLOBALS['PFX'] . '$1', $sql); }
 function create_tables(PDO $db): void {
-    $db->exec("CREATE TABLE IF NOT EXISTS ok_sessions (
+    $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_sessions (
         token CHAR(32) NOT NULL PRIMARY KEY, ip CHAR(64) NOT NULL, mode VARCHAR(8) NOT NULL, day DATE NULL,
         created_at DATETIME NOT NULL, used TINYINT(1) NOT NULL DEFAULT 0, KEY ix_ip (ip, created_at)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
-    $db->exec("CREATE TABLE IF NOT EXISTS ok_games (
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci"));
+    $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_games (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20) NOT NULL, mode VARCHAR(8) NOT NULL, level VARCHAR(8) NOT NULL,
         hands TINYINT UNSIGNED NOT NULL, total INT NOT NULL, won TINYINT(1) NOT NULL, best_open SMALLINT UNSIGNED NOT NULL DEFAULT 0,
         finished TINYINT UNSIGNED NOT NULL DEFAULT 0, day DATE NULL, duration INT UNSIGNED NOT NULL, ip CHAR(64) NOT NULL,
         created_at DATETIME NOT NULL, flag TINYINT(1) NOT NULL DEFAULT 0,
         KEY ix_name (name), KEY ix_time (created_at), KEY ix_day (mode, day)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
-    $db->exec("CREATE TABLE IF NOT EXISTS ok_tables (
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci"));
+    $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_tables (
         code CHAR(6) NOT NULL PRIMARY KEY, host_key CHAR(32) NOT NULL, status VARCHAR(8) NOT NULL DEFAULT 'lobby',
         seats TEXT NOT NULL, opts TEXT NOT NULL, ver INT UNSIGNED NOT NULL DEFAULT 0, pub MEDIUMTEXT NULL,
         created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, host_seen DATETIME NOT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
-    $db->exec("CREATE TABLE IF NOT EXISTS ok_private (
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci"));
+    $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_private (
         code CHAR(6) NOT NULL, seat TINYINT UNSIGNED NOT NULL, data MEDIUMTEXT NOT NULL, PRIMARY KEY (code, seat)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
-    $db->exec("CREATE TABLE IF NOT EXISTS ok_moves (
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci"));
+    $db->exec(tbl("CREATE TABLE IF NOT EXISTS ok_moves (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, code CHAR(6) NOT NULL, seat TINYINT UNSIGNED NOT NULL,
         move TEXT NOT NULL, created_at DATETIME NOT NULL, KEY ix_code (code, id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci"));
 }
 function q(PDO $db, string $sql, array $a = []): PDOStatement {
+    $sql = tbl($sql);
     try { $s = $db->prepare($sql); $s->execute($a); return $s; }
     catch (PDOException $e) {
         if ($e->getCode() !== '42S02') throw $e;
@@ -128,7 +135,7 @@ try {
         if (random_int(1, 40) === 1) q($db, 'DELETE FROM ok_sessions WHERE created_at < ?', [gmdate('Y-m-d H:i:s', time() - 3 * 86400)]);
         $tok = bin2hex(random_bytes(16)); $day = $mode === 'daily' ? ist_today() : null;
         q($db, 'INSERT INTO ok_sessions (token, ip, mode, day, created_at) VALUES (?, ?, ?, ?, ?)', [$tok, $ip, $mode, $day, now()]);
-        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a('okey-' . $day) : null]);
+        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a(($GAME === 'okey' ? 'duz-okey-' : 'okey-') . $day) : null]);
     }
     if ($a === 'submit') {
         $in = body();
@@ -138,8 +145,9 @@ try {
         if (!$s || (int)$s['used']) fail('bad_token');
         $mode = $s['mode']; $hands = (int)($in['hands'] ?? 0); $total = $in['total'] ?? null; $won = !empty($in['won']) ? 1 : 0;
         $level = in_array($in['level'] ?? '', ['easy', 'normal', 'hard', 'mixed'], true) ? $in['level'] : 'normal';
-        if (!is_int($total) || $total < -3232 || $total > 30000) fail('bad_total');
-        if ($hands < 1 || $hands > 11) fail('bad_hands');
+        $maxHands = $GAME === 'okey' ? 99 : 11;
+        if (!is_int($total) || ($GAME === 'okey' ? ($total < -400 || $total > 400) : ($total < -3232 || $total > 30000))) fail('bad_total');
+        if ($hands < 1 || $hands > $maxHands) fail('bad_hands');
         $elapsed = time() - strtotime($s['created_at'] . ' UTC');
         if ($elapsed < $hands * 20) fail('too_fast');
         if ($elapsed > 6 * 3600) fail('expired');
@@ -150,7 +158,7 @@ try {
         $flag = ($elapsed < $hands * 45 && $won) ? 1 : 0;
         $u = q($db, 'UPDATE ok_sessions SET used = 1 WHERE token = ? AND used = 0', [$tok]); if ($u->rowCount() !== 1) fail('bad_token');
         q($db, 'INSERT INTO ok_games (name, mode, level, hands, total, won, best_open, finished, day, duration, ip, created_at, flag) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            [$name, $mode, $level, $hands, $total, $won, max(0, min(999, (int)($in['bestOpen'] ?? 0))), max(0, min(11, (int)($in['finished'] ?? 0))), $s['day'], $elapsed, $ip, now(), $flag]);
+            [$name, $mode, $level, $hands, $total, $won, max(0, min(999, (int)($in['bestOpen'] ?? 0))), max(0, min($maxHands, (int)($in['finished'] ?? 0))), $s['day'], $elapsed, $ip, now(), $flag]);
         $rank = null;
         if ($mode === 'daily') $rank = 1 + (int)q($db, "SELECT COUNT(*) FROM (SELECT name FROM ok_games WHERE mode = 'daily' AND day = ? AND flag = 0 GROUP BY name HAVING MIN(total) < ?) t", [$s['day'], $total])->fetchColumn();
         out(['ok' => true, 'rank' => $rank]);
@@ -244,6 +252,6 @@ try {
     }
     fail('unknown_action', 404);
 } catch (Throwable $e) {
-    error_log('[okey] ' . $e->getMessage());
+    error_log('[' . $GAME . '] ' . $e->getMessage());
     fail('server_error', 500);
 }
