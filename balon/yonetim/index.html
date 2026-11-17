@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yönetim — Balon Patlat</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+:root{--bg:#ebebe8;--block:#fff;--ink:#0e0e0e;--muted:#6a6a6a;--line:#dadad6;--accent:#ff5a1f;--ok:#16a34a;--bad:#dc2626;--warn:#d97706;
+  --sans:"Inter Tight",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;--ok:#22c55e;--bad:#f87171;--warn:#fbbf24;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;--ok:#22c55e;--bad:#f87171;--warn:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+#app{display:grid;gap:12px}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:12px 16px 40px;display:grid;gap:12px}
+.b{background:var(--block);border:1px solid var(--line);border-radius:18px;padding:22px}
+.label{font:500 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:24px;font-weight:800;letter-spacing:-.03em}
+h2{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px}
+.top a{color:var(--muted);text-decoration:none;font:500 13px var(--mono)}
+.btn{height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 13.5px var(--sans);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn-a{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-s{height:30px;padding:0 10px;font-size:12.5px;border-radius:8px}
+.btn.ok{color:var(--ok)}.btn.bad{color:var(--bad)}.btn.warn{color:var(--warn)}
+.btn.sure{background:var(--bad);border-color:var(--bad);color:#fff}
+input{height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 14px var(--sans);padding:0 12px;outline:none}
+input:focus{border-color:var(--accent)}
+.login{max-width:380px;margin:12vh auto 0;display:grid;gap:12px}
+.msg{min-height:20px;font-size:13.5px;color:var(--bad)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.kpi b{display:block;font-size:24px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi.f b{color:var(--warn)}
+.chart svg{width:100%;height:190px;display:block}
+.legend{display:flex;gap:16px;font:500 12px var(--mono);color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.tabs{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px}
+.tabs button{border:0;background:none;height:32px;padding:0 12px;border-radius:9px;font:600 12.5px var(--sans);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--block);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;font:500 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 6px;border-bottom:1px solid var(--line)}
+.tbl td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl td.n{font-variant-numeric:tabular-nums;font-weight:700}
+.tbl td.m{font:500 12px var(--mono);color:var(--muted)}
+.tbl tr.flag td{background:color-mix(in srgb,var(--warn) 8%,transparent)}
+.acts{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font:600 10.5px var(--mono);padding:2px 7px;border-radius:999px;border:1px solid var(--line)}
+.tag.f{color:var(--warn);border-color:var(--warn)}
+.scroll{overflow-x:auto}
+.empty{color:var(--muted);padding:20px 0;text-align:center}
+.bans{display:flex;flex-wrap:wrap;gap:6px}
+.bans span{display:inline-flex;align-items:center;gap:6px;padding:4px 6px 4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:13px}
+.more{margin-top:12px;text-align:center}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="b top"><div><div class="label">Balon Patlat</div><h1>Yönetim</h1></div><div><a href="/balon/">← Oyuna dön</a> <button class="btn btn-s" id="logout" hidden>Çıkış</button></div></header>
+
+  <form class="b login" id="loginForm" autocomplete="off">
+    <h2>Giriş</h2>
+    <input type="password" id="pass" placeholder="Yönetim şifresi" autocomplete="current-password" required>
+    <button class="btn btn-a" type="submit">Giriş yap</button>
+    <div class="msg" id="loginMsg"></div>
+  </form>
+
+  <div id="app" hidden>
+    <section class="b">
+      <div class="kpis" id="kpis"></div>
+    </section>
+    <section class="b chart">
+      <h2>Son 30 gün</h2>
+      <svg id="chart" viewBox="0 0 600 190" preserveAspectRatio="none" role="img" aria-label="Son 30 günün oyun ve skor sayısı"></svg>
+      <div class="legend"><span><i style="background:var(--accent)"></i>Başlatılan oyun</span><span><i style="background:var(--muted)"></i>Kaydedilen skor</span></div>
+    </section>
+    <section class="b">
+      <h2>Skorlar</h2>
+      <div class="bar">
+        <div class="tabs" role="tablist">
+          <button data-f="flagged" aria-selected="true">Şüpheli</button>
+          <button data-f="recent" aria-selected="false">Son</button>
+          <button data-f="top" aria-selected="false">En yüksek</button>
+        </div>
+        <input id="q" placeholder="İsim ara" style="flex:1;min-width:160px">
+      </div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>İsim</th><th>Skor</th><th>Mod</th><th>Sv.</th><th>Atış</th><th>Süre</th><th>Şehir</th><th>Tarih (UTC)</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="more"><button class="btn" id="moreBtn" hidden>Daha fazla</button></div>
+    </section>
+    <section class="b">
+      <h2>Engellenen isimler</h2>
+      <div class="bar"><input id="banName" placeholder="İsim" maxlength="20"><button class="btn bad" id="banBtn">Engelle ve skorlarını sil</button></div>
+      <div class="bans" id="bans"></div>
+    </section>
+  </div>
+</div>
+<script>
+(function () {
+  'use strict';
+  var API = '/balon/api/';
+  var $ = function (id) { return document.getElementById(id); };
+  var tok = null; try { tok = sessionStorage.getItem('bp_admin'); } catch (e) {}
+  var filter = 'flagged', page = 0;
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function fmt(n) { return Number(n).toLocaleString('tr-TR'); }
+  function call(a, body) {
+    body = body || {}; body.t = tok;
+    return fetch(API + '?a=' + a, { method: 'POST', cache: 'no-store', body: JSON.stringify(body) }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.error === 'unauthorized') { logout(); throw new Error('unauthorized'); }
+      return j;
+    });
+  }
+  function logout() { tok = null; try { sessionStorage.removeItem('bp_admin'); } catch (e) {} $('app').hidden = true; $('loginForm').hidden = false; $('logout').hidden = true; }
+  function enter() { $('loginForm').hidden = true; $('app').hidden = false; $('logout').hidden = false; loadStats(); loadRows(true); }
+
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault(); $('loginMsg').textContent = '';
+    fetch(API + '?a=admin_login', { method: 'POST', cache: 'no-store', body: JSON.stringify({ pass: $('pass').value }) })
+      .then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.ok) { tok = j.token; try { sessionStorage.setItem('bp_admin', tok); } catch (e) {} $('pass').value = ''; enter(); }
+        else $('loginMsg').textContent = { wrong_pass: 'Şifre yanlış.', rate_limited: 'Çok fazla deneme. Bir saat sonra tekrar dene.', admin_disabled: 'Panel kapalı: config.php içine admin_pass ekle.' }[j && j.error] || 'Giriş yapılamadı.';
+      }).catch(function () { $('loginMsg').textContent = 'Sunucuya ulaşılamadı.'; });
+  });
+  $('logout').onclick = logout;
+
+  function kpi(v, l, cls) { return '<div class="kpi ' + (cls || '') + '"><span class="label">' + l + '</span><b>' + v + '</b></div>'; }
+  function loadStats() {
+    call('admin_stats').then(function (j) {
+      if (!j.ok) return;
+      var t = j.totals;
+      $('kpis').innerHTML = kpi(fmt(t.plays), 'Toplam oyun') + kpi(fmt(t.scores), 'Skor') + kpi(fmt(t.players), 'Oyuncu') + kpi(fmt(t.online), 'Şu an') + kpi(fmt(t.flagged), 'Şüpheli', 'f');
+      drawChart(j.plays, j.scores);
+      $('bans').innerHTML = j.bans.length ? j.bans.map(function (b) {
+        return '<span>' + esc(b.name) + ' <button class="btn btn-s" data-unban="' + esc(b.name) + '">Kaldır</button></span>';
+      }).join('') : '<p class="empty" style="padding:4px 0">Engellenen isim yok.</p>';
+    }).catch(function () {});
+  }
+  function drawChart(plays, scores) {
+    var days = [], pm = {}, sm = {};
+    plays.forEach(function (p) { pm[p.day] = p.n; }); scores.forEach(function (p) { sm[p.day] = p.n; });
+    var now = new Date(Date.now() + 3 * 3600000);
+    for (var i = 29; i >= 0; i--) { var d = new Date(now.getTime() - i * 86400000); days.push(d.toISOString().slice(0, 10)); }
+    var max = 1; days.forEach(function (d) { max = Math.max(max, pm[d] || 0, sm[d] || 0); });
+    var W = 600, H = 170, bw = W / days.length, svg = '';
+    for (var g = 0; g <= 4; g++) { var y = 10 + (H - 10) * g / 4; svg += '<line x1="0" x2="' + W + '" y1="' + y + '" y2="' + y + '" stroke="var(--line)" stroke-width="1"/>'; }
+    days.forEach(function (d, i) {
+      var p = pm[d] || 0, s = sm[d] || 0, x = i * bw;
+      var hp = (H - 10) * p / max, hs = (H - 10) * s / max;
+      svg += '<rect x="' + (x + bw * 0.12) + '" y="' + (H - hp) + '" width="' + (bw * 0.42) + '" height="' + hp + '" rx="2" fill="var(--accent)"><title>' + d + ': ' + p + ' oyun</title></rect>';
+      svg += '<rect x="' + (x + bw * 0.54) + '" y="' + (H - hs) + '" width="' + (bw * 0.34) + '" height="' + hs + '" rx="2" fill="var(--muted)"><title>' + d + ': ' + s + ' skor</title></rect>';
+      if (i % 5 === 2) svg += '<text x="' + (x + bw / 2) + '" y="186" font-size="10" text-anchor="middle" fill="var(--muted)" font-family="monospace">' + d.slice(5) + '</text>';
+    });
+    svg += '<text x="4" y="20" font-size="10" fill="var(--muted)" font-family="monospace">' + max + '</text>';
+    $('chart').innerHTML = svg;
+  }
+  var MODE = { classic: 'Klasik', timed: 'Zamanlı', daily: 'Günlük' };
+  function loadRows(reset) {
+    if (reset) { page = 0; $('rows').innerHTML = ''; }
+    call('admin_scores', { filter: filter, q: $('q').value.trim(), page: page }).then(function (j) {
+      if (!j.ok) return;
+      if (reset && !j.rows.length) $('rows').innerHTML = '<tr><td colspan="9" class="empty">' + (filter === 'flagged' ? 'Şüpheli skor yok. 🎉' : 'Kayıt yok.') + '</td></tr>';
+      $('rows').insertAdjacentHTML('beforeend', j.rows.map(function (r) {
+        var sec = r.shots ? (r.duration / r.shots).toFixed(2) + ' sn/atış' : '';
+        return '<tr class="' + (r.flag ? 'flag' : '') + '" data-id="' + r.id + '"><td><b>' + esc(r.name) + '</b> ' + (r.flag ? '<span class="tag f">şüpheli</span>' : '') + '</td>' +
+          '<td class="n">' + fmt(r.score) + '</td><td class="m">' + (MODE[r.mode] || r.mode) + '</td><td class="m">' + r.level + '</td><td class="m">' + r.shots + '</td>' +
+          '<td class="m" title="' + sec + '">' + r.duration + ' sn</td><td class="m">' + esc(r.city || '—') + '</td><td class="m">' + esc(r.at) + '</td>' +
+          '<td><div class="acts">' + (r.flag ? '<button class="btn btn-s ok" data-act="approve">Onayla</button>' : '<button class="btn btn-s warn" data-act="flag">Şüpheli</button>') +
+          '<button class="btn btn-s bad" data-act="delete">Sil</button><button class="btn btn-s bad" data-ban="' + esc(r.name) + '">Engelle</button></div></td></tr>';
+      }).join(''));
+      $('moreBtn').hidden = j.rows.length < 50;
+    }).catch(function () {});
+  }
+  // tehlikeli işlemler iki tıklama ister
+  function confirmClick(btn, fn) {
+    if (btn.classList.contains('sure')) { fn(); return; }
+    var old = btn.textContent; btn.classList.add('sure'); btn.textContent = 'Emin misin?';
+    setTimeout(function () { btn.classList.remove('sure'); btn.textContent = old; }, 2500);
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.act) {
+      var id = +b.closest('tr').dataset.id, act = b.dataset.act;
+      var go = function () { call('admin_act', { id: id, act: act }).then(function () { loadRows(true); loadStats(); }); };
+      act === 'delete' ? confirmClick(b, go) : go();
+    } else if (b.dataset.ban) {
+      var n = b.dataset.ban; confirmClick(b, function () { call('admin_ban', { name: n }).then(function () { loadRows(true); loadStats(); }); });
+    } else if (b.dataset.unban) {
+      call('admin_ban', { name: b.dataset.unban, unban: true }).then(loadStats);
+    } else if (b.dataset.f) {
+      filter = b.dataset.f;
+      document.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+      loadRows(true);
+    }
+  });
+  $('moreBtn').onclick = function () { page++; loadRows(false); };
+  var qt = 0; $('q').addEventListener('input', function () { clearTimeout(qt); qt = setTimeout(function () { loadRows(true); }, 300); });
+  $('banBtn').onclick = function () {
+    var n = $('banName').value.trim(); if (!n) return;
+    confirmClick(this, function () { call('admin_ban', { name: n }).then(function () { $('banName').value = ''; loadRows(true); loadStats(); }); });
+  };
+  if (tok) enter();
+})();
+</script>
+</body>
+</html>

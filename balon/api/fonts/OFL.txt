@@ -1,0 +1,3 @@
+Inter Tight — SIL Open Font License 1.1 (https://openfontlicense.org)
+Kaynak: Inter Tight (Google Fonts). Bu dosya sitenin kendi woff2 dosyalarından
+(assets/fonts) ExtraBold (wght 800) örneği olarak üretilmiştir; paylaşım görseli (og.php) için kullanılır.

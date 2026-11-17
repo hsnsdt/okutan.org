@@ -86,7 +86,14 @@
     'pf.games': 'Games', 'pf.total': 'Total points', 'pf.rank': 'All-time rank', 'pf.streak': 'Daily streak', 'pf.first': 'Since',
     'pf.recent': 'Recent games', 'pf.badges': 'Badges', 'pf.nf': 'No scores for this player yet.', 'pf.link': 'Copy profile link', 'pf.copied': 'Link copied',
     'md.classic': 'Classic', 'md.timed': 'Time attack', 'md.daily': 'Daily puzzle', 'city.ph': '📍 Your city', 'lb.players': 'players',
-    'inst': 'Install', 'days': 'days', 'lb.you': 'YOU', 'pf.my': 'My profile', 'kel.t': 'Love word games? A Turkish online word game',
+    'inst': 'Install', 'days': 'days', 'lb.you': 'YOU',
+    'tut.1': 'Aim, then click (or touch and release) to shoot', 'tut.2': 'Tip: bounce shots off the walls to reach gaps',
+    'tut.3': 'Missed shots lower the ceiling counter; at zero the ceiling drops', 'tut.done': 'You\u2019re ready. Good luck!',
+    'lk.locked': '🔒 {s} unlocks at {n} pts (your best: {b})', 'lk.new': '🎉 New look unlocked: {s}',
+    'snd.vol': 'Volume', 'snd.vib': 'Vibration', 'snd.mute': 'Mute', 'snd.on': 'On', 'snd.off': 'Off',
+    'season': '{m} season · {d} days left', 'season1': '{m} season · last day!', 'ch.title': 'Hall of champions',
+    'ch.l': 'Monthly seasons · classic mode', 'ch.empty': 'The first season champion is crowned at the end of this month.',
+    'bd.champ': 'Season champion', 'bd.podium': 'Season podium', 'lb.month': 'This month', 'pf.my': 'My profile', 'kel.t': 'Love word games? A Turkish online word game',
     'ms.l': 'Refreshed daily', 'ms.t': 'Today’s missions', 'lb.dailyS': 'Daily', 'lb.cities': 'Cities',
     'c.record': 'NEW RECORD!', 'p.1': 'GREAT!', 'p.2': 'AMAZING!', 'p.3': 'LEGENDARY!',
     'r.togo': '{n} pts to beat your record', 'r.new': 'New record! Previous: {n}', 'r.first': 'Your first record!',
@@ -130,6 +137,13 @@
     'pf.recent': 'Son oyunlar', 'pf.badges': 'Rozetler', 'pf.nf': 'Bu oyuncunun henüz skoru yok.', 'pf.link': 'Profil bağlantısını kopyala', 'pf.copied': 'Bağlantı kopyalandı',
     'md.classic': 'Klasik', 'md.timed': 'Zamana karşı', 'md.daily': 'Günün bulmacası', 'city.ph': '📍 Şehrin', 'lb.players': 'oyuncu',
     'inst': 'Yükle', 'days': 'gün', 'lb.you': 'SEN',
+    'tut.1': 'Nişan al, sonra tıkla (ya da dokunup bırak)', 'tut.2': 'İpucu: duvardan sektirerek boşluklara ulaşabilirsin',
+    'tut.3': 'Iskalarsan tavan sayacı azalır; bitince tavan bir sıra iner', 'tut.done': 'Hazırsın. Bol şans!',
+    'lk.locked': '🔒 {s} görünümü {n} puanda açılır (rekorun: {b})', 'lk.new': '🎉 Yeni görünüm açıldı: {s}',
+    'snd.vol': 'Ses', 'snd.vib': 'Titreşim', 'snd.mute': 'Sessiz', 'snd.on': 'Açık', 'snd.off': 'Kapalı',
+    'season': '{m} sezonu · {d} gün kaldı', 'season1': '{m} sezonu · son gün!', 'ch.title': 'Şampiyonlar duvarı',
+    'ch.l': 'Aylık sezonlar · klasik mod', 'ch.empty': 'İlk sezon şampiyonu bu ayın sonunda belli olacak.',
+    'bd.champ': 'Sezon şampiyonu', 'bd.podium': 'Sezon podyumu',
     'c.record': 'YENİ REKOR!', 'p.1': 'HARİKA!', 'p.2': 'MÜKEMMEL!', 'p.3': 'EFSANE!',
     'r.togo': 'Rekoruna {n} puan kaldı', 'r.new': 'Yeni rekor! Önceki: {n}', 'r.first': 'İlk rekorun bu!',
     'sh.text': 'Balon Patlat\'ta {s} puan yaptım! Beni geçebilir misin?', 'sh.saved': 'Görsel indirildi',
@@ -154,7 +168,7 @@
     $('langBtn').textContent = lang === 'en' ? 'TR' : 'EN';
     document.title = lang === 'en' ? 'Bubble Pop — Free Online Bubble Shooter Game | okutan.org' : TITLE_TR;
     renderBoard();
-    if (typeof renderMissions === 'function' && $('msList')) { try { renderMissions(); renderModeSel(); fillCities(); } catch (e) {} }
+    if (typeof renderMissions === 'function' && $('msList')) { try { renderMissions(); renderModeSel(); fillCities(); renderSeason(); renderSkins(); syncSoundBtn(); } catch (e) {} }
   }
   $('langBtn').onclick = function () { lang = lang === 'en' ? 'tr' : 'en'; lsSet('lang', lang); applyLang(); };
 
@@ -176,18 +190,41 @@
   readTheme();
 
   // ---------- Ses (WebAudio, dosya yok) ----------
-  var actx = null, muted = lsGet('bp_mute') === '1';
+  var actx = null, master = null, muted = lsGet('bp_mute') === '1';
+  var vol = Math.min(1, Math.max(0, +(lsGet('bp_vol') || 0.8))), vib = lsGet('bp_vib') !== '0';
+  function buzz(p) { if (vib && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
   function syncSoundBtn() {
     var b = $('soundBtn');
     b.setAttribute('aria-pressed', muted ? 'true' : 'false');
-    b.querySelector('.w').style.display = muted ? 'none' : '';
-    b.querySelector('.x').style.display = muted ? '' : 'none';
+    var off = muted || vol === 0;
+    b.querySelector('.w').style.display = off ? 'none' : '';
+    b.querySelector('.x').style.display = off ? '' : 'none';
+    if ($('vol')) { $('vol').value = Math.round(vol * 100); $('volVal').textContent = Math.round(vol * 100) + '%'; }
+    if ($('muteBtn')) $('muteBtn').setAttribute('aria-pressed', muted ? 'true' : 'false');
+    if ($('vibBtn')) { $('vibBtn').setAttribute('aria-pressed', vib ? 'true' : 'false'); $('vibBtn').textContent = t(vib ? 'snd.on' : 'snd.off'); }
+    if (master) master.gain.value = vol;
   }
-  $('soundBtn').onclick = function () { muted = !muted; lsSet('bp_mute', muted ? '1' : '0'); syncSoundBtn(); ensureAudio(); };
+  function toggleMute() { muted = !muted; lsSet('bp_mute', muted ? '1' : '0'); syncSoundBtn(); ensureAudio(); }
+  // ses düğmesi: küçük panel (ses seviyesi, sessiz, titreşim)
+  $('soundBtn').onclick = function (e) { e.stopPropagation(); ensureAudio(); $('sndPop').hidden = !$('sndPop').hidden; };
+  $('sndPop').addEventListener('click', function (e) { e.stopPropagation(); });
+  document.addEventListener('click', function () { $('sndPop').hidden = true; });
+  $('vol').addEventListener('input', function () {
+    vol = this.value / 100; lsSet('bp_vol', String(vol));
+    if (vol > 0 && muted) { muted = false; lsSet('bp_mute', '0'); }
+    ensureAudio(); syncSoundBtn();
+  });
+  $('vol').addEventListener('change', function () { tone(660, 0.08, 'triangle', 0.12); });
+  $('muteBtn').onclick = toggleMute;
+  $('vibBtn').onclick = function () { vib = !vib; lsSet('bp_vib', vib ? '1' : '0'); syncSoundBtn(); buzz(30); };
+  if (!('vibrate' in navigator)) $('vibRow').hidden = true;
   syncSoundBtn();
   function ensureAudio() {
     if (actx || muted) { if (actx && actx.state === 'suspended') actx.resume(); return; }
-    try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { actx = null; }
+    try {
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      master = actx.createGain(); master.gain.value = vol; master.connect(actx.destination);
+    } catch (e) { actx = null; }
   }
   function tone(f, dur, type, vol, f2, delay) {
     if (muted || !actx) return;
@@ -197,7 +234,7 @@
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(vol || 0.15, t0 + 0.008);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    o.connect(g); g.connect(actx.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+    o.connect(g); g.connect(master); o.start(t0); o.stop(t0 + dur + 0.02);
   }
   var noiseBuf = null;
   function noise(dur, vol, freq, delay) {
@@ -209,13 +246,14 @@
     var t0 = actx.currentTime + (delay || 0), s = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
     s.buffer = noiseBuf; f.type = 'bandpass'; f.frequency.value = freq || 2000; f.Q.value = 1.2;
     g.gain.setValueAtTime(vol || 0.2, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    s.connect(f); f.connect(g); g.connect(actx.destination); s.start(t0); s.stop(t0 + dur + 0.02);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t0); s.stop(t0 + dur + 0.02);
   }
   var sfx = {
     shoot: function () { tone(420, 0.09, 'triangle', 0.08, 760); },
     bounce: function () { tone(300, 0.05, 'sine', 0.05, 240); },
     stick: function () { tone(180, 0.07, 'sine', 0.1, 120); },
     pop: function (n, s) {
+      buzz(n >= 8 ? [15, 25, 25] : 12);
       for (var i = 0; i < Math.min(n, 8); i++) {
         noise(0.07, 0.16, 1600 + i * 180, i * 0.035);
         tone(520 + s * 70 + i * 40, 0.08, 'sine', 0.07, 900 + s * 90 + i * 40, i * 0.035);
@@ -224,12 +262,12 @@
     drop: function (k) { for (var i = 0; i < Math.min(k, 6); i++) tone(700 - i * 70, 0.12, 'triangle', 0.06, 300 - i * 30, 0.12 + i * 0.05); },
     row: function () { tone(110, 0.25, 'sawtooth', 0.06, 70); noise(0.15, 0.08, 400); },
     clear: function () { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, 0.22, 'triangle', 0.09, null, i * 0.09); }); },
-    over: function () { [392, 330, 262, 196].forEach(function (f, i) { tone(f, 0.3, 'triangle', 0.09, null, i * 0.16); }); },
-    boom: function () { noise(0.5, 0.35, 180); noise(0.25, 0.2, 900); tone(90, 0.45, 'sawtooth', 0.12, 40); },
-    zap: function () { for (var i = 0; i < 5; i++) noise(0.05, 0.18, 3000 + i * 400, i * 0.03); tone(1400, 0.25, 'square', 0.04, 200); },
+    over: function () { buzz([60, 40, 120]); [392, 330, 262, 196].forEach(function (f, i) { tone(f, 0.3, 'triangle', 0.09, null, i * 0.16); }); },
+    boom: function () { buzz([40, 30, 80]); noise(0.5, 0.35, 180); noise(0.25, 0.2, 900); tone(90, 0.45, 'sawtooth', 0.12, 40); },
+    zap: function () { buzz([15, 20, 15, 20, 15]); for (var i = 0; i < 5; i++) noise(0.05, 0.18, 3000 + i * 400, i * 0.03); tone(1400, 0.25, 'square', 0.04, 200); },
     warn: function () { tone(880, 0.06, 'square', 0.03); },
     praise: function (lv) { [659, 784, 988, 1319].slice(0, lv + 1).forEach(function (f, i) { tone(f, 0.16, 'triangle', 0.08, null, 0.05 + i * 0.07); }); },
-    record: function () { [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.2, 'square', 0.04, null, i * 0.08); tone(f * 2, 0.2, 'sine', 0.04, null, i * 0.08); }); }
+    record: function () { buzz([30, 30, 30, 30, 90]); [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, 0.2, 'square', 0.04, null, i * 0.08); tone(f * 2, 0.2, 'sine', 0.04, null, i * 0.08); }); }
   };
 
   // ---------- Çizim: ölçek ve balon görselleri ----------
@@ -284,10 +322,37 @@
   function buildSprites() {
     sprites = PALETTE.map(function (p, i) { return makeSprite(p, i); }); graySprite = makeSprite(GRAY);
   }
-  function setSkin(k) {
+  // Cam ve Şekilli (renk körü dostu) hep açık; Mat 1.000, Neon 5.000 puanda açılır
+  var SKIN_REQ = { glass: 0, shapes: 0, flat: 1000, neon: 5000 };
+  function topBest() { return Math.max(bestFor('classic'), bestFor('timed'), bestFor('daily')); }
+  function skinOpen(k) { return topBest() >= (SKIN_REQ[k] || 0); }
+  function skinName(k) { return t('sk.' + k); }
+  function setSkin(k, quiet) {
     if (SKINS.indexOf(k) < 0) return;
+    if (!skinOpen(k)) {
+      if (!quiet) showToast(t('lk.locked').replace('{s}', skinName(k)).replace('{n}', fmt(SKIN_REQ[k])).replace('{b}', fmt(topBest())));
+      if (skin === k) k = 'glass'; else return;
+    }
     skin = k; lsSet('bp_skin', k); buildSprites();
-    document.querySelectorAll('.skins button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.skin === k ? 'true' : 'false'); });
+    renderSkins();
+  }
+  function renderSkins() {
+    var opened = JSON.parse(lsGet('bp_skins_seen') || '[]');
+    document.querySelectorAll('.skins button').forEach(function (b) {
+      var k = b.dataset.skin, open = skinOpen(k);
+      b.setAttribute('aria-pressed', k === skin ? 'true' : 'false');
+      b.classList.toggle('locked', !open);
+      var lk = b.querySelector('.lk');
+      if (!open && !lk) { lk = document.createElement('em'); lk.className = 'lk'; b.appendChild(lk); }
+      if (lk) { lk.hidden = open; lk.textContent = '🔒 ' + (SKIN_REQ[k] >= 1000 ? SKIN_REQ[k] / 1000 + 'K' : SKIN_REQ[k]); }
+      b.title = open ? '' : t('lk.locked').replace('{s}', skinName(k)).replace('{n}', fmt(SKIN_REQ[k])).replace('{b}', fmt(topBest()));
+      // yeni açılan görünümü bir kere duyur
+      if (open && SKIN_REQ[k] > 0 && opened.indexOf(k) < 0) {
+        opened.push(k); lsSet('bp_skins_seen', JSON.stringify(opened));
+        if (lsGet('bp_skins_init')) setTimeout(function () { showToast(t('lk.new').replace('{s}', skinName(k))); }, 900);
+      }
+    });
+    lsSet('bp_skins_init', '1');
   }
   // Sürpriz balonlar: 10 bomba, 11 joker (gökkuşağı), 12 yıldırım
   var BOMB = 10, JOKER = 11, BOLT = 12, specialSprites = [];
@@ -575,6 +640,7 @@
     showOv(null);
     if (mode === 'daily') lsSet('bp_daily', JSON.stringify({ day: todayKey(), score: 0, done: false }));
     missionEvent('start', {});
+    tut = lsGet('bp_tut') ? 0 : 1; tutT = 0;
   }
 
   // Çevrimiçi sinyali: oyun sürerken 25 sn'de bir
@@ -610,6 +676,7 @@
     ball = { x: SH_X, y: SH_Y, vx: Math.cos(angle), vy: Math.sin(angle), color: cur };
     cur = nxt; nxt = nextBall();
     recoil = 1; loadT = 0;
+    if (tut) { tut++; tutT = 0; if (tut > 3) { tut = 0; lsSet('bp_tut', '1'); addText(W / 2, 380, t('tut.done'), false, C.accent); } }
     fx.push({ k: 'flash', x: SH_X + Math.cos(angle) * 50, y: SH_Y + Math.sin(angle) * 50, t: 0, life: 0.15, r: 14 });
     sfx.shoot();
   }
@@ -779,6 +846,7 @@
     $('scCard').classList.remove('fire');
     var prevBest = best, isBest = score > best;
     if (isBest) { best = score; lsSet(bestKey(mode), String(best)); }
+    renderSkins();
     if (mode === 'daily') lsSet('bp_daily', JSON.stringify({ day: todayKey(), score: score, done: true }));
     missionEvent('end', {});
     updateHud();
@@ -874,7 +942,7 @@
     return c;
   }
   function shareText() { return t('sh.text').replace('{s}', fmt(score)); }
-  function shareUrl() { return lastScoreId ? SHARE_URL + '?meydan=' + lastScoreId : SHARE_URL; }
+  function shareUrl() { return lastScoreId ? SHARE_URL + 'meydan.php?id=' + lastScoreId : SHARE_URL; }
   function downloadImage(c) {
     var a = document.createElement('a'); a.download = 'balon-patlat-' + score + '.png'; a.href = c.toDataURL('image/png');
     document.body.appendChild(a); a.click(); a.remove(); showToast(t('sh.saved'));
@@ -922,7 +990,7 @@
 
   // ---------- Görünüm seçici ----------
   document.querySelectorAll('.skins button').forEach(function (b) { b.onclick = function () { setSkin(b.dataset.skin); }; });
-  setSkin(skin);
+  setSkin(skin, true);
 
   function showOv(id) {
     ['ovStart', 'ovEnd', 'ovPause'].forEach(function (o) { $(o).classList.toggle('show', o === id); });
@@ -969,7 +1037,7 @@
     if (k === 'ArrowLeft' || k === 'ArrowRight') { keys[k] = 1; e.preventDefault(); }
     else if (k === ' ' || k === 'ArrowUp') { e.preventDefault(); if (state === 'play') { ensureAudio(); fire(); } }
     else if (k === 'x' || k === 'X') swap();
-    else if (k === 'm' || k === 'M') $('soundBtn').click();
+    else if (k === 'm' || k === 'M') toggleMute();
     else if (k === 'f' || k === 'F') toggleFs();
     else if (k === 'p' || k === 'P' || k === 'Escape') { state === 'play' ? pause() : resume(); }
     else if (k === 'Enter' && $('ovStart').classList.contains('show')) startGame();
@@ -989,7 +1057,7 @@
   $('resumeBtn').onclick = resume;
 
   // ---------- Güncelleme ----------
-  var lastTick = 99;
+  var lastTick = 99, tut = 0, tutT = 0;
   function step(dt) {
     if (state === 'play' && mode === 'timed' && rowAnim >= 0 && performance.now() > holdUntil - 400) {
       timeLeft -= dt;
@@ -1029,6 +1097,7 @@
     if (banner) { banner.t += dt; if (banner.t > 1.6) banner = null; }
     if (state === 'over') overT += dt;
     if (shake > 0) shake = Math.max(0, shake - dt);
+    if (tut) tutT += dt;
     if (recoil > 0) recoil = Math.max(0, recoil - dt * 6);
     if (loadT < 1) loadT = Math.min(1, loadT + dt * 4);
     if (praise) { praise.t += dt; if (praise.t > 1.3) praise = null; }
@@ -1214,6 +1283,26 @@
     ctx.textAlign = 'left'; ctx.font = '500 10px "JetBrains Mono", monospace'; ctx.fillStyle = C.muted;
     ctx.fillText(t('c.level') + ' ' + level, 16, NEXT_Y + 26 > H - 4 ? H - 6 : NEXT_Y + 28);
 
+    // ilk oyun eğitimi: konuşma balonu + hedefi gösteren ok
+    if (tut && state === 'play' && rowAnim >= 0 && !banner) {
+      var msg = t('tut.' + tut), a = Math.min(1, tutT * 3);
+      var tx0 = W / 2, ty0 = tut === 3 ? DEAD_Y - 70 : DEAD_Y - 110, bob = Math.sin(now / 260) * 4;
+      ctx.save(); ctx.globalAlpha = a;
+      ctx.font = '700 15px "Inter Tight", sans-serif';
+      var tw = Math.min(W - 40, ctx.measureText(msg).width + 32), bx = tx0 - tw / 2, by = ty0 - 22 + bob;
+      ctx.fillStyle = C.accent;
+      ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(bx, by, tw, 40, 12); else ctx.rect(bx, by, tw, 40); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.fillText(msg, tx0, by + 26, W - 60);
+      // ok: 1 → atıcıya, 2 → yan duvara, 3 → tavan sayacına
+      var ax, ay, sx = tx0, sy = by + 40;
+      if (tut === 1) { ax = SH_X; ay = SH_Y - 40; }
+      else if (tut === 2) { ax = 18; ay = by + 20; sx = bx; sy = by + 20; }
+      else { ax = W - 50; ay = NEXT_Y - 16; sx = bx + tw - 30; }
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 3; ctx.setLineDash([6, 5]); ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ax, ay + bob); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(ax, ay + bob, 6 + Math.sin(now / 200) * 2, 0, Math.PI * 2); ctx.fillStyle = C.accent; ctx.fill();
+      ctx.restore();
+    }
     // üstte hap rozetleri: süre (sağ), hedef (sol)
     function pill(x, y, txt, col, alignRight) {
       ctx.font = '700 14px "JetBrains Mono", monospace';
@@ -1378,7 +1467,7 @@
     } else meRow.hidden = true;
     if (lb.mode === 'classic') $('myRank').textContent = m && m.rank.week ? '#' + m.rank.week : '—';
     if (m && m.best > bestFor(lb.mode)) {
-      lsSet(bestKey(lb.mode), String(m.best));
+      lsSet(bestKey(lb.mode), String(m.best)); renderSkins();
       if (lb.mode === mode && state !== 'play') { best = m.best; $('best').textContent = fmt(best); }
     }
   }
@@ -1602,7 +1691,7 @@
   $('city').onchange = function () { lsSet('bp_city', this.value); if (lbMode === 'cities') renderBoard(); };
 
   // ---------- Profil ----------
-  var BADGE_EMOJI = { first: '🎈', g10: '🎯', g50: '🏅', g100: '💯', s1k: '⭐', s5k: '🌟', s10k: '💎', s25k: '🚀', timed1k: '⏱️', daily1: '📅', daily3: '🔥', daily7: '🗓️', king: '👑' };
+  var BADGE_EMOJI = { champ: '🏆', podium: '🎖️', first: '🎈', g10: '🎯', g50: '🏅', g100: '💯', s1k: '⭐', s5k: '🌟', s10k: '💎', s25k: '🚀', timed1k: '⏱️', daily1: '📅', daily3: '🔥', daily7: '🗓️', king: '👑' };
   function openProfile(name) {
     var box = $('pmodal'), body = $('pBody');
     box.hidden = false; document.body.classList.add('modal-open');
@@ -1658,6 +1747,31 @@
   };
   addEventListener('appinstalled', function () { $('instBtn').hidden = true; });
 
+  // ---------- Sezon (aylık) + şampiyonlar duvarı ----------
+  function monthName(ym) {
+    var p = ym.split('-'), d = new Date(+p[0], +p[1] - 1, 15);
+    try { return d.toLocaleDateString(lang === 'en' ? 'en-US' : 'tr-TR', { month: 'long', year: 'numeric' }); } catch (e) { return ym; }
+  }
+  function renderSeason() {
+    var day = todayKey(), y = +day.slice(0, 4), mo = +day.slice(5, 7), dd = +day.slice(8, 10);
+    var last = new Date(y, mo, 0).getDate(), left = last - dd + 1;
+    var nm = monthName(day.slice(0, 7)).replace(/\s*\d{4}$/, '');
+    $('season').textContent = left <= 1 ? t('season1').replace('{m}', nm) : t('season').replace('{m}', nm).replace('{d}', left);
+  }
+  function loadChampions() {
+    fetch(API + '?a=champions', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.ok) return;
+      var el = $('champList');
+      if (!j.seasons.length) { el.innerHTML = '<p class="ch-empty">🏆 ' + esc(t('ch.empty')) + '</p>'; return; }
+      el.innerHTML = j.seasons.map(function (sn) {
+        return '<div class="champ"><div class="ch-m">' + esc(monthName(sn.month)) + '</div><ol>' + sn.top.map(function (r, i) {
+          return '<li class="m' + (i + 1) + '"><span class="md">' + ['🥇', '🥈', '🥉'][i] + '</span>' + avatar(r.name) + '<span class="cn">' + pn(r.name) + '</span><b>' + fmt(r.score) + '</b></li>';
+        }).join('') + '</ol></div>';
+      }).join('');
+    }).catch(function () {});
+  }
+
+  renderSeason(); loadChampions();
   fillCities(); renderMissions(); renderModeSel();
 
   // Kontroller sekmeleri (Bilgisayar / Mobil)

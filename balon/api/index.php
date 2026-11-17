@@ -5,6 +5,8 @@
 //   GET  ?a=cities                                   → bu haftanın şehir sıralaması
 //   GET  ?a=profile&name=İsim                        → oyuncu profili
 //   GET  ?a=challenge&id=kod                         → meydan okuma bilgisi (tahta tohumu + hedef skor)
+//   GET  ?a=champions                                → geçmiş aylık sezonların ilk üçü
+//   POST ?a=admin_login {pass} / admin_stats / admin_scores / admin_act / admin_ban  → yönetim (config.php: admin_pass)
 //   POST ?a=start {mode, ch}                         → {token, seed, mode, day}
 //   POST ?a=ping  {token, end}                       → çevrimiçi sinyali
 //   POST ?a=submit {token, name, score, shots, level, gains, seed, city} → {ok, rank, id}
@@ -98,6 +100,20 @@ function create_tables(PDO $db): void {
         KEY ix_mode_time (mode, created_at),
         KEY ix_mode_day (mode, day)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
+    $db->exec("CREATE TABLE IF NOT EXISTS bp_bans (
+        name VARCHAR(20) NOT NULL PRIMARY KEY,
+        created_at DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
+    $db->exec("CREATE TABLE IF NOT EXISTS bp_daily (
+        day DATE NOT NULL PRIMARY KEY,
+        plays INT UNSIGNED NOT NULL DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $db->exec("CREATE TABLE IF NOT EXISTS bp_logins (
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        ip CHAR(64) NOT NULL,
+        at DATETIME NOT NULL,
+        KEY ix_ip_at (ip, at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     $db->exec("CREATE TABLE IF NOT EXISTS bp_stats (
         k VARCHAR(32) NOT NULL PRIMARY KEY,
         v BIGINT UNSIGNED NOT NULL DEFAULT 0
@@ -128,7 +144,7 @@ function q(PDO $db, string $sql, array $args = []): PDOStatement {
         $st = $db->prepare($sql); $st->execute($args); return $st;
     } catch (PDOException $e) {
         $code = $e->getCode();
-        if ($code === '42S02') { create_tables($db); migrate($db); }
+        if ($code === '42S02') { create_tables($db); migrate($db); }  // eksik tablo (yeni tablolar dahil)
         elseif ($code === '42S22') migrate($db);
         else throw $e;
         $st = $db->prepare($sql); $st->execute($args); return $st;
@@ -154,6 +170,7 @@ function period_start(string $p): string {
     $d = new DateTime('now', new DateTimeZone('Europe/Istanbul'));
     $d->setTime(0, 0, 0);
     if ($p === 'week') $d->modify('-' . ((int)$d->format('N') - 1) . ' days');
+    if ($p === 'month') $d->modify('first day of this month');
     $d->setTimezone(new DateTimeZone('UTC'));
     return $d->format('Y-m-d H:i:s');
 }
@@ -205,7 +222,40 @@ function rank_of(PDO $db, string $mode, string $period, int $score): int {
     return 1 + (int)q($db, 'SELECT COUNT(*) FROM (SELECT name FROM bp_scores WHERE mode = ? AND created_at >= ? AND flag = 0 GROUP BY name HAVING MAX(score) > ?) t',
         [$mode, period_start($period), $score])->fetchColumn();
 }
-function periods(string $mode): array { return $mode === 'daily' ? ['day'] : ['day', 'week', 'all']; }
+function periods(string $mode): array { return $mode === 'daily' ? ['day'] : ['day', 'week', 'month', 'all']; }
+
+// Geçmiş aylık sezonlar (klasik mod): her ayın ilk üçü, en yeniden eskiye
+function champions(PDO $db, int $months = 12): array {
+    $tz = new DateTimeZone('Europe/Istanbul'); $utc = new DateTimeZone('UTC');
+    $out = [];
+    for ($i = 1; $i <= $months; $i++) {
+        $start = new DateTime('first day of this month 00:00', $tz); $start->modify("-$i month");
+        $end = clone $start; $end->modify('+1 month');
+        $label = $start->format('Y-m');
+        $s = (clone $start)->setTimezone($utc)->format('Y-m-d H:i:s');
+        $e = (clone $end)->setTimezone($utc)->format('Y-m-d H:i:s');
+        $rows = q($db, 'SELECT name, MAX(score) AS score FROM bp_scores WHERE mode = ? AND flag = 0 AND created_at >= ? AND created_at < ? GROUP BY name ORDER BY score DESC, MIN(created_at) ASC LIMIT 3',
+            ['classic', $s, $e])->fetchAll();
+        if ($rows) $out[] = ['month' => $label, 'top' => array_map(fn($r) => ['name' => $r['name'], 'score' => (int)$r['score']], $rows)];
+    }
+    return $out;
+}
+function is_banned(PDO $db, string $name): bool {
+    return (bool)q($db, 'SELECT 1 FROM bp_bans WHERE name = ?', [$name])->fetchColumn();
+}
+
+// ---- Yönetim: config.php içindeki admin_pass ile giriş, 12 saatlik imzalı jeton ----
+function admin_token(array $cfg): string {
+    $exp = time() + 12 * 3600;
+    return $exp . '.' . hash_hmac('sha256', (string)$exp, $cfg['salt'] . '|admin|' . ($cfg['admin_pass'] ?? ''));
+}
+function admin_check(array $cfg, $tok): void {
+    if (empty($cfg['admin_pass'])) fail('admin_disabled', 403);
+    if (!is_string($tok) || !preg_match('/^(\d+)\.([a-f0-9]{64})$/', $tok, $m)) fail('unauthorized', 401);
+    if ((int)$m[1] < time()) fail('unauthorized', 401);
+    $want = hash_hmac('sha256', $m[1], $cfg['salt'] . '|admin|' . $cfg['admin_pass']);
+    if (!hash_equals($want, $m[2])) fail('unauthorized', 401);
+}
 
 $a = $_GET['a'] ?? '';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -216,7 +266,7 @@ try {
         $mode = get_mode($_GET['mode'] ?? 'classic');
         $res = ['mode' => $mode, 'day' => ist_today()];
         foreach (periods($mode) as $p) $res[$p] = top_list($db, $mode, $p);
-        if ($mode === 'daily') { $res['week'] = $res['day']; $res['all'] = $res['day']; }
+        if ($mode === 'daily') { $res['week'] = $res['day']; $res['month'] = $res['day']; $res['all'] = $res['day']; }
         // rozetler için: klasik tüm zamanlar 1.si ve bugünün 1.si
         $k = q($db, "SELECT name FROM bp_scores WHERE mode = 'classic' AND flag = 0 ORDER BY score DESC, created_at ASC LIMIT 1")->fetchColumn();
         $h = q($db, "SELECT name FROM bp_scores WHERE created_at >= ? AND flag = 0 ORDER BY score DESC, created_at ASC LIMIT 1", [period_start('day')])->fetchColumn();
@@ -228,7 +278,7 @@ try {
         if ($me !== null) {
             $best = q($db, 'SELECT MAX(score) FROM bp_scores WHERE name = ? AND mode = ?', [$me, $mode])->fetchColumn();
             $info = ['name' => $me, 'best' => $best !== null && $best !== false ? (int)$best : 0, 'rank' => [], 'score' => []];
-            foreach (['day', 'week', 'all'] as $p) {
+            foreach (['day', 'week', 'month', 'all'] as $p) {
                 if ($mode === 'daily') {
                     $mine = q($db, 'SELECT MAX(score) FROM bp_scores WHERE name = ? AND mode = ? AND day = ?', [$me, 'daily', ist_today()])->fetchColumn();
                 } else {
@@ -250,6 +300,11 @@ try {
                 WHERE mode = ? AND created_at >= ? AND flag = 0 AND city IS NOT NULL GROUP BY name, city
             ) t GROUP BY city ORDER BY total DESC LIMIT 20', ['classic', period_start('week')])->fetchAll();
         out(['ok' => true, 'cities' => array_map(fn($r) => ['city' => $r['city'], 'score' => (int)$r['total'], 'players' => (int)$r['players']], $rows)]);
+    }
+
+    // ---- Şampiyonlar duvarı (geçmiş aylık sezonlar) ----
+    if ($a === 'champions' && $method === 'GET') {
+        out(['ok' => true, 'seasons' => champions($db)]);
     }
 
     // ---- Meydan okuma ----
@@ -295,8 +350,16 @@ try {
         if ($streak >= 3) $badges[] = 'daily3';
         if ($streak >= 7) $badges[] = 'daily7';
         if ($rankAll === 1) $badges[] = 'king';
+        $champ = 0; $pod = 0;
+        foreach (champions($db) as $season) {
+            foreach ($season['top'] as $i => $r) {
+                if (mb_strtolower($r['name'], 'UTF-8') === mb_strtolower($name, 'UTF-8')) { if ($i === 0) $champ++; else $pod++; }
+            }
+        }
+        if ($champ) $badges[] = 'champ';
+        if ($pod || $champ) $badges[] = 'podium';
         out(['ok' => true, 'name' => $name, 'city' => $city, 'games' => $games, 'total' => (int)$agg['total'],
-            'first' => substr((string)$agg['first'], 0, 10), 'best' => $best, 'rank' => $rankAll, 'streak' => $streak, 'badges' => $badges,
+            'first' => substr((string)$agg['first'], 0, 10), 'best' => $best, 'rank' => $rankAll, 'streak' => $streak, 'badges' => $badges, 'champ' => $champ,
             'recent' => array_map(fn($r) => ['score' => (int)$r['score'], 'mode' => $r['mode'], 'level' => (int)$r['level'], 'at' => substr((string)$r['created_at'], 0, 10)], $recent)]);
     }
 
@@ -324,6 +387,7 @@ try {
         $now = now_utc();
         q($db, 'INSERT INTO bp_sessions (token, ip, created_at, last_seen, mode, seed, day) VALUES (?, ?, ?, ?, ?, ?, ?)', [$token, $ip, $now, $now, $mode, $seed, $day]);
         q($db, "INSERT INTO bp_stats (k, v) VALUES ('plays', 1) ON DUPLICATE KEY UPDATE v = v + 1");
+        q($db, 'INSERT INTO bp_daily (day, plays) VALUES (?, 1) ON DUPLICATE KEY UPDATE plays = plays + 1', [ist_today()]);
         out(['ok' => true, 'token' => $token, 'seed' => $seed, 'mode' => $mode, 'day' => $day, 'target' => $target,
             'online' => online_count($db), 'plays' => plays_count($db)]);
     }
@@ -347,7 +411,7 @@ try {
         $token = $in['token'] ?? '';
         if (!is_string($token) || !preg_match('/^[a-f0-9]{32}$/', $token)) fail('bad_token');
         $name = clean_name($in['name'] ?? null);
-        if ($name === null) fail('bad_name');
+        if ($name === null || is_banned($db, $name)) fail('bad_name');
         $city = clean_city($in['city'] ?? null);
 
         $score = $in['score'] ?? null; $shots = $in['shots'] ?? null; $level = $in['level'] ?? 1; $gains = $in['gains'] ?? null;
@@ -397,8 +461,74 @@ try {
         $id = (int)$db->lastInsertId();
 
         $rank = [];
-        foreach (['day', 'week', 'all'] as $p) $rank[$p] = rank_of($db, $mode, $mode === 'daily' ? 'day' : $p, $score);
+        foreach (['day', 'week', 'month', 'all'] as $p) $rank[$p] = rank_of($db, $mode, $mode === 'daily' ? 'day' : $p, $score);
         out(['ok' => true, 'name' => $name, 'mode' => $mode, 'rank' => $rank, 'id' => base_convert((string)$id, 10, 36)]);
+    }
+
+    // ---- Yönetim ----
+    if (strpos($a, 'admin_') === 0) {
+        $in = json_decode(file_get_contents('php://input', false, null, 0, 10000) ?: '', true);
+        if (!is_array($in)) $in = [];
+        if ($a === 'admin_login') {
+            if (empty($cfg['admin_pass'])) fail('admin_disabled', 403);
+            $hourAgo = gmdate('Y-m-d H:i:s', time() - 3600);
+            $n = (int)q($db, 'SELECT COUNT(*) FROM bp_logins WHERE ip = ? AND at >= ?', [$ip, $hourAgo])->fetchColumn();
+            if ($n >= 10) fail('rate_limited', 429);
+            q($db, 'INSERT INTO bp_logins (ip, at) VALUES (?, ?)', [$ip, now_utc()]);
+            $pass = $in['pass'] ?? '';
+            if (!is_string($pass) || !hash_equals((string)$cfg['admin_pass'], $pass)) { usleep(400000); fail('wrong_pass', 401); }
+            out(['ok' => true, 'token' => admin_token($cfg)]);
+        }
+        admin_check($cfg, $in['t'] ?? null);
+
+        if ($a === 'admin_stats') {
+            $from = (new DateTime('now', new DateTimeZone('Europe/Istanbul')))->modify('-29 days')->format('Y-m-d');
+            $plays = q($db, 'SELECT day, plays FROM bp_daily WHERE day >= ? ORDER BY day', [$from])->fetchAll();
+            $scores = q($db, "SELECT DATE(CONVERT_TZ(created_at, '+00:00', '+03:00')) AS day, COUNT(*) AS n, COUNT(DISTINCT name) AS players FROM bp_scores WHERE created_at >= ? GROUP BY day ORDER BY day",
+                [gmdate('Y-m-d H:i:s', time() - 30 * 86400)])->fetchAll();
+            out(['ok' => true,
+                'plays' => array_map(fn($r) => ['day' => $r['day'], 'n' => (int)$r['plays']], $plays),
+                'scores' => array_map(fn($r) => ['day' => $r['day'], 'n' => (int)$r['n'], 'players' => (int)$r['players']], $scores),
+                'totals' => [
+                    'plays' => plays_count($db),
+                    'scores' => (int)q($db, 'SELECT COUNT(*) FROM bp_scores')->fetchColumn(),
+                    'players' => (int)q($db, 'SELECT COUNT(DISTINCT name) FROM bp_scores')->fetchColumn(),
+                    'flagged' => (int)q($db, 'SELECT COUNT(*) FROM bp_scores WHERE flag = 1')->fetchColumn(),
+                    'online' => online_count($db),
+                ],
+                'bans' => q($db, 'SELECT name, created_at FROM bp_bans ORDER BY created_at DESC LIMIT 200')->fetchAll()]);
+        }
+        if ($a === 'admin_scores') {
+            $filter = $in['filter'] ?? 'flagged'; $qn = $in['q'] ?? ''; $page = max(0, (int)($in['page'] ?? 0));
+            $where = []; $args = [];
+            if ($filter === 'flagged') $where[] = 'flag = 1';
+            if (is_string($qn) && $qn !== '') { $where[] = 'name LIKE ?'; $args[] = '%' . str_replace(['%', '_'], ['\%', '\_'], mb_substr($qn, 0, 20)) . '%'; }
+            $sql = 'SELECT id, name, score, mode, level, shots, duration, city, flag, created_at FROM bp_scores' . ($where ? ' WHERE ' . implode(' AND ', $where) : '') .
+                ($filter === 'top' ? ' ORDER BY score DESC' : ' ORDER BY id DESC') . ' LIMIT 50 OFFSET ' . ($page * 50);
+            $rows = q($db, $sql, $args)->fetchAll();
+            out(['ok' => true, 'rows' => array_map(fn($r) => [
+                'id' => (int)$r['id'], 'name' => $r['name'], 'score' => (int)$r['score'], 'mode' => $r['mode'], 'level' => (int)$r['level'],
+                'shots' => (int)$r['shots'], 'duration' => (int)$r['duration'], 'city' => $r['city'], 'flag' => (int)$r['flag'], 'at' => $r['created_at'],
+            ], $rows)]);
+        }
+        if ($a === 'admin_act') {
+            $id = (int)($in['id'] ?? 0); $act = $in['act'] ?? '';
+            if ($id <= 0) fail('bad_id');
+            if ($act === 'approve') q($db, 'UPDATE bp_scores SET flag = 0 WHERE id = ?', [$id]);
+            elseif ($act === 'flag') q($db, 'UPDATE bp_scores SET flag = 1 WHERE id = ?', [$id]);
+            elseif ($act === 'delete') q($db, 'DELETE FROM bp_scores WHERE id = ?', [$id]);
+            else fail('bad_act');
+            out(['ok' => true]);
+        }
+        if ($a === 'admin_ban') {
+            $name = is_string($in['name'] ?? null) ? preg_replace('/\s+/u', ' ', trim($in['name'])) : '';
+            if ($name === '' || mb_strlen($name, 'UTF-8') > 20) fail('bad_name');
+            if (!empty($in['unban'])) { q($db, 'DELETE FROM bp_bans WHERE name = ?', [$name]); out(['ok' => true]); }
+            q($db, 'INSERT IGNORE INTO bp_bans (name, created_at) VALUES (?, ?)', [$name, now_utc()]);
+            $del = q($db, 'DELETE FROM bp_scores WHERE name = ?', [$name])->rowCount();
+            out(['ok' => true, 'deleted' => $del]);
+        }
+        fail('unknown_action', 404);
     }
 
     fail('unknown_action', 404);

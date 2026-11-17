@@ -500,6 +500,7 @@ canvas{display:block;width:100%;height:100%;border-radius:12px;background-color:
 /* liderlik sekmeleri */
 .lb-tabs{display:flex;flex-direction:column;gap:6px;justify-self:end}
 .lb .mtabs{grid-template-columns:repeat(4,1fr)}
+.lb #ptabs{grid-template-columns:repeat(4,1fr)}
 .lb .tabs[hidden]{display:none}
 .lb-top{grid-template-columns:auto 1fr auto}
 .pn{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
@@ -583,6 +584,46 @@ body.modal-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.pz,.lb .list li.row,.crown,.em-ic{animation:none}}
 @media (max-width:860px){.lb-top{grid-template-columns:1fr}.lb-tabs{justify-self:stretch}.lb .gstats{justify-self:start}.lb .tabs{min-width:0}}
 @media (max-width:420px){.lb .tabs button{font-size:9.5px;letter-spacing:0;padding:0 2px}.lb .gstats > div{padding:6px 9px}}
+/* ses paneli */
+.snd-wrap{position:relative}
+.snd-pop{position:absolute;right:0;top:44px;z-index:30;width:220px;background:var(--block);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 20px 40px -20px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:10px}
+.snd-pop[hidden]{display:none}
+.snd-row{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;font-weight:600}
+.snd-row b{font:600 12px var(--mono);color:var(--muted)}
+.snd-row[hidden]{display:none}
+#vol{width:100%;accent-color:var(--accent)}
+.sw-btn{width:40px;height:22px;border-radius:999px;border:1px solid var(--line);background:var(--bg);position:relative;cursor:pointer}
+.sw-btn i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:left .15s,background .15s}
+.sw-btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+.sw-btn[aria-pressed="true"] i{left:20px;background:#fff}
+.tg-btn{height:26px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 12px var(--sans);cursor:pointer}
+.tg-btn[aria-pressed="true"]{border-color:var(--ok);color:var(--ok)}
+
+/* kilitli görünümler */
+.skins button{position:relative}
+.skins button.locked{opacity:.6}
+.skins button.locked .sw{filter:grayscale(.85)}
+.skins .lk{position:absolute;top:-7px;right:-4px;font:700 9px var(--mono);font-style:normal;background:var(--ink);color:var(--block);padding:2px 5px;border-radius:999px}
+.skins .lk[hidden]{display:none}
+
+/* sezon */
+.season{font:600 11.5px var(--mono);color:var(--accent);margin-top:6px;letter-spacing:.02em}
+
+/* şampiyonlar duvarı */
+.champs{margin-top:var(--gap);padding:24px;overflow:hidden}
+.champs::before{content:"";position:absolute;right:-60px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,#f5c542 16%,transparent),transparent 70%);pointer-events:none}
+.champs h2{font-size:26px;font-weight:800;letter-spacing:-.03em;margin:4px 0 16px}
+.ch-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.champ{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px}
+.ch-m{font:700 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.champ ol{list-style:none;display:grid;gap:6px}
+.champ li{display:grid;grid-template-columns:22px 28px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:14px}
+.champ li .av2{width:28px;height:28px;font-size:12px}
+.champ li.m1{font-size:15.5px}
+.champ li.m1 .cn .pn{font-weight:800}
+.champ .cn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.champ b{font-variant-numeric:tabular-nums}
+.ch-empty{color:var(--muted);font-size:15px;padding:10px 0}
 .foot-links{display:flex;gap:16px;flex-wrap:wrap}
 .nojs{padding:20px;text-align:center;color:var(--muted)}
 footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 20px;margin-top:var(--gap);font-family:var(--mono);font-size:12px;color:var(--muted)}
@@ -601,9 +642,17 @@ footer a:hover{color:var(--ink)}
     </div>
     <div class="ctrls">
       <button class="ctrl inst" id="instBtn" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span data-i18n="inst">Yükle</span></button>
-      <button class="ctrl" id="soundBtn" aria-label="Ses" aria-pressed="false">
+      <div class="snd-wrap">
+      <button class="ctrl" id="soundBtn" aria-label="Ses" aria-pressed="false" aria-haspopup="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="x" d="m16 9 6 6m0-6-6 6" style="display:none"/></svg>
       </button>
+      <div class="snd-pop" id="sndPop" hidden>
+        <label class="snd-row" for="vol"><span data-i18n="snd.vol">Ses</span><b id="volVal">80%</b></label>
+        <input type="range" id="vol" min="0" max="100" step="5" value="80" aria-label="Ses seviyesi">
+        <div class="snd-row"><span data-i18n="snd.mute">Sessiz</span><button class="sw-btn" id="muteBtn" aria-pressed="false" aria-label="Sessiz"><i></i></button></div>
+        <div class="snd-row" id="vibRow"><span data-i18n="snd.vib">Titreşim</span><button class="tg-btn" id="vibBtn" aria-pressed="true">Açık</button></div>
+      </div>
+      </div>
       <button class="ctrl" id="fsBtn" aria-label="Tam ekran" aria-pressed="false" title="Tam ekran (F)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
       </button>
@@ -760,6 +809,7 @@ footer a:hover{color:var(--ink)}
       <div class="lb-title">
         <div class="label" data-i18n="lb.l">Online sıralama</div>
         <h2 id="lbTitle" data-i18n="lb.t">Liderlik tablosu</h2>
+        <div class="season" id="season"></div>
       </div>
       <div class="gstats">
         <span class="live" id="liveTag"><i></i><span data-i18n="lb.live">Canlı</span></span>
@@ -776,6 +826,7 @@ footer a:hover{color:var(--ink)}
       <div class="tabs" id="ptabs" role="tablist" aria-label="Dönem">
         <button role="tab" data-p="day" aria-selected="false" data-i18n="lb.day">Bugün</button>
         <button role="tab" data-p="week" aria-selected="true" data-i18n="lb.week">Bu hafta</button>
+        <button role="tab" data-p="month" aria-selected="false" data-i18n="lb.month">Bu ay</button>
         <button role="tab" data-p="all" aria-selected="false" data-i18n="lb.all">Tüm zamanlar</button>
       </div>
       </div>
@@ -791,6 +842,12 @@ footer a:hover{color:var(--ink)}
         <div class="me-row" id="meRow" hidden></div>
       </div>
     </div>
+  </section>
+
+  <section class="b champs" id="sampiyonlar" aria-labelledby="chTitle">
+    <div class="label" data-i18n="ch.l">Aylık sezonlar · klasik mod</div>
+    <h2 id="chTitle" data-i18n="ch.title">Şampiyonlar duvarı</h2>
+    <div class="ch-list" id="champList"></div>
   </section>
 
   <section class="info" aria-labelledby="pageTitle">
@@ -879,6 +936,6 @@ footer a:hover{color:var(--ink)}
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="oyun.js?v=11" defer></script>
+<script src="oyun.js?v=13" defer></script>
 </body>
 </html>

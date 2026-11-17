@@ -15,4 +15,6 @@ return [
     'db_pass' => 'SIFRE_BURAYA',
     // IP adresleri açık tutulmaz, bu tuzla hash'lenir. Uzun, rastgele bir şey yaz.
     'salt'    => 'buraya-uzun-rastgele-bir-metin-yaz',
+    // Yönetim paneli (/balon/yonetim/) şifresi. Boş bırakılırsa panel kapalıdır.
+    'admin_pass' => '',
 ];

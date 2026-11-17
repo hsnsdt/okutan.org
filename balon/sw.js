@@ -2,10 +2,10 @@
    - Sayfa: önce ağ, yoksa önbellek
    - Statik dosyalar: önbellekten ver, arkada tazele
    - API (/balon/api/) hiçbir zaman önbelleğe alınmaz */
-var CACHE = 'balon-v3';
+var CACHE = 'balon-v5';
 var CORE = [
   './',
-  'oyun.js?v=11',
+  'oyun.js?v=13',
   'manifest.json',
   'icon-192.png',
   '/assets/fonts/fonts.css',
