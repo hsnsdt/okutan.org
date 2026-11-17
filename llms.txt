@@ -11,6 +11,7 @@ Contact: sedat@okutan.org — open to freelance work and collaboration, usually 
   - [App Store](https://apps.apple.com/us/app/kelimeler-online-kelime-oyunu/id6775899635)
   - [Android](https://okutan.org/kelimeler/android.html)
   - [Support](https://okutan.org/kelimeler/support.html)
+- [Oyunlar](https://okutan.org/oyunlar/): Games hub listing all of Sedat Okutan's free games (Balon Patlat, 101 Okey, Kelimeler) with live leaderboard highlights and today's daily challenges.
 - [101 Okey](https://okutan.org/101-okey/): Free browser 101 Okey (Turkish tile game) with classic coffeehouse rules: three bot levels, a daily hand (same deal for everyone), online tables with friends via invite link, okey swap, optional house rules (12-13-1, doubling opens, penalty size), hints, move timer, leaderboard and player profiles. Installable as a PWA. No sign-up.
 - [Balon Patlat](https://okutan.org/balon/): Free browser bubble shooter game (Turkish/English): classic, 2-minute time attack and a daily puzzle (same board for everyone, one try), daily missions, friend challenges via share links, player profiles and a city leaderboard. Installable as a PWA. Built with HTML5 Canvas, PHP and MySQL.
 - [Sebze.net](https://www.sebze.net/): Turkish community for hobby gardening and growing vegetables. Built on XenForo with custom development, including his own image-rating add-on.
