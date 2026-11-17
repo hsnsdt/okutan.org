@@ -149,111 +149,160 @@
   }
   function arrangeSorted() { var gs = restGroups(st.hands[0]); rack = place(gs) || compact(gs); sel = null; }
 
+  // ---------- avatarlar (kendi çizimimiz: renkli zemin + yüz + saç) ----------
+  var AV = [
+    { bg: '#ffd8b0', skin: '#f2c49b', hair: '#3b2a1e', shirt: '#ff5a1f', style: 0 },
+    { bg: '#ffd9e6', skin: '#f5cfa8', hair: '#6b3d1f', shirt: '#e2457a', style: 2 },   // Ayşe
+    { bg: '#cfe3ff', skin: '#e9b48a', hair: '#151515', shirt: '#2f6df0', style: 1 },   // Mehmet
+    { bg: '#cdf3dc', skin: '#d9a77c', hair: '#1f1410', shirt: '#17975a', style: 4 }    // Zeynep
+  ];
+  function avatarSVG(p) {
+    var a = AV[p], hair;
+    if (a.style === 0) hair = '<path d="M20 30c0-11 8-17 16-17s16 6 16 17c-4-5-9-7-16-7s-12 2-16 7z" fill="' + a.hair + '"/>';
+    else if (a.style === 1) hair = '<path d="M21 31c-1-12 7-18 15-18 9 0 16 6 15 18l-3-6c-4 2-9 2-12 0-3 2-9 2-12 0z" fill="' + a.hair + '"/><path d="M26 47c3 4 7 5 10 5s7-1 10-5" stroke="' + a.hair + '" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    else if (a.style === 2) hair = '<path d="M17 44c-2-20 6-31 19-31s21 11 19 31c-2-6-4-10-5-15-6 3-17 3-27 0-1 5-3 9-6 15z" fill="' + a.hair + '"/>';
+    else if (a.style === 4) hair = '<circle cx="36" cy="14" r="7" fill="' + a.hair + '"/><path d="M19 38c-1-16 7-24 17-24s18 8 17 24c-3-7-6-11-8-14-5 2-13 2-18 0-2 3-5 7-8 14z" fill="' + a.hair + '"/>';
+    else hair = '<path d="M21 28c2-9 8-14 15-14s13 5 15 14c-5-3-10-4-15-4s-10 1-15 4z" fill="' + a.hair + '"/>';
+    return '<svg viewBox="0 0 72 72" aria-hidden="true"><rect width="72" height="72" fill="' + a.bg + '"/>' +
+      '<path d="M10 72c2-13 13-20 26-20s24 7 26 20z" fill="' + a.shirt + '"/><path d="M30 52h12v6c-2 2-10 2-12 0z" fill="' + a.skin + '"/>' +
+      '<ellipse cx="36" cy="35" rx="14" ry="16" fill="' + a.skin + '"/>' + hair +
+      '<circle cx="30.5" cy="36" r="1.8" fill="#222"/><circle cx="41.5" cy="36" r="1.8" fill="#222"/>' +
+      '<path d="M31 43c3 2.4 7 2.4 10 0" stroke="#7a3b2a" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>';
+  }
+
+  // ---------- sahneyi ekrana sığdır ----------
+  var BW = 1100, BH = 680;
+  function fit() {
+    var wrap = $('stageWrap'), board = $('board');
+    var fs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    var availW = wrap.clientWidth, top = fs ? 0 : Math.max(0, wrap.getBoundingClientRect().top + scrollY - scrollY);
+    // yatay telefonda üst başlık gizlenir; tüm yüksekliği kullan
+    var headerHidden = innerHeight <= 560 && innerWidth > innerHeight;
+    var availH = fs ? innerHeight : innerHeight - (headerHidden ? 12 : 86);
+    var k = Math.min(availW / BW, Math.max(0.3, availH / BH));
+    if (fs) k = Math.min(innerWidth / BW, innerHeight / BH);
+    board.style.transform = 'scale(' + k + ')';
+    board.style.left = Math.max(0, (availW - BW * k) / 2) + 'px';
+    wrap.style.height = Math.round(BH * k) + 'px';
+    void top;
+  }
+  addEventListener('resize', fit);
+  if (window.ResizeObserver) new ResizeObserver(fit).observe($('stageWrap'));
+  $('fsBtn').onclick = function () {
+    var el = $('stageWrap');
+    try {
+      if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      else { var r = (el.requestFullscreen || el.webkitRequestFullscreen).call(el); if (r && r.catch) r.catch(function () {}); }
+    } catch (e) {}
+  };
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) { document.addEventListener(ev, function () { setTimeout(fit, 50); }); });
+  if (!(document.fullscreenEnabled || document.webkitFullscreenEnabled)) $('fsBtn').hidden = true;
+  fit();
+
   // ---------- çizim ----------
   function render(freshIds) {
     if (!st) return;
     var nm = names();
-    $('handChip').textContent = 'El ' + (game.idx + 1) + '/' + game.hands;
-    $('indMini').innerHTML = ''; $('okeyMini').innerHTML = '';
-    var ind = st.indicator;
-    $('indMini').appendChild(miniTile(ind.c, ind.n)); $('okeyMini').appendChild(miniTile(st.okey.c, st.okey.n));
+    $('handChip').textContent = 'El ' + (game.idx + 1) + ' / ' + game.hands;
+    setMini($('indMini'), st.indicator.c, st.indicator.n); setMini($('okeyMini'), st.okey.c, st.okey.n);
     $('scoreChips').innerHTML = nm.map(function (n, i) { return '<span class="chip">' + esc(n) + ' <b>' + fmt(game.totals[i]) + '</b></span>'; }).join('');
-    [1, 2, 3].forEach(renderSeat);
+    [0, 1, 2, 3].forEach(renderPlate);
     renderMelds(); renderPiles(); renderRack(freshIds); renderButtons();
   }
-  function miniTile(c, n) {
-    var s = document.createElement('span');
-    s.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 4px;border-radius:5px;background:#fbf8ef;font:900 12px var(--sans);color:var(--t-' + c + ')';
-    s.textContent = n; return s;
-  }
-  function renderSeat(p) {
-    var el = $('seat' + p), nm = names()[p], o = st.opened[p];
-    var val = o ? st.table.filter(function (m) { return m.owner === p; }).length : 0;
-    var lastD = st.discards[p][st.discards[p].length - 1];
+  function setMini(el, c, n) { el.textContent = n; el.style.color = 'var(--t-' + c + ')'; }
+  function renderPlate(p) {
+    var el = $('pl' + p), nm = names()[p], o = st.opened[p];
+    var keep = el.querySelector('.say'), sayHTML = keep ? keep.outerHTML : '<div class="say"></div>';
     el.classList.toggle('turn', st.turn === p && !st.over);
-    var backs = ''; for (var i = 0; i < st.hands[p].length; i++) backs += '<i></i>';
-    var who = '<div class="av" style="--c:' + SEAT_COLORS[p] + '">' + esc(nm.charAt(0)) + '</div>';
-    var info = '<div class="nm">' + esc(nm) + '</div><div class="meta">' + st.hands[p].length + ' taş · ' + fmt(game.totals[p]) + ' puan</div>' +
-      '<span class="st' + (o ? ' open' : '') + '">' + (o === 'cift' ? 'ÇİFTE GİTTİ' : o ? 'AÇTI · ' + val + ' PER' : 'AÇMADI') + '</span>';
-    var last = lastD ? '<div class="meta">Son attığı</div>' + miniHTML(lastD) : '';
-    el.innerHTML = '<div class="say" id="say' + p + '"></div>' + (p === 2 ? who + '<div class="who">' + info + '</div><div class="backs">' + backs + '</div>' + last
-      : who + info + '<div class="backs">' + backs + '</div>' + last);
+    var status = o === 'cift' ? 'ÇİFT' : o ? 'AÇTI' : '';
+    var sub = p === 0 ? st.hands[0].length + ' taş · <i>' + fmt(game.totals[0]) + '</i>' : st.hands[p].length + ' taş · <i>' + fmt(game.totals[p]) + '</i>';
+    el.innerHTML = sayHTML + '<div class="av">' + avatarSVG(p) + (status ? '<span class="badge">' + status + '</span>' : '') + '</div>' +
+      '<div class="np"><b>' + esc(nm) + '</b><small>' + sub + '</small></div>';
   }
+  function meldEl(m, i) {
+    var d = document.createElement('div'); d.className = 'meld'; d.dataset.mi = i;
+    m.tiles.forEach(function (t) { d.appendChild(tileEl(t)); });
+    return d;
+  }
+  // panolar: sol üst Zeynep, sağ üst Mehmet, sol alt sen, sağ alt Ayşe
+  var QUAD = [3, 2, 0, 1];
   function renderMelds() {
-    var box = $('melds'), nm = names();
-    if (!st.table.length) { box.innerHTML = '<p class="empty">Masada henüz per yok.<br>101\'e ulaşan ilk oyuncu elini açar.</p>'; return; }
-    box.innerHTML = '';
-    [0, 1, 2, 3].forEach(function (p) {
-      var ms = st.table.map(function (m, i) { return { m: m, i: i }; }).filter(function (x) { return x.m.owner === p; });
-      if (!ms.length) return;
-      var row = document.createElement('div'); row.className = 'mrow';
-      row.innerHTML = '<span class="own">' + esc(nm[p]) + '</span>';
-      var wrap = document.createElement('div'); wrap.className = 'ms';
-      ms.forEach(function (x) {
-        var d = document.createElement('div'); d.className = 'meld'; d.dataset.mi = x.i;
-        x.m.tiles.forEach(function (t) { d.appendChild(tileEl(t)); });
-        wrap.appendChild(d);
-      });
-      row.appendChild(wrap); box.appendChild(row);
+    var nm = names(), q = $('quads'), c = $('ciftCols');
+    q.innerHTML = ''; c.innerHTML = '';
+    QUAD.forEach(function (p) {
+      var box = document.createElement('div'); box.className = 'quad' + (p === 0 ? ' mine' : '');
+      st.table.forEach(function (m, i) { if (m.owner === p && m.type !== 'pair') box.appendChild(meldEl(m, i)); });
+      box.insertAdjacentHTML('beforeend', '<span class="qn">' + esc(nm[p]) + '</span>');
+      q.appendChild(box);
     });
-    // seçili taş işlenebilecekse perleri işaretle
+    [0, 1, 2, 3].forEach(function (p) {
+      var col = document.createElement('div'); col.className = 'ccol' + (p === 0 ? ' mine' : '');
+      st.table.forEach(function (m, i) {
+        if (m.owner !== p || m.type !== 'pair') return;
+        var pr = document.createElement('div'); pr.className = 'pr';
+        m.tiles.forEach(function (t) { pr.appendChild(tileEl(t)); });
+        col.appendChild(pr); void i;
+      });
+      col.insertAdjacentHTML('beforeend', '<span class="qn">' + esc(nm[p]) + '</span>');
+      c.appendChild(col);
+    });
     if (sel != null && st.turn === 0 && st.phase === 'play' && st.opened[0] === 'seri') {
       var t = st.byId[sel];
-      box.querySelectorAll('.meld').forEach(function (d) { if (M.addToMeld(st.table[+d.dataset.mi], t)) d.classList.add('can'); });
+      q.querySelectorAll('.meld').forEach(function (d) { if (M.addToMeld(st.table[+d.dataset.mi], t)) d.classList.add('can'); });
     }
   }
+  function slotTile(id, t, cls) {
+    var el = $(id); el.querySelectorAll('.tile').forEach(function (x) { x.remove(); });
+    if (t) el.insertBefore(tileEl(t, cls), el.firstChild);
+  }
   function renderPiles() {
-    var side = M.sideTile(st, 0), sp = $('sidePile');
-    sp.innerHTML = ''; sp.className = 'side';
-    if (side) sp.appendChild(tileEl(side)); else { var e = document.createElement('div'); e.className = 'slot-empty'; sp.appendChild(e); }
+    var nm = names();
     var myDraw = st.turn === 0 && st.phase === 'draw' && !st.over && !busy;
-    sp.classList.toggle('live', myDraw && !!side && st.noSide !== 0);
-    $('deck').textContent = st.deck.length; $('deck').classList.toggle('live', myDraw);
+    slotTile('d3', M.sideTile(st, 0));
+    $('d3').classList.toggle('live', myDraw && !!M.sideTile(st, 0) && st.noSide !== 0);
+    slotTile('d2', st.discards[2][st.discards[2].length - 1]); $('d2c').textContent = nm[2];
+    slotTile('d1', st.discards[1][st.discards[1].length - 1]); $('d1c').textContent = nm[1];
+    slotTile('d0', st.discards[0][st.discards[0].length - 1], 'dim');
+    $('d0').classList.toggle('can', st.turn === 0 && st.phase === 'play' && sel != null && !busy);
+    $('deckCnt').textContent = st.deck.length; $('deck').classList.toggle('live', myDraw);
     $('indPile').innerHTML = ''; $('indPile').appendChild(tileEl(st.indicator));
-    var dz = $('discardZone'); dz.innerHTML = '';
-    var mine = st.discards[0][st.discards[0].length - 1];
-    if (mine) dz.appendChild(tileEl(mine, 'dim'));
-    dz.classList.toggle('can', st.turn === 0 && st.phase === 'play' && sel != null);
   }
   function renderRack(freshIds) {
     var el = $('rack'); el.innerHTML = '';
     for (var s = 0; s < SLOTS; s++) {
       var slot = document.createElement('div'); slot.className = 'slot'; slot.dataset.s = s;
       var id = rack[s];
-      if (id != null) {
-        var t = st.byId[id];
-        var te = tileEl(t, (sel === id ? 'sel' : '') + (freshIds && freshIds[id] ? ' new' : '') + (st.sideTaken === id ? ' sel' : ''));
-        slot.appendChild(te);
-      }
+      if (id != null) slot.appendChild(tileEl(st.byId[id], (sel === id || st.sideTaken === id ? 'sel' : '') + (freshIds && freshIds[id] ? ' new' : '')));
       el.appendChild(slot);
     }
-    var sg = seriGroups(), sum = sg.reduce(function (a, g) { return a + M.checkMeld(g).value; }, 0), pc = pairGroups().length;
-    $('meterSeri').innerHTML = 'Seri: <b>' + sum + '</b> / 101'; $('meterSeri').classList.toggle('ok', sum >= 101);
-    $('meterCift').innerHTML = 'Çift: <b>' + pc + '</b> / 5'; $('meterCift').classList.toggle('ok', pc >= 5);
-    var o = st.opened[0];
-    $('youInfo').textContent = (o === 'cift' ? 'Çifte gittin' : o ? 'Elini açtın' : 'Henüz açmadın') + ' · ' + st.hands[0].length + ' taş';
-    $('meterSeri').hidden = !!o; $('meterCift').hidden = !!o;
+    var o = st.opened[0], sum = seriGroups().reduce(function (a, g) { return a + M.checkMeld(g).value; }, 0), pc = pairGroups().length;
+    var b = $('sumBadge');
+    if (o === 'seri') { b.innerHTML = st.hands[0].length + '<small>TAŞ</small>'; b.classList.remove('ok'); b.title = 'Elindeki taş sayısı'; }
+    else if (o === 'cift' || (pc >= 4 && sum < 101)) { b.innerHTML = pc + '<small>ÇİFT</small>'; b.classList.toggle('ok', !o && pc >= 5); b.title = 'Dizili çift sayısı'; }
+    else { b.textContent = sum; b.classList.toggle('ok', sum >= 101); b.title = 'Istakada dizili perlerin toplamı'; }
   }
   function renderButtons() {
     var my = st.turn === 0 && !st.over && !busy, play = my && st.phase === 'play', o = st.opened[0];
+    var sum = seriGroups().reduce(function (a, g) { return a + M.checkMeld(g).value; }, 0), pc = pairGroups().length;
     $('openSeri').hidden = !!o; $('openCift').hidden = !!o; $('layBtn').hidden = !o;
     $('openSeri').disabled = !play; $('openCift').disabled = !play; $('layBtn').disabled = !play;
-    $('discardBtn').disabled = !(play && sel != null);
+    $('openSeri').classList.toggle('hot', play && !o && sum >= 101);
+    $('openCift').classList.toggle('hot', play && !o && pc >= 5);
     var sideUnused = st.sideTaken != null && st.hands[0].some(function (t) { return t.id === st.sideTaken; });
     $('returnBtn').hidden = !(play && sideUnused);
     var h = '';
     if (st.over) h = '';
     else if (!my) h = 'Sıra ' + names()[st.turn] + '\'da…';
-    else if (st.phase === 'draw') h = 'Desteden ya da yandan (soldaki rakibin attığı) bir taş çek.';
-    else if (sideUnused) h = 'Yandan aldığın taşı bu tur kullanmalısın: açarken ya da masaya işleyerek.';
-    else if (!o && seriGroups().reduce(function (a, g) { return a + M.checkMeld(g).value; }, 0) >= 101) h = '101\'e ulaştın: Seri aç ile elini açabilirsin!';
-    else if (!o && pairGroups().length >= 5) h = '5 çiftin var: Çift aç ile çifte gidebilirsin!';
+    else if (st.phase === 'draw') h = 'Desteden ya da sol alttaki yan taştan bir taş çek.';
+    else if (sideUnused) h = 'Yandan aldığın taşı bu tur kullanmalısın.';
+    else if (!o && sum >= 101) h = '101\'e ulaştın: Seri aç!';
+    else if (!o && pc >= 5) h = '5 çiftin var: Çift aç!';
     else if (st.hands[0].length === 1) h = 'Son taşını at, eli bitir!';
-    else h = 'Bir taş seç ve at (ya da atma alanına sürükle).' + (o === 'seri' ? ' Taşı masadaki bir pere sürükleyerek işleyebilirsin.' : '');
+    else h = 'Bir taşı sağ alttaki yuvaya sürükle ya da çift tıkla.';
     $('hint').textContent = h;
   }
   function say(p, text) {
-    var e = $('say' + p); if (!e) return;
+    var e = $('pl' + p) && $('pl' + p).querySelector('.say'); if (!e) return;
     e.textContent = text; e.classList.add('on');
     clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove('on'); }, 1500 * game.speed + 400);
   }
@@ -281,7 +330,7 @@
     var fresh = {}; syncRack(fresh); sfx.draw(); render(fresh); save();
   }
   $('deck').onclick = function () { drawFrom(false); };
-  $('sidePile').onclick = function () { drawFrom(true); };
+  $('d3').onclick = function () { drawFrom(true); };
   function doOpen(kind) {
     if (!myTurn('play')) return;
     var gs = kind === 'cift' ? pairGroups() : seriGroups();
@@ -315,7 +364,6 @@
     if (st.over) return handEnd();
     advance();
   }
-  $('discardBtn').onclick = function () { if (sel != null) doDiscard(sel); };
   $('returnBtn').onclick = function () {
     if (!myTurn('play')) return;
     var r = M.returnSide(st, 0); if (!r.ok) return fail(r);
@@ -336,7 +384,7 @@
   function targetAt(x, y) {
     var el = document.elementFromPoint(x, y); if (!el) return null;
     var slot = el.closest('.slot'); if (slot && slot.parentNode.id === 'rack') return { kind: 'slot', s: +slot.dataset.s, el: slot };
-    if (el.closest('#discardZone')) return { kind: 'discard', el: $('discardZone') };
+    if (el.closest('#d0')) return { kind: 'discard', el: $('d0') };
     var meld = el.closest('.meld'); if (meld) return { kind: 'meld', mi: +meld.dataset.mi, el: meld };
     return null;
   }
@@ -351,7 +399,8 @@
     if (!drag.ghost) {
       if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
       drag.ghost = drag.el.cloneNode(true); drag.ghost.classList.add('ghost'); drag.ghost.classList.remove('sel');
-      var r = drag.el.getBoundingClientRect(); drag.ghost.style.width = r.width + 'px'; drag.ghost.style.height = r.height + 'px';
+      var r = drag.el.getBoundingClientRect();
+      drag.ghost.style.setProperty('--tw', r.width + 'px'); drag.ghost.style.setProperty('--th', r.height + 'px');
       document.body.appendChild(drag.ghost); drag.el.classList.add('dim');
     }
     drag.ghost.style.left = (e.clientX - drag.ghost.offsetWidth / 2) + 'px';
@@ -375,10 +424,12 @@
     else if (t.kind === 'meld') doProcess(d.id, t.mi);
   });
   document.addEventListener('pointercancel', function () { if (drag && drag.ghost) drag.ghost.remove(); drag = null; setOver(null); render(); });
-  $('melds').addEventListener('click', function (e) {
+  $('seriPanel').addEventListener('click', function (e) {
     var m = e.target.closest('.meld'); if (m && sel != null) doProcess(sel, +m.dataset.mi);
   });
-  $('discardZone').addEventListener('click', function () { if (sel != null) doDiscard(sel); });
+  $('d0').addEventListener('click', function () { if (sel != null) doDiscard(sel); });
+  // çift tıklayınca at
+  $('rack').addEventListener('dblclick', function (e) { var te = e.target.closest('.tile'); if (te) doDiscard(+te.dataset.id); });
 
   // ---------- botlar ----------
   function delay(ms) { return sleep(ms * game.speed); }
@@ -429,7 +480,8 @@
     st = M.newHand(1 + Math.floor(Math.random() * 0x7ffffffe), game.dealer);
     rack = []; for (var i = 0; i < SLOTS; i++) rack.push(null);
     syncRack(); arrangeSorted(); sel = null; busy = false;
-    $('startModal').hidden = true; $('endModal').hidden = true;
+    $('startModal').hidden = true; $('endModal').hidden = true; fit();
+    if (innerHeight < 760) { try { $('stageWrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
     render(); save();
     toast(game.dealer === 0 ? 'Dağıtan sensin: 22 taşın var, bir taş atarak başla.' : names()[game.dealer] + ' dağıttı.');
     advance();
