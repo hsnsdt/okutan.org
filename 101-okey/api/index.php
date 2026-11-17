@@ -18,11 +18,13 @@
 //   POST ?a=t_say {code, seat, seatKey, text}    → masaya sohbet mesajı (140 karakter, küfür maskelenir)
 //   POST ?a=t_chat {code, seat, seatKey, after}  → yeni sohbet mesajları
 //
-// Aynı dosya düz Okey'e de hizmet eder: okey/api/index.php, OKEY_GAME = 'okey' tanımlayıp bu dosyayı çağırır.
-// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*), böylece sıralamalar ve masalar karışmaz.
+// Aynı dosya düz Okey'e ve Tavla'ya da hizmet eder: okey/api ve tavla/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
+// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*), böylece sıralamalar ve masalar karışmaz.
+// Tavla masası iki kişiliktir (koltuk 0 ve 1).
 declare(strict_types=1);
 $GAME = defined('OKEY_GAME') ? OKEY_GAME : '101';
-$PFX = $GAME === 'okey' ? 'oy_' : 'ok_';
+$PFX = ['okey' => 'oy_', 'tavla' => 'tv_'][$GAME] ?? 'ok_';
+$MAX_SEAT = $GAME === 'tavla' ? 1 : 3;
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -168,8 +170,9 @@ try {
         if (!$s || (int)$s['used']) fail('bad_token');
         $mode = $s['mode']; $hands = (int)($in['hands'] ?? 0); $total = $in['total'] ?? null; $won = !empty($in['won']) ? 1 : 0;
         $level = in_array($in['level'] ?? '', ['easy', 'normal', 'hard', 'mixed'], true) ? $in['level'] : 'normal';
-        $maxHands = $GAME === 'okey' ? 99 : 11;
-        if (!is_int($total) || ($GAME === 'okey' ? ($total < -400 || $total > 400) : ($total < -3232 || $total > 30000))) fail('bad_total');
+        $maxHands = ['okey' => 99, 'tavla' => 25][$GAME] ?? 11;
+        $range = ['okey' => [-400, 400], 'tavla' => [0, 30]][$GAME] ?? [-3232, 30000];
+        if (!is_int($total) || $total < $range[0] || $total > $range[1]) fail('bad_total');
         if ($hands < 1 || $hands > $maxHands) fail('bad_hands');
         $elapsed = time() - strtotime($s['created_at'] . ' UTC');
         if ($elapsed < $hands * 20) fail('too_fast');
@@ -216,7 +219,7 @@ try {
         // aynı isimle yeniden bağlanma: anahtarı yoksa yeni koltuk verilmez
         if ($t['status'] !== 'lobby') fail('started');
         foreach ($t['seats'] as $s) if ($s && mb_strtolower($s['name'], 'UTF-8') === mb_strtolower($name, 'UTF-8')) fail('name_taken');
-        $seat = -1; for ($i = 1; $i < 4; $i++) if (!$t['seats'][$i]) { $seat = $i; break; }
+        $seat = -1; for ($i = 1; $i <= $MAX_SEAT; $i++) if (!$t['seats'][$i]) { $seat = $i; break; }
         if ($seat < 0) fail('full');
         $sk = bin2hex(random_bytes(16)); $t['seats'][$seat] = ['name' => $name, 'key' => $sk];
         q($db, 'UPDATE ok_tables SET seats = ?, updated_at = ? WHERE code = ?', [json_encode($t['seats'], JSON_UNESCAPED_UNICODE), now(), $t['code']]);
@@ -230,7 +233,7 @@ try {
     if ($a === 't_start') {
         $in = body(); $t = table_row($db, $in['code'] ?? '');
         if (!hash_equals($t['host_key'], (string)($in['hostKey'] ?? ''))) fail('unauthorized', 401);
-        for ($i = 1; $i < 4; $i++) if (!$t['seats'][$i]) $t['seats'][$i] = ['name' => ['Ayşe', 'Mehmet', 'Zeynep'][$i - 1], 'bot' => true];
+        for ($i = 1; $i <= $MAX_SEAT; $i++) if (!$t['seats'][$i]) $t['seats'][$i] = ['name' => ($GAME === 'tavla' ? ['Mehmet'] : ['Ayşe', 'Mehmet', 'Zeynep'])[$i - 1], 'bot' => true];
         q($db, "UPDATE ok_tables SET status = 'play', seats = ?, updated_at = ?, host_seen = ? WHERE code = ?", [json_encode($t['seats'], JSON_UNESCAPED_UNICODE), now(), now(), $t['code']]);
         out(['ok' => true, 'seats' => public_seats($t['seats'])]);
     }

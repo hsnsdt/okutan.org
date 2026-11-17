@@ -300,13 +300,15 @@
   function setMini(el, c, n) { el.textContent = n; el.style.color = 'var(--t-' + c + ')'; }
   function renderPlate(p) {
     var seat = seatAt(p), el = $('pl' + p), nm = names()[seat];
-    var keep = el.querySelector('.say'), sayHTML = keep ? keep.outerHTML : '<div class="say"></div>';
+    var keep = el.querySelector('.say'), sayHTML = '';
     el.classList.toggle('turn', V.turn === seat && !V.over);
     var badge = V.shown === seat ? 'GÖSTERGE' : V.starter === seat && V.turnCount === 0 && !V.over ? 'BAŞLAR' : '';
     var lvl = game.levels && game.levels[seat] ? ' · ' + LEVEL_TR[game.levels[seat]] : '';
     var score = game.mode === 'daily' ? '' : ' · <i>' + fmt(game.scores[seat]) + ' puan</i>';
     el.innerHTML = sayHTML + '<div class="av"><div class="ring"></div>' + avatarSVG(seat) + (badge ? '<span class="badge">' + badge + '</span>' : '') + '</div>' +
       '<div class="np"><b>' + esc(nm) + '</b><small>' + V.counts[seat] + ' taş' + score + esc(lvl) + '</small></div>';
+    // balon aynı öğe olarak kalır: kapanma zamanlayıcısı çalışmaya devam eder
+    el.insertBefore(keep || Object.assign(document.createElement('div'), { className: 'say' }), el.firstChild);
   }
   function slotTile(id, t, cls) {
     var el = $(id); el.querySelectorAll('.tile').forEach(function (x) { x.remove(); });

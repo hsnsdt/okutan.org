@@ -369,6 +369,24 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .proj.okd .ok-rack{transform:rotate(4deg)}
 .proj.okd:hover .ok-rack{transform:rotate(0) scale(1.03)}
 @media (max-width:900px){.proj.ok101{flex-direction:column;align-items:stretch}.ok-viz{margin:0 auto}.ok-txt p{padding-right:0}}
+.proj.tvl{flex-direction:row;align-items:center;gap:28px;min-height:0;background:radial-gradient(120% 120% at 75% 30%,#7a4822,#3c210d);color:#f6efe1;border-color:#55301a}
+.proj.tvl .label{color:rgba(255,236,200,.7)}.proj.tvl p{color:rgba(255,240,215,.85)}
+.proj.tvl .tags span{border-color:rgba(255,236,200,.3);color:#fff}.proj.tvl .arrow{border-color:rgba(255,236,200,.4)}
+.proj.tvl:hover .arrow{background:#fff;color:#3c210d;border-color:#fff}.proj.tvl:hover{border-color:#7a4822}
+.tv-viz{flex:none;margin-right:60px;position:relative;width:236px;height:150px}
+.tv-board{position:absolute;inset:0;border-radius:12px;background:linear-gradient(#ecd6a8,#e1c48f);box-shadow:inset 0 0 0 6px #55301a,0 18px 30px -16px rgba(0,0,0,.7);overflow:hidden;transform:rotate(-4deg);transition:transform .35s}
+.tvt{position:absolute;top:6px;width:44px;height:66px;clip-path:polygon(0 0,100% 0,50% 100%)}
+.tvt:nth-child(1){left:8px}.tvt:nth-child(2){left:56px}.tvt:nth-child(3){left:104px}.tvt:nth-child(4){left:152px}
+.tvt.g{background:#22684b}.tvt.o{background:#c65a2e}
+.tvc{position:absolute;width:32px;height:32px;border-radius:50%}
+.tvc.w{background:radial-gradient(circle at 36% 30%,#fffef8,#f1e6cc 45%,#d6c193);box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 2px 3px rgba(0,0,0,.4)}
+.tvc.r{background:radial-gradient(circle at 36% 30%,#8a3029,#561713 48%,#2c0907);box-shadow:0 2px 3px rgba(0,0,0,.45)}
+.tvd{position:absolute;width:52px;height:52px;border-radius:12px;padding:7px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);box-shadow:0 10px 16px -6px rgba(0,0,0,.6);transition:transform .45s cubic-bezier(.3,1.5,.5,1);font-style:normal}
+.tvd b{width:9px;height:9px;border-radius:50%;align-self:center;justify-self:center}
+.tvd.w{left:92px;top:58px;background:linear-gradient(145deg,#fff,#e6dcc8);transform:rotate(-14deg)}.tvd.w b.on{background:#1e1b18}
+.tvd.r{left:150px;top:72px;background:linear-gradient(145deg,#8a3029,#4e1411);transform:rotate(12deg)}.tvd.r b.on{background:#f6e6c8}
+.proj.tvl:hover .tv-board{transform:rotate(0)}.proj.tvl:hover .tvd.w{transform:rotate(200deg) translateY(-6px)}.proj.tvl:hover .tvd.r{transform:rotate(-170deg) translateY(-4px)}
+@media (max-width:900px){.proj.tvl{flex-direction:column;align-items:stretch}.tv-viz{margin:0 auto}}
 .bp-live{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bp-live span{display:inline-flex;align-items:center;gap:7px;font:500 12px var(--mono);padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 .bp-live b{font-weight:700}
@@ -500,7 +518,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       </a>
     </div>
 
-    <div class="b stat s3"><div class="label" data-i18n="k1.l">Canlı</div><div><div class="n">7</div><div class="d" data-i18n="k1.d">Yayında olan proje</div></div></div>
+    <div class="b stat s3"><div class="label" data-i18n="k1.l">Canlı</div><div><div class="n">8</div><div class="d" data-i18n="k1.d">Yayında olan proje</div></div></div>
     <div class="b stat s3"><div class="label" lang="en">Android</div><div><div class="n">8</div><div class="d" data-i18n="k2.d">Yayınlanmış oyun ve uygulama</div></div></div>
     <div class="b stat s3"><div class="label" data-i18n="k3.l">En iyi puan</div><div><div class="nrow"><div class="n">4.8</div><div class="stars" role="img" aria-label="5 üzerinden 4.8 puan"><span class="s-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="s-fg" style="width:108.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></div></div><div class="d" data-i18n="k3.d">Kelimeler: Türkçe Bulmaca</div></div></div>
     <div class="b stat s3"><div class="label" lang="en">LaunchShots</div><div><div class="n">25</div><div class="d" data-i18n="k4.d">Desteklenen dil</div></div></div>
@@ -593,6 +611,16 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="tags"><span>javascript</span><span>oyun motoru</span><span>online masa</span></div>
       </div>
       <div class="ok-viz" aria-hidden="true"><div class="ok-rack"><i class="ot k">7</i><i class="ot m">7</i><i class="ot y">7</i><i class="ot s">7</i><i class="ot m">11</i><i class="ot m">12</i><i class="ot m">13</i><i class="ot j">★</i></div></div>
+    </a>
+    <a class="b proj s12 tvl" href="/tavla/">
+      <span class="arrow">→</span>
+      <div class="ok-txt">
+      <div class="label" data-i18n="tvl.l">Tarayıcı oyunu · Online masa · Sohbet</div>
+      <h3 data-i18n="tvl.t">Tavla</h3>
+      <p data-i18n="tvl.d">Türk tavlası: zarı at, kapını kur, açık pulu kır, evini kapat ve pullarını herkesten önce topla; mars iki puan. Kolay, orta ya da zor bota karşı veya arkadaşınla online masada sohbet ederek.</p>
+      <div class="tags"><span>javascript</span><span>yapay rakip</span><span>online masa</span></div>
+      </div>
+      <div class="tv-viz" aria-hidden="true"><div class="tv-board"><i class="tvt g"></i><i class="tvt o"></i><i class="tvt g"></i><i class="tvt o"></i><i class="tvc w" style="left:12px;top:8px"></i><i class="tvc w" style="left:12px;top:40px"></i><i class="tvc r" style="left:108px;top:8px"></i><i class="tvc r" style="left:60px;bottom:8px"></i><i class="tvc w" style="left:156px;bottom:8px"></i><i class="tvc w" style="left:156px;bottom:40px"></i></div><i class="tvd w"><b class="on"></b><b></b><b class="on"></b><b class="on"></b><b></b><b class="on"></b><b class="on"></b><b></b><b class="on"></b></i><i class="tvd r"><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b></i></div>
     </a>
 
   </div>
@@ -759,7 +787,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     "about.p":"I'm an independent developer based in İzmir. <em>I take products end to end — design, code, launch, and growing the community around them.</em> Today my focus is the web; before that I spent years building Android games and apps.",
     "f.t":"At a glance","f.loc":"Location","f.role":"Role","f.roleV":"Independent developer","f.focus":"Focus","f.focusV":"Web · Community · Tools","f.status":"Status","f.statusV":"Available",
     "c.label":"Contact","c.title":"Let's build something.",
-    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
+    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","tvl.l":"Browser game · Online table · Chat","tvl.t":"Backgammon (Tavla)","tvl.d":"Turkish backgammon: roll the dice, build your points, hit the blots, close your home board and bear off first; a gammon (mars) scores double. Play an easy, medium or hard bot, or a friend online with table chat.","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
     "c.text":"Freelance work, collaboration, or just saying hi. I usually reply within 24 hours."
   };
   var TR={};

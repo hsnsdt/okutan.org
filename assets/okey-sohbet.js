@@ -121,6 +121,8 @@
   }
   function schedule() { clearTimeout(pollT); pollT = setTimeout(function () { if (ctx()) poll(); else syncRoom(); schedule(); }, panel.hidden ? 2500 : 1500); }
   schedule();
+  // arka plandaki sekmede tarayıcı zamanlayıcıları seyreltir: sekme öne gelince hemen kontrol et
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) { poll(); schedule(); } });
 
   // ---------- etkileşim ----------
   function open() { if (!syncRoom()) return; panel.hidden = false; unread = 0; renderBadge(); renderList(); poll(); setTimeout(function () { if (matchMedia('(pointer:fine)').matches) input.focus(); }, 30); schedule(); }

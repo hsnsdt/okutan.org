@@ -1,8 +1,8 @@
 /* Okey — service worker (botlara karşı oyun internetsiz de çalışır)
    - Sayfa: önce ağ, yoksa önbellek · Statik dosyalar: önbellekten, arkada tazele · API önbelleğe alınmaz
    oyun.js / motor.js sürümü değişince CACHE ve CORE'u da güncelle. */
-var CACHE = 'duz-okey-v6';
-var CORE = ['./', 'oyun.js?v=4', '/assets/okey-sohbet.js?v=3', 'motor.js?v=1', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
+var CACHE = 'duz-okey-v8';
+var CORE = ['./', 'oyun.js?v=5', '/assets/okey-sohbet.js?v=4', 'motor.js?v=1', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
   '/assets/fonts/InterTight-latin.woff2', '/assets/fonts/InterTight-latin-ext.woff2', '/assets/fonts/JetBrainsMono-latin.woff2',
   '/assets/logo.svg', '/assets/logo-dark.svg', '/favicon.svg'];
 self.addEventListener('install', function (e) {

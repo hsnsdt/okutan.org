@@ -280,12 +280,14 @@
   function setMini(el, c, n) { el.textContent = n; el.style.color = 'var(--t-' + c + ')'; }
   function renderPlate(p) {
     var seat = seatAt(p), el = $('pl' + p), nm = names()[seat], o = V.opened[seat];
-    var keep = el.querySelector('.say'), sayHTML = keep ? keep.outerHTML : '<div class="say"></div>';
+    var keep = el.querySelector('.say'), sayHTML = '';
     el.classList.toggle('turn', V.turn === seat && !V.over);
     var status = o === 'cift' ? 'ÇİFT' : o ? 'AÇTI ' + (V.openValue[seat] || '') : '';
     var lvl = game.levels && game.levels[seat] ? ' · ' + LEVEL_TR[game.levels[seat]] : '';
     el.innerHTML = sayHTML + '<div class="av"><div class="ring"></div>' + avatarSVG(seat) + (status ? '<span class="badge">' + status + '</span>' : '') + '</div>' +
       '<div class="np"><b>' + esc(nm) + '</b><small>' + V.counts[seat] + ' taş · <i>' + fmt(game.totals[seat]) + '</i>' + esc(lvl) + '</small></div>';
+    // balon aynı öğe olarak kalır: kapanma zamanlayıcısı çalışmaya devam eder
+    el.insertBefore(keep || Object.assign(document.createElement('div'), { className: 'say' }), el.firstChild);
   }
   function meldEl(m, i) {
     var d = document.createElement('div'); d.className = 'meld'; d.dataset.mi = i;
