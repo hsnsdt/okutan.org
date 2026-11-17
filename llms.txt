@@ -11,6 +11,7 @@ Contact: sedat@okutan.org — open to freelance work and collaboration, usually 
   - [App Store](https://apps.apple.com/us/app/kelimeler-online-kelime-oyunu/id6775899635)
   - [Android](https://okutan.org/kelimeler/android.html)
   - [Support](https://okutan.org/kelimeler/support.html)
+- [Balon Patlat](https://okutan.org/balon/): Free browser bubble shooter game (Turkish/English) with an online daily, weekly and all-time leaderboard. No download, no sign-up. Built with HTML5 Canvas, PHP and MySQL.
 - [Sebze.net](https://www.sebze.net/): Turkish community for hobby gardening and growing vegetables. Built on XenForo with custom development, including his own image-rating add-on.
 - [Kitaplar.org](https://www.kitaplar.org/): Turkish book platform for book discovery, recommendations and a reader community, with search, categories and content management.
 

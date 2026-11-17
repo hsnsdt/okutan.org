@@ -38,6 +38,24 @@
     'end.name': 'Your name, for the leaderboard', 'end.ph': 'Your name', 'end.save': 'Save', again: 'Play again',
     'pause.l': 'Paused', 'pause.t': 'Break', resume: 'Resume', score: 'Score', bestS: 'Your best',
     new: 'New game', pause: 'Pause', 'k.aim': 'aim', 'k.fire': 'shoot', 'k.swap': 'swap bubble', 'k.pause': 'pause',
+    'nick.l': 'Your nickname', 'nick.ph': 'Type your name', 'nick.ph2': 'For the leaderboard',
+    'nick.hint': 'Your scores are posted under this name.', 'nick.saved': 'Saved. Scores will be posted automatically.',
+    rankW: 'Weekly rank', streakS: 'Streak', missS: 'Ceiling', 'st.plays': 'Games played', 'st.online': 'Playing now',
+    'lb.live': 'Live', 'm.auto': 'Saving as {n}…',
+    'i.l': 'Free browser game · Online leaderboard', 'i.h1': 'Bubble Pop: Free Online Bubble Shooter Game',
+    'i.p': 'Bubble Pop is a bubble shooter you can play right in your browser, with no download and no sign-up. Aim, match three or more bubbles of the same color and pop them. Bubbles cut off from the ceiling fall and score far more. Enter a nickname and see your score on the daily, weekly and all-time leaderboards.',
+    'i.how': 'How to play', 'i.how1': 'Aim with your mouse or finger; the bubble flies in the direction you point.',
+    'i.how2': 'The bubble sticks where it lands. Three or more bubbles of the same color pop.',
+    'i.how3': 'Bounce shots off the side walls to reach tricky gaps.',
+    'i.how4': 'Every shot that pops nothing lowers the ceiling counter; at zero the ceiling drops a row.',
+    'i.how5': 'If bubbles reach the dashed line the game ends. Clear the board to reach the next level.',
+    'i.pts': 'Scoring', 'i.pt1': 'Popped bubble', 'i.pt2': 'Dropped bubble', 'i.pt3': 'Streak multiplier', 'i.pt4': 'Board clear',
+    'i.ptp': 'Drop more than 10 bubbles in one shot and dropped points multiply.',
+    'i.faq': 'Frequently asked questions',
+    q1: 'Is Bubble Pop free?', a1: 'Yes. Bubble Pop is completely free. No download, no account and no ads to watch; it runs straight in your browser.',
+    q2: 'How do I get on the leaderboard?', a2: 'Type a nickname in the player card on the right. When a game ends your score is saved automatically under that name to the daily, weekly and all-time leaderboards.',
+    q3: 'How is the score calculated?', a3: 'Each popped bubble is worth 10 points and each bubble that falls from the ceiling 20. Consecutive pops give up to a 5× streak multiplier, and clearing the board earns a level bonus.',
+    q4: 'Can I play on my phone?', a4: 'Yes. The game works on phones, tablets and computers. On touch screens, aim with your finger and release to shoot.',
     'lb.l': 'Online ranking', 'lb.t': 'Leaderboard', 'lb.day': 'Today', 'lb.week': 'This week', 'lb.all': 'All time',
     'c.next': 'NEXT', 'c.level': 'LEVEL', 'c.streak': 'STREAK', 'c.clear': 'CLEARED!', 'c.drop': 'CEILING',
     'lb.empty': 'No scores yet. Be the first!', 'lb.off': 'Leaderboard is unavailable right now.',
@@ -48,6 +66,7 @@
     'm.token': 'Session expired, start a new game.', 'm.err': 'Something went wrong. Please try again.'
   };
   var TR = {
+    'nick.saved': 'Kaydedildi. Skorların otomatik yazılacak.', 'm.auto': '{n} adıyla kaydediliyor…',
     'c.next': 'SIRADAKİ', 'c.level': 'SEVİYE', 'c.streak': 'SERİ', 'c.clear': 'TEMİZLENDİ!', 'c.drop': 'TAVAN',
     'lb.empty': 'Henüz skor yok. İlk sen ol!', 'lb.off': 'Liderlik tablosuna şu an ulaşılamıyor.',
     'lb.games': 'oyun', 'm.saving': 'Kaydediliyor…',
@@ -58,14 +77,14 @@
   };
   document.querySelectorAll('[data-i18n]').forEach(function (el) { TR[el.dataset.i18n] = el.textContent; });
   document.querySelectorAll('[data-i18n-ph]').forEach(function (el) { TR[el.dataset.i18nPh] = el.placeholder; });
-  var lang = lsGet('lang') === 'en' ? 'en' : 'tr';
+  var lang = lsGet('lang') === 'en' ? 'en' : 'tr', TITLE_TR = document.title;
   function t(k) { var d = lang === 'en' ? EN : TR; return d[k] != null ? d[k] : (TR[k] || k); }
   function applyLang() {
     document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll('[data-i18n-ph]').forEach(function (el) { el.placeholder = t(el.dataset.i18nPh); });
     root.lang = lang;
     $('langBtn').textContent = lang === 'en' ? 'TR' : 'EN';
-    document.title = (lang === 'en' ? 'Bubble Pop' : 'Balon Patlat') + ' — okutan.org';
+    document.title = lang === 'en' ? 'Bubble Pop — Free Online Bubble Shooter Game | okutan.org' : TITLE_TR;
     renderBoard();
   }
   $('langBtn').onclick = function () { lang = lang === 'en' ? 'tr' : 'en'; lsSet('lang', lang); applyLang(); };
@@ -290,12 +309,18 @@
   function calcMissLimit() { return Math.max(3, 7 - level); }
   function updateHud(bump) {
     $('level').textContent = level; $('shots').textContent = shots; $('best').textContent = fmt(Math.max(best, score));
+    var sk = $('streak'); sk.textContent = '×' + Math.max(1, Math.min(streak, 5)); sk.classList.toggle('hot', streak > 1);
+    var ms = $('miss'); ms.textContent = missLeft + '/' + missLimit; ms.classList.toggle('hot', missLeft === 1 && state === 'play');
     if (bump) { var n = $('score'); n.classList.remove('bump'); void n.offsetWidth; n.classList.add('bump'); }
   }
   function fmt(n) { return Math.round(n).toLocaleString(lang === 'en' ? 'en-US' : 'tr-TR'); }
 
   function startGame() {
     ensureAudio();
+    if ($('ovStart').classList.contains('show') && $('startName').value.trim() && !setNick($('startName').value, true)) {
+      $('startName').focus(); return;
+    }
+    if (token) ping(true);
     level = 1; score = 0; shownScore = 0; shots = 0; gains = []; streak = 0; ball = null; fx = []; texts = []; overT = 0;
     missLimit = missLeft = calcMissLimit();
     newBoard();
@@ -307,9 +332,20 @@
     token = null;
     fetch(API + '?a=start', { method: 'POST', cache: 'no-store' })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (j && j.ok) token = j.token; })
+      .then(function (j) { if (j && j.ok) { token = j.token; setStats(j.plays, j.online); } })
       .catch(function () {});
   }
+
+  // Çevrimiçi sinyali: oyun sürerken 25 sn'de bir
+  function ping(end) {
+    if (!token) return;
+    var body = JSON.stringify({ token: token, end: !!end });
+    if (end && navigator.sendBeacon) { try { navigator.sendBeacon(API + '?a=ping', body); return; } catch (e) {} }
+    fetch(API + '?a=ping', { method: 'POST', cache: 'no-store', body: body, keepalive: !!end })
+      .then(function (r) { return r.json(); }).then(function (j) { if (j && j.ok) setStats(null, j.online); }).catch(function () {});
+  }
+  setInterval(function () { if (state === 'play' && !document.hidden) ping(false); }, 25000);
+  addEventListener('pagehide', function () { if (state === 'play' || state === 'paused') ping(true); });
 
   function fire() {
     var now = performance.now();
@@ -400,9 +436,14 @@
       form.style.display = score > 0 ? '' : 'none';
       if (score <= 0) m.textContent = t('m.zero');
       $('saveBtn').disabled = false; $('nameIn').disabled = false;
-      $('nameIn').value = lsGet('bp_name') || '';
+      var nk = lsGet('bp_name') || '';
+      $('nameIn').value = nk;
       showOv('ovEnd');
-      if (score > 0 && matchMedia('(pointer:fine)').matches) setTimeout(function () { $('nameIn').focus(); }, 300);
+      if (score > 0 && validName(nk)) { form.style.display = 'none'; submitScore(nk); }
+      else {
+        ping(true);
+        if (score > 0 && matchMedia('(pointer:fine)').matches) setTimeout(function () { $('nameIn').focus(); }, 300);
+      }
     }, 1300);
   }
 
@@ -651,39 +692,86 @@
     b.onclick = function () { period = b.dataset.p; lsSet('bp_period', period); renderBoard(); };
   });
   function esc(s) { return String(s).replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
+  var stats = { plays: null, online: null };
+  function setStats(plays, online) {
+    if (plays != null) stats.plays = plays;
+    if (online != null) stats.online = online;
+    $('stPlays').textContent = stats.plays == null ? '—' : fmt(stats.plays);
+    $('stOnline').textContent = stats.online == null ? '—' : fmt(stats.online);
+  }
   function renderBoard() {
     tabs.forEach(function (b) { b.setAttribute('aria-selected', b.dataset.p === period ? 'true' : 'false'); });
-    var el = $('lbList');
-    if (lbErr) { el.innerHTML = '<li class="empty">' + esc(t('lb.off')) + '</li>'; $('lbTotal').textContent = ''; return; }
+    var el = $('lbList'), pod = $('podium'), meRow = $('meRow');
+    $('liveTag').classList.toggle('off', !!lbErr);
+    if (lbErr) { pod.innerHTML = ''; meRow.hidden = true; el.innerHTML = '<li class="empty">' + esc(t('lb.off')) + '</li>'; return; }
     if (!lb) return;
-    $('lbTotal').textContent = lb.total ? fmt(lb.total) + ' ' + t('lb.games') : '';
     var rows = lb[period] || [];
-    if (!rows.length) { el.innerHTML = '<li class="empty">' + esc(t('lb.empty')) + '</li>'; return; }
     var me = (lsGet('bp_name') || '').toLocaleLowerCase('tr');
-    el.innerHTML = rows.map(function (r, i) {
-      var cls = (i < 3 ? 'p' + (i + 1) : '') + (me && r.name.toLocaleLowerCase('tr') === me ? ' me' : '');
-      return '<li class="' + cls + '"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(r.name) + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
-    }).join('');
+    var isMe = function (r) { return !!me && r.name.toLocaleLowerCase('tr') === me; };
+    if (!rows.length) { pod.innerHTML = ''; el.innerHTML = '<li class="empty">' + esc(t('lb.empty')) + '</li>'; }
+    else {
+      pod.innerHTML = [1, 0, 2].map(function (i) {
+        var r = rows[i]; if (!r) return '<div class="pd"></div>';
+        return '<div class="pd r' + (i + 1) + (isMe(r) ? ' me' : '') + '"><div class="ball">' + esc(initial(r.name)) + '</div><div class="who">' + esc(r.name) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
+      }).join('');
+      el.innerHTML = rows.slice(3).map(function (r, i) {
+        return '<li class="' + (isMe(r) ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + esc(r.name) + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
+      }).join('');
+    }
+    // Oyuncunun kendi satırı (listede yoksa)
+    var m = lb.me && me && lb.me.name.toLocaleLowerCase('tr') === me ? lb.me : null, inList = rows.some(isMe);
+    if (m && m.rank[period] && !inList) {
+      meRow.hidden = false;
+      meRow.innerHTML = '<span class="rk">' + m.rank[period] + '</span><span class="nm">' + esc(m.name) + '</span><span class="pt">' + fmt(m.score[period]) + '</span>';
+    } else meRow.hidden = true;
+    $('myRank').textContent = m && m.rank.week ? '#' + m.rank.week : '—';
+    if (m && m.best > best) { best = m.best; lsSet('bp_best', String(best)); $('best').textContent = fmt(best); }
   }
   function loadBoard() {
-    return fetch(API + '?a=top', { cache: 'no-store' })
+    var nk = lsGet('bp_name');
+    return fetch(API + '?a=top' + (nk ? '&me=' + encodeURIComponent(nk) : ''), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw 0; lb = j; lbErr = false; renderBoard(); })
+      .then(function (j) { if (!j || !j.ok) throw 0; lb = j; lbErr = false; setStats(j.plays, j.online); renderBoard(); })
       .catch(function () { lbErr = true; renderBoard(); });
   }
   loadBoard();
-  setInterval(function () { if (!document.hidden && state !== 'play') loadBoard(); }, 60000);
+  setInterval(function () { if (!document.hidden && state !== 'play') loadBoard(); }, 30000);
 
   // ---------- Skor kaydetme ----------
-  var ERR = { bad_name: 'm.name', rate_limited: 'm.rate', bad_token: 'm.token', expired: 'm.token', too_fast: 'm.err' };
-  $('saveForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var name = $('nameIn').value.replace(/\s+/g, ' ').trim(), m = $('saveMsg');
-    if (name.length < 2 || name.length > 16 || !/^[\p{L}\p{N}][\p{L}\p{N} ._\-]*$/u.test(name)) {
-      m.className = 'msg err'; m.textContent = t('m.name'); return;
-    }
-    if (!token) { m.className = 'msg err'; m.textContent = t('m.offline'); return; }
-    $('saveBtn').disabled = true; m.className = 'msg'; m.textContent = t('m.saving');
+  var ERR = { bad_name: 'm.badname', rate_limited: 'm.rate', bad_token: 'm.token', expired: 'm.token', too_fast: 'm.err' };
+  function validName(n) { n = (n || '').replace(/\s+/g, ' ').trim(); return n.length >= 2 && n.length <= 16 && /^[\p{L}\p{N}][\p{L}\p{N} ._\-]*$/u.test(n); }
+  function initial(n) { return (n || '?').trim().charAt(0).toLocaleUpperCase('tr') || '?'; }
+
+  // Takma ad (oyuncu kartı + başlangıç ekranı)
+  function setNick(raw, silent) {
+    var n = (raw || '').replace(/\s+/g, ' ').trim(), msg = $('nickMsg'), inp = $('nick');
+    if (!n) { lsSet('bp_name', ''); syncNick(); msg.className = 'nick-msg'; msg.textContent = t('nick.hint'); loadBoard(); return true; }
+    if (!validName(n)) { inp.classList.add('bad'); msg.className = 'nick-msg err'; msg.textContent = t('m.name'); return false; }
+    var changed = n !== lsGet('bp_name');
+    lsSet('bp_name', n); syncNick();
+    if (changed && !silent) { msg.className = 'nick-msg ok'; msg.textContent = t('nick.saved'); }
+    if (changed) loadBoard();
+    return true;
+  }
+  function syncNick() {
+    var n = lsGet('bp_name') || '';
+    $('nick').value = n; $('startName').value = n; $('nick').classList.remove('bad');
+    var av = $('avatar'); av.textContent = n ? initial(n) : '?'; av.classList.toggle('empty', !n);
+  }
+  $('nick').addEventListener('input', function () {
+    var v = this.value.trim(), av = $('avatar');
+    av.textContent = v ? initial(v) : '?'; av.classList.toggle('empty', !v);
+    this.classList.toggle('bad', !!v && !validName(v));
+  });
+  $('nick').addEventListener('change', function () { setNick(this.value); });
+  $('nick').addEventListener('keydown', function (e) { if (e.key === 'Enter') this.blur(); });
+  $('startName').addEventListener('keydown', function (e) { if (e.key === 'Enter') startGame(); });
+  syncNick();
+
+  function submitScore(name) {
+    var m = $('saveMsg');
+    if (!token) { m.className = 'msg err'; m.textContent = t('m.offline'); $('saveForm').style.display = ''; return; }
+    $('saveBtn').disabled = true; m.className = 'msg'; m.textContent = t('m.auto').replace('{n}', name);
     fetch(API + '?a=submit', {
       method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: token, name: name, score: score, shots: shots, level: level, gains: gains })
@@ -692,20 +780,26 @@
       .then(function (j) {
         if (j && j.ok) {
           token = null;
-          lsSet('bp_name', j.name || name);
-          $('nameIn').disabled = true;
+          lsSet('bp_name', j.name || name); syncNick();
+          $('saveForm').style.display = 'none';
           m.className = 'msg ok';
           m.textContent = t('m.ok').replace('{d}', j.rank.day).replace('{w}', j.rank.week).replace('{a}', j.rank.all);
           loadBoard();
         } else {
           var code = j && j.error;
-          if (code === 'bad_name' && name.length >= 2) code = 'bad_name2';
           m.className = 'msg err';
-          m.textContent = t(code === 'bad_name2' ? 'm.badname' : (ERR[code] || 'm.err'));
+          m.textContent = t(ERR[code] || 'm.err');
+          $('saveForm').style.display = '';
           $('saveBtn').disabled = code === 'bad_token' || code === 'expired';
         }
       })
-      .catch(function () { m.className = 'msg err'; m.textContent = t('m.offline'); $('saveBtn').disabled = false; });
+      .catch(function () { m.className = 'msg err'; m.textContent = t('m.offline'); $('saveForm').style.display = ''; $('saveBtn').disabled = false; });
+  }
+  $('saveForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('nameIn').value.replace(/\s+/g, ' ').trim(), m = $('saveMsg');
+    if (!validName(name)) { m.className = 'msg err'; m.textContent = t('m.name'); return; }
+    submitScore(name);
   });
 
   applyLang();

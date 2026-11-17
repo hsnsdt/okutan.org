@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /balon/api/
 
 Sitemap: https://okutan.org/sitemap.xml

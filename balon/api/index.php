@@ -55,8 +55,10 @@ function create_tables(PDO $db): void {
         ip CHAR(64) NOT NULL,
         created_at DATETIME NOT NULL,
         used TINYINT(1) NOT NULL DEFAULT 0,
+        last_seen DATETIME NULL,
         UNIQUE KEY uq_token (token),
-        KEY ix_ip_time (ip, created_at)
+        KEY ix_ip_time (ip, created_at),
+        KEY ix_seen (last_seen)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
     $db->exec("CREATE TABLE IF NOT EXISTS bp_scores (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -71,6 +73,15 @@ function create_tables(PDO $db): void {
         KEY ix_name_score (name, score),
         KEY ix_ip_time (ip, created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci");
+    $db->exec("CREATE TABLE IF NOT EXISTS bp_stats (
+        k VARCHAR(32) NOT NULL PRIMARY KEY,
+        v BIGINT UNSIGNED NOT NULL DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+// Eski kurulumları günceller (eksik sütun)
+function migrate(PDO $db): void {
+    try { $db->exec("ALTER TABLE bp_sessions ADD COLUMN last_seen DATETIME NULL, ADD KEY ix_seen (last_seen)"); } catch (Throwable $e) {}
 }
 
 // Tablo yoksa bir kere oluşturup sorguyu tekrar dener
@@ -78,13 +89,22 @@ function q(PDO $db, string $sql, array $args = []): PDOStatement {
     try {
         $st = $db->prepare($sql); $st->execute($args); return $st;
     } catch (PDOException $e) {
-        if ($e->getCode() !== '42S02') throw $e;
-        create_tables($db);
+        $code = $e->getCode();
+        if ($code === '42S02') create_tables($db);
+        elseif ($code === '42S22') migrate($db);
+        else throw $e;
         $st = $db->prepare($sql); $st->execute($args); return $st;
     }
 }
 
 function now_utc(): string { return gmdate('Y-m-d H:i:s'); }
+const ONLINE_WINDOW = 75; // son 75 sn içinde sinyal gönderen oyuncu "şu an oynuyor"
+function online_count(PDO $db): int {
+    return (int)q($db, 'SELECT COUNT(*) FROM bp_sessions WHERE used = 0 AND last_seen >= ?', [gmdate('Y-m-d H:i:s', time() - ONLINE_WINDOW)])->fetchColumn();
+}
+function plays_count(PDO $db): int {
+    return (int)(q($db, "SELECT v FROM bp_stats WHERE k = 'plays'")->fetchColumn() ?: 0);
+}
 function ip_hash(array $cfg): string {
     $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     return hash('sha256', $cfg['salt'] . '|' . $ip);
@@ -134,6 +154,26 @@ try {
             $res[$p] = array_map(fn($r) => ['name' => $r['name'], 'score' => (int)$r['score']], $rows);
         }
         $res['total'] = (int)q($db, 'SELECT COUNT(*) FROM bp_scores')->fetchColumn();
+        $res['plays'] = plays_count($db);
+        $res['online'] = online_count($db);
+        // İsteğe bağlı: ?me=İsim → o oyuncunun rekoru ve sıraları
+        $me = isset($_GET['me']) ? clean_name($_GET['me']) : null;
+        if ($me !== null) {
+            $best = q($db, 'SELECT MAX(score) FROM bp_scores WHERE name = ?', [$me])->fetchColumn();
+            if ($best !== null && $best !== false) {
+                $info = ['name' => $me, 'best' => (int)$best, 'rank' => []];
+                foreach (['day', 'week', 'all'] as $p) {
+                    $start = period_start($p);
+                    $mine = q($db, 'SELECT MAX(score) FROM bp_scores WHERE name = ? AND created_at >= ?', [$me, $start])->fetchColumn();
+                    if ($mine === null || $mine === false) { $info['rank'][$p] = null; $info['score'][$p] = null; continue; }
+                    $info['score'][$p] = (int)$mine;
+                    $info['rank'][$p] = 1 + (int)q($db,
+                        'SELECT COUNT(*) FROM (SELECT name FROM bp_scores WHERE created_at >= ? GROUP BY name HAVING MAX(score) > ?) t',
+                        [$start, (int)$mine])->fetchColumn();
+                }
+                $res['me'] = $info;
+            }
+        }
         out(['ok' => true] + $res);
     }
 
@@ -149,8 +189,20 @@ try {
             q($db, 'DELETE FROM bp_sessions WHERE created_at < ?', [gmdate('Y-m-d H:i:s', time() - 2 * 86400)]);
         }
         $token = bin2hex(random_bytes(16));
-        q($db, 'INSERT INTO bp_sessions (token, ip, created_at) VALUES (?, ?, ?)', [$token, $ip, now_utc()]);
-        out(['ok' => true, 'token' => $token]);
+        $now = now_utc();
+        q($db, 'INSERT INTO bp_sessions (token, ip, created_at, last_seen) VALUES (?, ?, ?, ?)', [$token, $ip, $now, $now]);
+        q($db, "INSERT INTO bp_stats (k, v) VALUES ('plays', 1) ON DUPLICATE KEY UPDATE v = v + 1");
+        out(['ok' => true, 'token' => $token, 'online' => online_count($db), 'plays' => plays_count($db)]);
+    }
+
+    // ---- Çevrimiçi sinyali (oyun sürerken ~25 sn'de bir; end=true oyundan çıkış) ----
+    if ($a === 'ping') {
+        $in = json_decode(file_get_contents('php://input', false, null, 0, 2000) ?: '', true);
+        $token = is_array($in) ? ($in['token'] ?? '') : '';
+        if (!is_string($token) || !preg_match('/^[a-f0-9]{32}$/', $token)) fail('bad_token');
+        $end = is_array($in) && !empty($in['end']);
+        q($db, 'UPDATE bp_sessions SET last_seen = ? WHERE token = ? AND used = 0', [$end ? null : now_utc(), $token]);
+        out(['ok' => true, 'online' => online_count($db)]);
     }
 
     // ---- Skor gönderme ----
