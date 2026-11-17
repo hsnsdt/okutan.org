@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Balon Patlat — Ücretsiz Online Balon Patlatma Oyunu | okutan.org</title>
-<meta name="description" content="Balon Patlat: tarayıcıda ücretsiz oynanan online balon patlatma oyunu. Aynı renkten üç balonu birleştir, patlat, adını liderlik tablosuna yazdır. İndirme ve üyelik yok.">
+<meta name="description" content="Balon Patlat: tarayıcıda ücretsiz online balon patlatma oyunu. Günün bulmacası, zamana karşı modu, arkadaşına meydan okuma ve online liderlik tablosu. İndirme ve üyelik yok.">
 <meta name="keywords" content="balon patlat, balon patlatma oyunu, online balon patlatma, bubble shooter, ücretsiz oyun, tarayıcı oyunu">
 <meta name="author" content="Sedat Okutan">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -57,6 +57,7 @@
       "applicationCategory": "GameApplication",
       "operatingSystem": "Any",
       "playMode": "SinglePlayer",
+      "gameItem": ["Günün bulmacası", "Zamana karşı modu", "Klasik mod", "Günlük görevler", "Şehir sıralaması"],
       "inLanguage": ["tr", "en"],
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TRY" },
@@ -77,6 +78,9 @@
         { "@type": "Question", "name": "Balon Patlat ücretsiz mi?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Balon Patlat tamamen ücretsizdir; indirme, üyelik veya reklam izleme gerektirmez, doğrudan tarayıcıda oynanır." } },
         { "@type": "Question", "name": "Liderlik tablosuna nasıl girerim?", "acceptedAnswer": { "@type": "Answer", "text": "Sağdaki oyuncu kartına bir takma ad yaz. Oyun bittiğinde skorun bu adla otomatik olarak günlük, haftalık ve tüm zamanlar liderlik tablosuna kaydedilir." } },
         { "@type": "Question", "name": "Puan nasıl hesaplanır?", "acceptedAnswer": { "@type": "Answer", "text": "Patlayan her balon 10 puan, tavandan kopup düşen her balon 20 puan getirir. Arka arkaya patlatmalar 5 kata kadar seri çarpanı verir; tahtayı temizlemek seviye bonusu kazandırır." } },
+        { "@type": "Question", "name": "Günün bulmacası nedir?", "acceptedAnswer": { "@type": "Answer", "text": "Her gün herkes aynı tahtayı oynar ve her oyuncunun günde tek hakkı vardır. Skorun o günün ayrı liderlik tablosuna yazılır; ertesi gün yeni bir bulmaca gelir." } },
+        { "@type": "Question", "name": "Zamana karşı modu nasıl oynanır?", "acceptedAnswer": { "@type": "Answer", "text": "2 dakikan var; süre bitene kadar olabildiğince çok balon patlatıp en yüksek skoru yapmaya çalışırsın. Bu modun kendi liderlik tablosu vardır." } },
+        { "@type": "Question", "name": "Arkadaşıma nasıl meydan okurum?", "acceptedAnswer": { "@type": "Answer", "text": "Oyun bitince Paylaş düğmesine bas. Paylaştığın bağlantıyı açan kişi senin oynadığın tahtanın aynısıyla başlar ve skorunu geçmeye çalışır." } },
         { "@type": "Question", "name": "Telefonda oynanır mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Oyun telefon, tablet ve bilgisayarda çalışır. Dokunmatik ekranda parmağınla nişan alıp bırakarak atış yaparsın." } }
       ]
     }
@@ -85,7 +89,11 @@
 </script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Balon Patlat">
 <link rel="preload" href="/assets/fonts/InterTight-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
 <script>
@@ -217,7 +225,8 @@ canvas{display:block;width:100%;height:100%;border-radius:12px;background-color:
 .howto li{display:flex;gap:10px;align-items:flex-start}
 .howto i{flex:none;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:600 11px var(--mono);font-style:normal;background:var(--bg);color:var(--ink);border:1px solid var(--line)}
 
-.card .label[for]{display:block;margin-top:18px}
+.card .label[for]{display:block;margin-top:14px}
+#ovStart .howto{display:none}
 
 /* player block */
 .player{padding:20px}
@@ -450,6 +459,77 @@ canvas{display:block;width:100%;height:100%;border-radius:12px;background-color:
   .rep b{font-size:16px}
   .rep div{padding:6px 9px}
 }
+/* mod seçici */
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:16px}
+.modes button{height:40px;border-radius:11px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-size:13px;color:var(--muted);padding:0 4px}
+.modes button b{font-weight:700}
+.modes button[aria-pressed="true"]{background:var(--ink);color:var(--block);border-color:var(--ink)}
+.mode-note{font-size:13.5px;color:var(--muted);margin-top:8px;min-height:20px}
+.mode-note.ch{color:var(--accent);font-weight:700}
+.mode-note.done{color:var(--ok);font-weight:600}
+.chres{font-size:14px;font-weight:700;color:var(--muted);margin:-6px 0 12px}
+.chres.win{color:var(--ok)}
+.chres[hidden]{display:none}
+.kel{display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--bg);transition:border-color .15s}
+.kel:hover{border-color:#6c5ce7}
+.kel img{width:40px;height:40px;border-radius:10px;flex:none}
+.kel span{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.kel b{font-size:15px}
+.kel small{font-size:12px;color:var(--muted)}
+.kel i{margin-left:auto;font-style:normal;color:#6c5ce7;font-weight:700}
+
+/* oyuncu kartı: şehir + profil */
+.pl-row{display:flex;gap:8px;margin-top:12px}
+.pl-row select{flex:1;min-width:0;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 13px var(--sans);padding:0 8px}
+.pl-prof{height:36px;padding:0 12px;font-size:13px}
+.ctrl.inst{gap:6px;font-family:var(--sans);font-weight:600;color:var(--accent);border-color:var(--accent)}
+.ctrl[hidden]{display:none}
+
+/* görevler */
+.missions{margin-top:var(--gap);padding:20px 24px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.ms-head h2{font-size:22px;font-weight:800;letter-spacing:-.03em;margin-top:4px;white-space:nowrap}
+.ms-head small{font:600 13px var(--mono);color:var(--accent);margin-left:4px}
+.ms-list{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ms-list li{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-size:14px;font-weight:600;line-height:1.3}
+.ms-list .ck{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+.ms-list li.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--line));color:var(--muted)}
+.ms-list li.done .ck{background:var(--ok);border-color:var(--ok)}
+.ms-list li.done span:last-child{text-decoration:line-through}
+@media (max-width:860px){.missions{grid-template-columns:1fr;gap:12px}.ms-list{grid-template-columns:1fr}}
+
+/* liderlik sekmeleri */
+.lb-tabs{display:flex;flex-direction:column;gap:6px;justify-self:end}
+.lb .mtabs{grid-template-columns:repeat(4,1fr)}
+.lb .tabs[hidden]{display:none}
+.lb-top{grid-template-columns:auto 1fr auto}
+.pn{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.pn:hover{color:var(--accent);text-decoration:underline}
+.list .nm small{font:500 11px var(--mono);color:var(--muted);margin-left:4px}
+@media (max-width:860px){.lb-tabs{justify-self:stretch}}
+
+/* profil penceresi */
+.pmodal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.pmodal[hidden]{display:none}
+body.modal-open{overflow:hidden}
+.pcard{position:relative;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:24px;box-shadow:0 30px 70px -30px rgba(0,0,0,.6)}
+.pclose{position:absolute;top:14px;right:14px}
+.p-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-right:40px}
+.p-head .av{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font:800 26px var(--sans);color:#fff;background:var(--accent);background-image:radial-gradient(circle at 30% 25%,rgba(255,255,255,.55),transparent 45%);flex:none}
+.p-head h2{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.p-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.p-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.p-stats div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 10px;display:flex;flex-direction:column;min-width:0}
+.p-stats b{font-size:18px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.p-stats span{font:500 9.5px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.pcard h3{font-size:15px;font-weight:800;margin:16px 0 8px}
+.p-badges{display:flex;flex-wrap:wrap;gap:6px}
+.p-bdg{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-size:12.5px;font-weight:600}
+.p-bdg i{font-style:normal}
+.p-recent{list-style:none;margin-bottom:14px}
+.p-recent li{display:flex;justify-content:space-between;padding:7px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.p-recent li span{color:var(--muted)}
+.p-nf{padding:30px 0;text-align:center;color:var(--muted)}
+.p-load{display:grid;gap:10px;padding:20px 0}
 .foot-links{display:flex;gap:16px;flex-wrap:wrap}
 .nojs{padding:20px;text-align:center;color:var(--muted)}
 footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 20px;margin-top:var(--gap);font-family:var(--mono);font-size:12px;color:var(--muted)}
@@ -467,6 +547,7 @@ footer a:hover{color:var(--ink)}
       <span class="crumb"><span data-i18n="crumb">Oyun</span> / <b data-i18n="title">Balon Patlat</b></span>
     </div>
     <div class="ctrls">
+      <button class="ctrl inst" id="instBtn" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span data-i18n="inst">Yükle</span></button>
       <button class="ctrl" id="soundBtn" aria-label="Ses" aria-pressed="false">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="w" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="x" d="m16 9 6 6m0-6-6 6" style="display:none"/></svg>
       </button>
@@ -497,6 +578,12 @@ footer a:hover{color:var(--ink)}
               <li><i>3</i><span data-i18n="h3">Iskalarsan sayaç azalır; bitince tavan bir sıra iner.</span></li>
               <li><i>4</i><span data-i18n="h4">Balonlar çizgiye ulaşırsa oyun biter.</span></li>
             </ol>
+            <div class="modes" id="modeSel" role="group" aria-label="Oyun modu">
+              <button data-mode="classic" aria-pressed="true"><b data-i18n="md.classic">Klasik</b></button>
+              <button data-mode="timed" aria-pressed="false"><b data-i18n="md.timed">Zamana karşı</b></button>
+              <button data-mode="daily" aria-pressed="false"><b data-i18n="md.daily">Günün bulmacası</b></button>
+            </div>
+            <p class="mode-note" id="modeNote"></p>
             <label class="label" for="startName" data-i18n="nick.l">Takma adın</label>
             <div class="field">
               <input id="startName" maxlength="16" placeholder="Liderlik tablosu için" data-i18n-ph="nick.ph2" autocomplete="nickname" spellcheck="false" enterkeyhint="go">
@@ -508,7 +595,7 @@ footer a:hover{color:var(--ink)}
         <!-- Oyun sonu -->
         <div class="ov" id="ovEnd" role="dialog" aria-modal="true" aria-label="Oyun sonu">
           <div class="card">
-            <div class="label"><span data-i18n="end.l">Oyun bitti</span> <span class="newbest" id="newBest" data-i18n="end.best">· Yeni rekor!</span></div>
+            <div class="label"><span id="endL">Oyun bitti</span> <span class="newbest" id="newBest" data-i18n="end.best">· Yeni rekor!</span></div>
             <div class="big" id="endScore">0<small data-i18n="pts">puan</small></div>
             <div class="meta"><span><span data-i18n="lvl">Seviye</span> <b id="endLevel">1</b></span><span><span data-i18n="shots">Atış</span> <b id="endShots">0</b></span></div>
             <div class="rep">
@@ -519,6 +606,7 @@ footer a:hover{color:var(--ink)}
             </div>
             <div class="rep-sp" id="rSp" hidden></div>
             <div class="togo" id="rToGo"></div>
+            <div class="chres" id="rCh" hidden></div>
             <div class="share-row" id="shareRow">
               <button class="btn btn-a" id="shareBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg><span data-i18n="share">Paylaş</span></button>
               <button class="btn btn-g sq" id="waBtn" aria-label="WhatsApp"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4a.5.5 0 0 0 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3z"/></svg></button>
@@ -535,6 +623,7 @@ footer a:hover{color:var(--ink)}
             </form>
             <div class="msg" id="saveMsg" role="status"></div>
             <button class="btn btn-g btn-w" id="againBtn" data-i18n="again">Tekrar oyna</button>
+            <a class="kel" href="/kelimeler/"><img src="/kelimeler/img/app-icon.webp" width="40" height="40" alt="" loading="lazy"><span><b>Kelimeler</b><small data-i18n="kel.t">Kelime oyunlarını sever misin? Türkçe online kelime oyunu</small></span><i aria-hidden="true">→</i></a>
           </div>
         </div>
 
@@ -562,6 +651,10 @@ footer a:hover{color:var(--ink)}
               <svg class="pen" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
             </div>
           </div>
+        </div>
+        <div class="pl-row">
+          <select id="city" aria-label="Şehir"></select>
+          <button class="btn btn-g pl-prof" id="myProfile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i18n="pf.my">Profilim</span></button>
         </div>
         <div class="nick-msg" id="nickMsg"></div>
         <div class="pl-stats">
@@ -596,11 +689,17 @@ footer a:hover{color:var(--ink)}
             <button data-skin="neon" aria-pressed="false"><i class="sw neon"></i><span data-i18n="sk.neon">Neon</span></button>
           </div>
         </div>
-        <div class="keys"><kbd>←</kbd><kbd>→</kbd> <span data-i18n="k.aim">nişan</span> <i>·</i> <kbd>Space</kbd> <span data-i18n="k.fire">at</span> <i>·</i> <kbd>X</kbd> <span data-i18n="k.swap">değiştir</span></div>
+
       </div>
 
     </aside>
   </main>
+
+  <!-- Günlük görevler -->
+  <section class="b missions" aria-labelledby="msTitle">
+    <div class="ms-head"><div class="label" data-i18n="ms.l">Her gün yenilenir</div><h2 id="msTitle"><span data-i18n="ms.t">Bugünün görevleri</span> <small id="msCount">0/3</small></h2></div>
+    <ol class="ms-list" id="msList"></ol>
+  </section>
 
   <!-- Liderlik: oyunun altında, tam genişlik -->
   <section class="b lb" id="siralama" aria-labelledby="lbTitle">
@@ -614,10 +713,18 @@ footer a:hover{color:var(--ink)}
         <div><b id="stOnline">—</b><span data-i18n="st.online">Şu an oynayan</span></div>
         <div><b id="stPlays">—</b><span data-i18n="st.plays">Toplam oyun</span></div>
       </div>
-      <div class="tabs" role="tablist">
+      <div class="lb-tabs">
+      <div class="tabs mtabs" id="mtabs" role="tablist" aria-label="Mod">
+        <button role="tab" data-m="classic" aria-selected="true" data-i18n="md.classic">Klasik</button>
+        <button role="tab" data-m="timed" aria-selected="false" data-i18n="md.timed">Zamana karşı</button>
+        <button role="tab" data-m="daily" aria-selected="false" data-i18n="lb.dailyS">Günlük</button>
+        <button role="tab" data-m="cities" aria-selected="false" data-i18n="lb.cities">Şehirler</button>
+      </div>
+      <div class="tabs" id="ptabs" role="tablist" aria-label="Dönem">
         <button role="tab" data-p="day" aria-selected="false" data-i18n="lb.day">Bugün</button>
         <button role="tab" data-p="week" aria-selected="true" data-i18n="lb.week">Bu hafta</button>
         <button role="tab" data-p="all" aria-selected="false" data-i18n="lb.all">Tüm zamanlar</button>
+      </div>
       </div>
     </div>
     <div class="lb-body">
@@ -700,6 +807,9 @@ footer a:hover{color:var(--ink)}
       <details><summary data-i18n="q1">Balon Patlat ücretsiz mi?</summary><p data-i18n="a1">Evet. Balon Patlat tamamen ücretsizdir; indirme, üyelik veya reklam izleme gerektirmez, doğrudan tarayıcıda oynanır.</p></details>
       <details><summary data-i18n="q2">Liderlik tablosuna nasıl girerim?</summary><p data-i18n="a2">Sağdaki oyuncu kartına bir takma ad yaz. Oyun bittiğinde skorun bu adla otomatik olarak günlük, haftalık ve tüm zamanlar liderlik tablosuna kaydedilir.</p></details>
       <details><summary data-i18n="q3">Puan nasıl hesaplanır?</summary><p data-i18n="a3">Patlayan her balon 10 puan, tavandan kopup düşen her balon 20 puan getirir. Arka arkaya patlatmalar 5 kata kadar seri çarpanı verir; tahtayı temizlemek seviye bonusu kazandırır.</p></details>
+      <details><summary data-i18n="q5">Günün bulmacası nedir?</summary><p data-i18n="a5">Her gün herkes aynı tahtayı oynar ve her oyuncunun günde tek hakkı vardır. Skorun o günün ayrı liderlik tablosuna yazılır; ertesi gün yeni bir bulmaca gelir.</p></details>
+      <details><summary data-i18n="q6">Zamana karşı modu nasıl oynanır?</summary><p data-i18n="a6">2 dakikan var; süre bitene kadar olabildiğince çok balon patlatıp en yüksek skoru yapmaya çalışırsın. Bu modun kendi liderlik tablosu vardır.</p></details>
+      <details><summary data-i18n="q7">Arkadaşıma nasıl meydan okurum?</summary><p data-i18n="a7">Oyun bitince Paylaş düğmesine bas. Paylaştığın bağlantıyı açan kişi senin oynadığın tahtanın aynısıyla başlar ve skorunu geçmeye çalışır.</p></details>
       <details><summary data-i18n="q4">Telefonda oynanır mı?</summary><p data-i18n="a4">Evet. Oyun telefon, tablet ve bilgisayarda çalışır. Dokunmatik ekranda parmağınla nişan alıp bırakarak atış yaparsın.</p></details>
     </div>
   </section>
@@ -709,7 +819,13 @@ footer a:hover{color:var(--ink)}
     <nav class="foot-links" aria-label="Diğer sayfalar"><a href="/">okutan.org</a><a href="/kelimeler/">Kelimeler</a><a href="https://launchshots.app/" rel="noopener">LaunchShots</a></nav>
   </footer>
 </div>
+<div class="pmodal" id="pmodal" hidden>
+  <div class="pcard" role="dialog" aria-modal="true" aria-labelledby="pName">
+    <button class="ctrl pclose" id="pClose" aria-label="Kapat">✕</button>
+    <div id="pBody"></div>
+  </div>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="oyun.js?v=8" defer></script>
+<script src="oyun.js?v=9" defer></script>
 </body>
 </html>

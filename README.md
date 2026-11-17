@@ -11,4 +11,4 @@ Sedat Okutan'ın kişisel geliştirici sitesi. Tek sayfa, framework yok: `index.
 **Yayın:** `main` dalına push → GitHub Actions FTP ile cPanel'e yükler (`.github/workflows/deploy.yml`).
 `.htaccess` otomatik yüklenmez; elle yüklenir. İçindeki yönlendirme kuralı, üst klasördeki (ana cPanel hesabı) kuralların okutan.org'u bozmasını engeller.
 `kelimeler/` — Kelimeler oyununun sitesi (aynı tasarım dili, oyunun lavanta/mor paleti). APK dosyaları repoda değildir; sunucuda elle güncellenir.
-`balon/` — Balon Patlat (HTML5 canvas oyunu) + `balon/api/` PHP/MySQL liderlik tablosu. Veritabanı bilgileri `balon/api/config.php` içinde; bu dosya depoda yok (şablon: `config.sample.php`), sunucuya elle yüklenir. Tablolar ilk istekte otomatik oluşur.
+`balon/` — Balon Patlat (HTML5 canvas oyunu) + `balon/api/` PHP/MySQL liderlik tablosu. Veritabanı bilgileri `balon/api/config.php` içinde; bu dosya depoda yok (şablon: `config.sample.php`), sunucuya elle yüklenir. Tablolar ilk istekte otomatik oluşur, eski kurulumlara eksik sütunlar kendiliğinden eklenir. PWA: `balon/manifest.json`, `balon/sw.js` (oyun.js sürümü değişince sw.js içindeki `CACHE` ve `CORE` listesini de güncelle).

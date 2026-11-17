@@ -57,6 +57,9 @@
     q1: 'Is Bubble Pop free?', a1: 'Yes. Bubble Pop is completely free. No download, no account and no ads to watch; it runs straight in your browser.',
     q2: 'How do I get on the leaderboard?', a2: 'Type a nickname in the player card on the right. When a game ends your score is saved automatically under that name to the daily, weekly and all-time leaderboards.',
     q3: 'How is the score calculated?', a3: 'Each popped bubble is worth 10 points and each bubble that falls from the ceiling 20. Consecutive pops give up to a 5× streak multiplier, and clearing the board earns a level bonus.',
+    q5: 'What is the daily puzzle?', a5: 'Everyone plays the same board each day and each player gets one try. Your score goes on that day’s own leaderboard; a new puzzle arrives tomorrow.',
+    q6: 'How does time attack work?', a6: 'You have 2 minutes; pop as many bubbles as you can before time runs out. This mode has its own leaderboard.',
+    q7: 'How do I challenge a friend?', a7: 'When a game ends, press Share. Whoever opens your link starts on the exact same board you played and tries to beat your score.',
     q4: 'Can I play on my phone?', a4: 'Yes. The game works on phones, tablets and computers. On touch screens, aim with your finger and release to shoot.',
     'i.ctl': 'Controls', 't.desk': 'Computer', 't.desk2': 'Keyboard & mouse', 't.mob': 'Mobile', 't.mob2': 'Phone & tablet',
     c1: 'Move the mouse to rotate the aim', c2: 'Left click: the bubble flies where you aim', c3: 'Right click: swap your bubble with the next one',
@@ -65,6 +68,26 @@
     m1: 'Drag your finger across the board to aim', m2: 'Lift your finger to shoot', m3: 'Tap the next bubble (bottom left) to swap',
     m4: 'Tap the New game, Pause and sound buttons',
     'lb.l': 'Online ranking', 'lb.t': 'Leaderboard', 'lb.day': 'Today', 'lb.week': 'This week', 'lb.all': 'All time',
+
+    'c.daily': 'DAILY PUZZLE', 'c.timed': 'TIME ATTACK', 'c.timeup': 'TIME\'S UP!', 'c.target': 'TARGET', 'c.passed': 'YOU BEAT IT!',
+    'end.time': 'Time\'s up', 'ch.win': 'You beat {n}\'s {s}! 🎉', 'ch.lose': '{d} pts short of {n}', 'ch.banner': '⚔️ {n} challenged you: beat {s} pts!',
+    'daily.done': 'You finished today\'s puzzle: {s} pts. New puzzle tomorrow!', 'daily.left': 'One try today. Everyone plays the same board.',
+    'mode.classic': 'Endless: clear the board, level up.', 'mode.timed': 'Score as much as you can in 2 minutes.',
+    'm.offgame': 'Games started offline are not ranked.', 'm.queued': 'No connection; your score will be sent when you\'re back online.',
+    'm.qsent': 'Your pending score was sent.', 'm.daily_done': 'You already played today\'s puzzle.',
+    'ms.done': 'Mission complete: {m}', 'ms.all': 'All of today\'s missions done! 🎉',
+    'mi.drop10': 'Drop 10 bubbles in one shot', 'mi.blast15': 'Clear 15 bubbles in one shot', 'mi.streak4': 'Reach a ×4 streak',
+    'mi.bomb8': 'Destroy 8 bubbles with one bomb', 'mi.joker': 'Use a joker', 'mi.bolt': 'Use a lightning bubble', 'mi.level2': 'Reach level 2',
+    'mi.score1500': 'Score 1,500 in one game', 'mi.score3000': 'Score 3,000 in one game', 'mi.timed800': 'Score 800 in time attack',
+    'mi.pop100': 'Pop 100 bubbles in one game', 'mi.daily': 'Play the daily puzzle',
+    'bd.first': 'First game', 'bd.g10': '10 games', 'bd.g50': '50 games', 'bd.g100': '100 games', 'bd.s1k': '1,000 pts', 'bd.s5k': '5,000 pts',
+    'bd.s10k': '10,000 pts', 'bd.s25k': '25,000 pts', 'bd.timed1k': 'Time attack 1,000', 'bd.daily1': 'Daily puzzle', 'bd.daily3': '3-day streak',
+    'bd.daily7': '7-day streak', 'bd.king': 'All-time #1',
+    'pf.games': 'Games', 'pf.total': 'Total points', 'pf.rank': 'All-time rank', 'pf.streak': 'Daily streak', 'pf.first': 'Since',
+    'pf.recent': 'Recent games', 'pf.badges': 'Badges', 'pf.nf': 'No scores for this player yet.', 'pf.link': 'Copy profile link', 'pf.copied': 'Link copied',
+    'md.classic': 'Classic', 'md.timed': 'Time attack', 'md.daily': 'Daily puzzle', 'city.ph': '📍 Your city', 'lb.players': 'players',
+    'inst': 'Install', 'days': 'days', 'pf.my': 'My profile', 'kel.t': 'Love word games? A Turkish online word game',
+    'ms.l': 'Refreshed daily', 'ms.t': 'Today’s missions', 'lb.dailyS': 'Daily', 'lb.cities': 'Cities',
     'c.record': 'NEW RECORD!', 'p.1': 'GREAT!', 'p.2': 'AMAZING!', 'p.3': 'LEGENDARY!',
     'r.togo': '{n} pts to beat your record', 'r.new': 'New record! Previous: {n}', 'r.first': 'Your first record!',
     'sh.text': 'I scored {s} in Bubble Pop! Can you beat me?', 'sh.saved': 'Image downloaded',
@@ -87,6 +110,26 @@
   };
   var TR = {
     'nick.saved': 'Kaydedildi. Skorların otomatik yazılacak.', 'm.prev': 'Önceki oyunun skoru kaydedildi: {s} puan.', 'm.auto': '{n} adıyla kaydediliyor…',
+
+    'c.daily': 'GÜNÜN BULMACASI', 'c.timed': 'ZAMANA KARŞI', 'c.timeup': 'SÜRE DOLDU!', 'c.target': 'HEDEF', 'c.passed': 'GEÇTİN!',
+    'end.time': 'Süre doldu', 'ch.win': '{n} adlı oyuncunun {s} puanını geçtin! 🎉', 'ch.lose': '{n} adlı oyuncuyu geçmene {d} puan kaldı',
+    'ch.banner': '⚔️ {n} seni düelloya çağırdı: {s} puanı geç!',
+    'daily.done': 'Bugünkü bulmacayı bitirdin: {s} puan. Yarın yeni bulmaca!', 'daily.left': 'Bugün tek hakkın var. Herkes aynı tahtayı oynuyor.',
+    'mode.classic': 'Sonsuz mod: tahtayı temizle, seviye atla.', 'mode.timed': '2 dakikada yapabildiğin en yüksek skoru yap.',
+    'm.offgame': 'Çevrimdışı başlayan oyunlar sıralamaya girmez.', 'm.queued': 'İnternet yok; skorun bağlantı gelince gönderilecek.',
+    'm.qsent': 'Bekleyen skorun gönderildi.', 'm.daily_done': 'Bugünkü bulmacayı zaten oynadın.',
+    'ms.done': 'Görev tamam: {m}', 'ms.all': 'Bugünün görevlerinin hepsi tamam! 🎉',
+    'mi.drop10': 'Tek atışta 10 balon düşür', 'mi.blast15': 'Tek atışta 15 balon temizle', 'mi.streak4': '×4 seri yap',
+    'mi.bomb8': 'Bir bombayla 8 balon yok et', 'mi.joker': 'Bir joker kullan', 'mi.bolt': 'Bir yıldırım kullan', 'mi.level2': '2. seviyeye ulaş',
+    'mi.score1500': 'Tek oyunda 1.500 puan yap', 'mi.score3000': 'Tek oyunda 3.000 puan yap', 'mi.timed800': 'Zamana karşı modunda 800 puan yap',
+    'mi.pop100': 'Tek oyunda 100 balon patlat', 'mi.daily': 'Günün bulmacasını oyna',
+    'bd.first': 'İlk oyun', 'bd.g10': '10 oyun', 'bd.g50': '50 oyun', 'bd.g100': '100 oyun', 'bd.s1k': '1.000 puan', 'bd.s5k': '5.000 puan',
+    'bd.s10k': '10.000 puan', 'bd.s25k': '25.000 puan', 'bd.timed1k': 'Zamana karşı 1.000', 'bd.daily1': 'Günün bulmacası', 'bd.daily3': '3 gün seri',
+    'bd.daily7': '7 gün seri', 'bd.king': 'Tüm zamanların birincisi',
+    'pf.games': 'Oyun', 'pf.total': 'Toplam puan', 'pf.rank': 'Tüm zamanlar sırası', 'pf.streak': 'Günlük seri', 'pf.first': 'İlk oyun',
+    'pf.recent': 'Son oyunlar', 'pf.badges': 'Rozetler', 'pf.nf': 'Bu oyuncunun henüz skoru yok.', 'pf.link': 'Profil bağlantısını kopyala', 'pf.copied': 'Bağlantı kopyalandı',
+    'md.classic': 'Klasik', 'md.timed': 'Zamana karşı', 'md.daily': 'Günün bulmacası', 'city.ph': '📍 Şehrin', 'lb.players': 'oyuncu',
+    'inst': 'Yükle', 'days': 'gün',
     'c.record': 'YENİ REKOR!', 'p.1': 'HARİKA!', 'p.2': 'MÜKEMMEL!', 'p.3': 'EFSANE!',
     'r.togo': 'Rekoruna {n} puan kaldı', 'r.new': 'Yeni rekor! Önceki: {n}', 'r.first': 'İlk rekorun bu!',
     'sh.text': 'Balon Patlat\'ta {s} puan yaptım! Beni geçebilir misin?', 'sh.saved': 'Görsel indirildi',
@@ -111,6 +154,7 @@
     $('langBtn').textContent = lang === 'en' ? 'TR' : 'EN';
     document.title = lang === 'en' ? 'Bubble Pop — Free Online Bubble Shooter Game | okutan.org' : TITLE_TR;
     renderBoard();
+    if (typeof renderMissions === 'function' && $('msList')) { try { renderMissions(); renderModeSel(); fillCities(); } catch (e) {} }
   }
   $('langBtn').onclick = function () { lang = lang === 'en' ? 'tr' : 'en'; lsSet('lang', lang); applyLang(); };
 
@@ -325,6 +369,23 @@
     }
   }
 
+  // ---------- Tohumlu rastgelelik (mulberry32): aynı tohum = aynı tahta ----------
+  var rngState = 1;
+  function seedRng(sd) { rngState = (sd >>> 0) || 1; }
+  function rnd() {
+    rngState = (rngState + 0x6D2B79F5) >>> 0;
+    var q = rngState;
+    q = Math.imul(q ^ (q >>> 15), q | 1);
+    q ^= q + Math.imul(q ^ (q >>> 7), q | 61);
+    return ((q ^ (q >>> 14)) >>> 0) / 4294967296;
+  }
+  function fnv1a(str) { var h = 0x811c9dc5; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h; }
+  function todayKey() {
+    try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Istanbul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); }
+    catch (e) { var d = new Date(Date.now() + 3 * 3600000); return d.toISOString().slice(0, 10); }
+  }
+  function dailySeed(day) { return fnv1a('balon-' + day); }
+
   // ---------- Izgara ----------
   var grid, shift, rowAnim = 0;
   function isOff(r) { return ((r + shift) & 1) === 1; }
@@ -348,12 +409,12 @@
   function colorCount() { return level <= 1 ? 4 : level <= 3 ? 5 : 6; }
   function randColor() {
     var p = presentColors();
-    if (!p.length) return Math.floor(Math.random() * colorCount());
-    return p[Math.floor(Math.random() * p.length)];
+    if (!p.length) return Math.floor(rnd() * colorCount());
+    return p[Math.floor(rnd() * p.length)];
   }
   function fillRow(r, n) {
     for (var c = 0; c < ncols(r); c++) {
-      var v = Math.floor(Math.random() * n), roll = Math.random();
+      var v = Math.floor(rnd() * n), roll = rnd();
       if (roll < 0.3 && c > 0 && grid[r][c - 1] >= 0) v = grid[r][c - 1];
       else if (roll < 0.5 && r + 1 < grid.length && grid[r + 1][c] >= 0) v = grid[r + 1][c];
       grid[r][c] = v;
@@ -434,6 +495,11 @@
   // ---------- Oyun durumu ----------
   var state = 'idle', level = 1, score = 0, shots = 0, gains = [], streak = 0, missLimit = 6, missLeft = 6;
   var cur = 0, nxt = 1, ball = null, angle = -Math.PI / 2, lastShot = 0, holdUntil = 0, overT = 0;
+  var MODES = ['classic', 'timed', 'daily'], TIMED = 120;
+  var mode = MODES.indexOf(lsGet('bp_mode')) >= 0 ? lsGet('bp_mode') : 'classic';
+  var seed = 0, timeLeft = 0, target = null, challenge = null, lastScoreId = null, offlineGame = false, overReason = '';
+  function bestKey(m) { return 'bp_best' + (m === 'classic' ? '' : '_' + m); }
+  function bestFor(m) { return +(lsGet(bestKey(m)) || 0); }
   var shake = 0, recoil = 0, loadT = 1, praise = null, confetti = [], recordBroken = false, gs = {};
   function resetStats() { gs = { popped: 0, dropped: 0, biggest: 0, maxStreak: 0, bomb: 0, joker: 0, bolt: 0 }; }
   resetStats();
@@ -441,7 +507,7 @@
     var n = parseInt(hex.slice(1), 16);
     return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
   }
-  var fx = [], texts = [], banner = null, token = null, best = +(lsGet('bp_best') || 0);
+  var fx = [], texts = [], banner = null, token = null, best = bestFor(mode);
   var shownScore = 0;
 
   function calcMissLimit() { return Math.max(3, 7 - level); }
@@ -454,33 +520,61 @@
   }
   function fmt(n) { return Math.round(n).toLocaleString(lang === 'en' ? 'en-US' : 'tr-TR'); }
 
+  var starting = false;
   function startGame() {
+    if (starting) return;
     ensureAudio();
     // Küçük ekranda oyun alanını görünür alana oturt
     if (innerWidth < 1000) { try { $('stage').closest('.game').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
     if ($('ovStart').classList.contains('show') && $('startName').value.trim() && !setNick($('startName').value, true)) {
       $('startName').focus(); return;
     }
+    if (mode === 'daily' && dailyDone()) { showOv('ovStart'); renderModeSel(); return; }
     var prev = score;
     if (quickSave()) {
       var nm = $('nickMsg'); nm.className = 'nick-msg ok'; nm.textContent = t('m.prev').replace('{s}', fmt(prev));
       setTimeout(loadBoard, 1500);
     } else if (token) ping(true);
+    starting = true; token = null;
+    $('playBtn').disabled = true; $('againBtn').disabled = true;
+    var body = { mode: mode }, done = false;
+    if (challenge && mode === 'classic') body.ch = challenge.id;
+    var go = function (j) {
+      if (done) return; done = true; starting = false;
+      $('playBtn').disabled = false; $('againBtn').disabled = false;
+      begin(j);
+    };
+    fetch(API + '?a=start', { method: 'POST', cache: 'no-store', body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (done) return;
+        if (j && j.ok) { token = j.token; setStats(j.plays, j.online); go(j); } else go(null);
+      })
+      .catch(function () { go(null); });
+    setTimeout(function () { go(null); }, 3500);
+  }
+
+  function begin(j) {
+    offlineGame = !j;
+    seed = j ? (j.seed >>> 0) : (mode === 'daily' ? dailySeed(todayKey()) : 1 + Math.floor(Math.random() * 0x7ffffffe));
+    target = j && j.target ? { name: j.target.name, score: j.target.score, passed: false } : null;
+    seedRng(seed);
     level = 1; score = 0; shownScore = 0; shots = 0; gains = []; streak = 0; ball = null; fx = []; texts = []; overT = 0;
-    praise = null; confetti = []; recordBroken = false; recoil = 0; loadT = 1; resetStats();
+    praise = null; confetti = []; recordBroken = false; recoil = 0; loadT = 1; resetStats(); sinceSpecial = 0;
+    best = bestFor(mode); $('best').textContent = fmt(best);
     $('scCard').classList.remove('record', 'fire');
+    timeLeft = mode === 'timed' ? TIMED : 0; overReason = ''; lastScoreId = null;
     missLimit = missLeft = calcMissLimit();
     newBoard();
     cur = randColor(); nxt = randColor();
     state = 'play'; holdUntil = performance.now() + 500;
-    banner = { text: t('c.level') + ' 1', t: 0 };
+    banner = mode === 'daily' ? { text: t('c.daily'), t: 0, sub: todayKey() }
+      : mode === 'timed' ? { text: t('c.timed'), t: 0, sub: '2:00' }
+      : { text: t('c.level') + ' 1', t: 0, sub: target ? t('c.target') + ' ' + fmt(target.score) : null };
     $('score').textContent = '0'; updateHud();
     showOv(null);
-    token = null;
-    fetch(API + '?a=start', { method: 'POST', cache: 'no-store' })
-      .then(function (r) { return r.json(); })
-      .then(function (j) { if (j && j.ok) { token = j.token; setStats(j.plays, j.online); } })
-      .catch(function () {});
+    if (mode === 'daily') lsSet('bp_daily', JSON.stringify({ day: todayKey(), score: 0, done: false }));
+    missionEvent('start', {});
   }
 
   // Çevrimiçi sinyali: oyun sürerken 25 sn'de bir
@@ -494,11 +588,15 @@
   setInterval(function () { if (state === 'play' && !document.hidden) ping(false); }, 25000);
   addEventListener('pagehide', function () { if ((state === 'play' || state === 'paused') && !quickSave()) ping(true); });
 
+  function payload(name) {
+    return { token: token, name: name, score: score, shots: shots, level: level, gains: gains, seed: seed, city: lsGet('bp_city') || null };
+  }
   // Oyun bitmeden ayrılınca (sayfayı yenileme/kapatma, oyun ortasında Yeni oyun) o ana kadarki skoru kaydet
   function quickSave() {
     var nk = lsGet('bp_name') || '';
     if (!token || score <= 0 || !validName(nk) || !(state === 'play' || state === 'paused')) return false;
-    var body = JSON.stringify({ token: token, name: nk, score: score, shots: shots, level: level, gains: gains }), sent = false;
+    var body = JSON.stringify(payload(nk)), sent = false;
+    if (mode === 'daily') lsSet('bp_daily', JSON.stringify({ day: todayKey(), score: score, done: true }));
     token = null;
     try { sent = !!(navigator.sendBeacon && navigator.sendBeacon(API + '?a=submit', new Blob([body], { type: 'text/plain' }))); } catch (e) {}
     if (!sent) fetch(API + '?a=submit', { method: 'POST', cache: 'no-store', body: body, keepalive: true }).catch(function () {});
@@ -519,9 +617,9 @@
   function nextBall() {
     sinceSpecial++;
     // ~her 12 atışta bir sürpriz; en az 7 atış arayla, ilk 5 atışta yok
-    if (shots >= 5 && sinceSpecial >= 7 && Math.random() < 0.13) {
+    if (shots >= 5 && sinceSpecial >= 7 && rnd() < 0.13) {
       sinceSpecial = 0;
-      var roll = Math.random(), kind = roll < 0.45 ? BOMB : roll < 0.8 ? JOKER : BOLT;
+      var roll = rnd(), kind = roll < 0.45 ? BOMB : roll < 0.8 ? JOKER : BOLT;
       addText(NEXT_X + 30, NEXT_Y - 40, t('c.surprise'), false, C.accent);
       tone(880, 0.08, 'triangle', 0.07, 1320); tone(1320, 0.1, 'triangle', 0.06, 1760, 0.08);
       return kind;
@@ -554,6 +652,7 @@
     if (k) sfx.drop(k);
     gs.popped += cells.length; gs.dropped += k;
     var total = cells.length + k;
+    lastShot_total += total; lastShot_dropped += k;
     if (total > gs.biggest) gs.biggest = total;
     if (total >= 10) {
       var lv = total >= 25 ? 3 : total >= 15 ? 2 : 1;
@@ -573,6 +672,7 @@
     }
     return gain;
   }
+  var lastShot_total = 0, lastShot_dropped = 0, lastShot_special = '';
   function occupiedWithin(r, c, radius) {
     var out = [], x0 = cx(r, c), y0 = cy(r);
     for (var rr = Math.max(0, r - 3); rr <= r + 3 && rr < grid.length; rr++)
@@ -607,12 +707,12 @@
         sfx.zap();
         banner = { text: t('c.bolt'), t: 0.4 };
       }
-      gs[color === BOMB ? 'bomb' : 'bolt']++;
+      gs[color === BOMB ? 'bomb' : 'bolt']++; lastShot_special = color === BOMB ? 'bomb' : 'bolt';
       if (cells.length) { streak++; gain = blast(cells, r, c, Math.min(streak, 5)); sfx.pop(Math.min(cells.length, 8), streak); }
       else miss();
     } else {
       if (color === JOKER) {
-        gs.joker++;
+        gs.joker++; lastShot_special = 'joker';
         // komşulardaki renkler arasından en büyük eşleşmeyi veren renk
         var bestCol = -1, bestN = 0, n = neighbors(r, c);
         n.forEach(function (p) {
@@ -635,6 +735,11 @@
     }
     gains.push(gain); score += gain;
     if (streak > gs.maxStreak) gs.maxStreak = streak;
+    missionEvent('shot', { total: lastShot_total, dropped: lastShot_dropped, special: lastShot_special });
+    lastShot_total = 0; lastShot_dropped = 0; lastShot_special = '';
+    if (target && !target.passed && score > target.score) {
+      target.passed = true; banner = { text: t('c.passed'), t: 0 }; sfx.record();
+    }
     if (gain) updateHud(true); else updateHud();
     if (state !== 'play') return;
     // 6) oyun içinde rekor kırıldı
@@ -673,7 +778,9 @@
     state = 'over'; overT = 0; ball = null; sfx.over();
     $('scCard').classList.remove('fire');
     var prevBest = best, isBest = score > best;
-    if (isBest) { best = score; lsSet('bp_best', String(best)); }
+    if (isBest) { best = score; lsSet(bestKey(mode), String(best)); }
+    if (mode === 'daily') lsSet('bp_daily', JSON.stringify({ day: todayKey(), score: score, done: true }));
+    missionEvent('end', {});
     updateHud();
     setTimeout(function () {
       $('endScore').firstChild.nodeValue = fmt(score);
@@ -697,6 +804,13 @@
   }
 
   function fillReport(isBest, prevBest) {
+    $('endL').textContent = overReason === 'time' ? t('end.time') : (mode === 'classic' ? t('end.l') : t('md.' + mode));
+    var ch = $('rCh');
+    if (target) {
+      ch.hidden = false; ch.classList.toggle('win', score > target.score);
+      ch.textContent = score > target.score ? t('ch.win').replace('{n}', target.name).replace('{s}', fmt(target.score))
+        : t('ch.lose').replace('{n}', target.name).replace('{d}', fmt(target.score - score + 10));
+    } else ch.hidden = true;
     $('rPop').textContent = fmt(gs.popped); $('rDrop').textContent = fmt(gs.dropped);
     $('rBig').textContent = fmt(gs.biggest); $('rStreak').textContent = '×' + Math.max(1, Math.min(gs.maxStreak, 5));
     var sp = [];
@@ -760,6 +874,7 @@
     return c;
   }
   function shareText() { return t('sh.text').replace('{s}', fmt(score)); }
+  function shareUrl() { return lastScoreId ? SHARE_URL + '?meydan=' + lastScoreId : SHARE_URL; }
   function downloadImage(c) {
     var a = document.createElement('a'); a.download = 'balon-patlat-' + score + '.png'; a.href = c.toDataURL('image/png');
     document.body.appendChild(a); a.click(); a.remove(); showToast(t('sh.saved'));
@@ -770,15 +885,15 @@
       var file = null;
       try { file = new File([blob], 'balon-patlat.png', { type: 'image/png' }); } catch (e) {}
       if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], text: txt + ' ' + SHARE_URL }).catch(function () {});
+        navigator.share({ files: [file], text: txt + ' ' + shareUrl() }).catch(function () {});
       } else if (navigator.share) {
-        navigator.share({ text: txt, url: SHARE_URL }).catch(function () {});
+        navigator.share({ text: txt, url: shareUrl() }).catch(function () {});
       } else downloadImage(c);
     }, 'image/png');
   };
   $('dlBtn').onclick = function () { downloadImage(makeShareImage()); };
-  $('waBtn').onclick = function () { window.open('https://wa.me/?text=' + encodeURIComponent(shareText() + ' ' + SHARE_URL), '_blank', 'noopener'); };
-  $('xBtn').onclick = function () { window.open('https://x.com/intent/post?text=' + encodeURIComponent(shareText()) + '&url=' + encodeURIComponent(SHARE_URL), '_blank', 'noopener'); };
+  $('waBtn').onclick = function () { window.open('https://wa.me/?text=' + encodeURIComponent(shareText() + ' ' + shareUrl()), '_blank', 'noopener'); };
+  $('xBtn').onclick = function () { window.open('https://x.com/intent/post?text=' + encodeURIComponent(shareText()) + '&url=' + encodeURIComponent(shareUrl()), '_blank', 'noopener'); };
 
   // ---------- Bildirim (toast) ----------
   var toastTimer = 0;
@@ -865,12 +980,24 @@
 
   $('playBtn').onclick = startGame;
   $('againBtn').onclick = startGame;
-  $('newBtn').onclick = startGame;
+  // Yeni oyun: mod seçimi için başlangıç ekranını aç (süren oyun bekletilir, Oyna'ya basınca skoru kaydedilir)
+  $('newBtn').onclick = function () {
+    if (state === 'play') state = 'paused';
+    showOv('ovStart'); renderModeSel();
+  };
   $('pauseBtn').onclick = function () { state === 'play' ? pause() : resume(); };
   $('resumeBtn').onclick = resume;
 
   // ---------- Güncelleme ----------
+  var lastTick = 99;
   function step(dt) {
+    if (state === 'play' && mode === 'timed' && rowAnim >= 0 && performance.now() > holdUntil - 400) {
+      timeLeft -= dt;
+      var whole = Math.ceil(timeLeft);
+      if (whole !== lastTick && whole <= 10 && whole > 0) tone(whole <= 3 ? 1200 : 900, 0.05, 'square', 0.03);
+      lastTick = whole;
+      if (timeLeft <= 0) { timeLeft = 0; overReason = 'time'; ball = null; sfx.clear(); return gameOver(); }
+    }
     if (keys.ArrowLeft) angle = Math.max(-Math.PI + 0.12, angle - 1.7 * dt);
     if (keys.ArrowRight) angle = Math.min(-0.12, angle + 1.7 * dt);
     if (rowAnim < 0) rowAnim = Math.min(0, rowAnim + Math.max(ROWH * 4, -rowAnim * 5) * dt);
@@ -1087,6 +1214,24 @@
     ctx.textAlign = 'left'; ctx.font = '500 10px "JetBrains Mono", monospace'; ctx.fillStyle = C.muted;
     ctx.fillText(t('c.level') + ' ' + level, 16, NEXT_Y + 26 > H - 4 ? H - 6 : NEXT_Y + 28);
 
+    // üstte hap rozetleri: süre (sağ), hedef (sol)
+    function pill(x, y, txt, col, alignRight) {
+      ctx.font = '700 14px "JetBrains Mono", monospace';
+      var w = ctx.measureText(txt).width + 22, x0 = alignRight ? x - w : x;
+      ctx.globalAlpha = 0.92; ctx.fillStyle = C.ink;
+      ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x0, y, w, 26, 13); else ctx.rect(x0, y, w, 26); ctx.fill();
+      ctx.globalAlpha = 1; ctx.fillStyle = col; ctx.textAlign = 'left'; ctx.fillText(txt, x0 + 11, y + 18);
+    }
+    if ((state === 'play' || state === 'paused') && mode === 'timed') {
+      var tl = Math.max(0, Math.ceil(timeLeft)), urgent = tl <= 10;
+      var tt = '⏱ ' + Math.floor(tl / 60) + ':' + ('0' + tl % 60).slice(-2);
+      if (urgent) ctx.globalAlpha = 0.6 + 0.4 * Math.sin(now / 90);
+      pill(W - 8, DEAD_Y - 34, tt, urgent ? '#ff6b6b' : C.field, true);
+      ctx.globalAlpha = 1;
+    }
+    if ((state === 'play' || state === 'paused') && target) {
+      pill(8, DEAD_Y - 34, (target.passed ? '✓ ' : '⚔ ') + target.name + ' ' + fmt(target.score), target.passed ? '#22c55e' : C.field, false);
+    }
     // yazılar
     ctx.textAlign = 'center';
     texts.forEach(function (tx) {
@@ -1138,8 +1283,12 @@
   requestAnimationFrame(loop);
 
   // ---------- Liderlik tablosu ----------
-  var lb = null, lbErr = false, period = lsGet('bp_period') || 'week';
-  var tabs = document.querySelectorAll('.tabs button');
+  var lb = null, lbErr = false, period = lsGet('bp_period') || 'week', cities = null;
+  var LBM = ['classic', 'timed', 'daily', 'cities'], lbMode = LBM.indexOf(lsGet('bp_lbmode')) >= 0 ? lsGet('bp_lbmode') : 'classic';
+  var tabs = document.querySelectorAll('#ptabs button');
+  document.querySelectorAll('#mtabs button').forEach(function (b) {
+    b.onclick = function () { lbMode = b.dataset.m; lsSet('bp_lbmode', lbMode); lb = null; renderBoard(); loadBoard(); };
+  });
   tabs.forEach(function (b) {
     b.onclick = function () { period = b.dataset.p; lsSet('bp_period', period); renderBoard(); };
   });
@@ -1151,17 +1300,35 @@
     $('stPlays').textContent = stats.plays == null ? '—' : fmt(stats.plays);
     $('stOnline').textContent = stats.online == null ? '—' : fmt(stats.online);
   }
+  function pn(n) { return '<button class="pn" data-name="' + esc(n) + '">' + esc(n) + '</button>'; }
+  function renderCities() {
+    var el = $('lbList'), pod = $('podium'), my = lsGet('bp_city') || '';
+    $('meRow').hidden = true;
+    var rows = cities || [];
+    if (!rows.length) { pod.innerHTML = ''; el.innerHTML = '<li class="empty">' + esc(t('lb.empty')) + '</li>'; return; }
+    pod.innerHTML = [1, 0, 2].map(function (i) {
+      var r = rows[i]; if (!r) return '<div class="pd"></div>';
+      return '<div class="pd r' + (i + 1) + (r.city === my ? ' me' : '') + '"><div class="pdb"></div><div class="ball">' + esc(initial(r.city)) + '</div><div class="who">' + esc(r.city) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
+    }).join('');
+    el.innerHTML = rows.slice(3).map(function (r, i) {
+      return '<li class="' + (r.city === my ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + esc(r.city) + ' <small>' + r.players + ' ' + esc(t('lb.players')) + '</small></span><span class="pt">' + fmt(r.score) + '</span></li>';
+    }).join('');
+  }
   function renderBoard() {
     tabs.forEach(function (b) { b.setAttribute('aria-selected', b.dataset.p === period ? 'true' : 'false'); });
+    document.querySelectorAll('#mtabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.m === lbMode ? 'true' : 'false'); });
+    $('ptabs').hidden = lbMode === 'daily' || lbMode === 'cities';
     var el = $('lbList'), pod = $('podium'), meRow = $('meRow');
     $('liveTag').classList.toggle('off', !!lbErr);
     if (lbErr) { pod.innerHTML = ''; meRow.hidden = true; el.innerHTML = '<li class="empty">' + esc(t('lb.off')) + '</li>'; return; }
-    if (!lb) return;
-    var rows = lb[period] || [];
+    if (lbMode === 'cities') { if (cities) renderCities(); return; }
+    if (!lb || lb.mode !== lbMode) return;
+    var per = lbMode === 'daily' ? 'day' : period;
+    var rows = lb[per] || [];
     var me = (lsGet('bp_name') || '').toLocaleLowerCase('tr');
     var isMe = function (r) { return !!me && r.name.toLocaleLowerCase('tr') === me; };
     var low = function (n) { return n.toLocaleLowerCase('tr'); };
-    var king = lb.all && lb.all[0] ? low(lb.all[0].name) : '', hot = lb.day && lb.day[0] ? low(lb.day[0].name) : '';
+    var king = lb.king ? low(lb.king) : '', hot = lb.hot ? low(lb.hot) : '';
     var badges = function (n) {
       var l = low(n), b = '';
       if (l === king) b += '<span class="bdg" title="' + esc(t('bdg.crown')) + '">👑</span>';
@@ -1172,25 +1339,28 @@
     else {
       pod.innerHTML = [1, 0, 2].map(function (i) {
         var r = rows[i]; if (!r) return '<div class="pd"></div>';
-        return '<div class="pd r' + (i + 1) + (isMe(r) ? ' me' : '') + '"><div class="pdb">' + badges(r.name) + '</div><div class="ball">' + esc(initial(r.name)) + '</div><div class="who">' + esc(r.name) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
+        return '<div class="pd r' + (i + 1) + (isMe(r) ? ' me' : '') + '"><div class="pdb">' + badges(r.name) + '</div><div class="ball">' + esc(initial(r.name)) + '</div><div class="who">' + pn(r.name) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
       }).join('');
       el.innerHTML = rows.slice(3).map(function (r, i) {
-        return '<li class="' + (isMe(r) ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + esc(r.name) + badges(r.name) + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
+        return '<li class="' + (isMe(r) ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + pn(r.name) + badges(r.name) + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
       }).join('');
     }
     // Oyuncunun kendi satırı (listede yoksa)
     var m = lb.me && me && lb.me.name.toLocaleLowerCase('tr') === me ? lb.me : null, inList = rows.some(isMe);
-    if (m && m.rank[period] && !inList) {
+    if (m && m.rank[per] && !inList) {
       meRow.hidden = false;
-      meRow.innerHTML = '<span class="rk">' + m.rank[period] + '</span><span class="nm">' + esc(m.name) + '</span><span class="pt">' + fmt(m.score[period]) + '</span>';
+      meRow.innerHTML = '<span class="rk">' + m.rank[per] + '</span><span class="nm">' + pn(m.name) + '</span><span class="pt">' + fmt(m.score[per]) + '</span>';
     } else meRow.hidden = true;
-    $('myRank').textContent = m && m.rank.week ? '#' + m.rank.week : '—';
-    if (m && m.best > best) { best = m.best; lsSet('bp_best', String(best)); $('best').textContent = fmt(best); }
+    if (lb.mode === 'classic') $('myRank').textContent = m && m.rank.week ? '#' + m.rank.week : '—';
+    if (m && m.best > bestFor(lb.mode)) {
+      lsSet(bestKey(lb.mode), String(m.best));
+      if (lb.mode === mode && state !== 'play') { best = m.best; $('best').textContent = fmt(best); }
+    }
   }
   // Haftalık sıran düştüyse kimin geçtiğini bildir
   function weekKey() { var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.toDateString(); }
   function checkPassed() {
-    var m = lb && lb.me, nk = (lsGet('bp_name') || '').toLocaleLowerCase('tr');
+    var m = lb && lb.mode === 'classic' && lb.me, nk = (lsGet('bp_name') || '').toLocaleLowerCase('tr');
     if (!m || !m.rank || !m.rank.week || m.name.toLocaleLowerCase('tr') !== nk) return;
     var prev = null; try { prev = JSON.parse(lsGet('bp_rk') || 'null'); } catch (e) {}
     var wk = weekKey(), r = m.rank.week;
@@ -1201,17 +1371,21 @@
     lsSet('bp_rk', JSON.stringify({ wk: wk, n: nk, r: r }));
   }
   function loadBoard() {
-    var nk = lsGet('bp_name');
-    return fetch(API + '?a=top' + (nk ? '&me=' + encodeURIComponent(nk) : ''), { cache: 'no-store' })
+    var nk = lsGet('bp_name'), qm = lbMode === 'cities' ? 'classic' : lbMode;
+    if (lbMode === 'cities') {
+      fetch(API + '?a=cities', { cache: 'no-store' }).then(function (r) { return r.json(); })
+        .then(function (j) { if (j && j.ok) { cities = j.cities; lbErr = false; renderBoard(); } }).catch(function () {});
+    }
+    return fetch(API + '?a=top&mode=' + qm + (nk ? '&me=' + encodeURIComponent(nk) : ''), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j || !j.ok) throw 0; lb = j; lbErr = false; setStats(j.plays, j.online); renderBoard(); checkPassed(); })
+      .then(function (j) { if (!j || !j.ok) throw 0; lb = j; lbErr = false; setStats(j.plays, j.online); renderBoard(); checkPassed(); renderModeSel(); })
       .catch(function () { lbErr = true; renderBoard(); });
   }
   loadBoard();
   setInterval(function () { if (!document.hidden && state !== 'play') loadBoard(); }, 30000);
 
   // ---------- Skor kaydetme ----------
-  var ERR = { bad_name: 'm.badname', rate_limited: 'm.rate', bad_token: 'm.token', expired: 'm.token', too_fast: 'm.err' };
+  var ERR = { bad_name: 'm.badname', rate_limited: 'm.rate', bad_token: 'm.token', expired: 'm.token', too_fast: 'm.err', daily_done: 'm.daily_done', bad_seed: 'm.err' };
   function validName(n) { n = (n || '').replace(/\s+/g, ' ').trim(); return n.length >= 2 && n.length <= 16 && /^[\p{L}\p{N}][\p{L}\p{N} ._\-]*$/u.test(n); }
   function initial(n) { return (n || '?').trim().charAt(0).toLocaleUpperCase('tr') || '?'; }
 
@@ -1243,16 +1417,18 @@
 
   function submitScore(name) {
     var m = $('saveMsg');
-    if (!token) { m.className = 'msg err'; m.textContent = t('m.offline'); $('saveForm').style.display = ''; return; }
+    if (!token) { m.className = 'msg err'; m.textContent = t(offlineGame ? 'm.offgame' : 'm.offline'); $('saveForm').style.display = 'none'; return; }
     $('saveBtn').disabled = true; m.className = 'msg'; m.textContent = t('m.auto').replace('{n}', name);
+    var pl = payload(name);
     fetch(API + '?a=submit', {
       method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: token, name: name, score: score, shots: shots, level: level, gains: gains })
+      body: JSON.stringify(pl)
     })
       .then(function (r) { return r.json(); })
       .then(function (j) {
         if (j && j.ok) {
           token = null;
+          if (j.mode === 'classic' && j.id) lastScoreId = j.id;
           lsSet('bp_name', j.name || name); syncNick();
           $('saveForm').style.display = 'none';
           m.className = 'msg ok';
@@ -1266,14 +1442,198 @@
           $('saveBtn').disabled = code === 'bad_token' || code === 'expired';
         }
       })
-      .catch(function () { m.className = 'msg err'; m.textContent = t('m.offline'); $('saveForm').style.display = ''; $('saveBtn').disabled = false; });
+      .catch(function () {
+        // bağlantı yok: skoru kuyruğa al, internet gelince gönder (jeton 6 saat geçerli)
+        queuePush(pl); token = null;
+        m.className = 'msg'; m.textContent = t('m.queued'); $('saveForm').style.display = 'none';
+      });
   }
+  function queueGet() { try { return JSON.parse(lsGet('bp_queue') || '[]'); } catch (e) { return []; } }
+  function queuePush(p) { var q = queueGet(); p.ts = Date.now(); q.push(p); lsSet('bp_queue', JSON.stringify(q.slice(-10))); }
+  function flushQueue() {
+    var q = queueGet(); if (!q.length || !navigator.onLine) return;
+    var p = q.shift(); lsSet('bp_queue', JSON.stringify(q));
+    if (Date.now() - (p.ts || 0) > 6 * 3600000) return flushQueue();
+    delete p.ts;
+    fetch(API + '?a=submit', { method: 'POST', cache: 'no-store', body: JSON.stringify(p) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (j && j.ok) { showToast(t('m.qsent')); loadBoard(); } flushQueue(); })
+      .catch(function () { queuePush(p); });
+  }
+  addEventListener('online', flushQueue);
+  setTimeout(flushQueue, 2000);
   $('saveForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var name = $('nameIn').value.replace(/\s+/g, ' ').trim(), m = $('saveMsg');
     if (!validName(name)) { m.className = 'msg err'; m.textContent = t('m.name'); return; }
     submitScore(name);
   });
+
+  // ---------- Mod seçici + günün bulmacası ----------
+  function dailyInfo() { try { var d = JSON.parse(lsGet('bp_daily') || 'null'); return d && d.day === todayKey() ? d : null; } catch (e) { return null; } }
+  function dailyDone() {
+    // deneme, oyun başladığı anda harcanmış sayılır
+    if (dailyInfo()) return true;
+    // sunucu da bugünkü skoru biliyorsa
+    return !!(lb && lb.mode === 'daily' && lb.me && lb.me.score && lb.me.score.day);
+  }
+  function setMode(m) {
+    if (MODES.indexOf(m) < 0) return;
+    mode = m; lsSet('bp_mode', m);
+    if (state !== 'play' && state !== 'paused') { best = bestFor(mode); $('best').textContent = fmt(best); }
+    renderModeSel();
+  }
+  function renderModeSel() {
+    document.querySelectorAll('#modeSel button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.mode === mode ? 'true' : 'false'); });
+    var note = $('modeNote'), btn = $('playBtn');
+    btn.disabled = starting;
+    if (challenge && mode === 'classic') { note.textContent = t('ch.banner').replace('{n}', challenge.name).replace('{s}', fmt(challenge.score)); note.className = 'mode-note ch'; return; }
+    note.className = 'mode-note';
+    if (mode === 'daily') {
+      if (dailyDone()) {
+        var d = dailyInfo(), sc = (state === 'paused' && mode === 'daily') ? score : d ? d.score : (lb && lb.me && lb.me.score ? lb.me.score.day : 0);
+        note.textContent = t('daily.done').replace('{s}', fmt(sc || 0)); note.className = 'mode-note done'; btn.disabled = true;
+      } else note.textContent = t('daily.left');
+    } else note.textContent = t('mode.' + mode);
+  }
+  document.querySelectorAll('#modeSel button').forEach(function (b) { b.onclick = function () { setMode(b.dataset.mode); }; });
+
+  // ---------- Meydan okuma bağlantısı (?meydan=kod) ----------
+  var params = new URLSearchParams(location.search);
+  var chId = params.get('meydan');
+  if (chId && /^[0-9a-z]{1,10}$/.test(chId)) {
+    fetch(API + '?a=challenge&id=' + chId, { cache: 'no-store' }).then(function (r) { return r.json(); })
+      .then(function (j) { if (j && j.ok) { challenge = { id: j.id, name: j.name, score: j.score }; setMode('classic'); } })
+      .catch(function () {});
+  }
+
+  // ---------- Günlük görevler ----------
+  var MISSIONS = {
+    drop10: { ev: 'shot', ok: function (e) { return e.dropped >= 10; } },
+    blast15: { ev: 'shot', ok: function (e) { return e.total >= 15; } },
+    streak4: { ev: 'shot', ok: function () { return streak >= 4; } },
+    bomb8: { ev: 'shot', ok: function (e) { return e.special === 'bomb' && e.total >= 8; } },
+    joker: { ev: 'shot', ok: function (e) { return e.special === 'joker'; } },
+    bolt: { ev: 'shot', ok: function (e) { return e.special === 'bolt'; } },
+    level2: { ev: 'shot', ok: function () { return level >= 2; } },
+    score1500: { ev: 'shot', ok: function () { return score >= 1500; } },
+    score3000: { ev: 'shot', ok: function () { return score >= 3000; } },
+    timed800: { ev: 'shot', ok: function () { return mode === 'timed' && score >= 800; } },
+    pop100: { ev: 'shot', ok: function () { return gs.popped >= 100; } },
+    daily: { ev: 'start', ok: function () { return mode === 'daily'; } }
+  };
+  function todayMissions() {
+    var day = todayKey(), st = null;
+    try { st = JSON.parse(lsGet('bp_missions') || 'null'); } catch (e) {}
+    if (!st || st.day !== day) {
+      var ids = Object.keys(MISSIONS), h = fnv1a('gorev-' + day), pick = [];
+      while (pick.length < 3) { h = Math.imul(h ^ (h >>> 13), 0x5bd1e995) >>> 0; var id = ids[h % ids.length]; if (pick.indexOf(id) < 0) pick.push(id); }
+      st = { day: day, ids: pick, done: {} };
+      lsSet('bp_missions', JSON.stringify(st));
+    }
+    return st;
+  }
+  function missionEvent(ev, e) {
+    var st = todayMissions(), changed = false;
+    st.ids.forEach(function (id) {
+      var m = MISSIONS[id];
+      if (st.done[id] || m.ev !== ev) return;
+      if (m.ok(e || {})) {
+        st.done[id] = true; changed = true;
+        showToast(t('ms.done').replace('{m}', t('mi.' + id)));
+        tone(784, 0.1, 'triangle', 0.07); tone(1175, 0.16, 'triangle', 0.07, null, 0.09);
+        lsSet('bp_mdone', String(+(lsGet('bp_mdone') || 0) + 1));
+      }
+    });
+    if (changed) {
+      lsSet('bp_missions', JSON.stringify(st));
+      if (st.ids.every(function (id) { return st.done[id]; })) setTimeout(function () { showToast(t('ms.all')); }, 1800);
+      renderMissions();
+    }
+  }
+  function renderMissions() {
+    var st = todayMissions(), n = 0;
+    $('msList').innerHTML = st.ids.map(function (id) {
+      var d = !!st.done[id]; if (d) n++;
+      return '<li class="' + (d ? 'done' : '') + '"><span class="ck" aria-hidden="true">' + (d ? '✓' : '') + '</span><span>' + esc(t('mi.' + id)) + '</span></li>';
+    }).join('');
+    $('msCount').textContent = n + '/3';
+  }
+
+  // ---------- Şehir ----------
+  var CITIES = ['Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara', 'Antalya', 'Ardahan', 'Artvin', 'Aydın',
+    'Balıkesir', 'Bartın', 'Batman', 'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 'Çankırı', 'Çorum',
+    'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ', 'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari',
+    'Hatay', 'Iğdır', 'Isparta', 'İstanbul', 'İzmir', 'Kahramanmaraş', 'Karabük', 'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kilis',
+    'Kırıkkale', 'Kırklareli', 'Kırşehir', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin', 'Muğla', 'Muş',
+    'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun', 'Şanlıurfa', 'Siirt', 'Sinop', 'Şırnak', 'Sivas', 'Tekirdağ',
+    'Tokat', 'Trabzon', 'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'];
+  function fillCities() {
+    var sel = $('city'), cur = lsGet('bp_city') || '';
+    sel.innerHTML = '<option value="">' + esc(t('city.ph')) + '</option>' + CITIES.map(function (c) {
+      return '<option' + (c === cur ? ' selected' : '') + '>' + esc(c) + '</option>';
+    }).join('');
+  }
+  $('city').onchange = function () { lsSet('bp_city', this.value); if (lbMode === 'cities') renderBoard(); };
+
+  // ---------- Profil ----------
+  var BADGE_EMOJI = { first: '🎈', g10: '🎯', g50: '🏅', g100: '💯', s1k: '⭐', s5k: '🌟', s10k: '💎', s25k: '🚀', timed1k: '⏱️', daily1: '📅', daily3: '🔥', daily7: '🗓️', king: '👑' };
+  function openProfile(name) {
+    var box = $('pmodal'), body = $('pBody');
+    box.hidden = false; document.body.classList.add('modal-open');
+    body.innerHTML = '<div class="p-load"><span class="skel" style="width:60%"></span><span class="skel"></span><span class="skel" style="width:80%"></span></div>';
+    try { var u = new URL(location.href); u.searchParams.set('oyuncu', name); history.replaceState(null, '', u); } catch (e) {}
+    fetch(API + '?a=profile&name=' + encodeURIComponent(name), { cache: 'no-store' }).then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) { body.innerHTML = '<p class="p-nf"><b>' + esc(name) + '</b><br>' + esc(t('pf.nf')) + '</p>'; return; }
+        var stat = function (v, l) { return '<div><b>' + v + '</b><span>' + esc(l) + '</span></div>'; };
+        body.innerHTML =
+          '<div class="p-head"><div class="av">' + esc(initial(j.name)) + '</div><div><h2 id="pName">' + esc(j.name) + '</h2>' +
+          '<div class="p-sub">' + (j.city ? '📍 ' + esc(j.city) + ' · ' : '') + esc(t('pf.first')) + ' ' + esc(j.first) +
+          (j.streak ? ' · 🔥 ' + j.streak + ' ' + esc(t('days')) + ' ' + esc(t('pf.streak')).toLocaleLowerCase(lang === 'en' ? 'en' : 'tr') : '') + '</div></div></div>' +
+          '<div class="p-stats">' + stat(fmt(j.best.classic), t('md.classic')) + stat(fmt(j.best.timed), t('md.timed')) + stat(fmt(j.best.daily), t('md.daily')) +
+          stat(j.rank ? '#' + j.rank : '—', t('pf.rank')) + stat(fmt(j.games), t('pf.games')) + stat(fmt(j.total), t('pf.total')) +
+          '</div>' +
+          '<h3>' + esc(t('pf.badges')) + '</h3><div class="p-badges">' + j.badges.map(function (b) {
+            return '<span class="p-bdg"><i>' + (BADGE_EMOJI[b] || '🏷️') + '</i>' + esc(t('bd.' + b)) + '</span>';
+          }).join('') + '</div>' +
+          '<h3>' + esc(t('pf.recent')) + '</h3><ol class="p-recent">' + j.recent.map(function (r) {
+            return '<li><span>' + esc(t('md.' + r.mode)) + ' · ' + esc(r.at) + '</span><b>' + fmt(r.score) + '</b></li>';
+          }).join('') + '</ol>' +
+          '<button class="btn btn-g btn-w" id="pCopy">' + esc(t('pf.link')) + '</button>';
+        $('pCopy').onclick = function () {
+          var link = SHARE_URL + '?oyuncu=' + encodeURIComponent(j.name);
+          (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(function () { showToast(t('pf.copied')); }).catch(function () { prompt('', link); });
+        };
+      })
+      .catch(function () { body.innerHTML = '<p class="p-nf">' + esc(t('lb.off')) + '</p>'; });
+  }
+  function closeProfile() {
+    $('pmodal').hidden = true; document.body.classList.remove('modal-open');
+    try { var u = new URL(location.href); u.searchParams.delete('oyuncu'); history.replaceState(null, '', u); } catch (e) {}
+  }
+  $('pClose').onclick = closeProfile;
+  $('pmodal').addEventListener('click', function (e) { if (e.target === this) closeProfile(); });
+  addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('pmodal').hidden) { e.stopPropagation(); closeProfile(); } }, true);
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.pn'); if (b) openProfile(b.dataset.name);
+  });
+  $('myProfile').onclick = function () { var n = lsGet('bp_name'); if (validName(n || '')) openProfile(n); else $('nick').focus(); };
+  if (params.get('oyuncu')) openProfile(params.get('oyuncu').slice(0, 20));
+
+  // ---------- Uygulama gibi kurulum (PWA) ----------
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
+    addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
+  var installEvt = null;
+  addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; $('instBtn').hidden = false; });
+  $('instBtn').onclick = function () {
+    if (!installEvt) return;
+    installEvt.prompt(); installEvt.userChoice.finally(function () { installEvt = null; $('instBtn').hidden = true; });
+  };
+  addEventListener('appinstalled', function () { $('instBtn').hidden = true; });
+
+  fillCities(); renderMissions(); renderModeSel();
 
   // Kontroller sekmeleri (Bilgisayar / Mobil)
   function ctlTab(mob) {
