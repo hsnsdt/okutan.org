@@ -292,7 +292,7 @@
     $('returnBtn').hidden = !(play && sideUnused);
     var h = '';
     if (st.over) h = '';
-    else if (!my) h = 'Sıra ' + names()[st.turn] + '\'da…';
+    else if (!my) h = 'Sıra ' + names()[st.turn] + "'" + bulunma(names()[st.turn]) + '…';
     else if (st.phase === 'draw') h = 'Desteden ya da sol alttaki yan taştan bir taş çek.';
     else if (sideUnused) h = 'Yandan aldığın taşı bu tur kullanmalısın.';
     else if (!o && sum >= 101) h = '101\'e ulaştın: Seri aç!';
@@ -300,6 +300,12 @@
     else if (st.hands[0].length === 1) h = 'Son taşını at, eli bitir!';
     else h = 'Bir taşı sağ alttaki yuvaya sürükle ya da çift tıkla.';
     $('hint').textContent = h;
+  }
+  // Türkçe bulunma eki: Ayşe'de, Mehmet'te, Burak'ta, Ali'de
+  function bulunma(n) {
+    var low = String(n).toLocaleLowerCase('tr'), v = low.match(/[aeıioöuü](?=[^aeıioöuü]*$)/);
+    var front = v && 'eiöü'.indexOf(v[0]) >= 0, hard = 'çfhkpsşt'.indexOf(low.slice(-1)) >= 0;
+    return (hard ? 't' : 'd') + (front ? 'e' : 'a');
   }
   function say(p, text) {
     var e = $('pl' + p) && $('pl' + p).querySelector('.say'); if (!e) return;
@@ -373,7 +379,7 @@
   $('sortCift').onclick = function () { if (!st) return; arrangePairs(); sfx.tick(); render(); save(); };
 
   // ---------- sürükle-bırak + seçim ----------
-  var drag = null;
+  var drag = null, lastTap = { id: null, t: 0 };
   $('rack').addEventListener('pointerdown', function (e) {
     var te = e.target.closest('.tile'); if (!te || !st) return;
     audio();
@@ -413,7 +419,10 @@
     if (d.ghost) d.ghost.remove();
     var t = d.ghost ? targetAt(e.clientX, e.clientY) : null;
     setOver(null);
-    if (!d.ghost) { // tıklama: seç / bırak
+    if (!d.ghost) { // tıklama: seç / bırak · aynı taşa hızlı ikinci dokunuş: at
+      var nowT = Date.now();
+      if (lastTap.id === d.id && nowT - lastTap.t < 330) { lastTap = { id: null, t: 0 }; doDiscard(d.id); return; }
+      lastTap = { id: d.id, t: nowT };
       sel = sel === d.id ? null : d.id; sfx.tick(); render(); return;
     }
     if (!t) { render(); return; }
@@ -429,7 +438,7 @@
   });
   $('d0').addEventListener('click', function () { if (sel != null) doDiscard(sel); });
   // çift tıklayınca at
-  $('rack').addEventListener('dblclick', function (e) { var te = e.target.closest('.tile'); if (te) doDiscard(+te.dataset.id); });
+  // çift tıklama pointerup içinde yakalanıyor (fare ve dokunmada aynı)
 
   // ---------- botlar ----------
   function delay(ms) { return sleep(ms * game.speed); }
@@ -556,10 +565,42 @@
   };
   $('nameIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('startBtn').click(); });
   $('newBtn').onclick = function () { if (busy) return; showStart(); };
+  // ---------- klavye kısayolları ----------
+  function rackOrder() { return rack.filter(function (id) { return id != null; }); }
   addEventListener('keydown', function (e) {
-    if (e.target && /INPUT/.test(e.target.tagName)) return;
-    if (e.key === 'Escape' && !$('startModal').hidden && st) $('startModal').hidden = true;
+    if (e.target && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    if (e.key === 'Escape' && !$('startModal').hidden && st) { $('startModal').hidden = true; return; }
+    if (!$('startModal').hidden || !$('endModal').hidden || !st || e.ctrlKey || e.metaKey || e.altKey) return;
+    var k = e.key.toLocaleLowerCase('tr'), done = true;
+    if (k === 'd') drawFrom(false);
+    else if (k === 'y') drawFrom(true);
+    else if (k === 's') $('sortSeri').click();
+    else if (k === 'ç' || k === 'c') $('sortCift').click();
+    else if (k === 'a') doOpen(e.shiftKey ? 'cift' : 'seri');
+    else if (k === 'e') $('layBtn').click();
+    else if (k === 'g') $('returnBtn').click();
+    else if (k === 'm') $('soundBtn').click();
+    else if (k === 'f') $('fsBtn').click();
+    else if (k === 'n') $('newBtn').click();
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      var ord = rackOrder(); if (!ord.length) return;
+      var i = ord.indexOf(sel), n = e.key === 'ArrowRight' ? 1 : -1;
+      sel = ord[i < 0 ? (n > 0 ? 0 : ord.length - 1) : (i + n + ord.length) % ord.length]; sfx.tick(); render();
+    }
+    else if ((e.key === 'Enter' || e.key === 'Delete' || e.key === 'Backspace') && sel != null) doDiscard(sel);
+    else done = false;
+    if (done) e.preventDefault();
   });
+
+  // ---------- kontroller sekmeleri ----------
+  function ctlTab(mob) {
+    $('tabDesk').setAttribute('aria-selected', mob ? 'false' : 'true');
+    $('tabMob').setAttribute('aria-selected', mob ? 'true' : 'false');
+    $('ctlDesk').hidden = !!mob; $('ctlMob').hidden = !mob;
+  }
+  $('tabDesk').onclick = function () { ctlTab(false); };
+  $('tabMob').onclick = function () { ctlTab(true); };
+  if (window.matchMedia && matchMedia('(pointer:coarse)').matches) ctlTab(true);
 
   // ---------- açılış: kayıt varsa devam ----------
   var sv = loadSave();

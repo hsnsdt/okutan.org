@@ -352,6 +352,19 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 
 /* projects */
 .proj.bp{flex-direction:row;align-items:stretch;gap:28px;min-height:0}
+.proj.ok101{flex-direction:row;align-items:center;gap:28px;min-height:0;background:radial-gradient(120% 120% at 70% 30%,#1d7a52,#0c3d28);color:#f4f4f2;border-color:#14512f}
+.proj.ok101 .label{color:rgba(255,255,255,.7)}.proj.ok101 p{color:rgba(255,255,255,.82)}
+.proj.ok101 .tags span{border-color:rgba(255,255,255,.25);color:#fff}.proj.ok101 .arrow{border-color:rgba(255,255,255,.35)}
+.proj.ok101:hover .arrow{background:#fff;color:#0c3d28;border-color:#fff}.proj.ok101:hover{border-color:#1d7a52}
+.ok-txt{display:flex;flex-direction:column;flex:1;min-width:0}.ok-txt h3,.ok-txt p{padding-right:56px}
+.ok-viz{flex:none;margin-right:60px}
+.ok-rack{display:grid;grid-template-columns:repeat(4,42px);gap:6px;padding:12px;border-radius:14px;background:linear-gradient(180deg,#c88a4c,#8a5224);box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 18px 30px -16px rgba(0,0,0,.7);transform:rotate(-4deg);transition:transform .35s}
+.proj.ok101:hover .ok-rack{transform:rotate(0) scale(1.03)}
+.ot{width:42px;height:56px;border-radius:7px;background:linear-gradient(#fff,#f1ead8);box-shadow:inset 0 -3px 0 #d9cfb6,0 2px 0 rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;padding-top:6px;font:900 22px/1 var(--sans);font-style:normal;letter-spacing:-.04em}
+.ot::after{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;margin-top:auto;margin-bottom:7px}
+.ot.k{color:#d7262b}.ot.m{color:#1f4fd6}.ot.s{color:#e98b00}.ot.y{color:#16171b}
+.ot.j{box-shadow:inset 0 -3px 0 #d9cfb6,0 0 0 2px #f2c14e,0 0 12px rgba(242,193,78,.6)}
+@media (max-width:900px){.proj.ok101{flex-direction:column;align-items:stretch}.ok-viz{margin:0 auto}.ok-txt p{padding-right:0}}
 .bp-live{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bp-live span{display:inline-flex;align-items:center;gap:7px;font:500 12px var(--mono);padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 .bp-live b{font-weight:700}
@@ -482,7 +495,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       </a>
     </div>
 
-    <div class="b stat s3"><div class="label" data-i18n="k1.l">Canlı</div><div><div class="n">5</div><div class="d" data-i18n="k1.d">Yayında olan proje</div></div></div>
+    <div class="b stat s3"><div class="label" data-i18n="k1.l">Canlı</div><div><div class="n">6</div><div class="d" data-i18n="k1.d">Yayında olan proje</div></div></div>
     <div class="b stat s3"><div class="label" lang="en">Android</div><div><div class="n">8</div><div class="d" data-i18n="k2.d">Yayınlanmış oyun ve uygulama</div></div></div>
     <div class="b stat s3"><div class="label" data-i18n="k3.l">En iyi puan</div><div><div class="nrow"><div class="n">4.8</div><div class="stars" role="img" aria-label="5 üzerinden 4.8 puan"><span class="s-bg"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span><span class="s-fg" style="width:108.0px"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.95 6.1 6.55.95-4.75 4.6 1.12 6.55L12 17.6l-5.87 3.1 1.12-6.55L2.5 9.55l6.55-.95z"/></svg></span></div></div><div class="d" data-i18n="k3.d">Kelimeler: Türkçe Bulmaca</div></div></div>
     <div class="b stat s3"><div class="label" lang="en">LaunchShots</div><div><div class="n">25</div><div class="d" data-i18n="k4.d">Desteklenen dil</div></div></div>
@@ -555,6 +568,16 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <div class="tags"><span>html5 canvas</span><span>php</span><span>mysql</span><span>leaderboard</span></div>
       </div>
       <div class="bp-viz" aria-hidden="true"><svg viewBox="0 0 290 190"><defs><radialGradient id="bpg0" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".38" stop-color="#ff5a1f"/><stop offset="1" stop-color="#ff5a1f"/></radialGradient><radialGradient id="bpg1" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".38" stop-color="#ffc21a"/><stop offset="1" stop-color="#ffc21a"/></radialGradient><radialGradient id="bpg2" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".38" stop-color="#22b35e"/><stop offset="1" stop-color="#22b35e"/></radialGradient><radialGradient id="bpg3" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".38" stop-color="#12b4c8"/><stop offset="1" stop-color="#12b4c8"/></radialGradient><radialGradient id="bpg4" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".38" stop-color="#3366ff"/><stop offset="1" stop-color="#3366ff"/></radialGradient><radialGradient id="bpg5" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".38" stop-color="#a845e8"/><stop offset="1" stop-color="#a845e8"/></radialGradient></defs><circle class="bb" cx="18" cy="18" r="16" fill="url(#bpg0)"/><circle class="bb" cx="54" cy="18" r="16" fill="url(#bpg1)"/><circle class="bb" cx="90" cy="18" r="16" fill="url(#bpg1)"/><circle class="bb" cx="126" cy="18" r="16" fill="url(#bpg3)"/><circle class="bb" cx="162" cy="18" r="16" fill="url(#bpg4)"/><circle class="bb" cx="198" cy="18" r="16" fill="url(#bpg2)"/><circle class="bb" cx="234" cy="18" r="16" fill="url(#bpg5)"/><circle class="bb" cx="270" cy="18" r="16" fill="url(#bpg0)"/><circle class="bb" cx="36" cy="49" r="16" fill="url(#bpg2)"/><circle class="bb" cx="72" cy="49" r="16" fill="url(#bpg0)"/><circle class="bb" cx="108" cy="49" r="16" fill="url(#bpg3)"/><circle class="bb" cx="144" cy="49" r="16" fill="url(#bpg3)"/><circle class="bb" cx="180" cy="49" r="16" fill="url(#bpg4)"/><circle class="bb" cx="216" cy="49" r="16" fill="url(#bpg1)"/><circle class="bb" cx="252" cy="49" r="16" fill="url(#bpg5)"/><circle class="bb" cx="18" cy="80" r="16" fill="url(#bpg4)"/><circle class="bb" cx="54" cy="80" r="16" fill="url(#bpg5)"/><circle class="bb" cx="90" cy="80" r="16" fill="url(#bpg2)"/><circle class="bb pp" cx="126" cy="80" r="16" fill="url(#bpg0)"/><circle class="bb pp" cx="162" cy="80" r="16" fill="url(#bpg0)"/><circle class="bb pp" cx="198" cy="80" r="16" fill="url(#bpg0)"/><circle class="bb" cx="234" cy="80" r="16" fill="url(#bpg3)"/><g opacity=".45" fill="currentColor"><circle cx="146" cy="140" r="2.5"/><circle cx="148" cy="126" r="2.5"/><circle cx="150" cy="112" r="2.5"/><circle cx="152" cy="98" r="2.5"/></g><circle class="bp-shot" cx="144" cy="166" r="16" fill="url(#bpg0)"/></svg></div>
+    </a>
+    <a class="b proj s12 ok101" href="/101-okey/">
+      <span class="arrow">→</span>
+      <div class="ok-txt">
+      <div class="label" data-i18n="ok.l">Tarayıcı oyunu · Botlara karşı</div>
+      <h3 data-i18n="ok.t">101 Okey</h3>
+      <p data-i18n="ok.d">Gerçek kahvehane kurallarıyla 101 Okey: 101 ile el aç, çifte git, taş işle. Gösterge, okey ve cezalarıyla; indirme ve üyelik yok.</p>
+      <div class="tags"><span>javascript</span><span>oyun motoru</span><span>yapay rakip</span></div>
+      </div>
+      <div class="ok-viz" aria-hidden="true"><div class="ok-rack"><i class="ot k">10</i><i class="ot k">11</i><i class="ot k">12</i><i class="ot k">13</i><i class="ot m j">7</i><i class="ot s">5</i><i class="ot y">5</i><i class="ot k">5</i></div></div>
     </a>
 
   </div>
@@ -721,7 +744,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     "about.p":"I'm an independent developer based in İzmir. <em>I take products end to end — design, code, launch, and growing the community around them.</em> Today my focus is the web; before that I spent years building Android games and apps.",
     "f.t":"At a glance","f.loc":"Location","f.role":"Role","f.roleV":"Independent developer","f.focus":"Focus","f.focusV":"Web · Community · Tools","f.status":"Status","f.statusV":"Available",
     "c.label":"Contact","c.title":"Let's build something.",
-    "bp.l":"Browser game · Online ranking","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
+    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Against bots","ok.t":"101 Okey","ok.d":"101 Okey with real coffeehouse rules: open with 101, go for pairs, lay off tiles. Indicator, okey jokers and penalties; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
     "c.text":"Freelance work, collaboration, or just saying hi. I usually reply within 24 hours."
   };
   var TR={};
