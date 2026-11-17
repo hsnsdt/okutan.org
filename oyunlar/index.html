@@ -226,19 +226,29 @@ button{font:inherit;color:inherit}
 .kl-in{display:flex;flex-direction:column;align-items:flex-start;position:relative}
 
 /* günlük */
-.daily{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:var(--gap)}
-.dc{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;align-items:center;transition:border-color .2s}
-.dc:hover{border-color:var(--ink)}
-.dc .ic{width:64px;height:64px;position:relative;display:block}
-.dc .ic img{width:64px;height:64px;border-radius:16px;display:block;box-shadow:0 10px 18px -10px rgba(0,0,0,.5)}
-.dd{position:absolute;right:-8px;bottom:-8px;width:30px;height:32px;border-radius:8px;background:var(--block);border:1px solid var(--line);box-shadow:0 4px 10px -4px rgba(0,0,0,.35);font:800 13px/1 var(--sans);font-style:normal;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;overflow:hidden}
+.daily{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap)}
+.dc{display:flex;flex-direction:column;padding:0;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
+.dc:hover{transform:translateY(-3px);border-color:var(--ink);box-shadow:0 22px 36px -26px rgba(0,0,0,.45)}
+.dc-top{display:flex;align-items:center;gap:16px;padding:20px 20px 18px;color:#fff;position:relative;overflow:hidden}
+.dc-top::after{content:"";position:absolute;right:-40px;top:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+.dc.bp .dc-top{background:radial-gradient(120% 140% at 0% 0%,#3a2f6e,#120f26)}
+.dc.ok .dc-top{background:radial-gradient(120% 140% at 0% 0%,#1d7a52,#0c3d28)}
+.dc.okd .dc-top{background:radial-gradient(120% 140% at 0% 0%,#17734f,#0a3524)}
+.dc .ic{width:58px;height:58px;position:relative;display:block;flex:none}
+.dc .ic img{width:58px;height:58px;border-radius:15px;display:block;box-shadow:0 0 0 2px rgba(255,255,255,.18),0 10px 18px -8px rgba(0,0,0,.6)}
+.dd{position:absolute;right:-8px;bottom:-8px;width:28px;height:30px;border-radius:7px;background:#fff;color:#111;box-shadow:0 4px 10px -4px rgba(0,0,0,.5);font:800 12.5px/1 var(--sans);font-style:normal;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;overflow:hidden}
 .dd::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--accent)}
-.dc h3{font-size:19px;font-weight:800;letter-spacing:-.02em}
-.dc p{font-size:14px;color:var(--muted)}
-.dc .go{font:700 13px var(--mono);padding:9px 12px;border-radius:10px;border:1px solid var(--line);white-space:nowrap}
-.dc:hover .go{background:var(--accent);color:#fff;border-color:var(--accent)}
-.dc .st{font:600 12px var(--mono);color:var(--ok)}
+.dc-t{min-width:0;position:relative;z-index:1}
+.dc-t small{display:block;font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.dc h3{font-size:21px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-top:2px}
+.dc p{flex:1;padding:16px 20px 0;font-size:14.5px;line-height:1.5;color:var(--muted)}
+.dc-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px 18px}
+.dc .st{display:inline-flex;align-items:center;gap:7px;font:600 12px var(--mono);color:var(--ok);min-width:0}
+.dc .st::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 22%,transparent)}
 .dc .st.done{color:var(--muted)}
+.dc .go{flex:none;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:10px;background:var(--ink);color:var(--block);font:700 13.5px var(--sans);transition:background .2s}
+.dc .go b{transition:transform .25s}
+.dc:hover .go{background:var(--accent);color:#fff}.dc:hover .go b{transform:translateX(3px)}
 
 /* SSS */
 .faq{margin-top:var(--gap);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:28px;padding:30px}
@@ -258,11 +268,12 @@ footer a:hover{color:var(--ink)}
 
 @media (max-width:860px){.hero{grid-template-columns:1fr}.intro{min-height:0}.faq{grid-template-columns:1fr;gap:16px}}
 @media (min-width:641px){.games .g:last-child{grid-column:span 2}.games .g:last-child .art{height:180px}}
+@media (max-width:980px) and (min-width:641px){.daily{grid-template-columns:1fr 1fr}.daily .dc:last-child{grid-column:span 2}}
 @media (max-width:640px){
   .games{grid-template-columns:1fr}
   .daily{grid-template-columns:1fr}
   .intro{padding:26px 22px}.faq{padding:22px}
-  .dc{grid-template-columns:52px minmax(0,1fr)}.dc .ic,.dc .ic img{width:52px;height:52px}.dc .go{grid-column:1 / -1;text-align:center}
+
   .crumb{display:none}
   .sh h2{font-size:24px}
 }
@@ -376,20 +387,29 @@ footer a:hover{color:var(--ink)}
 
     <div class="sh"><h2>Bugünün meydan okumaları</h2><span class="label" id="today">—</span></div>
     <section class="daily" aria-label="Günlük meydan okumalar">
-      <a class="b dc" href="/balon/">
-        <span class="ic"><img src="/balon/icon-192.png" width="96" height="96" alt="" decoding="async"><i class="dd"></i></span>
-        <span><h3>Günün bulmacası</h3><p>Herkese aynı balon dizilimi, günde tek deneme. Balon Patlat'ta “Günün bulmacası” modunu seç.</p><span class="st" id="dBp"></span></span>
-        <span class="go">Balon Patlat →</span>
+      <a class="b dc bp" href="/balon/">
+        <div class="dc-top">
+          <span class="ic"><img src="/balon/icon-192.png" width="96" height="96" alt="" decoding="async"><i class="dd"></i></span>
+          <div class="dc-t"><small>Balon Patlat</small><h3>Günün bulmacası</h3></div>
+        </div>
+        <p>Herkese aynı balon dizilimi, günde tek deneme. Oyunda “Günün bulmacası” modunu seç.</p>
+        <div class="dc-foot"><span class="st" id="dBp"></span><span class="go">Oyna <b>→</b></span></div>
       </a>
-      <a class="b dc" href="/101-okey/">
-        <span class="ic"><img src="/101-okey/icon-192.png" width="96" height="96" alt="" decoding="async"><i class="dd"></i></span>
-        <span><h3>101'de günün eli</h3><p>Herkese aynı dağıtım, orta botlara karşı tek el. En düşük puan zirveye çıkar.</p><span class="st" id="dOk"></span></span>
-        <span class="go">101 Okey →</span>
+      <a class="b dc ok" href="/101-okey/">
+        <div class="dc-top">
+          <span class="ic"><img src="/101-okey/icon-192.png" width="96" height="96" alt="" decoding="async"><i class="dd"></i></span>
+          <div class="dc-t"><small>101 Okey</small><h3>Günün eli</h3></div>
+        </div>
+        <p>Herkese aynı dağıtım, orta botlara karşı tek el. En düşük puan zirveye çıkar.</p>
+        <div class="dc-foot"><span class="st" id="dOk"></span><span class="go">Oyna <b>→</b></span></div>
       </a>
-      <a class="b dc" href="/okey/">
-        <span class="ic"><img src="/okey/icon-192.png" width="96" height="96" alt="" decoding="async"><i class="dd"></i></span>
-        <span><h3>Okey'de günün eli</h3><p>Herkese aynı dağıtım, tek el. Eli en az çekişle bitiren zirveye çıkar.</p><span class="st" id="dDo"></span></span>
-        <span class="go">Okey →</span>
+      <a class="b dc okd" href="/okey/">
+        <div class="dc-top">
+          <span class="ic"><img src="/okey/icon-192.png" width="96" height="96" alt="" decoding="async"><i class="dd"></i></span>
+          <div class="dc-t"><small>Okey</small><h3>Günün eli</h3></div>
+        </div>
+        <p>Herkese aynı dağıtım, tek el. Eli en az çekişle bitiren zirveye çıkar.</p>
+        <div class="dc-foot"><span class="st" id="dDo"></span><span class="go">Oyna <b>→</b></span></div>
       </a>
     </section>
 
@@ -411,7 +431,7 @@ footer a:hover{color:var(--ink)}
 
   <footer class="b">
     <span>© <span id="yr">2026</span> Sedat Okutan</span>
-    <nav aria-label="Oyunlar"><a href="/">okutan.org</a><a href="/balon/">Balon Patlat</a><a href="/101-okey/">101 Okey</a><a href="/kelimeler/">Kelimeler</a></nav>
+    <nav aria-label="Oyunlar"><a href="/">okutan.org</a><a href="/okey/">Okey</a><a href="/tavla/">Tavla</a><a href="/101-okey/">101 Okey</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
   </footer>
 </div>
 <script>
@@ -429,12 +449,12 @@ footer a:hover{color:var(--ink)}
   var day; try { day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Istanbul' }).format(new Date()); } catch (e) { day = new Date().toISOString().slice(0, 10); }
   try { $('today').textContent = new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', day: 'numeric', month: 'long', weekday: 'long' }).format(new Date()); } catch (e) {}
   // günlük durum (bu tarayıcıda oynandı mı)
-  if (ls('okey_daily_' + day)) { $('dOk').textContent = '✓ Bugünkü eli oynadın'; $('dOk').classList.add('done'); }
-  else $('dOk').textContent = 'Bugün henüz oynamadın';
-  if (ls('dok_daily_' + day)) { $('dDo').textContent = '✓ Bugünkü eli oynadın'; $('dDo').classList.add('done'); }
-  else $('dDo').textContent = 'Bugün henüz oynamadın';
+  if (ls('okey_daily_' + day)) { $('dOk').textContent = 'Bugün oynadın'; $('dOk').classList.add('done'); }
+  else $('dOk').textContent = 'Bugün oynamadın';
+  if (ls('dok_daily_' + day)) { $('dDo').textContent = 'Bugün oynadın'; $('dDo').classList.add('done'); }
+  else $('dDo').textContent = 'Bugün oynamadın';
   document.querySelectorAll('.dd').forEach(function (e) { e.textContent = String(+day.slice(8)); });
-  $('dBp').textContent = 'Her gün 00:00\'da yenilenir';
+  $('dBp').textContent = 'Gece yarısı yenilenir';
 
   function bp() {
     fetch('/balon/api/?a=top&mode=classic', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
