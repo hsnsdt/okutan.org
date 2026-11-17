@@ -4,7 +4,9 @@
   'use strict';
 
   // ---------- Sabitler (mantıksal koordinatlar; canvas ölçeklenir) ----------
-  var W = 512, H = 640, R = 16, D = R * 2, COLS = 16, ROWH = R * Math.sqrt(3), TOP = 4;
+  // Geniş ekranda 20 sütun (kareye yakın alan), dar ekranda 16 sütun; CSS'teki --ar ile aynı kırılım
+  var NARROW = !!(window.matchMedia && matchMedia('(max-width:599px)').matches);
+  var R = 16, D = R * 2, COLS = NARROW ? 16 : 20, W = COLS * D, H = 640, ROWH = R * Math.sqrt(3), TOP = 4;
   var DEAD_Y = 540, SH_X = W / 2, SH_Y = 598, SPEED = 1050;
   var MAXROWS = Math.floor((DEAD_Y - TOP - D) / ROWH) + 1;   // 19 sıra (0..18) güvenli
   var NEXT_X = 46, NEXT_Y = 606;

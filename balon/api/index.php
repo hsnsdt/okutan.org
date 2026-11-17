@@ -18,7 +18,7 @@ header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex');
 
 const MAX_SCORE      = 50000000;
-const MAX_GAIN       = 300000;   // tek atışta alınabilecek en yüksek puan (bonus dahil)
+const MAX_GAIN       = 500000;   // tek atışta alınabilecek en yüksek puan (bonus dahil)
 const MAX_SHOTS      = 20000;
 const MIN_SEC_PER_SHOT = 0.25;   // bir atışın uçuşu bundan kısa sürmez
 const SESSION_TTL    = 6 * 3600; // oturum en fazla 6 saat geçerli
