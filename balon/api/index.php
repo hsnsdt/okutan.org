@@ -189,13 +189,13 @@ function clean_name($raw): ?string {
 // Bir mod + dönem için liste (işaretli skorlar hariç)
 function top_list(PDO $db, string $mode, string $period): array {
     if ($mode === 'daily') {
-        $rows = q($db, 'SELECT name, MAX(score) AS score FROM bp_scores WHERE mode = ? AND day = ? AND flag = 0 GROUP BY name ORDER BY score DESC, MIN(created_at) ASC LIMIT ' . LIST_LIMIT,
+        $rows = q($db, 'SELECT name, MAX(score) AS score, MAX(city) AS city FROM bp_scores WHERE mode = ? AND day = ? AND flag = 0 GROUP BY name ORDER BY score DESC, MIN(created_at) ASC LIMIT ' . LIST_LIMIT,
             ['daily', ist_today()])->fetchAll();
     } else {
-        $rows = q($db, 'SELECT name, MAX(score) AS score FROM bp_scores WHERE mode = ? AND created_at >= ? AND flag = 0 GROUP BY name ORDER BY score DESC, MIN(created_at) ASC LIMIT ' . LIST_LIMIT,
+        $rows = q($db, 'SELECT name, MAX(score) AS score, MAX(city) AS city FROM bp_scores WHERE mode = ? AND created_at >= ? AND flag = 0 GROUP BY name ORDER BY score DESC, MIN(created_at) ASC LIMIT ' . LIST_LIMIT,
             [$mode, period_start($period)])->fetchAll();
     }
-    return array_map(fn($r) => ['name' => $r['name'], 'score' => (int)$r['score']], $rows);
+    return array_map(fn($r) => ['name' => $r['name'], 'score' => (int)$r['score'], 'city' => $r['city'] ?: null], $rows);
 }
 function rank_of(PDO $db, string $mode, string $period, int $score): int {
     if ($mode === 'daily') {

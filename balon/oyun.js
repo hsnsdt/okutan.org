@@ -86,7 +86,7 @@
     'pf.games': 'Games', 'pf.total': 'Total points', 'pf.rank': 'All-time rank', 'pf.streak': 'Daily streak', 'pf.first': 'Since',
     'pf.recent': 'Recent games', 'pf.badges': 'Badges', 'pf.nf': 'No scores for this player yet.', 'pf.link': 'Copy profile link', 'pf.copied': 'Link copied',
     'md.classic': 'Classic', 'md.timed': 'Time attack', 'md.daily': 'Daily puzzle', 'city.ph': '📍 Your city', 'lb.players': 'players',
-    'inst': 'Install', 'days': 'days', 'pf.my': 'My profile', 'kel.t': 'Love word games? A Turkish online word game',
+    'inst': 'Install', 'days': 'days', 'lb.you': 'YOU', 'pf.my': 'My profile', 'kel.t': 'Love word games? A Turkish online word game',
     'ms.l': 'Refreshed daily', 'ms.t': 'Today’s missions', 'lb.dailyS': 'Daily', 'lb.cities': 'Cities',
     'c.record': 'NEW RECORD!', 'p.1': 'GREAT!', 'p.2': 'AMAZING!', 'p.3': 'LEGENDARY!',
     'r.togo': '{n} pts to beat your record', 'r.new': 'New record! Previous: {n}', 'r.first': 'Your first record!',
@@ -129,7 +129,7 @@
     'pf.games': 'Oyun', 'pf.total': 'Toplam puan', 'pf.rank': 'Tüm zamanlar sırası', 'pf.streak': 'Günlük seri', 'pf.first': 'İlk oyun',
     'pf.recent': 'Son oyunlar', 'pf.badges': 'Rozetler', 'pf.nf': 'Bu oyuncunun henüz skoru yok.', 'pf.link': 'Profil bağlantısını kopyala', 'pf.copied': 'Bağlantı kopyalandı',
     'md.classic': 'Klasik', 'md.timed': 'Zamana karşı', 'md.daily': 'Günün bulmacası', 'city.ph': '📍 Şehrin', 'lb.players': 'oyuncu',
-    'inst': 'Yükle', 'days': 'gün',
+    'inst': 'Yükle', 'days': 'gün', 'lb.you': 'SEN',
     'c.record': 'YENİ REKOR!', 'p.1': 'HARİKA!', 'p.2': 'MÜKEMMEL!', 'p.3': 'EFSANE!',
     'r.togo': 'Rekoruna {n} puan kaldı', 'r.new': 'Yeni rekor! Önceki: {n}', 'r.first': 'İlk rekorun bu!',
     'sh.text': 'Balon Patlat\'ta {s} puan yaptım! Beni geçebilir misin?', 'sh.saved': 'Görsel indirildi',
@@ -1301,18 +1301,45 @@
     $('stOnline').textContent = stats.online == null ? '—' : fmt(stats.online);
   }
   function pn(n) { return '<button class="pn" data-name="' + esc(n) + '">' + esc(n) + '</button>'; }
+  // isimden sabit renk: herkesin balon avatarı hep aynı renkte
+  function avatar(n) {
+    var p = PALETTE[fnv1a(String(n).toLocaleLowerCase('tr')) % PALETTE.length];
+    return '<span class="av2" style="--a:' + p.b + ';--ah:' + p.h + ';--al:' + p.l + '">' + esc(initial(n)) + '</span>';
+  }
+  var CROWN = '<svg class="crown" viewBox="0 0 30 22" aria-hidden="true"><path d="M2 7l6.5 5L15 2l6.5 10L28 7l-2.6 13H4.6z" fill="#f5c542" stroke="#b8860b" stroke-width="1.4" stroke-linejoin="round"/><circle cx="2" cy="7" r="2" fill="#f5c542"/><circle cx="15" cy="2" r="2" fill="#f5c542"/><circle cx="28" cy="7" r="2" fill="#f5c542"/></svg>';
+  // items: [{name, nameHTML, score, sub, me, extra}]
+  function podiumHTML(items) {
+    return [1, 0, 2].map(function (i, k) {
+      var r = items[i];
+      if (!r) return '<div class="pz r' + (i + 1) + ' empty" style="--d:' + (k * 90) + 'ms"><span class="av2 ghost">?</span><div class="pz-name">—</div><div class="pz-score">0</div><div class="pz-step"><span>' + (i + 1) + '</span></div></div>';
+      return '<div class="pz r' + (i + 1) + (r.me ? ' me' : '') + '" style="--d:' + (k * 90) + 'ms">' + (i === 0 ? CROWN : '') + avatar(r.name) +
+        '<div class="pz-name">' + r.nameHTML + '</div>' + ((r.sub || r.extra) ? '<div class="pz-sub">' + (r.extra || '') + (r.sub || '') + '</div>' : '') +
+        '<div class="pz-score">' + fmt(r.score) + '</div><div class="pz-step"><span>' + (i + 1) + '</span></div></div>';
+    }).join('');
+  }
+  function rowsHTML(items, topScore) {
+    // iki sütuna dengeli dağıt (az satırda tek sütun)
+    var el = $('lbList'), n = items.length;
+    el.style.setProperty('--rows', n > 6 ? Math.ceil(n / 2) : Math.max(1, n));
+    el.classList.toggle('one', n <= 6);
+    return items.map(function (r, i) {
+      var w = topScore > 0 ? Math.max(4, Math.round(r.score / topScore * 100)) : 0;
+      return '<li class="row' + (r.me ? ' me' : '') + '" style="--i:' + i + ';--w:' + w + '%"><span class="rk">' + (i + 4) + '</span>' + avatar(r.name) +
+        '<span class="who"><span class="wn">' + r.nameHTML + (r.extra || '') + (r.me ? '<em class="tagme">' + esc(t('lb.you')) + '</em>' : '') + '</span>' +
+        (r.sub ? '<small>' + r.sub + '</small>' : '') + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
+    }).join('');
+  }
+  function emptyHTML(msg) { return '<li class="empty"><span class="em-ic" aria-hidden="true">🎈</span>' + esc(msg) + '</li>'; }
   function renderCities() {
     var el = $('lbList'), pod = $('podium'), my = lsGet('bp_city') || '';
     $('meRow').hidden = true;
     var rows = cities || [];
-    if (!rows.length) { pod.innerHTML = ''; el.innerHTML = '<li class="empty">' + esc(t('lb.empty')) + '</li>'; return; }
-    pod.innerHTML = [1, 0, 2].map(function (i) {
-      var r = rows[i]; if (!r) return '<div class="pd"></div>';
-      return '<div class="pd r' + (i + 1) + (r.city === my ? ' me' : '') + '"><div class="pdb"></div><div class="ball">' + esc(initial(r.city)) + '</div><div class="who">' + esc(r.city) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
-    }).join('');
-    el.innerHTML = rows.slice(3).map(function (r, i) {
-      return '<li class="' + (r.city === my ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + esc(r.city) + ' <small>' + r.players + ' ' + esc(t('lb.players')) + '</small></span><span class="pt">' + fmt(r.score) + '</span></li>';
-    }).join('');
+    if (!rows.length) { pod.innerHTML = podiumHTML([]); el.innerHTML = emptyHTML(t('lb.empty')); return; }
+    var items = rows.map(function (r) {
+      return { name: r.city, nameHTML: esc(r.city), score: r.score, sub: r.players + ' ' + esc(t('lb.players')), me: r.city === my };
+    });
+    pod.innerHTML = podiumHTML(items);
+    el.innerHTML = rowsHTML(items.slice(3), items[0].score);
   }
   function renderBoard() {
     tabs.forEach(function (b) { b.setAttribute('aria-selected', b.dataset.p === period ? 'true' : 'false'); });
@@ -1320,7 +1347,7 @@
     $('ptabs').hidden = lbMode === 'daily' || lbMode === 'cities';
     var el = $('lbList'), pod = $('podium'), meRow = $('meRow');
     $('liveTag').classList.toggle('off', !!lbErr);
-    if (lbErr) { pod.innerHTML = ''; meRow.hidden = true; el.innerHTML = '<li class="empty">' + esc(t('lb.off')) + '</li>'; return; }
+    if (lbErr) { pod.innerHTML = ''; meRow.hidden = true; el.innerHTML = emptyHTML(t('lb.off')); return; }
     if (lbMode === 'cities') { if (cities) renderCities(); return; }
     if (!lb || lb.mode !== lbMode) return;
     var per = lbMode === 'daily' ? 'day' : period;
@@ -1335,21 +1362,19 @@
       if (l === hot) b += '<span class="bdg" title="' + esc(t('bdg.fire')) + '">🔥</span>';
       return b;
     };
-    if (!rows.length) { pod.innerHTML = ''; el.innerHTML = '<li class="empty">' + esc(t('lb.empty')) + '</li>'; }
+    if (!rows.length) { pod.innerHTML = podiumHTML([]); el.innerHTML = emptyHTML(t('lb.empty')); }
     else {
-      pod.innerHTML = [1, 0, 2].map(function (i) {
-        var r = rows[i]; if (!r) return '<div class="pd"></div>';
-        return '<div class="pd r' + (i + 1) + (isMe(r) ? ' me' : '') + '"><div class="pdb">' + badges(r.name) + '</div><div class="ball">' + esc(initial(r.name)) + '</div><div class="who">' + pn(r.name) + '</div><div class="pts">' + fmt(r.score) + '</div><div class="step">' + (i + 1) + '</div></div>';
-      }).join('');
-      el.innerHTML = rows.slice(3).map(function (r, i) {
-        return '<li class="' + (isMe(r) ? 'me' : '') + '"><span class="rk">' + (i + 4) + '</span><span class="nm">' + pn(r.name) + badges(r.name) + '</span><span class="pt">' + fmt(r.score) + '</span></li>';
-      }).join('');
+      var items = rows.map(function (r) {
+        return { name: r.name, nameHTML: pn(r.name), score: r.score, sub: r.city ? '📍 ' + esc(r.city) : '', me: isMe(r), extra: badges(r.name) };
+      });
+      pod.innerHTML = podiumHTML(items);
+      el.innerHTML = rowsHTML(items.slice(3), rows[0].score);
     }
     // Oyuncunun kendi satırı (listede yoksa)
     var m = lb.me && me && lb.me.name.toLocaleLowerCase('tr') === me ? lb.me : null, inList = rows.some(isMe);
     if (m && m.rank[per] && !inList) {
       meRow.hidden = false;
-      meRow.innerHTML = '<span class="rk">' + m.rank[per] + '</span><span class="nm">' + pn(m.name) + '</span><span class="pt">' + fmt(m.score[per]) + '</span>';
+      meRow.innerHTML = '<span class="rk">#' + m.rank[per] + '</span>' + avatar(m.name) + '<span class="who"><span class="wn">' + pn(m.name) + '<em class="tagme">' + esc(t('lb.you')) + '</em></span></span><span class="pt">' + fmt(m.score[per]) + '</span>';
     } else meRow.hidden = true;
     if (lb.mode === 'classic') $('myRank').textContent = m && m.rank.week ? '#' + m.rank.week : '—';
     if (m && m.best > bestFor(lb.mode)) {
