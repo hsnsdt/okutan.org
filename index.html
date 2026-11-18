@@ -387,6 +387,16 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .tvd.r{left:150px;top:72px;background:linear-gradient(145deg,#8a3029,#4e1411);transform:rotate(12deg)}.tvd.r b.on{background:#f6e6c8}
 .proj.tvl:hover .tv-board{transform:rotate(0)}.proj.tvl:hover .tvd.w{transform:rotate(200deg) translateY(-6px)}.proj.tvl:hover .tvd.r{transform:rotate(-170deg) translateY(-4px)}
 @media (max-width:900px){.proj.tvl{flex-direction:column;align-items:stretch}.tv-viz{margin:0 auto}}
+.proj.gkl{flex-direction:row;align-items:center;gap:28px;min-height:0;background:radial-gradient(120% 130% at 75% 0%,#2a4a86,#14233f 55%,#0b1529);color:#eef2fa;border-color:#1e3358}
+.proj.gkl .label{color:rgba(238,242,250,.7)}.proj.gkl p{color:rgba(238,242,250,.84)}
+.proj.gkl .tags span{border-color:rgba(238,242,250,.28);color:#fff}.proj.gkl .arrow{border-color:rgba(238,242,250,.4)}
+.proj.gkl:hover .arrow{background:#fff;color:#14233f;border-color:#fff}.proj.gkl:hover{border-color:#2f6bff}
+.gk-viz{flex:none;margin-right:60px;display:grid;gap:6px;transform:rotate(3deg);transition:transform .35s}
+.gk-viz span{display:flex;gap:6px}
+.gk-viz i{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:900 21px var(--sans);font-style:normal;color:#fff;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2),0 3px 0 rgba(0,0,0,.25);transition:transform .45s}
+.gk-viz .s2{background:linear-gradient(#4a82ff,#2f6bff)}.gk-viz .s1{background:linear-gradient(#ffa24d,#ff8a1f)}.gk-viz .s0{background:linear-gradient(#4a5468,#3d475a);color:#dfe4ee}
+.proj.gkl:hover .gk-viz{transform:rotate(0) scale(1.03)}.proj.gkl:hover .gk-viz span:nth-child(3) i{transform:rotateX(360deg)}
+@media (max-width:900px){.proj.gkl{flex-direction:column;align-items:stretch}.gk-viz{margin:0 auto}}
 .bp-live{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .bp-live span{display:inline-flex;align-items:center;gap:7px;font:500 12px var(--mono);padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 .bp-live b{font-weight:700}
@@ -622,6 +632,16 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       </div>
       <div class="ok-viz" aria-hidden="true"><div class="ok-rack"><i class="ot k">7</i><i class="ot m">7</i><i class="ot y">7</i><i class="ot s">7</i><i class="ot m">11</i><i class="ot m">12</i><i class="ot m">13</i><i class="ot j">★</i></div></div>
     </a>
+    <a class="b proj s12 gkl" href="/gizli-kelime/">
+      <span class="arrow">→</span>
+      <div class="ok-txt">
+      <div class="label" data-i18n="gk.l">Tarayıcı oyunu · Her gün yeni kelime</div>
+      <h3 data-i18n="gk.t">Gizli Kelime</h3>
+      <p data-i18n="gk.d">Beş harfli Türkçe kelimeyi altı tahminde bul: mavi doğru yer, turuncu başka yer. Her gün herkese aynı günün kelimesi, sınırsız serbest oyun, zor mod ve seri; sonucu kelimeyi açık etmeden paylaş.</p>
+      <div class="tags"><span>javascript</span><span>kelime oyunu</span><span>günlük bulmaca</span></div>
+      </div>
+      <div class="gk-viz" aria-hidden="true"><span><i class="s0">D</i><i class="s1">E</i><i class="s0">N</i><i class="s0">İ</i><i class="s0">Z</i></span><span><i class="s1">M</i><i class="s0">E</i><i class="s2">L</i><i class="s2">E</i><i class="s1">K</i></span><span><i class="s2">K</i><i class="s2">A</i><i class="s2">L</i><i class="s2">E</i><i class="s2">M</i></span></div>
+    </a>
 
   </div>
 
@@ -787,7 +807,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     "about.p":"I'm an independent developer based in İzmir. <em>I take products end to end — design, code, launch, and growing the community around them.</em> Today my focus is the web; before that I spent years building Android games and apps.",
     "f.t":"At a glance","f.loc":"Location","f.role":"Role","f.roleV":"Independent developer","f.focus":"Focus","f.focusV":"Web · Community · Tools","f.status":"Status","f.statusV":"Available",
     "c.label":"Contact","c.title":"Let's build something.",
-    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","tvl.l":"Browser game · Online table · Chat","tvl.t":"Backgammon (Tavla)","tvl.d":"Turkish backgammon: roll the dice, build your points, hit the blots, close your home board and bear off first; a gammon (mars) scores double. Play an easy, medium or hard bot, or a friend online with table chat.","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
+    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","tvl.l":"Browser game · Online table · Chat","tvl.t":"Backgammon (Tavla)","gk.l":"Browser game · New word every day","gk.t":"Gizli Kelime (Hidden Word)","gk.d":"Find the hidden five-letter Turkish word in six guesses: blue means the right spot, orange means elsewhere in the word. The same daily word for everyone, unlimited free play, hard mode and streaks; share your result without spoiling the word.","tvl.d":"Turkish backgammon: roll the dice, build your points, hit the blots, close your home board and bear off first; a gammon (mars) scores double. Play an easy, medium or hard bot, or a friend online with table chat.","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
     "c.text":"Freelance work, collaboration, or just saying hi. I usually reply within 24 hours."
   };
   var TR={};

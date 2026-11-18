@@ -86,7 +86,7 @@ button{font:inherit;color:inherit}
 /* oyun kartları */
 .sh{display:flex;justify-content:space-between;align-items:baseline;gap:4px 12px;flex-wrap:wrap;margin:30px 4px 12px}
 .sh h2{font-size:28px;font-weight:800;letter-spacing:-.04em}
-.games{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--gap)}
+.games{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap)}
 .g{display:flex;flex-direction:column;padding:0;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
 .g:hover,.g:focus-visible{transform:translateY(-4px);border-color:var(--ink);box-shadow:0 24px 40px -28px rgba(0,0,0,.45)}
 .g.hit{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
@@ -136,6 +136,13 @@ button{font:inherit;color:inherit}
 .tvd.w{left:92px;top:58px;background:linear-gradient(145deg,#fff,#e6dcc8);transform:rotate(-14deg)}.tvd.w b.on{background:#1e1b18}
 .tvd.r{left:150px;top:72px;background:linear-gradient(145deg,#8a3029,#4e1411);transform:rotate(12deg)}.tvd.r b.on{background:#f6e6c8}
 .g:hover .tv-board{transform:rotate(0)}.g:hover .tvd.w{transform:rotate(200deg) translateY(-6px)}.g:hover .tvd.r{transform:rotate(-170deg) translateY(-4px)}
+/* Gizli Kelime */
+.art.gk{background:radial-gradient(120% 110% at 50% 0%,#2a4a86,#14233f 55%,#0b1529)}
+.gkb{display:grid;gap:6px;transform:rotate(3deg);transition:transform .35s}
+.gkb span{display:flex;gap:6px}
+.gkb i{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:900 21px var(--sans);font-style:normal;color:#fff;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2),0 3px 0 rgba(0,0,0,.25)}
+.gkb .s2{background:linear-gradient(#4a82ff,#2f6bff)}.gkb .s1{background:linear-gradient(#ffa24d,#ff8a1f)}.gkb .s0{background:linear-gradient(#4a5468,#3d475a);color:#dfe4ee}
+.g:hover .gkb{transform:rotate(0) scale(1.04)}
 /* Kelimeler */
 .art.kl{background:radial-gradient(90% 100% at 50% 30%,#6a3fe0,#2c1677)}
 .art.kl::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg at 50% 45%,rgba(255,255,255,.07) 0 6deg,transparent 6deg 18deg)}
@@ -152,10 +159,9 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
 footer nav{display:flex;gap:16px;flex-wrap:wrap}
 footer a:hover{color:var(--ink)}
 
-@media (max-width:1060px){.games{grid-template-columns:repeat(6,minmax(0,1fr))}.games .g{grid-column:span 2}.games .g:nth-child(4),.games .g:nth-child(5){grid-column:span 3}}
 @media (max-width:860px){.hero{grid-template-columns:1fr}.felt{min-height:300px;order:-1}}
 @media (max-width:640px){
-  .games{grid-template-columns:1fr 1fr}.games .g,.games .g:nth-child(4){grid-column:auto}.games .g:nth-child(5){grid-column:span 2}
+  .games{grid-template-columns:1fr 1fr}
   .intro{padding:26px 22px}.felt{min-height:260px}
   .sh h2{font-size:24px}
 }
@@ -241,6 +247,14 @@ footer a:hover{color:var(--ink)}
           <span class="play">Oyna <b>→</b></span>
         </div>
       </a>
+      <a class="b g" href="/gizli-kelime/" data-n="Gizli Kelime">
+        <div class="art gk" aria-hidden="true"><div class="sc" style="--s:.72"><div class="gkb"><span><i class="s0">D</i><i class="s1">E</i><i class="s0">N</i><i class="s0">İ</i><i class="s0">Z</i></span><span><i class="s1">M</i><i class="s0">E</i><i class="s2">L</i><i class="s2">E</i><i class="s1">K</i></span><span><i class="s2">K</i><i class="s2">A</i><i class="s2">L</i><i class="s2">E</i><i class="s2">M</i></span></div></div></div>
+        <div class="body">
+          <div class="head"><img class="app" src="/gizli-kelime/icon-192.png" width="96" height="96" alt="" decoding="async"><div><h3>Gizli Kelime</h3></div></div>
+          <p>Beş harfli kelimeyi altı tahminde bul. Her gün yeni kelime.</p>
+          <span class="play">Oyna <b>→</b></span>
+        </div>
+      </a>
       <a class="b g" href="/kelimeler/" data-n="Kelimeler">
         <div class="art kl" aria-hidden="true"><div class="sc" style="--s:.58"><div class="kl-in"><div class="word"><span class="lt">K<sup>1</sup></span><span class="lt">E<sup>1</sup></span><span class="lt">L<sup>1</sup></span><span class="lt">İ<sup>1</sup></span><span class="lt y">M<sup>2</sup></span><span class="lt">E<sup>1</sup></span></div><div class="word"><span class="lt">O<sup>2</sup></span><span class="lt">Y<sup>3</sup></span><span class="lt">U<sup>2</sup></span><span class="lt">N<sup>1</sup></span></div></div></div></div>
         <div class="body">
@@ -254,7 +268,7 @@ footer a:hover{color:var(--ink)}
 
   <footer class="b">
     <span>© <span id="yr">2026</span> Sedat Okutan</span>
-    <nav aria-label="Bağlantılar"><a href="/">okutan.org</a><a href="/oyunlar/">Oyunlar</a><a href="/okey/">Okey</a><a href="/tavla/">Tavla</a><a href="/101-okey/">101 Okey</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
+    <nav aria-label="Bağlantılar"><a href="/">okutan.org</a><a href="/oyunlar/">Oyunlar</a><a href="/gizli-kelime/">Gizli Kelime</a><a href="/okey/">Okey</a><a href="/tavla/">Tavla</a><a href="/101-okey/">101 Okey</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
   </footer>
 </div>
 <script>
@@ -277,7 +291,7 @@ footer a:hover{color:var(--ink)}
     btn.classList.add('rolling');
     (function tick() {
       n = 1 + Math.floor(Math.random() * 6); face(n);
-      idx = (n - 1) % cards.length; // 6 → ilk oyuna döner
+      idx = (n - 1) % cards.length;
       cards.forEach(function (c, i) { c.classList.toggle('hit', i === idx); });
       if (++k < steps) return setTimeout(tick, 80 + k * 12);
       btn.classList.remove('rolling');
