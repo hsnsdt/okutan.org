@@ -1,20 +1,20 @@
 /* Kor ile Damla — service worker (aynı cihazda oyun internetsiz de çalışır)
    - Sayfa: önce ağ, yoksa önbellek · Statik dosyalar: önbellekten, arkada tazele · API önbelleğe alınmaz
    oyun.js / motor.js / bolumler.js sürümü değişince CACHE ve CORE'u da güncelle. */
-var CACHE = 'kor-ile-damla-v1';
-var CORE = ['./', 'oyun.js?v=1', 'motor.js?v=1', 'bolumler.js?v=1', '/assets/okey-sohbet.js?v=4', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
-  '/assets/fonts/InterTight-latin.woff2', '/assets/fonts/InterTight-latin-ext.woff2', '/assets/fonts/JetBrainsMono-latin.woff2',
+var CACHE = 'ates-ve-su-v5';
+var CORE = ['./', 'oyun.js?v=5', 'motor.js?v=1', 'bolumler.js?v=5', '/assets/okey-sohbet.js?v=4', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
+  '/assets/fonts/InterTight-latin.woff2', '/assets/fonts/InterTight-latin-ext.woff2', '/assets/fonts/JetBrainsMono-latin.woff2', '/assets/fonts/Nunito-latin.woff2', '/assets/fonts/Nunito-latin-ext.woff2',
   '/assets/logo.svg', '/assets/logo-dark.svg'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));
 });
 self.addEventListener('activate', function (e) {
-  e.waitUntil(caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return k.indexOf('kor-ile-damla-') === 0 && k !== CACHE; }).map(function (k) { return caches.delete(k); })); })
+  e.waitUntil(caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return k.indexOf('ates-ve-su-') === 0 && k !== CACHE; }).map(function (k) { return caches.delete(k); })); })
     .then(function () { return self.clients.claim(); }));
 });
 self.addEventListener('fetch', function (e) {
   var req = e.request, url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== location.origin || url.pathname.indexOf('/kor-ile-damla/api/') === 0) return;
+  if (req.method !== 'GET' || url.origin !== location.origin || url.pathname.indexOf('/ates-ve-su/api/') === 0) return;
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then(function (res) { var c = res.clone(); caches.open(CACHE).then(function (x) { x.put('./', c); }); return res; })
       .catch(function () { return caches.match('./'); }));

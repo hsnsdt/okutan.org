@@ -1,10 +1,10 @@
-// Kor ile Damla motor testleri: node --test tests/kor-ile-damla.test.mjs
+// Ateş ve Su motor testleri: node --test tests/ates-ve-su.test.mjs  (FULL=1 ile 100 bölümün hepsi çözülür, uzun sürer)
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const M = require('../kor-ile-damla/motor.js');
-const LV = require('../kor-ile-damla/bolumler.js');
+const M = require('../ates-ve-su/motor.js');
+const LV = require('../ates-ve-su/bolumler.js');
 
 const T = M.T;
 function run(w, inputs, frames) { for (let i = 0; i < frames; i++) M.step(w, typeof inputs === 'function' ? inputs(i) : inputs); }
@@ -15,13 +15,16 @@ function flat(rows) { // küçük test haritası: 34 sütuna ve 21 satıra tamam
 }
 const FLOOR = '#'.repeat(34);
 
-test('bölümler: 34×21, birer başlangıç ve kapı', () => {
-  assert.ok(LV.length >= 6);
+test('bölümler: 100 bölüm, hepsi 34×21, birer başlangıç ve kapı, kapılar arasında boşluk', () => {
+  assert.equal(LV.length, 100);
+  assert.equal(new Set(LV.map(l => l.name)).size, LV.length, 'bölüm adları tekrarsız');
   for (const l of LV) {
     assert.equal(l.map.length, M.ROWS, l.name);
     for (const r of l.map) assert.equal([...r].length, M.COLS, l.name);
     const all = l.map.join('');
     for (const ch of 'kdKD') assert.equal(all.split(ch).length - 1, 1, l.name + ' ' + ch);
+    const ki = all.indexOf('K'), di = all.indexOf('D');
+    assert.ok(Math.floor(ki / 34) !== Math.floor(di / 34) || Math.abs(ki - di) >= 2, l.name + ': kapılar bitişik');
     assert.ok(l.ipucu && l.par > 0);
   }
 });
@@ -136,7 +139,8 @@ function reach(level, c) {
   w0.force = {}; run(w0, {}, 10);
   const seen = new Set(), q = [w0], gems = new Set(); let door = false, n = 0;
   const acts = ACTS.map(a => ({ a })).concat(groups.map(g => ({ g })));
-  while (q.length && n < 25000) {
+  const mineIds = w0.gems.filter(g => g.c === c).map(g => g.id);
+  while (q.length && n < 40000) {
     const w = q.shift(); n++;
     for (const act of acts) {
       const v = clone(w);
@@ -147,14 +151,17 @@ function reach(level, c) {
       const p = v.p[c];
       v.gems.forEach(g => { if (g.got) gems.add(g.id); });
       if (p.atDoor) door = true;
+      if (door && mineIds.every(id => gems.has(id))) return { door, gems, mine: mineIds, n };
       const key = Math.round(p.x / 8) + ',' + Math.round(p.y / 8) + '|' + v.movers.map(m => Math.round(m.s * 4)).join('') + v.boxes.map(b => Math.round(b.x / 16)).join(',');
       if (seen.has(key)) continue; seen.add(key); q.push(v);
     }
   }
   return { door, gems, mine: w0.gems.filter(g => g.c === c).map(g => g.id), n };
 }
-for (const lv of LV) {
-  test('çözülebilir: ' + lv.name, () => {
+// Hepsini denetlemek uzun sürer: FULL=1 ile bütün bölümler, yoksa elle yapılan 6 bölüm ve her dünyadan bir örnek
+const SAMPLE = process.env.FULL ? LV.map((_, i) => i) : [0, 1, 2, 3, 4, 5, 12, 33, 52, 71, 99];
+for (const lv of SAMPLE.map(i => LV[i])) {
+  test('çözülebilir: ' + (LV.indexOf(lv) + 1) + ' ' + lv.name, () => {
     for (const c of ['k', 'd']) {
       const r = reach(lv, c);
       assert.ok(r.door, lv.name + ': ' + c + ' kapısına ulaşamıyor (' + r.n + ' durum)');

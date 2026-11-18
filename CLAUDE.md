@@ -10,7 +10,8 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - **Yayın elle yapılır:** kullanıcı dosyaları FTP ile cPanel'e yükler (GitHub Actions FTP adımı sırları olmadığı için çalışmıyor). İş bitince yüklenecek dosyaların listesini ver; kullanıcı "yükledim" deyince canlıda kontrol et (dosyaları `curl` ile HEAD sürümüyle karşılaştır, API uçlarını çağır, tarayıcıda oyna).
 
 ## Yeni oyun / sayfa kontrol listesi (sorulmadan yapılır)
-- Kendi çizimimiz, ticari kalitede görünüm; başka oyunun görselini/adını kopyalama.
+- Kendi çizimimiz, ticari kalitede görünüm; başka oyunun görselini, karakterini ya da adını kopyalama. Arama için "X tarzı" gibi açıklayıcı kullanım olur (Gizli Kelime: "Türkçe Wordle tarzı", SSS'de marka notu).
+- Oyun arayüzünde kibar, yuvarlak hatlı yazı: Nunito (`assets/fonts/Nunito-*.woff2`, kendi sunucumuzdan; `fonts.css` içinde).
 - Kontroller bölümü: Bilgisayar/Mobil sekmeleri, SVG simgeler, tuş kapakları; listelenen kısayollar gerçekten çalışmalı.
 - Tam SEO: title/description, canonical, og/twitter (og:image:alt dahil), JSON-LD (VideoGame+WebApplication, BreadcrumbList, FAQPage = sayfadaki SSS), H1 ve dizine girecek metin, 1200×630 `og.png`.
 - `sitemap.xml` (lastmod), `llms.txt`, `README.md`, ana sayfa kartı (`index.html`, TR + `data-i18n` EN), `/oyunlar/` kartı ve JSON-LD ItemList, diğer oyunların alt bilgi bağlantıları.
@@ -19,9 +20,11 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 
 ## Oyun mimarisi
 - Her oyunda **kural motoru arayüzden ayrı** (UMD: tarayıcıda `window.X`, Node'da `module.exports`) ve `tests/*.test.mjs` ile test edilir: `node --test tests/<dosya>.test.mjs`.
-- Masa oyunları sabit 1100×680 sahne olarak çizilir, `fit()` ile `transform: scale` edilir. Kısa yatay ekranda başlık (`.top`) gizlenir.
-- **Ortak API:** `101-okey/api/index.php` üç oyuna hizmet eder. `okey/api` ve `tavla/api`, `OKEY_GAME` tanımlayıp onu çağırır; tablo önekleri `ok_` (101), `oy_` (Okey), `tv_` (Tavla), `tbl()` ile değiştirilir. Tablolar ilk istekte kendiliğinden oluşur (42S02). Tavla masası iki kişiliktir (`$MAX_SEAT`).
-- **Online masa:** masa sahibinin tarayıcısı oyunu yönetir; sunucu yalnızca aktarır (`t_create/t_join/t_lobby/t_start/t_move/t_moves/t_state/t_poll`). WebSocket yok, yoklama var.
+- Masa oyunları sabit 1100×680 sahne olarak çizilir, `fit()` ile `transform: scale` edilir. Kısa yatay ekranda başlık (`.top`) gizlenir. Ateş ve Su canvas sahnesi 1088×672 (34×21 kare, 32 px).
+- **Oyunlar:** Balon Patlat, 101 Okey, Okey, Tavla (sunuculu); Gizli Kelime (`gizli-kelime/`, sunucusuz, ilerleme localStorage `gk_*`, 1. gün 2026-11-18); Ateş ve Su (`ates-ve-su/`, 100 bölüm, aynı klavyede ya da online).
+- **Ateş ve Su bölümleri:** ilk 6 elle yapıldı; 7–100'ü `node tools/ates-ve-su-bolumler.mjs` üretir (tohumlu, parçalardan; her bölüm motorla çalışan çözücüden geçer). Bölüm ya da motor değişince yeniden üret, sonra `node --test tests/ates-ve-su.test.mjs` (`FULL=1` hepsini çözer, uzun sürer). `tools/` siteye yüklenmez.
+- **Ortak API:** `101-okey/api/index.php` dört oyuna hizmet eder. `okey/api`, `tavla/api` ve `ates-ve-su/api`, `OKEY_GAME` tanımlayıp onu çağırır; tablo önekleri `ok_` (101), `oy_` (Okey), `tv_` (Tavla), `kd_` (Ateş ve Su, `OKEY_GAME=kor`), `tbl()` ile değiştirilir. Tablolar ilk istekte kendiliğinden oluşur (42S02). Tavla ve Ateş ve Su masası iki kişiliktir (`$MAX_SEAT`); Ateş ve Su arkadaş gelmeden başlamaz (`need_guest`).
+- **Online masa:** masa sahibinin tarayıcısı oyunu yönetir; sunucu yalnızca aktarır (`t_create/t_join/t_lobby/t_start/t_move/t_moves/t_state/t_poll`). WebSocket yok, yoklama var. Ateş ve Su gerçek zamanlıdır: iki tarayıcı `t_sync` ile ~7 kez/sn kendi karakter durumunu yazar, öbürününkünü okur (ok_private koltuk 10/11); misafir masa sahibinin bölümünü izler, kim yeniden başlarsa öbürü de başlar.
 - **Sohbet:** `assets/okey-sohbet.js`, yalnızca online masada görünür. Oyun sayfası `window.OkeySohbetHost = { ctx, say, sound }` sağlar. Uçlar: `t_say` / `t_chat` (140 karakter, küfür maskesi, hız sınırı).
 - Günlük modlarda tohum: FNV-1a(`'okey-'`/`'duz-okey-'`/`'balon-'` + gün), JS ve PHP'de aynı.
 
@@ -32,10 +35,15 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - Plaka/kart yeniden çizilirken içteki balon gibi zamanlayıcılı öğeleri `outerHTML` ile kopyalama; aynı DOM düğümünü koru.
 - Sürükle-bırakta hedefi, sürüklenen öğe yeniden tıklanabilir olmadan önce bul.
 - Arka plandaki sekmede zincirleme zamanlayıcılar seyrelir; `visibilitychange` ile yenile.
+- Dosyalar arası global adlar eşleşmeli (bir kez `bolumler.js` `AteşSuBolumler` tanımladı, `oyun.js` başka adı aradı, canlıda oyun açılmadı). Değişken adlarında yalnızca ASCII kullan.
+- Headless Chrome'da `--virtual-time-budget` ile `requestAnimationFrame` ilerlemez: animasyon/oynanış denemesini gerçek Chrome'da (claude-in-chrome) yap. Headless'ın en küçük pencere genişliği ~500 px: küçük simgeyi büyükten küçülterek üret.
+- Takılan headless Chrome'u kapatırken `taskkill /IM chrome.exe` kullanma (kullanıcının Chrome'unu da kapatır); yalnızca komut satırında `--headless` olan süreçleri durdur.
+- Windows'ta `mysql -N` çıktısı satır sonunda `\r` taşır; tablo adlarını kullanmadan önce `tr -d '\r'`.
 
 ## Yerel test
 - MySQL: `C:\xampp\mysql\bin\mysqld.exe --defaults-file=C:\xampp\mysql\bin\my.ini --standalone`
-- PHP: `C:\xampp\php\php.exe -d extension=gd -S 127.0.0.1:8765 -t .` — tek iş parçacıklıdır; MySQL kapalıyken API isteği takılır ve sayfadaki resimler de bekler.
+- PHP: `C:\xampp\php\php.exe -d extension=gd -S 127.0.0.1:8765 -t .` — tek iş parçacıklıdır; MySQL kapalıyken API isteği takılır ve sayfadaki resimler de bekler. Yalnızca görünüm denemesi için `python -m http.server 8766` yeter (API istekleri hemen 404 döner).
 - API testleri: `node --test tests/okey-api.test.mjs` (101), `BASE=… ADMIN_PASS=… node --test tests/api.test.mjs` (Balon). Canlıda çalıştırma.
 - Online iki oyunculu deneme: ikinci oyuncuyu Node betiğiyle API üzerinden oynat ya da ikinci sekmeyi `localhost:8765` kökeninden aç (localStorage ayrı kalır).
-- Test bitince yerel `ok_* / oy_* / tv_*` tablolarını sil, sunucuları kapat.
+- Ateş ve Su: `?test=1` `window.__kd` (dünya `w`, `load(i)`, `net`) açar; `&dpr=N` çizim çözünürlüğünü artırır (yakın inceleme).
+- Test bitince yerel `ok_* / oy_* / tv_* / kd_*` tablolarını sil, sunucuları kapat.
