@@ -213,7 +213,29 @@
   function restGroups(rest) { var by = {}; sortTiles(rest).forEach(function (t) { var k = t.joker ? 'j' : t.c; (by[k] = by[k] || []).push(t); }); return Object.keys(by).map(function (k) { return by[k]; }); }
   function compact(gs) { var all = [].concat.apply([], gs), out = []; for (var i = 0; i < SLOTS; i++) out.push(all[i] ? all[i].id : null); return out; }
   function pushHist() { rackHist.push(rack.slice()); if (rackHist.length > 30) rackHist.shift(); }
-  function arrangeSeri() { pushHist(); var bm = M.bestMelds(V.myHand, V.opts); var gs = bm.melds.concat(restGroups(bm.rest)); rack = place(gs) || place(bm.melds.concat([sortTiles(bm.rest)])) || compact(gs); sel = null; }
+  // Seri diz sonrası kalan taşlar: aynı sayı farklı renk (9-9, 5-5) yan yana; aynı renkte ardışık komşusu olan taş kendi renginde kalır
+  function seriRest(rest) {
+    var real = rest.filter(function (t) { return !t.joker; }), jk = rest.filter(function (t) { return t.joker; }), used = {}, sets = [];
+    function nb(t) { return real.some(function (u) { return u !== t && u.c === t.c && Math.abs(u.n - t.n) === 1; }); }
+    for (var n = 13; n >= 1; n--) {
+      var cols = {}, g = [];
+      sortTiles(real).forEach(function (t) { if (t.n === n && !cols[t.c] && !nb(t)) { cols[t.c] = 1; g.push(t); } });
+      if (g.length >= 2) { sets.push(g); g.forEach(function (t) { used[t.id] = 1; }); }
+    }
+    var gs = sets.concat(restGroups(real.filter(function (t) { return !used[t.id]; })));
+    if (jk.length) gs.push(jk);
+    return gs;
+  }
+  // sığmazsa kalan grupları sondan başlayarak birleştir (perler ve 9-9 gibi gruplar ayrı kalsın)
+  function placeSeri(melds, rgs) {
+    rgs = rgs.slice();
+    for (;;) {
+      var r = place(melds.concat(rgs)); if (r) return r;
+      if (rgs.length < 2) return compact(melds.concat(rgs));
+      var b = rgs.pop(); rgs[rgs.length - 1] = rgs[rgs.length - 1].concat(b);
+    }
+  }
+  function arrangeSeri() { pushHist(); var bm = M.bestMelds(V.myHand, V.opts); rack = placeSeri(bm.melds, seriRest(bm.rest)); sel = null; }
   function arrangePairs() { pushHist(); var bp = M.bestPairs(V.myHand); var gs = bp.pairs.concat(restGroups(bp.rest)); rack = place(gs) || place(bp.pairs.concat([sortTiles(bp.rest)])) || compact(gs); sel = null; }
   function arrangeSorted() { var gs = restGroups(V.myHand); rack = place(gs) || compact(gs); sel = null; }
   function undo() {
