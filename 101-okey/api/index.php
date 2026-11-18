@@ -17,14 +17,16 @@
 //   POST ?a=t_poll {code, seat, seatKey, ver}    → oyuncu yeni durumu alır
 //   POST ?a=t_say {code, seat, seatKey, text}    → masaya sohbet mesajı (140 karakter, küfür maskelenir)
 //   POST ?a=t_chat {code, seat, seatKey, after}  → yeni sohbet mesajları
+//   POST ?a=t_sync {code, seat, seatKey, data}   → (yalnızca Kor ile Damla) kendi anlık durumunu yazar, öbür koltuğunkini alır
 //
 // Aynı dosya düz Okey'e ve Tavla'ya da hizmet eder: okey/api ve tavla/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
 // Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*), böylece sıralamalar ve masalar karışmaz.
-// Tavla masası iki kişiliktir (koltuk 0 ve 1).
+// Tavla masası iki kişiliktir (koltuk 0 ve 1). Kor ile Damla (kor-ile-damla/api, kd_*) da iki kişiliktir; masa sahibi oyunu
+// yönetmez, iki tarayıcı t_sync ile anlık durumlarını değiş tokuş eder (ok_private'ta koltuk 10 ve 11).
 declare(strict_types=1);
 $GAME = defined('OKEY_GAME') ? OKEY_GAME : '101';
-$PFX = ['okey' => 'oy_', 'tavla' => 'tv_'][$GAME] ?? 'ok_';
-$MAX_SEAT = $GAME === 'tavla' ? 1 : 3;
+$PFX = ['okey' => 'oy_', 'tavla' => 'tv_', 'kor' => 'kd_'][$GAME] ?? 'ok_';
+$MAX_SEAT = in_array($GAME, ['tavla', 'kor'], true) ? 1 : 3;
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -233,6 +235,7 @@ try {
     if ($a === 't_start') {
         $in = body(); $t = table_row($db, $in['code'] ?? '');
         if (!hash_equals($t['host_key'], (string)($in['hostKey'] ?? ''))) fail('unauthorized', 401);
+        if ($GAME === 'kor' && !$t['seats'][1]) fail('need_guest');
         for ($i = 1; $i <= $MAX_SEAT; $i++) if (!$t['seats'][$i]) $t['seats'][$i] = ['name' => ($GAME === 'tavla' ? ['Mehmet'] : ['Ayşe', 'Mehmet', 'Zeynep'])[$i - 1], 'bot' => true];
         q($db, "UPDATE ok_tables SET status = 'play', seats = ?, updated_at = ?, host_seen = ? WHERE code = ?", [json_encode($t['seats'], JSON_UNESCAPED_UNICODE), now(), now(), $t['code']]);
         out(['ok' => true, 'seats' => public_seats($t['seats'])]);
@@ -276,6 +279,19 @@ try {
             $res['priv'] = $p ? json_decode($p, true) : null;
         }
         out($res);
+    }
+    // ---------- Kor ile Damla: anlık durum değişimi ----------
+    if ($a === 't_sync' && $GAME === 'kor') {
+        $in = body(); $t = table_row($db, $in['code'] ?? ''); $seat = seat_auth($t, $in['seat'] ?? -1, $in['seatKey'] ?? '');
+        if ($seat > 1) fail('unauthorized', 401);
+        $d = json_encode($in['data'] ?? null, JSON_UNESCAPED_UNICODE); if (strlen($d) > 6000) fail('too_big');
+        q($db, 'REPLACE INTO ok_private (code, seat, data) VALUES (?,?,?)', [$t['code'], 10 + $seat, $d]);
+        if (strtotime($t['updated_at'] . ' UTC') < time() - 15)
+            q($db, 'UPDATE ok_tables SET updated_at = ? WHERE code = ?', [now(), $t['code']]);
+        if ($seat === 0 && strtotime($t['host_seen'] . ' UTC') < time() - 10)
+            q($db, 'UPDATE ok_tables SET host_seen = ? WHERE code = ?', [now(), $t['code']]);
+        $o = q($db, 'SELECT data FROM ok_private WHERE code = ? AND seat = ?', [$t['code'], 11 - $seat])->fetchColumn();
+        out(['ok' => true, 'other' => $o ? json_decode($o, true) : null, 'status' => $t['status'], 'seats' => public_seats($t['seats'])]);
     }
     // ---------- sohbet ----------
     if ($a === 't_say') {
