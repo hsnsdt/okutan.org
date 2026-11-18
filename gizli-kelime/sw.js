@@ -1,9 +1,9 @@
 /* Gizli Kelime — service worker (oyun internetsiz de çalışır)
    - Sayfa: önce ağ, yoksa önbellek · Statik dosyalar: önbellekten, arkada tazele
    oyun.js / motor.js / sozluk.js sürümü değişince CACHE ve CORE'u da güncelle. */
-var CACHE = 'gizli-kelime-v1';
+var CACHE = 'gizli-kelime-v2';
 var CORE = ['./', 'oyun.js?v=1', 'motor.js?v=1', 'sozluk.js?v=1', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
-  '/assets/fonts/InterTight-latin.woff2', '/assets/fonts/InterTight-latin-ext.woff2', '/assets/fonts/JetBrainsMono-latin.woff2',
+  '/assets/fonts/InterTight-latin.woff2', '/assets/fonts/InterTight-latin-ext.woff2', '/assets/fonts/JetBrainsMono-latin.woff2', '/assets/fonts/Nunito-latin.woff2', '/assets/fonts/Nunito-latin-ext.woff2',
   '/assets/logo.svg', '/assets/logo-dark.svg'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));
