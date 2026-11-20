@@ -140,7 +140,11 @@ function sayfa_bas(array $o): void {
   $can = $o['can'] ?? null; $ac = $o['aciklama'] ?? ''; $ogb = $o['og_baslik'] ?? ($o['baslik'] ?? '');
   $img = $o['og_img'] ?? SITE . '/kelime-bulucu/og.png'; $alt = $o['og_alt'] ?? 'Kelime Bulucu: yeşil harf taşlarıyla yazılmış Türkçe kelimeler ve arama kutusu';
   header('Content-Type: text/html; charset=UTF-8');
-  if (!isset($o['durum']) || $o['durum'] === 200) header('Cache-Control: public, max-age=3600');
+  if (!isset($o['durum']) || $o['durum'] === 200) {
+    header('Cache-Control: public, max-age=3600');
+    // Sunucunun LiteSpeed önbelleği sayfayı saklar; sonraki istekte PHP çalışmadan verilir (veri değişince 1 günde yenilenir)
+    header('X-LiteSpeed-Cache-Control: public,max-age=86400');
+  }
   ?><!doctype html>
 <html lang="tr">
 <head>
@@ -180,7 +184,7 @@ function sayfa_son(): void { ?>
 <script src="/kelime-bulucu/ortak.js?v=<?= KB_V ?>" defer></script>
 </body>
 </html>
-<?php onbellek_yaz(); }
+<?php }
 function breadcrumb(array $son): array {
   $it = [['okutan.org', SITE . '/'], ['Kelime Bulucu', SITE . '/kelime-bulucu/']];
   foreach ($son as $x) $it[] = $x;
@@ -192,44 +196,6 @@ function cipler(array $ws, ?callable $vurgu = null, string $cls = 'ws'): string 
   $o = '<ul class="' . $cls . '">';
   foreach ($ws as $w) { $p = puan($w); $o .= '<li><a href="' . kurl($w) . '">' . ($vurgu ? $vurgu($w) : h($w)) . rozet($p) . '</a></li>'; }
   return $o . '</ul>';
-}
-
-// ---------- disk önbelleği (liste ve sözlük dizini sayfaları) ----------
-// Aynı adres ikinci kez istenince hazır HTML verilir. Sürüm: KB_V + veri ve PHP dosyalarının değişme zamanı.
-function onbellek(string $anahtar): void {
-  $dir = KB_DIR . '/veri/onbellek';
-  $surum = KB_V . '-' . @filemtime(KB_DIR . '/veri/listeler.json') . '-' . @filemtime(KB_DIR . '/sozluk.txt') . '-' . max(@filemtime(__FILE__), @filemtime((string)($_SERVER['SCRIPT_FILENAME'] ?? __FILE__)));
-  $f = $dir . '/' . md5($anahtar . '|' . $surum) . '.onb';
-  if (!headers_sent()) header('X-KB-Anahtar: ' . substr(basename($f), 0, 8) . ',var=' . (int)is_file($f));
-  if (is_file($f) && filesize($f) > 100) {
-    header('Content-Type: text/html; charset=UTF-8'); header('Cache-Control: public, max-age=3600'); header('X-KB-Onbellek: 1'); header('Vary: Accept-Encoding');
-    // dosya gzip'li tutulur; tarayıcı gzip kabul ediyorsa olduğu gibi gönderilir
-    if (stripos((string)($_SERVER['HTTP_ACCEPT_ENCODING'] ?? ''), 'gzip') !== false) { header('Content-Encoding: gzip'); readfile($f); }
-    else echo (string)gzdecode((string)file_get_contents($f));
-    exit;
-  }
-  // Sayfa bitince sayfa_son() yazar (çıktı tamponu geri çağrısı bazı sunucularda dosya yazamıyor).
-  $GLOBALS['KB_ONB'] = [$dir, $f];
-  header('X-KB-Onbellek: 0');
-  ob_start();
-}
-function onbellek_yaz(): void {
-  $o = $GLOBALS['KB_ONB'] ?? null; if (!$o) return;
-  [$dir, $f] = $o; $GLOBALS['KB_ONB'] = null;
-  $html = (string)ob_get_contents();
-  $kod = (int)http_response_code(); $n = 0;
-  $d = is_dir($dir) || @mkdir($dir, 0755, true);
-  if ($kod === 200 && strlen($html) > 1000 && $d) {
-    // kilitsiz yaz: geçici dosya + yeniden adlandır (bazı sunucularda LOCK_EX çalışmıyor)
-    // api.php'deki sayaçla aynı yöntem (yerinde aç + kilitle + yaz); rename ile oluşan dosya bu sunucuda sonraki istekte görünmüyordu
-    $gz = (string)gzencode($html, 6);
-    $hd = @fopen($f, 'c');
-    if ($hd && flock($hd, LOCK_EX)) { ftruncate($hd, 0); $n = (int)fwrite($hd, $gz); fflush($hd); flock($hd, LOCK_UN); }
-    if ($hd) fclose($hd);
-    if (mt_rand(1, 300) === 1) foreach (glob($dir . '/*.onb') ?: [] as $eski) if (@filemtime($eski) < time() - 30 * 86400) @unlink($eski);
-  }
-  if (!headers_sent()) header('X-KB-Yaz: d=' . (int)$d . ',w=' . (int)is_writable($dir) . ',n=' . $n . ',k=' . $kod . ',ob=' . ob_get_level() . ',var=' . (int)is_file($f));
-  ob_end_flush();
 }
 
 // ---------- A–Z sözlük dizini ----------

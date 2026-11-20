@@ -25,7 +25,6 @@ if ($slug !== '' && !Listeler::bilgi($slug)) {
 }
 if ($slug !== '' && $istenen !== $ON . $slug . '/' && strpos($istenen, $ON) === 0) { header('Location: ' . lurl($slug), true, 301); exit; }
 
-onbellek($slug === '' ? $ON : lurl($slug));
 Sozluk::yukle();
 $S = Sozluk::$S;
 $K = fn(string $k) => tr_upper($k);

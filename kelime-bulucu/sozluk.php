@@ -31,7 +31,6 @@ if ($gecersiz || ($harf !== null && $sayfa > max(1, (int)ceil(($say[$harf] ?? 0)
   sayfa_son(); exit;
 }
 if ($istenen !== '' && strpos($istenen, $ON) === 0 && $istenen !== ($harf ? durl($harf, $sayfa) : $ON)) { header('Location: ' . ($harf ? durl($harf, $sayfa) : $ON), true, 301); exit; }
-onbellek($harf ? durl($harf, $sayfa) : $ON);
 
 $abc = '<div class="lk abc">' . implode('', array_map(fn($c) => isset($say[$c]) ? '<a href="' . durl($c) . '"' . ($c === $harf ? ' class="on"' : '') . '>' . h(tr_upper($c)) . '</a>' : '', $HARFLER)) . '</div>';
 
