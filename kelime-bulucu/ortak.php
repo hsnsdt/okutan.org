@@ -180,7 +180,7 @@ function sayfa_son(): void { ?>
 <script src="/kelime-bulucu/ortak.js?v=<?= KB_V ?>" defer></script>
 </body>
 </html>
-<?php }
+<?php onbellek_yaz(); }
 function breadcrumb(array $son): array {
   $it = [['okutan.org', SITE . '/'], ['Kelime Bulucu', SITE . '/kelime-bulucu/']];
   foreach ($son as $x) $it[] = $x;
@@ -204,13 +204,20 @@ function onbellek(string $anahtar): void {
     header('Content-Type: text/html; charset=UTF-8'); header('Cache-Control: public, max-age=3600'); header('X-KB-Onbellek: 1');
     readfile($f); exit;
   }
-  ob_start(function (string $html) use ($dir, $f) {
-    if (http_response_code() === 200 && strlen($html) > 1000 && (is_dir($dir) || @mkdir($dir, 0755, true)) && is_writable($dir)) {
-      @file_put_contents($f, $html, LOCK_EX);
-      if (mt_rand(1, 300) === 1) foreach (glob($dir . '/*.html') ?: [] as $eski) if (@filemtime($eski) < time() - 30 * 86400) @unlink($eski);
-    }
-    return $html;
-  });
+  // Sayfa bitince sayfa_son() yazar (çıktı tamponu geri çağrısı bazı sunucularda dosya yazamıyor).
+  $GLOBALS['KB_ONB'] = [$dir, $f];
+  header('X-KB-Onbellek: 0');
+  ob_start();
+}
+function onbellek_yaz(): void {
+  $o = $GLOBALS['KB_ONB'] ?? null; if (!$o) return;
+  [$dir, $f] = $o; $GLOBALS['KB_ONB'] = null;
+  $html = (string)ob_get_contents();
+  if (http_response_code() === 200 && strlen($html) > 1000 && (is_dir($dir) || @mkdir($dir, 0755, true)) && is_writable($dir)) {
+    @file_put_contents($f, $html, LOCK_EX);
+    if (mt_rand(1, 300) === 1) foreach (glob($dir . '/*.html') ?: [] as $eski) if (@filemtime($eski) < time() - 30 * 86400) @unlink($eski);
+  }
+  ob_end_flush();
 }
 
 // ---------- A–Z sözlük dizini ----------
