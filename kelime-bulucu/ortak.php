@@ -213,10 +213,16 @@ function onbellek_yaz(): void {
   $o = $GLOBALS['KB_ONB'] ?? null; if (!$o) return;
   [$dir, $f] = $o; $GLOBALS['KB_ONB'] = null;
   $html = (string)ob_get_contents();
-  if (http_response_code() === 200 && strlen($html) > 1000 && (is_dir($dir) || @mkdir($dir, 0755, true)) && is_writable($dir)) {
-    @file_put_contents($f, $html, LOCK_EX);
+  $kod = (int)http_response_code(); $n = 0;
+  $d = is_dir($dir) || @mkdir($dir, 0755, true);
+  if ($kod === 200 && strlen($html) > 1000 && $d) {
+    // kilitsiz yaz: geçici dosya + yeniden adlandır (bazı sunucularda LOCK_EX çalışmıyor)
+    $tmp = $f . '.' . getmypid() . '.tmp';
+    $n = (int)@file_put_contents($tmp, $html);
+    if ($n) { if (!@rename($tmp, $f)) { @unlink($tmp); $n = -1; } }
     if (mt_rand(1, 300) === 1) foreach (glob($dir . '/*.html') ?: [] as $eski) if (@filemtime($eski) < time() - 30 * 86400) @unlink($eski);
   }
+  if (!headers_sent()) header('X-KB-Yaz: d=' . (int)$d . ',w=' . (int)is_writable($dir) . ',n=' . $n . ',k=' . $kod . ',ob=' . ob_get_level());
   ob_end_flush();
 }
 
