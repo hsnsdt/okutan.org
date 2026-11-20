@@ -37,10 +37,14 @@ $PARCA = ['ç' => 'c1', 'ğ' => 'g1', 'ı' => 'i1', 'ö' => 'o1', 'ş' => 's1', 
 $sluglar = fn(string $s) => is_file($DIR . '/liste/' . $s . '/index.html');
 
 // ---------- istek ----------
-$ham = (string)($_GET['k'] ?? '');
+// Kelime doğrudan istenen adresten okunur: sunucu, kodlanmamış Türkçe karakterli adreslerde
+// yönlendirme kuralındaki $1'i bozabiliyor (abacılık → abaclk). ?k= yalnızca yedek.
+$istenen = rawurldecode((string)strtok((string)($_SERVER['REQUEST_URI'] ?? ''), '?'));
+$ON = '/kelime-bulucu/kelime/';
+$ham = strpos($istenen, $ON) === 0 ? explode('/', substr($istenen, strlen($ON)))[0] : (string)($_GET['k'] ?? '');
+if (!mb_check_encoding($ham, 'UTF-8')) { $ham = (string)@iconv('WINDOWS-1254', 'UTF-8//IGNORE', $ham); }
 $w = preg_replace('/[^a-zçğıöşü]/u', '', tr_lower(str_replace(['â', 'î', 'û', 'Â', 'Î', 'Û'], ['a', 'i', 'u', 'a', 'i', 'u'], $ham))) ?? '';
 if ($w === '') { header('Location: /kelime-bulucu/', true, 302); exit; }
-$istenen = rawurldecode(strtok((string)($_SERVER['REQUEST_URI'] ?? ''), '?'));
 if (strpos($istenen, '/kelime-bulucu/kelime/') === 0 && $istenen !== kurl($w)) { header('Location: ' . kurl(rawurlencode($w)), true, 301); exit; }
 
 // ---------- sözlük ----------
