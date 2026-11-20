@@ -129,7 +129,7 @@
       out += j[n] ? '<i>' + c + '</i>' : c;
       if (n === ge - 1) out += '</u>';
     }
-    return '<li data-k="' + w + '">' + out + '<sub>' + x.p + '</sub></li>';
+    return '<li data-k="' + w + '">' + out + O.rozet(x.p) + '</li>';
   }
 
   function ciz(toplam, ozet) {

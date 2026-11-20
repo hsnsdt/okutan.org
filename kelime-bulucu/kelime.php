@@ -5,7 +5,7 @@
 declare(strict_types=1);
 mb_internal_encoding('UTF-8');
 const SITE = 'https://okutan.org';
-const V = 2; // kb.css / ortak.js sürümü
+const V = 3; // kb.css / ortak.js sürümü
 $DIR = __DIR__;
 
 function tr_lower(string $s): string { return mb_strtolower(str_replace(['İ', 'I'], ['i', 'ı'], $s)); }
@@ -117,7 +117,7 @@ $aciklama = $var ? ($kisa ? "$Wc ne demek: $kisa " : "$Wc kelimesi: ") . "$harfS
 $liste = function (array $a, bool $puanGoster = true) { // bağlantılı kelime çipleri
   return '<ul class="wl">' . implode('', array_map(function ($x) use ($puanGoster) {
     $w = is_array($x) ? $x[0] : $x; $p = is_array($x) ? $x[1] : puan($w);
-    return '<li><a href="' . h(kurl($w)) . '">' . h($w) . ($puanGoster ? '<sub>' . $p . '</sub>' : '') . '</a></li>';
+    return '<li><a href="' . h(kurl($w)) . '">' . h($w) . ($puanGoster ? '<sub class="pt t' . ($p >= 20 ? 4 : ($p >= 12 ? 3 : ($p >= 7 ? 2 : 1))) . '" title="' . $p . ' puan">' . $p . '</sub>' : '') . '</a></li>';
   }, $a)) . '</ul>';
 };
 $lk = function (string $slug, string $metin) use ($sluglar) { return $sluglar($slug) ? '<a href="/kelime-bulucu/liste/' . h($slug) . '/">' . h($metin) . '</a>' : ''; };

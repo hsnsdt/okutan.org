@@ -2,8 +2,8 @@
    - Yalnızca araç sayfası (/kelime-bulucu/) önbelleğe alınır; liste sayfalarına karışılmaz.
    - Sayfa: önce ağ, yoksa önbellek · Statik dosyalar ve anlam parçaları: önbellekten, arkada tazele.
    bulucu.js / motor.js / ortak.js / kb.css / sozluk.txt sürümü değişince CACHE ve CORE'u da güncelle. */
-var CACHE = 'kelime-bulucu-v2';
-var CORE = ['./', 'bulucu.js?v=2', 'motor.js?v=2', 'ortak.js?v=2', 'kb.css?v=2', 'sozluk.txt?v=1', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
+var CACHE = 'kelime-bulucu-v3';
+var CORE = ['./', 'bulucu.js?v=3', 'motor.js?v=2', 'ortak.js?v=3', 'kb.css?v=3', 'sozluk.txt?v=1', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
   '/assets/fonts/Roboto-latin.woff2', '/assets/fonts/Roboto-latin-ext.woff2',
   '/assets/logo.svg', '/assets/logo-dark.svg'];
 var KOK = '/kelime-bulucu/';

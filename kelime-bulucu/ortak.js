@@ -11,23 +11,25 @@
   // Türkçe Scrabble taş puanları (motor.js'teki PUAN ile aynı; joker 0).
   var PUAN = { a: 1, b: 3, c: 4, 'ç': 4, d: 3, e: 1, f: 7, g: 5, 'ğ': 8, h: 5, 'ı': 2, i: 1, j: 10, k: 1, l: 1, m: 2,
     n: 1, o: 2, 'ö': 7, p: 5, r: 1, s: 2, 'ş': 4, t: 1, u: 2, 'ü': 3, v: 7, y: 3, z: 4 };
+  function kat(p) { return p >= 20 ? 4 : p >= 12 ? 3 : p >= 7 ? 2 : 1; }
+  function rozet(p) { return '<sub class="pt t' + kat(p) + '" title="' + p + ' puan">' + p + '</sub>'; }
   function puan(w) { var t = 0; for (var i = 0; i < w.length; i++) t += PUAN[w[i]] || 0; return t; }
   var tr = (function () { try { return new Intl.Collator('tr').compare; } catch (e) { return function (a, b) { return a < b ? -1 : a > b ? 1 : 0; }; } })();
+  var LEJANT = '<span class="pleg">Puan:' + rozet(1).replace('>1<', '>1–6<') + rozet(7).replace('>7<', '>7–11<') + rozet(12).replace('>12<', '>12–19<') + rozet(20).replace('>20<', '>20+<') + '</span>';
   function puanSira(a, b) { return b.p - a.p || b.k.length - a.k.length || tr(a.k, b.k); }
 
   // Puan rozeti ve sıralama düğmeleri için stiller (kb.css önbellekte eski kalsa da çalışsın diye burada).
   (function () {
     var st = document.createElement('style');
     st.textContent =
-      '.ws li sub{display:inline-block;margin-left:5px;padding:2px 5px;border-radius:6px;background:var(--line);color:var(--muted);font:600 10.5px/1 var(--round);vertical-align:2px;letter-spacing:0}' +
-      '.ws li:hover sub{background:var(--g);color:#fff}' +
+      '/* puan rozeti: kelimenin yanında minik Scrabble taşı; renk puana göre (t1 1–6, t2 7–11, t3 12–19, t4 20+) */sub.pt{display:inline-flex;align-items:center;justify-content:center;min-width:23px;height:22px;margin:-4px -6px -4px 9px;padding:0 5px;border-radius:7px;font:700 12px/1 var(--round);font-variant-numeric:tabular-nums;letter-spacing:0;vertical-align:middle;color:#fff;background:linear-gradient(180deg,#9aa6b4,#7c8796);box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35),0 1px 2px rgba(0,0,0,.15);transition:transform .15s}sub.pt.t2{background:linear-gradient(180deg,#22c08f,#0f9d76)}sub.pt.t3{background:linear-gradient(180deg,#ffa449,#f2700f)}sub.pt.t4{color:#4a3300;background:linear-gradient(180deg,#ffe07a,#f2b51d);box-shadow:inset 0 -2px 0 rgba(120,80,0,.3),inset 0 1px 0 rgba(255,255,255,.6),0 0 0 1px rgba(200,140,0,.35),0 2px 6px -2px rgba(200,140,0,.6)}.ws li:hover sub.pt,.wl a:hover sub.pt{transform:scale(1.1) rotate(-4deg)}.ws li,.wl a,.ws li a{display:inline-flex;align-items:center}.tops .ws li{font-size:16.5px}.tops sub.pt{min-width:27px;height:25px;font-size:13.5px}.pleg{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;font:600 12.5px var(--round);color:var(--muted)}.pleg sub.pt{margin:0 2px 0 6px;height:18px;min-width:34px;font-size:10.5px}' +
       '.sortb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 2px;font:600 13px var(--round);color:var(--muted)}' +
       '.sortb button{height:32px;padding:0 13px;border-radius:999px;border:1px solid var(--line);background:var(--block);font:600 13px var(--round);cursor:pointer}' +
       '.sortb button:hover{border-color:var(--muted)}.sortb button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--block)}' +
       '.tops{margin:14px 0 4px;padding:14px 16px 16px;border-radius:14px;background:var(--g2);border:1px solid color-mix(in srgb,var(--g) 30%,transparent)}' +
       '.tops h3{font:700 16px var(--round);margin-bottom:10px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}' +
       '.tops h3 small{font:700 12.5px var(--round);color:var(--muted)}' +
-      '.tops .ws li{background:var(--block);font-size:16.5px}.tops .ws li sub{background:var(--g);color:#fff}' +
+      '.tops .ws li{background:var(--block)}' +
       '.tops ol{list-style:none}' +
       '.puanl{margin-top:4px}';
     document.head.appendChild(st);
@@ -124,7 +126,7 @@
       var li = lis[i], w = li.getAttribute('data-k') || li.textContent;
       li.setAttribute('data-k', w);
       var p = puan(w);
-      li.innerHTML = '<a href="/kelime-bulucu/kelime/' + w + '/">' + li.innerHTML + '<sub>' + p + '</sub></a>';
+      li.innerHTML = '<a href="/kelime-bulucu/kelime/' + w + '/">' + li.innerHTML + rozet(p) + '</a>';
       if (!gor[w]) { gor[w] = 1; kelimeler.push({ k: w, p: p, h: li.innerHTML }); }
     }
     if (kelimeler.length < 2) return;
@@ -135,7 +137,7 @@
     bas.insertAdjacentHTML('afterend',
       '<div class="tops"><h3>En yüksek puanlı ' + esc(ad) + ' kelimeler <small>Scrabble taş puanlarıyla · en yüksek ' + buyuk(sirali[0].k) + ', ' + sirali[0].p + ' puan</small></h3>' +
       '<ul class="ws">' + en.map(function (x) { return '<li data-k="' + x.k + '">' + x.h + '</li>'; }).join('') + '</ul></div>' +
-      '<div class="sortb" role="group" aria-label="Sıralama">Sırala: <button type="button" data-s="uz" aria-pressed="true">Harf sayısına göre</button><button type="button" data-s="puan" aria-pressed="false">Puana göre</button></div>');
+      '<div class="sortb" role="group" aria-label="Sıralama">Sırala: <button type="button" data-s="uz" aria-pressed="true">Harf sayısına göre</button><button type="button" data-s="puan" aria-pressed="false">Puana göre</button><span class="sp"></span>' + LEJANT + '</div>');
     var gruplar = bolum.querySelectorAll('.grp'), lens = bolum.querySelector('.lens'), puanGrp = null;
     function sirala(s) {
       [].forEach.call(bolum.querySelectorAll('.sortb button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-s') === s); });
@@ -157,5 +159,5 @@
   }
   listeSayfasi();
 
-  window.KBOrtak = { goster: goster, kapat: kapat, anlam: anlam, buyuk: buyuk, esc: esc, puan: puan, PUAN: PUAN };
+  window.KBOrtak = { goster: goster, kapat: kapat, anlam: anlam, buyuk: buyuk, esc: esc, puan: puan, PUAN: PUAN, rozet: rozet };
 })();
