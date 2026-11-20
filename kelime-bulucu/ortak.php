@@ -199,7 +199,9 @@ function cipler(array $ws, ?callable $vurgu = null, string $cls = 'ws'): string 
 function onbellek(string $anahtar): void {
   $dir = KB_DIR . '/veri/onbellek';
   $surum = KB_V . '-' . @filemtime(KB_DIR . '/veri/listeler.json') . '-' . @filemtime(KB_DIR . '/sozluk.txt') . '-' . max(@filemtime(__FILE__), @filemtime((string)($_SERVER['SCRIPT_FILENAME'] ?? __FILE__)));
-  $f = $dir . '/' . md5($anahtar . '|' . $surum) . '.html';
+  // .html değil: bazı sunucularda güvenlik tarayıcısı PHP'nin yazdığı .html dosyalarını siliyor
+  $f = $dir . '/' . md5($anahtar . '|' . $surum) . '.onb';
+  if (!headers_sent()) header('X-KB-Anahtar: ' . substr(basename($f), 0, 8) . ',var=' . (int)is_file($f));
   if (is_file($f)) {
     header('Content-Type: text/html; charset=UTF-8'); header('Cache-Control: public, max-age=3600'); header('X-KB-Onbellek: 1');
     readfile($f); exit;
@@ -220,7 +222,7 @@ function onbellek_yaz(): void {
     $tmp = $f . '.' . getmypid() . '.tmp';
     $n = (int)@file_put_contents($tmp, $html);
     if ($n) { if (!@rename($tmp, $f)) { @unlink($tmp); $n = -1; } }
-    if (mt_rand(1, 300) === 1) foreach (glob($dir . '/*.html') ?: [] as $eski) if (@filemtime($eski) < time() - 30 * 86400) @unlink($eski);
+    if (mt_rand(1, 300) === 1) foreach (glob($dir . '/*.onb') ?: [] as $eski) if (@filemtime($eski) < time() - 30 * 86400) @unlink($eski);
   }
   if (!headers_sent()) header('X-KB-Yaz: d=' . (int)$d . ',w=' . (int)is_writable($dir) . ',n=' . $n . ',k=' . $kod . ',ob=' . ob_get_level());
   ob_end_flush();
