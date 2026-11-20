@@ -107,11 +107,19 @@ def birlestir(satirlar):
         out.append(buf)
     return out
 
-def ayristir(text):
+def ayristir(text, title=''):
     bol = bolum_turkce(text)
     if bol is None:
         return None
     sonuc = {'t': []}
+    # telaffuz ses kaydı (Wikimedia Commons dosya adı)
+    m = re.search(r'\{\{\s*ses\s*\|(?:[^{}|]*\|)*?\s*([^{}|=]+\.(?:ogg|oga|wav|mp3|flac))\s*[|}]', bol, re.I)
+    if m:
+        sonuc['ses'] = m.group(1).strip()
+    else:
+        m2 = re.search(r'\{\{\s*tr-ses\s*\|[^{}]*?k\s*=\s*([^|{}]+)', bol)
+        if m2 and title:
+            sonuc['ses'] = 'LL-Q256 (tur)-' + m2.group(1).strip() + '-' + title + '.wav'
     baslik, tur, kaynakca = '', None, False
     es, dy = [], []
     satirlar = birlestir(bol.split('\n'))
@@ -204,7 +212,7 @@ def main():
                     rest = line[i:]
                     if '</text>' in rest:
                         buf = [rest[:rest.find('</text>')]]
-                        r = ayristir(html.unescape(''.join(buf)))
+                        r = ayristir(html.unescape(''.join(buf)), title)
                         if r: out[title] = r
                     else:
                         intext, buf = True, [rest]
@@ -212,7 +220,7 @@ def main():
                 if '</text>' in line:
                     buf.append(line[:line.find('</text>')])
                     intext = False
-                    r = ayristir(html.unescape(''.join(buf)))
+                    r = ayristir(html.unescape(''.join(buf)), title)
                     if r: out[title] = r
                 else:
                     buf.append(line)
@@ -220,6 +228,6 @@ def main():
         json.dump(out, f, ensure_ascii=False, separators=(',', ':'))
     n_anlam = sum(len(a['a']) for v in out.values() for a in v['t'])
     n_ornek = sum(len(x.get('o', [])) for v in out.values() for a in v['t'] for x in a['a'])
-    print('kelime', len(out), 'anlam', n_anlam, 'örnek', n_ornek, 'köken', sum(1 for v in out.values() if 'k' in v))
+    print('kelime', len(out), 'anlam', n_anlam, 'örnek', n_ornek, 'köken', sum(1 for v in out.values() if 'k' in v), 'ses', sum(1 for v in out.values() if 'ses' in v))
 
 main()

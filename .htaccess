@@ -14,6 +14,10 @@
   RewriteRule ^kelime-bulucu/kelime/([^/]+)/?$ kelime-bulucu/kelime.php?k=$1 [B,L,QSA]
   RewriteRule ^kelime-bulucu/liste/?$ kelime-bulucu/liste.php [L,QSA]
   RewriteRule ^kelime-bulucu/liste/([^/]+)/?(index\.html)?$ kelime-bulucu/liste.php?s=$1 [B,L,QSA]
+  RewriteRule ^kelime-bulucu/sozluk/?$ kelime-bulucu/sozluk.php [L,QSA]
+  RewriteRule ^kelime-bulucu/sozluk/(.+?)/?$ kelime-bulucu/sozluk.php?y=$1 [B,L,QSA]
+  # PHP önbellek ve arama sayaçları dışarıdan okunmaz
+  RewriteRule ^kelime-bulucu/veri/(onbellek|arama)/ - [F,L]
 </IfModule>
 
 # Özel 404 sayfası

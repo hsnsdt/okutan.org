@@ -14,7 +14,8 @@ Sozluk::yukle();
 $w = null;
 if (preg_match('/^[a-z]+(-\d+)?$/', $parca)) $w = Sozluk::kelime($parca);   // ASCII adres
 if ($w === null) {                                                           // Türkçe karakterli/büyük harfli eski adres ya da ?k=
-  $t = temiz_kelime($parca);
+  $t = preg_match('/^[a-zCGIOSU]+$/', $parca) && preg_match('/[CGIOSU]/', $parca) ? arac_coz($parca) : temiz_kelime($parca); // asI → ası (araç kodu)
+  if (!Sozluk::var($t)) $t = temiz_kelime($parca);
   if ($t !== '' && Sozluk::var($t)) { header('Location: ' . kurl($t), true, 301); exit; }
   $w = null; $aranan = $t !== '' ? $t : $parca;
 }
@@ -38,12 +39,16 @@ if ($w === null) {
 $S = Sozluk::$S; $W = l5($w); $L = strlen($W);
 $wc = count_chars($W, 1);
 $turetilen = $anagram = $benzer = $basla = $biten = $icinde = [];
+$kafiye = []; $kMin = $L <= 3 ? 2 : 3; // en az bu kadar son harfi ortak olanlar (kelimenin tamamıyla bitenler hariç)
 $nBasla = $nBiten = $nIcinde = 0;
 $anahtar = function (string $x): string { $a = str_split($x); sort($a); return implode('', $a); };
 $wk = $anahtar($W);
 foreach ($S as $x) {
   $xl = strlen($x);
   if ($x === $W) continue;
+  $o = 0; $mx = min($xl, $L);
+  while ($o < $mx && $x[$xl - 1 - $o] === $W[$L - 1 - $o]) $o++;
+  if ($o >= $kMin && $o < $L && $o < $xl) $kafiye[$o][] = $x;
   if ($xl < $L) { $ok = true; foreach (count_chars($x, 1) as $b => $c) if (($wc[$b] ?? 0) < $c) { $ok = false; break; } if ($ok) $turetilen[] = $x; continue; }
   if ($xl === $L) { if (strlen(str_replace("\0", '', $x ^ $W)) === 1) $benzer[] = $x; if ($anahtar($x) === $wk) $anagram[] = $x; continue; }
   if (strncmp($x, $W, $L) === 0) { $nBasla++; if (count($basla) < 40) $basla[] = $x; }
@@ -53,6 +58,8 @@ foreach ($S as $x) {
 $u = fn(array $a) => array_map('u8', $a);
 [$turetilen, $anagram, $benzer, $basla, $biten, $icinde] = [$u($turetilen), $u($anagram), $u($benzer), $u($basla), $u($biten), $u($icinde)];
 usort($turetilen, fn($a, $b) => puan($b) <=> puan($a) ?: mb_strlen($b) <=> mb_strlen($a) ?: strcmp(l5($a), l5($b)));
+krsort($kafiye); $kafiyeL = []; $kafiyeN = 0; $kSik = sik();
+foreach ($kafiye as $o => $l) { $kafiyeN += count($l); $l = array_map('u8', $l); usort($l, fn($a, $b) => ($kSik[$a] ?? 1e9) <=> ($kSik[$b] ?? 1e9) ?: mb_strlen($a) <=> mb_strlen($b)); foreach ($l as $x) { if (count($kafiyeL) >= 48) break 2; $kafiyeL[] = $x; } }
 $i = Sozluk::$idx[$W];
 $komsu = [$u(array_slice($S, max(0, $i - 6), min(6, $i))), $u(array_slice($S, $i + 1, 6))];
 $kardes = Sozluk::kardesler($w);
@@ -93,6 +100,7 @@ $sss = array_values(array_filter([
   ["$Wc Scrabble'da kaç puan?", "Türkçe Scrabble taş puanlarıyla $W_ $puan puan eder (" . implode(' + ', array_map(fn($c) => tr_upper($c) . ' ' . (PUAN[$c] ?? 0), $hs)) . '). ' . ($fazla === 0 ? 'Torbadaki taşlarla kurulabilir.' : "Torbada yeterli taş olmadığı için $fazla joker gerekir.")],
   isset($Z['k']) ? ["$Wc kelimesinin kökeni nedir?", "$Wc kelimesi " . $Z['k'] . ' kökenlidir.'] : null,
   ["$W_ harfleriyle hangi kelimeler türetilir?", $turetilen ? "$W_ harflerinden " . sayi(count($turetilen)) . ' kelime türetilir. En yüksek puanlıları: ' . implode(', ', array_map(fn($x) => $x . ' (' . puan($x) . ')', array_slice($turetilen, 0, 8))) . '.' : "$W_ harfleriyle türetilebilen başka bir kelime yok."],
+  $kafiyeL ? ["$Wc ile kafiyeli kelimeler hangileri?", "$Wc ile kafiyeli (sonu aynı seslerle biten) kelimelerden bazıları: " . implode(', ', array_slice($kafiyeL, 0, 15)) . '.'] : null,
   $anagram ? ["$Wc kelimesinin anagramı var mı?", 'Evet, aynı harflerle yazılan kelimeler: ' . implode(', ', $anagram) . '.'] : null,
 ]));
 $jsonld = ['@context' => 'https://schema.org', '@graph' => [
@@ -114,6 +122,7 @@ $sesliMi = fn($c) => mb_strpos(SESLI, $c) !== false;
 <?php else: ?>
 <p class="anlam none"><?= h($Wc) ?> kelimesinin anlamı sözlüğümüzde henüz yok. <a href="https://sozluk.gov.tr/?kelime=<?= h(rawurlencode($w)) ?>" target="_blank" rel="noopener">TDK Güncel Türkçe Sözlük'te bak ↗</a></p>
 <?php endif; ?>
+<?php if (!empty($Z['ses'])): ?><p class="dinle-s"><button type="button" class="dinle" data-ses="https://commons.wikimedia.org/wiki/Special:FilePath/<?= h(rawurlencode($Z['ses'])) ?>"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>Dinle</button><small>Ses kaydı: Wikimedia Commons</small></p><?php endif; ?>
 <?php if ($kardes): ?><p class="src">Benzer yazılış: <?php foreach ($kardes as $j => $x): ?><?= $j ? ', ' : '' ?><a href="<?= kurl($x) ?>"><b><?= h($x) ?></b></a><?php endforeach; ?></p><?php endif; ?>
 <div class="chips">
 <span class="chip"><b><?= $harfSay ?></b><span>harf</span></span>
@@ -123,6 +132,7 @@ $sesliMi = fn($c) => mb_strpos(SESLI, $c) !== false;
 <span class="chip"><b><?= sayi(count($turetilen)) ?></b><span>türetilen kelime</span></span>
 <span class="chip"><b><?= $fazla === 0 ? '✓' : "+$fazla joker" ?></b><span>torbayla kurulur</span></span>
 </div>
+<?= paylas_html($can, "$Wc ne demek? $harfSay harf, $puan puan" . ($kisa ? ": $kisa" : '')) ?>
 <div class="hecev" aria-label="Heceler: <?= h(implode('-', $heceler)) ?>"><?php foreach ($heceler as $j => $hc): ?><span class="hc h<?= $j % 3 ?>"><?php foreach (harfler($hc) as $c): ?><i class="<?= $sesliMi($c) ? 'sl' : 'ss' ?>"><?= h(tr_upper($c)) ?></i><?php endforeach; ?></span><?php endforeach; ?><span class="hleg"><i class="sl">A</i> sesli <i class="ss">B</i> sessiz</span></div>
 </section>
 
@@ -159,6 +169,16 @@ $sesliMi = fn($c) => mb_strpos(SESLI, $c) !== false;
 <?php if (count($turetilen) > 60): ?><a class="more" href="<?= h(arac_url('h', $w)) ?>">Tüm <?= sayi(count($turetilen)) ?> kelimeyi kelime bulucuda gör →</a><?php endif; ?>
 </section>
 <?php endif; ?>
+
+<?php if ($kafiyeL): ?>
+<section class="b" aria-labelledby="hKaf">
+<h2 id="hKaf"><?= h($Wc) ?> ile kafiyeli kelimeler <small class="cnt"><?= sayi($kafiyeN) ?></small></h2>
+<p class="sub2">Sonu <?= h($W_) ?> ile aynı seslerle biten kelimeler; en çok harfi ortak olanlar önce. Şiir, şarkı sözü ve tekerleme için.</p>
+<?= cipler($kafiyeL, fn($x) => (function ($x) use ($w) { $o = 0; $a = harfler($x); $b = harfler($w); while ($o < count($a) && $o < count($b) && $a[count($a) - 1 - $o] === $b[count($b) - 1 - $o]) $o++; return h(implode('', array_slice($a, 0, count($a) - $o))) . '<b>' . h(implode('', array_slice($a, count($a) - $o))) . '</b>'; })($x), 'wl') ?>
+</section>
+<?php endif; ?>
+
+<?= kelimeler_kart($w) ?>
 
 <?php if ($anagram || $benzer): ?>
 <div class="cols2">

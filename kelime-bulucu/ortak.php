@@ -7,7 +7,7 @@
 declare(strict_types=1);
 mb_internal_encoding('UTF-8');
 const SITE = 'https://okutan.org';
-const KB_V = 4; // kb.css / ortak.js sürümü
+const KB_V = 5; // kb.css / ortak.js sürümü
 const KB_DIR = __DIR__;
 
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
@@ -105,6 +105,7 @@ final class Sozluk {
 function kurl(string $w): string { return '/kelime-bulucu/kelime/' . Sozluk::slug($w) . '/'; }
 // Araç adresleri: Türkçe harf büyük ASCII harfle (ç→C …), ? → _ ; adres çubuğunda Türkçe karakter olmaz.
 function arac_kod(string $s): string { return strtr($s, ['ç' => 'C', 'ğ' => 'G', 'ı' => 'I', 'ö' => 'O', 'ş' => 'S', 'ü' => 'U', '?' => '_']); }
+function arac_coz(string $s): string { return mb_strtolower(strtr($s, ['C' => 'ç', 'G' => 'ğ', 'I' => 'ı', 'O' => 'ö', 'S' => 'ş', 'U' => 'ü', '_' => '?'])); }
 function arac_url(string $p, string $v, int $u = 0): string { return '/kelime-bulucu/?' . $p . '=' . rawurlencode(arac_kod($v)) . ($u ? '&u=' . $u : ''); }
 
 // ---------- liste sayfası dizini ----------
@@ -191,4 +192,48 @@ function cipler(array $ws, ?callable $vurgu = null, string $cls = 'ws'): string 
   $o = '<ul class="' . $cls . '">';
   foreach ($ws as $w) { $p = puan($w); $o .= '<li><a href="' . kurl($w) . '">' . ($vurgu ? $vurgu($w) : h($w)) . rozet($p) . '</a></li>'; }
   return $o . '</ul>';
+}
+
+// ---------- disk önbelleği (liste ve sözlük dizini sayfaları) ----------
+// Aynı adres ikinci kez istenince hazır HTML verilir. Sürüm: KB_V + veri ve PHP dosyalarının değişme zamanı.
+function onbellek(string $anahtar): void {
+  $dir = KB_DIR . '/veri/onbellek';
+  $surum = KB_V . '-' . @filemtime(KB_DIR . '/veri/listeler.json') . '-' . @filemtime(KB_DIR . '/sozluk.txt') . '-' . max(@filemtime(__FILE__), @filemtime((string)($_SERVER['SCRIPT_FILENAME'] ?? __FILE__)));
+  $f = $dir . '/' . md5($anahtar . '|' . $surum) . '.html';
+  if (is_file($f)) {
+    header('Content-Type: text/html; charset=UTF-8'); header('Cache-Control: public, max-age=3600'); header('X-KB-Onbellek: 1');
+    readfile($f); exit;
+  }
+  ob_start(function (string $html) use ($dir, $f) {
+    if (http_response_code() === 200 && strlen($html) > 1000 && (is_dir($dir) || @mkdir($dir, 0755, true)) && is_writable($dir)) {
+      @file_put_contents($f, $html, LOCK_EX);
+      if (mt_rand(1, 300) === 1) foreach (glob($dir . '/*.html') ?: [] as $eski) if (@filemtime($eski) < time() - 30 * 86400) @unlink($eski);
+    }
+    return $html;
+  });
+}
+
+// ---------- A–Z sözlük dizini ----------
+const DIZIN_SAYFA = 200;
+const HARF_SLUG = ['a' => 'a', 'b' => 'b', 'c' => 'c', 'ç' => 'c-2', 'd' => 'd', 'e' => 'e', 'f' => 'f', 'g' => 'g', 'ğ' => 'g-2', 'h' => 'h', 'ı' => 'i-2', 'i' => 'i', 'j' => 'j', 'k' => 'k', 'l' => 'l', 'm' => 'm',
+  'n' => 'n', 'o' => 'o', 'ö' => 'o-2', 'p' => 'p', 'r' => 'r', 's' => 's', 'ş' => 's-2', 't' => 't', 'u' => 'u', 'ü' => 'u-2', 'v' => 'v', 'y' => 'y', 'z' => 'z'];
+function durl(string $harf, int $sayfa = 1): string { return '/kelime-bulucu/sozluk/' . (HARF_SLUG[$harf] ?? '') . '/' . ($sayfa > 1 ? $sayfa . '/' : ''); }
+
+// ---------- ortak parçalar ----------
+// Paylaş ve yazdır düğmeleri (ortak.js çalıştırır)
+function paylas_html(string $url, string $metin): string {
+  return '<div class="pay" data-url="' . h($url) . '" data-metin="' . h($metin) . '">'
+    . '<button type="button" class="pay-b" data-pay="paylas" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>Paylaş</button>'
+    . '<a class="pay-b wa" data-pay="wa" href="https://wa.me/?text=' . rawurlencode($metin . ' ' . $url) . '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.9 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2z"/></svg>WhatsApp</a>'
+    . '<a class="pay-b" data-pay="x" href="https://twitter.com/intent/tweet?text=' . rawurlencode($metin) . '&amp;url=' . rawurlencode($url) . '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4 4 20"/></svg>X</a>'
+    . '<button type="button" class="pay-b" data-pay="kopyala"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg><span>Bağlantıyı kopyala</span></button>'
+    . '<button type="button" class="pay-b" data-pay="yazdir"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg>Yazdır / PDF</button>'
+    . '</div>';
+}
+// Kelimeler oyununa yönlendirme kartı
+function kelimeler_kart(string $kelime = ''): string {
+  $b = $kelime !== '' ? h(tr_upper($kelime)) . ' gibi kelimeleri' : 'Bulduğun kelimeleri';
+  return '<aside class="b kkart" aria-label="Kelimeler oyunu"><img src="/kelimeler/img/app-icon.webp" width="72" height="72" alt="" loading="lazy" decoding="async">'
+    . '<div><div class="label">Kelime oyunu · iPhone ve Android</div><h2>' . $b . ' Kelimeler\'de oyna</h2><p>Türkçeye özel online kelime oyunu: harflerden kelime kur, 81 il arasında şehir savaşlarına katıl, günün bulmacasını çöz. Ücretsiz.</p>'
+    . '<div class="kk-b"><a class="go" href="https://apps.apple.com/app/kelimeler-online-kelime-oyunu/id6775899635" target="_blank" rel="noopener">App Store</a><a class="go ikinci" href="/kelimeler/android.html">Android</a><a class="more" href="/kelimeler/">Oyunu tanı →</a></div></div></aside>';
 }

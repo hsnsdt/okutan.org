@@ -122,7 +122,12 @@ console.log('liste', Object.keys(listeler).length, sayac);
 // ---------------- site haritaları ----------------
 for (const f of readdirSync(DIZ)) if (/^sitemap.*\.xml$/.test(f)) rmSync(join(DIZ, f));
 const harita = (dosya, urls, oncelik) => writeFileSync(join(DIZ, dosya), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `  <url><loc>${u}</loc><lastmod>${BUGUN}</lastmod><changefreq>monthly</changefreq><priority>${oncelik(u)}</priority></url>`).join('\n')}\n</urlset>\n`);
-harita('sitemap.xml', [`${SITE}/kelime-bulucu/liste/`, ...Object.keys(listeler).map(s => `${SITE}/kelime-bulucu/liste/${s}/`)], u => u.endsWith('/liste/') || /puan|degerli/.test(u) ? '0.7' : '0.5');
+// A–Z sözlük dizini (sozluk.php ile aynı harf adresleri ve sayfa boyu)
+const HARF_SLUG = { 'ç': 'c-2', 'ğ': 'g-2', 'ı': 'i-2', 'ö': 'o-2', 'ş': 's-2', 'ü': 'u-2' }, DIZIN_SAYFA = 200;
+const dizin = [`${SITE}/kelime-bulucu/sozluk/`];
+for (const h of HARF) { const n = kelimeler.filter(w => w[0] === h).length; for (let p = 1; p <= Math.ceil(n / DIZIN_SAYFA); p++) dizin.push(`${SITE}/kelime-bulucu/sozluk/${HARF_SLUG[h] || h}/${p > 1 ? p + '/' : ''}`); }
+harita('sitemap.xml', [`${SITE}/kelime-bulucu/tahta/`, `${SITE}/kelime-bulucu/liste/`, ...Object.keys(listeler).map(s => `${SITE}/kelime-bulucu/liste/${s}/`), ...dizin],
+  u => /\/(tahta|liste)\/$/.test(u) || /puan|degerli/.test(u) ? '0.7' : /\/sozluk\//.test(u) ? '0.4' : '0.5');
 const sh = KB.slugHarita(kelimeler);
 const kUrl = kelimeler.map(w => `${SITE}/kelime-bulucu/kelime/${sh.slug(w)}/`);
 if (kUrl.some(u => /[^\x20-\x7e]/.test(u))) throw new Error('ASCII olmayan adres');
@@ -138,6 +143,7 @@ console.log('site haritası: liste', Object.keys(listeler).length + 1, '· kelim
   const blok = `<!--LISTE-->
     <div class="b links" aria-labelledby="hHazir">
       <h2 id="hHazir">Hazır kelime listeleri</h2>
+      <h3>Araçlar ve sözlük</h3><div class="lk"><a href="tahta/">Tahta çözücü</a><a href="sozluk/">A–Z Türkçe sözlük</a><a href="?m=wordle">Wordle yardımcısı</a><a href="?m=gecerli">Kelime geçerli mi?</a></div>
       <h3>Scrabble</h3><div class="lk"><a href="liste/en-yuksek-puanli-kelimeler/">En yüksek puanlı kelimeler</a>${[2, 3, 4, 5, 6, 7].map(u => `<a href="liste/en-yuksek-puanli-${u}-harfli-kelimeler/">En yüksek puanlı ${u} harfli</a>`).join('')}<a href="liste/degerli-harfli-kisa-kelimeler/">J, Ğ, F, Ö, V geçen kısa kelimeler</a><a href="liste/2-harfli-kelimeler/">2 harfli kelimeler</a></div>
       <h3>Harf sayısına göre</h3><div class="lk">${[...Array(14)].map((_, i) => i + 2).map(u => { const s = L('uz', '', u); return s ? `<a href="liste/${s}/">${u} harfli<small>${listeler[s][3].toLocaleString('tr-TR')}</small></a>` : ''; }).join('')}</div>
       <h3>Harfle başlayan kelimeler</h3><div class="lk abc">${abc('bas')}</div>

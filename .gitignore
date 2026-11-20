@@ -18,3 +18,5 @@ kelimeler/*.MOV
 balon/api/config.php
 tools/.veri/
 kelime-bulucu/veri/og/
+kelime-bulucu/veri/onbellek/
+kelime-bulucu/veri/arama/

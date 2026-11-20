@@ -114,6 +114,7 @@
     bekleyen = false;
     adresYaz();
     secUz = 0; sonHam = sonuc; sonOzet = ozet + (u ? ' · ' + u + ' harfli' : '');
+    if (kaydir) { sonEkle(); logla(); }
     hazirla();
     ciz();
     if (kaydir && sonuc.length && matchMedia('(max-width: 820px)').matches) $('res').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -240,7 +241,7 @@
   document.addEventListener('click', function (e) {
     var a = e.target.closest('[data-ornek]'); if (!a) return;
     e.preventDefault();
-    adrestenAc(new URLSearchParams(a.getAttribute('data-ornek'))); ara(true);
+    adrestenAc(new URLSearchParams(a.getAttribute('data-ornek'))); rafCiz(); ara(true);
   });
 
   // ---------- sıralama ve torba ----------
@@ -268,6 +269,61 @@
   }
   if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { formGorunur = e[0].isIntersecting; stickGuncelle(); }).observe($('form'));
   $('stickBtn').onclick = function () { window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(function () { ({ harf: hInp, kalip: kInp, wordle: wy[0], gecerli: gInp })[mod].focus(); }, 350); };
+
+  // ---------- harf rafı (yazdığın harfler puanlı taşlar olarak) ----------
+  function rafCiz(karis) {
+    var r = KB.raf(hInp.value), el = $('hraf');
+    if (!r) { el.innerHTML = ''; return; }
+    el.innerHTML = r.split('').map(function (c) { return c === '*' ? '<i class="jk">*<small>0</small></i>' : '<i>' + KB.buyuk(c) + '<small>' + (KB.PUAN[c] || 0) + '</small></i>'; }).join('') +
+      (r.length > 1 ? '<button type="button" class="kar" id="karBtn" title="Harfleri karıştır"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>Karıştır</button>' : '');
+    if (karis) { el.classList.remove('karis'); void el.offsetWidth; el.classList.add('karis'); }
+  }
+  hInp.addEventListener('input', function () { rafCiz(); });
+  $('hraf').addEventListener('click', function (e) {
+    if (!e.target.closest('#karBtn')) return;
+    var a = KB.raf(hInp.value).split('');
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    hInp.value = a.join(''); rafCiz(true);
+  });
+
+  // ---------- son aramalar (yalnızca bu tarayıcıda) ----------
+  function sonOku() { try { return JSON.parse(localStorage.getItem('kb_son') || '[]'); } catch (e) { return []; } }
+  function sonEkle() {
+    var q = location.search.slice(1); if (!q || /^m=/.test(q)) return;
+    var etiket = $('resTitle').textContent ? sonOzet.replace(/<[^>]+>/g, '') : '';
+    if (mod === 'gecerli') etiket = KB.buyuk(KB.harf(gInp.value));
+    if (!etiket) return;
+    var l = sonOku().filter(function (x) { return x.q !== q; }); l.unshift({ q: q, e: etiket.slice(0, 40) });
+    try { localStorage.setItem('kb_son', JSON.stringify(l.slice(0, 8))); } catch (e) {}
+    sonCiz();
+  }
+  function sonCiz() {
+    var l = sonOku(), el = $('son');
+    el.hidden = !l.length;
+    el.innerHTML = l.length ? 'Son aramaların: ' + l.map(function (x) { return '<a href="?' + esc(x.q) + '" data-ornek="' + esc(x.q) + '">' + esc(x.e) + '</a>'; }).join('') + '<button type="button" class="sil" id="sonSil">temizle</button>' : '';
+  }
+  $('son').addEventListener('click', function (e) { if (e.target.id === 'sonSil') { try { localStorage.removeItem('kb_son'); } catch (x) {} sonCiz(); } });
+  sonCiz();
+
+  // ---------- popüler aramalar (kimlik bilgisi olmadan sayılır: api.php) ----------
+  function logla() {
+    var t = { harf: 'h', kalip: 'k', wordle: 'w', gecerli: 'g' }[mod], q;
+    if (mod === 'harf') q = KB.raf(hInp.value) + (bInp.value ? '.' + KB.harf(bInp.value) : '');
+    else if (mod === 'kalip') q = KB.kalip(kInp.value);
+    else if (mod === 'wordle') q = wy.map(function (x) { return KB.harf(x.value).slice(0, 1) || '.'; }).join('');
+    else q = KB.harf(gInp.value);
+    if (!q || !navigator.sendBeacon) return;
+    try { var f = new FormData(); f.append('t', t); f.append('q', q); navigator.sendBeacon('api.php?a=say', f); } catch (e) {}
+  }
+  var gecZ = null;
+  gInp.addEventListener('input', function () { clearTimeout(gecZ); gecZ = setTimeout(function () { if (kume && kume[KB.harf(gInp.value)]) { logla(); sonEkle(); } }, 1800); });
+  fetch('api.php?a=populer').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (d) {
+    var h = (d.h || []).slice(0, 10), g = (d.g || []).slice(0, 10), el = $('pop');
+    if (!h.length && !g.length) return;
+    el.innerHTML = 'Popüler: ' + h.map(function (x) { var q = x[0].split('.')[0]; return '<a href="?h=' + encodeURIComponent(KB.aracKod(q)) + '" data-ornek="h=' + encodeURIComponent(KB.aracKod(q)) + '">' + esc(KB.buyuk(q)) + '</a>'; }).join('') +
+      g.map(function (x) { return '<a href="kelime/' + esc(x[2]) + '/">' + esc(x[0]) + '</a>'; }).join('');
+    el.hidden = false;
+  }).catch(function () {});
 
   // ---------- günün kelimesi ----------
   function fnv(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; }
@@ -301,7 +357,7 @@
     modSec(p.get('g') != null || p.get('m') === 'gecerli' ? 'gecerli' : p.get('wy') != null || p.get('ws') != null || p.get('wg') != null || p.get('m') === 'wordle' ? 'wordle' : p.get('k') != null && !p.get('h') ? 'kalip' : 'harf', false);
   }
   var ilk = new URLSearchParams(location.search);
-  adrestenAc(ilk);
+  adrestenAc(ilk); rafCiz();
   if (adresVar()) ara(false);
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(function () {});
 })();

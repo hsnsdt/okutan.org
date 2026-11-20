@@ -25,6 +25,7 @@ if ($slug !== '' && !Listeler::bilgi($slug)) {
 }
 if ($slug !== '' && $istenen !== $ON . $slug . '/' && strpos($istenen, $ON) === 0) { header('Location: ' . lurl($slug), true, 301); exit; }
 
+onbellek($slug === '' ? $ON : lurl($slug));
 Sozluk::yukle();
 $S = Sozluk::$S;
 $K = fn(string $k) => tr_upper($k);
@@ -104,6 +105,7 @@ if ($slug === '') {
 <?= $MINI ?>
 </section>
 <section class="b links" aria-label="Listeler">
+<h3>Sözlük</h3><div class="lk"><a href="/kelime-bulucu/sozluk/">A–Z Türkçe sözlük<small><?= sayi(count($S)) ?></small></a><a href="/kelime-bulucu/tahta/">Tahta çözücü</a></div>
 <h3>Scrabble</h3><div class="lk"><?php foreach ($grup('puan') as $s => $x) echo link_l($s, null, false); foreach ($grup('deger') as $s => $x) echo link_l($s); ?></div>
 <h3>Harf sayısına göre</h3><div class="lk"><?php foreach ($uz as $s => $x) echo link_l($s); ?></div>
 <h3>Harfle başlayan kelimeler</h3><div class="lk abc"><?= $abc('bas') ?></div>
@@ -233,6 +235,7 @@ $sinir = !$puanli && $n > 6000 && $t !== 'uz';
 <div class="label">Kelime listesi · <?= sayi($n) ?> kelime</div>
 <h1 id="pageTitle"><?= h($A) ?></h1>
 <p><?= $p ?> Bir kelimeye dokununca anlamı ve ayrıntıları açılır.</p>
+<?= paylas_html(SITE . lurl($slug), "$A ($n kelime)") ?>
 <div class="chips"><span class="chip"><b><?= sayi($n) ?></b><span>kelime</span></span><?php if (count($g) > 1): ?><span class="chip"><b><?= mb_strlen($enUzun) ?> harf</b><span>en uzun</span></span><span class="chip"><b><?= $enCok[0] ?> harfli</b><span>en kalabalık</span></span><?php endif; ?><span class="chip"><b><?= $puanS[$top] ?? 0 ?></b><span>en yüksek puan</span></span></div>
 <?= $MINI ?>
 </section>
@@ -259,5 +262,6 @@ $sinir = !$puanli && $n > 6000 && $t !== 'uz';
 <section class="b" aria-labelledby="hAnlam"><h2 id="hAnlam">Bazı <?= h($ifd) ?> kelimelerin anlamları</h2><dl class="defs"><?php foreach ($anlamli as $w): ?><div><dt><a href="<?= kurl($w) ?>"><?= h(tr_upper($w)) ?></a> <?= rozet(puan($w)) ?></dt><dd><?= h(anlam_ilk($w)) ?></dd></div><?php endforeach; ?></dl><p class="src">Anlamlar: <a href="https://tr.wiktionary.org/" target="_blank" rel="noopener">Vikisözlük</a> (CC BY-SA).</p></section>
 <?php endif; ?>
 <section class="b links" aria-label="İlgili listeler"><?= implode('', $ilg) ?></section>
+<?= kelimeler_kart() ?>
 <section class="b faq" aria-labelledby="hSss"><h2 id="hSss">Sık sorulan sorular</h2><?php foreach ($sss as $q): ?><details><summary><?= h($q[0]) ?></summary><p><?= h($q[1]) ?></p></details><?php endforeach; ?><p class="src">Puanlar Türkçe Scrabble taş değerleridir; Scrabble, Hasbro ve Mattel'in markasıdır, bu sayfayla bağlantısı yoktur.</p></section>
 <?php sayfa_son();

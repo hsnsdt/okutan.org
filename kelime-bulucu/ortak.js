@@ -20,7 +20,8 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function ascii(s) { return String(s).replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u'); }
   function aracKod(s) { return String(s).replace(/[çğıöşü?]/g, function (c) { return { 'ç': 'C', 'ğ': 'G', 'ı': 'I', 'ö': 'O', 'ş': 'S', 'ü': 'U', '?': '_' }[c]; }); }
-  function kelimeUrl(w) { return '/kelime-bulucu/kelime/' + (window.KBSlug ? window.KBSlug(w) : ascii(w)) + '/'; }
+  // Sözlük yüklü değilse (tahta sayfası) Türkçe harfler büyük ASCII ile yazılır (ası → asI); kelime.php doğru adrese yönlendirir.
+  function kelimeUrl(w) { return '/kelime-bulucu/kelime/' + (window.KBSlug ? window.KBSlug(w) : /[çğıöşü]/.test(w) ? aracKod(w) : w) + '/'; }
   function aracUrl(p, v) { return '/kelime-bulucu/?' + p + '=' + encodeURIComponent(aracKod(v)); }
 
   function anlam(w) {
@@ -127,6 +128,30 @@
     var kayit = null; try { kayit = localStorage.getItem('kb_sira'); } catch (e) {}
     if (kayit === 'puan') sirala('puan');
   })();
+
+  // ---------- paylaş, kopyala, yazdır, dinle ----------
+  [].forEach.call(document.querySelectorAll('.pay'), function (p) {
+    if (navigator.share) { var b = p.querySelector('[data-pay="paylas"]'); if (b) b.hidden = false; }
+  });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-pay]');
+    if (b) {
+      var p = b.closest('.pay'), url = p.getAttribute('data-url'), metin = p.getAttribute('data-metin'), t = b.getAttribute('data-pay');
+      if (t === 'paylas') { e.preventDefault(); navigator.share({ title: document.title, text: metin, url: url }).catch(function () {}); }
+      else if (t === 'kopyala') {
+        e.preventDefault();
+        var bitti = function () { var s = b.querySelector('span'); if (s) { var e2 = s.textContent; s.textContent = 'Kopyalandı ✓'; b.classList.add('ok'); setTimeout(function () { s.textContent = e2; b.classList.remove('ok'); }, 1600); } };
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(bitti, function () {});
+        else { var ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); bitti(); } catch (x) {} ta.remove(); }
+      } else if (t === 'yazdir') { e.preventDefault(); window.print(); }
+      return;
+    }
+    var d = e.target.closest && e.target.closest('.dinle[data-ses]');
+    if (d) {
+      if (!d._ses) { d._ses = new Audio(d.getAttribute('data-ses')); d._ses.addEventListener('ended', function () { d.classList.remove('cal'); }); d._ses.addEventListener('error', function () { d.classList.remove('cal'); d.disabled = true; d.lastChild.textContent = 'Ses açılamadı'; }); }
+      d.classList.add('cal'); d._ses.currentTime = 0; d._ses.play().catch(function () { d.classList.remove('cal'); });
+    }
+  });
 
   window.KBOrtak = { goster: goster, kapat: kapat, anlam: anlam, buyuk: buyuk, esc: esc, puan: puan, PUAN: PUAN, rozet: rozet, kat: kat,
     kelimeUrl: kelimeUrl, aracUrl: aracUrl };
