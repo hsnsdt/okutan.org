@@ -6,3 +6,5 @@ Disallow: /balon/yonetim/
 
 Sitemap: https://okutan.org/sitemap.xml
 Sitemap: https://okutan.org/kelime-bulucu/sitemap.xml
+Sitemap: https://okutan.org/kelime-bulucu/sitemap-kelime-1.xml
+Sitemap: https://okutan.org/kelime-bulucu/sitemap-kelime-2.xml

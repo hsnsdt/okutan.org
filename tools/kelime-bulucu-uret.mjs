@@ -233,7 +233,7 @@ function bas(head) {
 <meta property="og:image" content="${SITE}/kelime-bulucu/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Kelime Bulucu: yeşil harf taşlarıyla yazılmış Türkçe kelimeler ve arama kutusu">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@okutanapp"><meta name="twitter:title" content="${esc(ogBaslik)}"><meta name="twitter:description" content="${esc(aciklama)}"><meta name="twitter:image" content="${SITE}/kelime-bulucu/og.png"><meta name="twitter:image:alt" content="Kelime Bulucu: yeşil harf taşlarıyla yazılmış Türkçe kelimeler ve arama kutusu">
 ${ikonlar}
-<link rel="preload" href="/assets/fonts/Nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/Roboto-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
 <link rel="stylesheet" href="/kelime-bulucu/kb.css?v=${V}">
 <script type="application/ld+json">${JSON.stringify(jsonld)}</script>

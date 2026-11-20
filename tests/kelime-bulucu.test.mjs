@@ -88,3 +88,20 @@ test('gerçek sözlük açılır ve aramalar çalışır', () => {
   assert.ok(r.find(x => x.k === 'kitaplık') && r.find(x => x.k === 'kitapçı' && x.j.length === 1));
   assert.ok(KB.kalipla(s, 'k?t?p').find(x => x.k === 'kitap'));
 });
+
+test('puan: Türkçe Scrabble taş değerleri, joker 0; üç dosyada aynı tablo', () => {
+  assert.equal(KB.puan('kalem'), 6);
+  assert.equal(KB.puan('jilet'), 14);
+  assert.equal(KB.puan('ağaç'), 14);
+  assert.equal(KB.puan('kalem', [4]), 4);
+  const r = KB.harflerle(['kalem', 'kale'], 'kale*');
+  assert.equal(r.find(x => x.k === 'kalem').p, 4);
+  assert.deepEqual(KB.puanaGore([{ k: 'ala', j: [] }, { k: 'jel', j: [] }, { k: 'kale', j: [] }]).map(x => x.k), ['jel', 'kale', 'ala']);
+  const tablo = src => { const m = src.match(/PUAN = \{([\s\S]*?)\};/); return Object.fromEntries([...m[1].matchAll(/'?([a-zçğıöşü])'?: (\d+)/g)].map(x => [x[1], +x[2]])); };
+  const ortak = tablo(readFileSync(new URL('../kelime-bulucu/ortak.js', import.meta.url), 'utf8'));
+  assert.deepEqual(ortak, KB.PUAN);
+  const php = readFileSync(new URL('../kelime-bulucu/kelime.php', import.meta.url), 'utf8').match(/const PUAN = \[([\s\S]*?)\];/)[1];
+  const phpT = Object.fromEntries([...php.matchAll(/'([a-zçğıöşü])' => (\d+)/g)].map(x => [x[1], +x[2]]));
+  assert.deepEqual(phpT, KB.PUAN);
+  assert.equal(Object.keys(KB.PUAN).length, 29);
+});

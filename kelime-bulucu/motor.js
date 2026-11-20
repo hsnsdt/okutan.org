@@ -13,6 +13,17 @@
   var HARFLER = 'abcçdefgğhıijklmnoöprsştuüvyz';
   var HARF_RE = /^[a-zçğıöşü]$/;
   var MAX_HARF = 16;
+  // Türkçe Scrabble taş puanları (Kelimeler oyunundaki letter_tile.dart ile aynı); joker 0 puan.
+  // ortak.js'te aynı tablo var (liste sayfaları motor.js yüklemez); test ikisinin eşitliğini denetler.
+  var PUAN = { a: 1, b: 3, c: 4, 'ç': 4, d: 3, e: 1, f: 7, g: 5, 'ğ': 8, h: 5, 'ı': 2, i: 1, j: 10, k: 1, l: 1, m: 2,
+    n: 1, o: 2, 'ö': 7, p: 5, r: 1, s: 2, 'ş': 4, t: 1, u: 2, 'ü': 3, v: 7, y: 3, z: 4 };
+  // Kelimenin puanı; joker konumlarındaki harfler sayılmaz.
+  function puan(w, jokerler) {
+    var t = 0, j = {};
+    if (jokerler) for (var i = 0; i < jokerler.length; i++) j[jokerler[i]] = 1;
+    for (var n = 0; n < w.length; n++) if (!j[n]) t += PUAN[w[n]] || 0;
+    return t;
+  }
 
   // Türkçe küçük harf; â î û düzleşir; harf ve joker dışındakiler atılır.
   function kucuk(s) {
@@ -93,10 +104,10 @@
           if (jk) { bulundu = jk; bas = at; break; }
           at = w.indexOf(gecen, at + 1);
         }
-        if (bulundu) out.push({ k: w, j: bulundu, g: bas });
+        if (bulundu) out.push({ k: w, j: bulundu, g: bas, p: puan(w, bulundu) });
       } else {
         var jk2 = sigdir(w, 0, 0, sayac, joker);
-        if (jk2) out.push({ k: w, j: jk2, g: -1 });
+        if (jk2) out.push({ k: w, j: jk2, g: -1, p: puan(w, jk2) });
       }
     }
     return out;
@@ -126,7 +137,7 @@
       if (uz && w.length !== uz) continue;
       if (yildizYok && w.length !== k.length) continue;
       if (w.length < Math.max(2, sabitSay)) continue;
-      if (re.test(w)) out.push({ k: w, j: [], g: -1 });
+      if (re.test(w)) out.push({ k: w, j: [], g: -1, p: puan(w) });
     }
     return out;
   }
@@ -152,12 +163,20 @@
     });
   }
 
+  // Puana göre: yüksekten düşüğe, eşitse uzun olan, sonra alfabetik.
+  function puanaGore(sonuc) {
+    return sonuc.slice().sort(function (a, b) {
+      var pa = a.p != null ? a.p : puan(a.k, a.j), pb = b.p != null ? b.p : puan(b.k, b.j);
+      return pb - pa || b.k.length - a.k.length || karsilastir(a.k, b.k);
+    });
+  }
+
   // Joker harfi büyük harfle göstermek için Türkçe büyük harf.
   function buyuk(s) { return String(s).replace(/i/g, 'İ').replace(/ı/g, 'I').toUpperCase(); }
 
   return {
     HARFLER: HARFLER, MAX_HARF: MAX_HARF, kucuk: kucuk, harf: harf, raf: raf, kalip: kalip, buyuk: buyuk,
     sozlukAc: sozlukAc, sozlukSikistir: sozlukSikistir, harflerle: harflerle, kalipla: kalipla,
-    grupla: grupla, karsilastir: karsilastir, harfMi: function (c) { return HARF_RE.test(c); }
+    grupla: grupla, karsilastir: karsilastir, PUAN: PUAN, puan: puan, puanaGore: puanaGore, harfMi: function (c) { return HARF_RE.test(c); }
   };
 });

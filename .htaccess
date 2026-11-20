@@ -9,6 +9,9 @@
   RewriteCond %{HTTPS} off [OR]
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^ https://okutan.org%{REQUEST_URI} [L,R=301]
+
+  # Kelime Bulucu kelime sayfaları: /kelime-bulucu/kelime/<kelime>/ → kelime.php (tek dosya, 60.000+ sayfa)
+  RewriteRule ^kelime-bulucu/kelime/([^/]+)/?$ kelime-bulucu/kelime.php?k=$1 [B,L,QSA]
 </IfModule>
 
 # Özel 404 sayfası

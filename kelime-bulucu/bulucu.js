@@ -5,7 +5,7 @@
   'use strict';
   var KB = window.KelimeBulucu, O = window.KBOrtak;
   function $(id) { return document.getElementById(id); }
-  var sozluk = null, bekleyen = false, gecenL = 0, mod = 'harf', sonInput = null, sonGruplar = [], secUz = 0;
+  var sozluk = null, bekleyen = false, gecenL = 0, sira = 'uz', sonDuz = [], puanTum = false, mod = 'harf', sonInput = null, sonGruplar = [], secUz = 0;
   var SINIR = 400;
 
   var hInp = $('hInp'), bInp = $('bInp'), kInp = $('kInp'), uSel = $('uSel');
@@ -88,7 +88,7 @@
     bekleyen = false;
     adresYaz();
     secUz = 0;
-    sonGruplar = KB.grupla(sonuc);
+    sonGruplar = KB.grupla(sonuc); sonDuz = KB.puanaGore(sonuc); puanTum = false;
     ciz(sonuc.length, ozet + (u ? ' · ' + u + ' harfli' : ''));
     if (kaydir && sonuc.length && matchMedia('(max-width: 820px)').matches) $('res').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -129,19 +129,21 @@
       out += j[n] ? '<i>' + c + '</i>' : c;
       if (n === ge - 1) out += '</u>';
     }
-    return '<li data-k="' + w + '">' + out + '</li>';
+    return '<li data-k="' + w + '">' + out + '<sub>' + x.p + '</sub></li>';
   }
 
   function ciz(toplam, ozet) {
     $('res').hidden = false;
     if (!toplam) {
       $('resTitle').innerHTML = '';
-      $('lens').innerHTML = '';
+      $('lens').innerHTML = ''; $('sortB').hidden = true;
       $('resBody').innerHTML = '<div class="empty"><b>Kelime bulunamadı</b>' + ozet + ' ile kurulan bir kelime yok. ' +
         (mod === 'harf' ? 'Bir joker (*) eklemeyi ya da uzunluk süzgecini kaldırmayı dene.' : 'Kalıba * ekleyerek aramayı genişletebilirsin.') + '</div>';
       return;
     }
-    $('resTitle').innerHTML = toplam.toLocaleString('tr-TR') + ' kelime <small>' + ozet + '</small>';
+    var en = sonDuz[0];
+    $('resTitle').innerHTML = toplam.toLocaleString('tr-TR') + ' kelime <small>' + ozet + ' · en yüksek puan: ' + KB.buyuk(en.k) + ' ' + en.p + '</small>';
+    $('sortB').hidden = false;
     var l = '<button type="button" data-u="0" class="on">Tümü<small>' + toplam.toLocaleString('tr-TR') + '</small></button>';
     sonGruplar.forEach(function (g) { l += '<button type="button" data-u="' + g.uzunluk + '">' + g.uzunluk + ' harf<small>' + g.liste.length.toLocaleString('tr-TR') + '</small></button>'; });
     $('lens').innerHTML = sonGruplar.length > 1 ? l : '';
@@ -149,6 +151,15 @@
   }
   function govde() {
     var h = '';
+    if (sira === 'puan') {
+      var l = secUz ? sonDuz.filter(function (x) { return x.k.length === secUz; }) : sonDuz;
+      var lim = puanTum ? l.length : Math.min(l.length, SINIR);
+      h = '<div class="grp"><h3>Puana göre, yüksekten düşüğe <small>' + l.length.toLocaleString('tr-TR') + '</small></h3><ul class="ws">';
+      for (var n = 0; n < lim; n++) h += kelimeHtml(l[n]);
+      h += '</ul>' + (lim < l.length ? '<button type="button" class="more" data-tump="1">Tüm ' + l.length.toLocaleString('tr-TR') + ' kelimeyi göster →</button>' : '') + '</div>';
+      $('resBody').innerHTML = h;
+      return;
+    }
     sonGruplar.forEach(function (g) {
       if (secUz && g.uzunluk !== secUz) return;
       var limit = secUz ? g.liste.length : Math.min(g.liste.length, SINIR);
@@ -165,6 +176,7 @@
     govde();
   });
   $('resBody').addEventListener('click', function (e) {
+    if (e.target.closest('[data-tump]')) { puanTum = true; govde(); return; }
     var b = e.target.closest('[data-tum]'); if (!b) return;
     secUz = +b.getAttribute('data-tum');
     [].forEach.call($('lens').children, function (x) { x.classList.toggle('on', +x.getAttribute('data-u') === secUz); });
@@ -178,6 +190,18 @@
     var p = new URLSearchParams(a.getAttribute('data-ornek'));
     adrestenAc(p); ara(true);
   });
+
+  // ---------- sıralama (harf sayısı / puan) ----------
+  function siraSec(s2) {
+    sira = s2 === 'puan' ? 'puan' : 'uz';
+    [].forEach.call($('sortB').querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-s') === sira); });
+    try { localStorage.setItem('kb_sira', sira); } catch (e) {}
+  }
+  $('sortB').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    siraSec(b.getAttribute('data-s')); if (sonGruplar.length) govde();
+  });
+  try { siraSec(localStorage.getItem('kb_sira')); } catch (e) {}
 
   // ---------- kontroller sekmesi ----------
   [['cTabDesk', 'ctlDesk'], ['cTabMob', 'ctlMob']].forEach(function (p, i, all) {

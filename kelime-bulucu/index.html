@@ -34,10 +34,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Kelime Bulucu">
-<link rel="preload" href="/assets/fonts/Nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/Roboto-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="sozluk.txt?v=1" as="fetch" crossorigin>
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
-<link rel="stylesheet" href="kb.css?v=1">
+<link rel="stylesheet" href="kb.css?v=2">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -84,7 +84,7 @@
 <style>
 .res-h .lens button{font-family:var(--round)}
 .ex{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center;font:700 13px var(--round);color:var(--p-mut)}
-.ex a{padding:5px 10px;border-radius:999px;background:var(--p-tile);border:1px solid var(--p-line);color:var(--p-ink);font-weight:800;letter-spacing:.04em}
+.ex a{padding:5px 10px;border-radius:999px;background:var(--p-tile);border:1px solid var(--p-line);color:var(--p-ink);font-weight:600;letter-spacing:.04em}
 .ex a:hover{border-color:var(--g);color:var(--g)}
 .dinfo{font:700 12px var(--mono);color:var(--p-mut);letter-spacing:.03em}
 .ptop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
@@ -135,6 +135,7 @@
 
   <section class="b res" id="res" aria-live="polite" hidden>
     <div class="res-h"><h2 id="resTitle"></h2><div class="lens" id="lens"></div></div>
+    <div class="sortb" id="sortB" role="group" aria-label="Sıralama" hidden>Sırala: <button type="button" data-s="uz" aria-pressed="true">Harf sayısına göre</button><button type="button" data-s="puan" aria-pressed="false">Puana göre</button><span class="sp"></span>Rozetteki sayı: Scrabble taş puanı (joker 0)</div>
     <div id="resBody"></div>
   </section>
 
@@ -218,8 +219,8 @@
     <nav aria-label="Diğer sayfalar"><a href="/">okutan.org</a><a href="liste/">Kelime Listeleri</a><a href="/gizli-kelime/">Gizli Kelime</a><a href="/oyunlar/">Oyunlar</a><a href="/ates-ve-su/">Ateş ve Su</a><a href="/okey/">Okey</a><a href="/tavla/">Tavla</a><a href="/101-okey/">101 Okey</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
   </footer>
 </div>
-<script src="motor.js?v=1" defer></script>
-<script src="ortak.js?v=1" defer></script>
-<script src="bulucu.js?v=1" defer></script>
+<script src="motor.js?v=2" defer></script>
+<script src="ortak.js?v=2" defer></script>
+<script src="bulucu.js?v=2" defer></script>
 </body>
 </html>
