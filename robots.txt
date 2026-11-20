@@ -5,3 +5,4 @@ Disallow: /balon/api/
 Disallow: /balon/yonetim/
 
 Sitemap: https://okutan.org/sitemap.xml
+Sitemap: https://okutan.org/kelime-bulucu/sitemap.xml

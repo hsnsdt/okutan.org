@@ -397,6 +397,19 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .gk-viz .s2{background:linear-gradient(#4a82ff,#2f6bff)}.gk-viz .s1{background:linear-gradient(#ffa24d,#ff8a1f)}.gk-viz .s0{background:linear-gradient(#4a5468,#3d475a);color:#dfe4ee}
 .proj.gkl:hover .gk-viz{transform:rotate(0) scale(1.03)}.proj.gkl:hover .gk-viz span:nth-child(3) i{transform:rotateX(360deg)}
 @media (max-width:900px){.proj.gkl{flex-direction:column;align-items:stretch}.gk-viz{margin:0 auto}}
+.proj.kbl{flex-direction:row;align-items:center;gap:28px;min-height:0;background:radial-gradient(120% 130% at 75% 0%,#16795c,#0d3b2e 55%,#08231b);color:#eaf7f2;border-color:#14473a}
+.proj.kbl .label{color:rgba(234,247,242,.7)}.proj.kbl p{color:rgba(234,247,242,.84)}
+.proj.kbl .tags span{border-color:rgba(234,247,242,.28);color:#fff}.proj.kbl .arrow{border-color:rgba(234,247,242,.4)}
+.proj.kbl:hover .arrow{background:#fff;color:#0d3b2e;border-color:#fff}.proj.kbl:hover{border-color:#14b688}
+.kb-viz{flex:none;margin-right:60px;display:grid;gap:10px;justify-items:start;transform:rotate(-2deg);transition:transform .35s}
+.kb-viz .rk{display:flex;gap:6px}
+.kb-viz .rk i{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:900 21px var(--sans);font-style:normal;color:#0a8462;background:linear-gradient(#fff,#e7f3ee);box-shadow:inset 0 -3px 0 rgba(0,0,0,.12),0 3px 0 rgba(0,0,0,.25)}
+.kb-viz .rk i.j{color:#fff;background:linear-gradient(#ff9a4a,#ff7a1a)}
+.kb-viz .rs{display:flex;flex-wrap:wrap;gap:5px;max-width:270px}
+.kb-viz .rs b{font:800 14px var(--sans);padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;transition:background .3s}
+.kb-viz .rs b u{text-decoration:none;color:#ffa65e}
+.proj.kbl:hover .kb-viz{transform:rotate(0) scale(1.03)}.proj.kbl:hover .kb-viz .rs b{background:rgba(20,182,136,.4)}
+@media (max-width:900px){.proj.kbl{flex-direction:column;align-items:stretch}.kb-viz{margin:0 auto}}
 .proj.kdl{flex-direction:row;align-items:center;gap:28px;min-height:0;background:radial-gradient(110% 130% at 75% 20%,#2c2542,#141220 70%);color:#f2eeff;border-color:#2a2438}
 .proj.kdl .label{color:rgba(242,238,255,.65)}.proj.kdl p{color:rgba(242,238,255,.84)}
 .proj.kdl h3 .k{color:#ff8a3d}.proj.kdl h3 .d{color:#4aa8ff}
@@ -650,6 +663,16 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       </div>
       <div class="gk-viz" aria-hidden="true"><span><i class="s0">D</i><i class="s1">E</i><i class="s0">N</i><i class="s0">İ</i><i class="s0">Z</i></span><span><i class="s1">M</i><i class="s0">E</i><i class="s2">L</i><i class="s2">E</i><i class="s1">K</i></span><span><i class="s2">K</i><i class="s2">A</i><i class="s2">L</i><i class="s2">E</i><i class="s2">M</i></span></div>
     </a>
+    <a class="b proj s12 kbl" href="/kelime-bulucu/">
+      <span class="arrow">→</span>
+      <div class="ok-txt">
+      <div class="label" data-i18n="kb.l">Araç · 60.000+ kelime · 2.000+ liste</div>
+      <h3 data-i18n="kb.t">Kelime Bulucu</h3>
+      <p data-i18n="kb.d">Elindeki harflerden kurulabilen bütün Türkçe kelimeleri bul: joker, kelimede geçecek harfler, k?t?p gibi kalıpla arama ve kelime anlamları. Harfle başlayan, biten ve harf sayısına göre hazır kelime listeleri.</p>
+      <div class="tags"><span>javascript</span><span>sözlük</span><span>statik sayfa üretimi</span></div>
+      </div>
+      <div class="kb-viz" aria-hidden="true"><span class="rk"><i>K</i><i>A</i><i>L</i><i>E</i><i>M</i><i class="j">*</i></span><span class="rs"><b>mak<u>a</u>le</b><b><u>r</u>eklam</b><b>kalem</b><b>kelam</b><b>emlak</b><b>kemal</b><b>elma</b></span></div>
+    </a>
     <a class="b proj s12 kdl" href="/ates-ve-su/">
       <span class="arrow">→</span>
       <div class="ok-txt">
@@ -832,7 +855,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     "about.p":"I'm an independent developer based in İzmir. <em>I take products end to end — design, code, launch, and growing the community around them.</em> Today my focus is the web; before that I spent years building Android games and apps.",
     "f.t":"At a glance","f.loc":"Location","f.role":"Role","f.roleV":"Independent developer","f.focus":"Focus","f.focusV":"Web · Community · Tools","f.status":"Status","f.statusV":"Available",
     "c.label":"Contact","c.title":"Let's build something.",
-    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","tvl.l":"Browser game · Online table · Chat","tvl.t":"Backgammon (Tavla)","kd.l":"Browser game · Two players · Online","kd.d":"A fire-and-water two-player puzzle platformer: Ateş walks on lava, Su on water. Press plates, pull levers, ride elevators and push boxes to clear the way for each other. Play on one keyboard or online with a friend.","gk.l":"Browser game · New word every day","gk.t":"Gizli Kelime (Hidden Word)","gk.d":"Find the hidden five-letter Turkish word in six guesses: blue means the right spot, orange means elsewhere in the word. The same daily word for everyone, unlimited free play, hard mode and streaks; share your result without spoiling the word.","tvl.d":"Turkish backgammon: roll the dice, build your points, hit the blots, close your home board and bear off first; a gammon (mars) scores double. Play an easy, medium or hard bot, or a friend online with table chat.","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
+    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","tvl.l":"Browser game · Online table · Chat","tvl.t":"Backgammon (Tavla)","kd.l":"Browser game · Two players · Online","kd.d":"A fire-and-water two-player puzzle platformer: Ateş walks on lava, Su on water. Press plates, pull levers, ride elevators and push boxes to clear the way for each other. Play on one keyboard or online with a friend.","kb.l":"Tool · 60,000+ words · 2,000+ lists","kb.t":"Word Finder (Kelime Bulucu)","kb.d":"Find every Turkish word you can build from your letters: wildcards, letters that must appear, pattern search like k?t?p and word meanings. Ready-made lists of words by first letter, last letter and length.","gk.l":"Browser game · New word every day","gk.t":"Gizli Kelime (Hidden Word)","gk.d":"Find the hidden five-letter Turkish word in six guesses: blue means the right spot, orange means elsewhere in the word. The same daily word for everyone, unlimited free play, hard mode and streaks; share your result without spoiling the word.","tvl.d":"Turkish backgammon: roll the dice, build your points, hit the blots, close your home board and bear off first; a gammon (mars) scores double. Play an easy, medium or hard bot, or a friend online with table chat.","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
     "c.text":"Freelance work, collaboration, or just saying hi. I usually reply within 24 hours."
   };
   var TR={};

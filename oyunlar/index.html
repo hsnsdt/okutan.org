@@ -50,7 +50,7 @@
       "@type": "ItemList",
       "@id": "https://okutan.org/oyunlar/#list",
       "itemListOrder": "https://schema.org/ItemListUnordered",
-      "numberOfItems": 7,
+      "numberOfItems": 8,
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "url": "https://okutan.org/balon/", "name": "Balon Patlat" },
         { "@type": "ListItem", "position": 2, "url": "https://okutan.org/101-okey/", "name": "101 Okey" },
@@ -58,7 +58,8 @@
         { "@type": "ListItem", "position": 4, "url": "https://okutan.org/tavla/", "name": "Tavla" },
         { "@type": "ListItem", "position": 5, "url": "https://okutan.org/gizli-kelime/", "name": "Gizli Kelime" },
         { "@type": "ListItem", "position": 6, "url": "https://okutan.org/kelimeler/", "name": "Kelimeler: Online Kelime Oyunu" },
-        { "@type": "ListItem", "position": 7, "url": "https://okutan.org/ates-ve-su/", "name": "Ateş ve Su" }
+        { "@type": "ListItem", "position": 7, "url": "https://okutan.org/ates-ve-su/", "name": "Ateş ve Su" },
+        { "@type": "ListItem", "position": 8, "url": "https://okutan.org/kelime-bulucu/", "name": "Kelime Bulucu" }
       ]
     },
     {
@@ -223,6 +224,15 @@ button{font:inherit;color:inherit}
 .gkb .s2{background:linear-gradient(#4a82ff,#2f6bff)}.gkb .s1{background:linear-gradient(#ffa24d,#ff8a1f)}.gkb .s0{background:linear-gradient(#4a5468,#3d475a);color:#dfe4ee}
 .g:hover .gkb{transform:rotate(0) scale(1.04)}.g:hover .gkb div:nth-child(3) i{transform:rotateX(360deg)}
 .g:hover .gkb div:nth-child(3) i:nth-child(2){transition-delay:.06s}.g:hover .gkb div:nth-child(3) i:nth-child(3){transition-delay:.12s}.g:hover .gkb div:nth-child(3) i:nth-child(4){transition-delay:.18s}.g:hover .gkb div:nth-child(3) i:nth-child(5){transition-delay:.24s}
+.art.kb{background:radial-gradient(120% 110% at 50% 0%,#16795c,#0d3b2e 55%,#08231b)}
+.kbb{display:grid;gap:10px;justify-items:center;transform:rotate(-2deg);transition:transform .35s}
+.kbb .rk{display:flex;gap:6px}
+.kbb .rk i{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:900 21px var(--sans);font-style:normal;color:#0a8462;background:linear-gradient(#fff,#e7f3ee);box-shadow:inset 0 -3px 0 rgba(0,0,0,.12),0 3px 0 rgba(0,0,0,.25)}
+.kbb .rk i.j{color:#fff;background:linear-gradient(#ff9a4a,#ff7a1a)}
+.kbb .rs{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;max-width:260px}
+.kbb .rs b{font:800 13.5px var(--sans);padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;transition:background .3s}
+.kbb .rs b u{text-decoration:none;color:#ffa65e}
+.g:hover .kbb{transform:rotate(0) scale(1.04)}.g:hover .kbb .rs b{background:rgba(20,182,136,.4)}
 /* Ateş ve Su sanatı */
 .art.kd{background:radial-gradient(110% 130% at 50% 20%,#2c2542,#141220 70%)}
 .art.kd svg{width:min(380px,88%);height:auto;overflow:visible;transition:transform .35s}
@@ -395,6 +405,16 @@ footer a:hover{color:var(--ink)}
         </div>
       </a>
 
+      <a class="b g" href="/kelime-bulucu/">
+        <div class="art kb" aria-hidden="true"><div class="kbb"><span class="rk"><i>K</i><i>A</i><i>L</i><i>E</i><i>M</i><i class="j">*</i></span><span class="rs"><b>mak<u>a</u>le</b><b><u>r</u>eklam</b><b>kalem</b><b>kelam</b><b>emlak</b><b>elma</b></span></div></div>
+        <div class="body">
+          <div class="head"><img class="app" src="/kelime-bulucu/icon-192.png" width="96" height="96" alt="" decoding="async"><div><div class="label">Kelime oyunlarına yardımcı</div><h3>Kelime Bulucu</h3></div></div>
+          <p>Elindeki harflerden kurulabilen bütün Türkçe kelimeleri bul; bulmacada bildiğin harfleri kalıpla ara.</p>
+          <ul class="feats"><li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Joker ve kelimede geçecek harfler</li><li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15z"/><path d="M8.5 7.5h7M8.5 11h4.5"/></svg>60.000+ kelime ve anlamları</li><li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>2.000+ hazır kelime listesi</li></ul>
+          <div class="cta"><span class="play">Aç <b>→</b></span><span class="plat" title="Tarayıcıda: masaüstü ve mobil"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 9h19"/><circle cx="6" cy="6.5" r=".6"/><circle cx="8.5" cy="6.5" r=".6"/></svg><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2" width="11" height="20" rx="2.8"/><path d="M10.5 18.5h3"/></svg></span></div>
+        </div>
+      </a>
+
       <a class="b g" href="/kelimeler/">
         <div class="art kl" aria-hidden="true">
           <div class="kl-in">
@@ -483,7 +503,7 @@ footer a:hover{color:var(--ink)}
 
   <footer class="b">
     <span>© <span id="yr">2026</span> Sedat Okutan</span>
-    <nav aria-label="Oyunlar"><a href="/">okutan.org</a><a href="/ates-ve-su/">Ateş ve Su</a><a href="/gizli-kelime/">Gizli Kelime</a><a href="/okey/">Okey</a><a href="/tavla/">Tavla</a><a href="/101-okey/">101 Okey</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
+    <nav aria-label="Oyunlar"><a href="/">okutan.org</a><a href="/ates-ve-su/">Ateş ve Su</a><a href="/gizli-kelime/">Gizli Kelime</a><a href="/kelime-bulucu/">Kelime Bulucu</a><a href="/okey/">Okey</a><a href="/tavla/">Tavla</a><a href="/101-okey/">101 Okey</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
   </footer>
 </div>
 <script>
