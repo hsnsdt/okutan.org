@@ -16,3 +16,5 @@ kelimeler/*.MOV
 
 # Balon Patlat veritabanı şifresi depoya girmez (sunucuya elle yüklenir)
 balon/api/config.php
+tools/.veri/
+kelime-bulucu/veri/og/

@@ -142,6 +142,61 @@
     return out;
   }
 
+
+  // ---------- adresler (Türkçe karakter yok) ----------
+  // Kelime sayfası adresi: ç→c ğ→g ı→i ö→o ş→s ü→u. Aynı ASCII adrese düşen kelimelerde Türkçe harfi az olan
+  // (eşitse sözlükte önce gelen) sade adresi alır, ötekiler -2, -3 … (ortak.php ve üretici aynı kuralı uygular).
+  function ascii(s) { return String(s).replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u'); }
+  function trSay(s) { var m = String(s).match(/[çğıöşü]/g); return m ? m.length : 0; }
+  function slugHarita(sozluk) {
+    var g = Object.create(null), sira = Object.create(null);
+    for (var i = 0; i < sozluk.length; i++) { var a = ascii(sozluk[i]); (g[a] || (g[a] = [])).push(i); sira[sozluk[i]] = i; }
+    for (var k in g) if (g[k].length > 1) g[k].sort(function (x, y) { return trSay(sozluk[x]) - trSay(sozluk[y]) || x - y; });
+    return {
+      slug: function (w) { var a = ascii(w), l = g[a]; if (!l || l.length < 2 || sira[w] == null) return a; var p = l.indexOf(sira[w]); return p > 0 ? a + '-' + (p + 1) : a; },
+      kelime: function (s) { var m = /^([a-z]+)(?:-(\d+))?$/.exec(s); if (!m || !g[m[1]]) return null; var l = g[m[1]], n = m[2] ? +m[2] : 1; return l[n - 1] != null ? sozluk[l[n - 1]] : null; }
+    };
+  }
+  // Araç adresi (?h= ?k= ?b=): Türkçe harf büyük ASCII harfle, ? → _ (adres çubuğunda Türkçe karakter olmaz)
+  var KOD = { 'ç': 'C', 'ğ': 'G', 'ı': 'I', 'ö': 'O', 'ş': 'S', 'ü': 'U', '?': '_' }, COZ = { C: 'ç', G: 'ğ', I: 'ı', O: 'ö', S: 'ş', U: 'ü', _: '?' };
+  function aracKod(s) { return String(s).replace(/[çğıöşü?]/g, function (c) { return KOD[c]; }); }
+  function aracCoz(s) { return String(s).replace(/[CGIOSU_]/g, function (c) { return COZ[c]; }).toLowerCase(); }
+
+  // ---------- Türkçe Scrabble torbası ----------
+  var TORBA = { a: 12, b: 2, c: 2, 'ç': 2, d: 2, e: 8, f: 1, g: 1, 'ğ': 1, h: 1, 'ı': 4, i: 7, j: 1, k: 7, l: 7, m: 4,
+    n: 5, o: 3, 'ö': 1, p: 1, r: 6, s: 3, 'ş': 2, t: 5, u: 3, 'ü': 2, v: 1, y: 2, z: 2 };
+  // Torbadakinden fazla gereken taş sayısı (2 joker bunu kapatabilir)
+  function torbaFazla(w) { var n = say(w), f = 0; for (var c in n) f += Math.max(0, n[c] - (TORBA[c] || 0)); return f; }
+
+  // ---------- Wordle yardımcısı ----------
+  // yesil: 5 elemanlı dizi (o konumdaki harf ya da ''), sari: 5 elemanlı dizi (o konumda OLMAYAN ama kelimede olan harfler),
+  // gri: kelimede olmayan harfler (yeşil/sarıda geçen bir harf griyse yalnızca fazladan tekrarı yasaklanır)
+  function wordle(sozluk, s) {
+    var L = s.uzunluk || 5, yesil = (s.yesil || []).map(harf), sari = (s.sari || []).map(harf), gri = harf(s.gri || '');
+    var gerekli = Object.create(null), out = [];
+    yesil.forEach(function (c) { if (c) gerekli[c[0]] = (gerekli[c[0]] || 0) + 1; });
+    var sariHarf = Object.create(null);
+    sari.forEach(function (x) { (x || '').split('').forEach(function (c) { sariHarf[c] = 1; }); });
+    for (var c in sariHarf) if (!gerekli[c]) gerekli[c] = 1;
+    var griSet = Object.create(null); gri.split('').forEach(function (c) { griSet[c] = 1; });
+    for (var n = 0; n < sozluk.length; n++) {
+      var w = sozluk[n];
+      if (w.length !== L) continue;
+      var ok = true;
+      for (var p = 0; p < L && ok; p++) {
+        if (yesil[p] && w[p] !== yesil[p][0]) ok = false;
+        else if (sari[p] && sari[p].indexOf(w[p]) !== -1) ok = false;
+      }
+      if (!ok) continue;
+      var sc = say(w);
+      for (var g in gerekli) if ((sc[g] || 0) < gerekli[g]) { ok = false; break; }
+      if (!ok) continue;
+      for (var h in griSet) { if (sc[h] && (sc[h] > (gerekli[h] || 0))) { ok = false; break; } }
+      if (ok) out.push({ k: w, j: [], g: -1, p: puan(w) });
+    }
+    return out;
+  }
+
   var tr = null;
   function karsilastir(a, b) {
     if (!tr) {
@@ -177,6 +232,7 @@
   return {
     HARFLER: HARFLER, MAX_HARF: MAX_HARF, kucuk: kucuk, harf: harf, raf: raf, kalip: kalip, buyuk: buyuk,
     sozlukAc: sozlukAc, sozlukSikistir: sozlukSikistir, harflerle: harflerle, kalipla: kalipla,
-    grupla: grupla, karsilastir: karsilastir, PUAN: PUAN, puan: puan, puanaGore: puanaGore, harfMi: function (c) { return HARF_RE.test(c); }
+    grupla: grupla, karsilastir: karsilastir, PUAN: PUAN, puan: puan, puanaGore: puanaGore,
+    ascii: ascii, slugHarita: slugHarita, aracKod: aracKod, aracCoz: aracCoz, TORBA: TORBA, torbaFazla: torbaFazla, wordle: wordle, harfMi: function (c) { return HARF_RE.test(c); }
   };
 });

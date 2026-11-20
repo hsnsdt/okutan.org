@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kelime Bulucu — Harflerden Kelime Türetme, Jokerli Kelime Bulma | okutan.org</title>
-<meta name="description" content="Kelime bulucu: elindeki harflerden kurulabilen tüm Türkçe kelimeleri bul. Joker (*) desteği, kelimede geçecek harfler, k?t?p gibi kalıpla arama ve anlamlar. 60.000'den fazla kelime, ücretsiz ve üyeliksiz.">
+<title>Kelime Bulucu — Harflerden Kelime Türetme, Scrabble Puanı, Wordle Yardımcısı | okutan.org</title>
+<meta name="description" content="Kelime bulucu: elindeki harflerden kurulabilen tüm Türkçe kelimeleri Scrabble puanlarıyla bul. Joker, kelimede geçecek harfler, k?t?p gibi kalıpla arama, Wordle yardımcısı, kelime geçerli mi kontrolü ve anlamlar. 60.000'den fazla kelime, ücretsiz.">
 <meta name="author" content="Sedat Okutan">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#f6f8f7">
@@ -37,7 +37,7 @@
 <link rel="preload" href="/assets/fonts/Roboto-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="sozluk.txt?v=1" as="fetch" crossorigin>
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
-<link rel="stylesheet" href="kb.css?v=3">
+<link rel="stylesheet" href="kb.css?v=4">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -74,6 +74,10 @@
         { "@type": "Question", "name": "Sözlükte kaç kelime var?", "acceptedAnswer": { "@type": "Answer", "text": "Kelime bulucu, Kelimeler oyununun 60.000'den fazla kelimelik Türkçe sözlüğünü kullanır. Özel adlar yoktur. Kelimelerin yaklaşık 45.000'inin anlamı Vikisözlük'ten alınmıştır; bir kelimeye dokununca anlamı açılır." } },
         { "@type": "Question", "name": "Türkçe karakterleri nasıl yazarım?", "acceptedAnswer": { "@type": "Answer", "text": "Klavyende Türkçe harf yoksa arama kutusunun altındaki Ç, Ğ, I, Ö, Ş ve Ü tuşlarını kullan. Büyük ya da küçük harf fark etmez; I ve İ ayrı harf olarak doğru yorumlanır." } },
         { "@type": "Question", "name": "Hangi oyunlarda işe yarar?", "acceptedAnswer": { "@type": "Answer", "text": "Harflerden kelime türetilen her oyunda: Scrabble tarzı tahta oyunları, Kelimeler gibi harf çarkı oyunları, bulmaca, çengel bulmaca ve Wordle tarzı tahmin oyunları. Kelime listeleri sayfasında harfle başlayan, biten ve harf sayısına göre ayrılmış hazır listeler de var." } },
+        { "@type": "Question", "name": "Wordle yardımcısı nasıl kullanılır?", "acceptedAnswer": { "@type": "Answer", "text": "Wordle sekmesinde yeri doğru bulunan harfleri yeşil kutulara, kelimede olan ama o yerde olmayan harfleri o kutunun altındaki sarı alana, kelimede olmayan harfleri gri alana yaz. Kalan olası beş harfli Türkçe kelimeler puana göre listelenir. Gizli Kelime gibi Wordle tarzı oyunlarda takıldığında işe yarar." } },
+        { "@type": "Question", "name": "Bir kelimenin geçerli olup olmadığını nasıl anlarım?", "acceptedAnswer": { "@type": "Answer", "text": "Geçerli mi? sekmesine kelimeyi yaz; yazdıkça sözlükte olup olmadığı, Scrabble puanı ve anlamı görünür. Sözlükte yoksa bir harf farkla yazılan en yakın kelimeler önerilir." } },
+        { "@type": "Question", "name": "Kelimelerin yanındaki puan nedir?", "acceptedAnswer": { "@type": "Answer", "text": "Rozetteki sayı, kelimenin Türkçe Scrabble taş puanlarıyla değeridir: A, E, İ, K, L, N, R, T 1; I, M, O, S, U 2; B, D, Ü, Y 3; C, Ç, Ş, Z 4; G, H, P 5; F, Ö, V 7; Ğ 8; J 10 puan. Jokerle tamamlanan harf 0 sayılır. Renk puanı gösterir: gri 1–6, yeşil 7–11, turuncu 12–19, altın 20 ve üstü." } },
+        { "@type": "Question", "name": "Torbayla kurulanlar süzgeci ne işe yarar?", "acceptedAnswer": { "@type": "Answer", "text": "Türkçe Scrabble torbasında her harften sınırlı sayıda taş vardır (örneğin tek J, tek Ğ). Süzgeç açıkken, torbadaki taşlar ve iki jokerle kurulamayacak kelimeler gizlenir." } },
         { "@type": "Question", "name": "Kelime bulucu ücretsiz mi?", "acceptedAnswer": { "@type": "Answer", "text": "Tamamen ücretsizdir; üyelik ya da indirme gerekmez. Arama senin tarayıcında yapılır, yazdığın harfler hiçbir yere gönderilmez. Sözlük bir kez yüklendikten sonra internet olmadan da çalışır." } }
       ]
     }
@@ -106,8 +110,10 @@
   <section class="b play" aria-label="Kelime arama">
     <div class="ptop">
       <div class="mtabs" role="tablist" aria-label="Arama türü">
-        <button role="tab" type="button" id="tabHarf" aria-selected="true">Harflerden bul</button>
-        <button role="tab" type="button" id="tabKalip" aria-selected="false">Kalıpla bul</button>
+        <button role="tab" type="button" id="tab_harf" aria-selected="true">Harflerden</button>
+        <button role="tab" type="button" id="tab_kalip" aria-selected="false">Kalıpla</button>
+        <button role="tab" type="button" id="tab_wordle" aria-selected="false">Wordle</button>
+        <button role="tab" type="button" id="tab_gecerli" aria-selected="false">Geçerli mi?</button>
       </div>
       <span class="dinfo" id="dictInfo">Sözlük yükleniyor…</span>
     </div>
@@ -115,35 +121,51 @@
       <label class="fld main" id="hFld"><span>Harflerin <small>· joker için * ya da ?</small></span><input class="inp" id="hInp" name="h" maxlength="16" placeholder="Örnek: kalem* ya da aeklm" autocapitalize="off" spellcheck="false" enterkeyhint="search"></label>
       <label class="fld" id="bFld"><span>Kelimede geçecek <small>· isteğe bağlı</small></span><input class="inp sm" id="bInp" name="b" maxlength="12" placeholder="Örnek: kale" autocapitalize="off" spellcheck="false" enterkeyhint="search"></label>
       <label class="fld main" id="kFld" hidden><span>Kalıp <small>· ? tek harf, * herhangi sayıda harf</small></span><input class="inp" id="kInp" name="k" maxlength="30" placeholder="Örnek: k?t?p · ka* · *lık" autocapitalize="off" spellcheck="false" enterkeyhint="search"></label>
-      <label class="fld"><span>Uzunluk</span><select class="inp" id="uSel" name="u" aria-label="Harf sayısı">
+      <div class="fld main" id="wFld" hidden>
+        <span>Yeşil <small>· yeri doğru harfler</small></span>
+        <div class="w5" role="group" aria-label="Yeşil harfler"><input class="inp wy" maxlength="1" aria-label="1. harf" autocapitalize="off" spellcheck="false"><input class="inp wy" maxlength="1" aria-label="2. harf" autocapitalize="off" spellcheck="false"><input class="inp wy" maxlength="1" aria-label="3. harf" autocapitalize="off" spellcheck="false"><input class="inp wy" maxlength="1" aria-label="4. harf" autocapitalize="off" spellcheck="false"><input class="inp wy" maxlength="1" aria-label="5. harf" autocapitalize="off" spellcheck="false"></div>
+        <span>Sarı <small>· kelimede var ama bu yerde değil</small></span>
+        <div class="w5 sari" role="group" aria-label="Sarı harfler"><input class="inp ws5" maxlength="5" aria-label="1. yerde olmayan harfler" autocapitalize="off" spellcheck="false"><input class="inp ws5" maxlength="5" aria-label="2. yerde olmayan harfler" autocapitalize="off" spellcheck="false"><input class="inp ws5" maxlength="5" aria-label="3. yerde olmayan harfler" autocapitalize="off" spellcheck="false"><input class="inp ws5" maxlength="5" aria-label="4. yerde olmayan harfler" autocapitalize="off" spellcheck="false"><input class="inp ws5" maxlength="5" aria-label="5. yerde olmayan harfler" autocapitalize="off" spellcheck="false"></div>
+        <span>Gri <small>· kelimede olmayan harfler</small></span>
+        <input class="inp sm gri" id="wg" maxlength="29" placeholder="Örnek: rtsy" autocapitalize="off" spellcheck="false" enterkeyhint="search">
+      </div>
+      <label class="fld main" id="gFld" hidden><span>Kelime <small>· sözlükte var mı?</small></span><input class="inp" id="gInp" name="g" maxlength="24" placeholder="Örnek: şelale" autocapitalize="off" spellcheck="false" enterkeyhint="search"></label>
+      <label class="fld" id="uFld"><span>Uzunluk</span><select class="inp" id="uSel" name="u" aria-label="Harf sayısı">
         <option value="0">Tümü</option><option value="2">2 harf</option><option value="3">3 harf</option><option value="4">4 harf</option><option value="5">5 harf</option><option value="6">6 harf</option><option value="7">7 harf</option><option value="8">8 harf</option><option value="9">9 harf</option><option value="10">10 harf</option><option value="11">11 harf</option><option value="12">12 harf</option><option value="13">13 harf</option><option value="14">14 harf</option><option value="15">15 harf</option><option value="16">16 harf</option>
       </select></label>
       <button class="go" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Bul</button>
     </form>
     <div class="keys" id="keys" aria-label="Türkçe harfler">
       <button type="button" data-c="ç">Ç</button><button type="button" data-c="ğ">Ğ</button><button type="button" data-c="ı">I</button><button type="button" data-c="i">İ</button><button type="button" data-c="ö">Ö</button><button type="button" data-c="ş">Ş</button><button type="button" data-c="ü">Ü</button>
-      <button type="button" class="jk" data-c="*" aria-label="Joker">*</button><button type="button" class="jk" data-c="?" id="kQ" aria-label="Tek harf" hidden>?</button>
+      <button type="button" class="jk" data-c="*" id="kJ" aria-label="Joker">*</button><button type="button" class="jk" data-c="?" id="kQ" aria-label="Tek harf" hidden>?</button>
       <span class="sp"></span>
       <button type="button" class="wide" id="kSil" aria-label="Son harfi sil">⌫</button><button type="button" class="wide" id="kTemiz">Temizle</button>
     </div>
     <p class="hint" id="hintHarf">Her harf bir kez kullanılır. <b class="jx">Turuncu</b> harf jokerle, <b class="mx">mavi</b> kısım “kelimede geçecek” kutusundan gelir.</p>
+    <p class="hint" id="hintWordle" hidden>Gizli kelimenin ipuçlarını yaz: <b style="color:var(--g)">yeşil</b> harf yerinde, <b class="jx">sarı</b> harf kelimede ama o kutudaki yerde değil, <b>gri</b> harf kelimede yok. Kalan olası 5 harfli kelimeler puana göre gelir.</p>
+    <p class="hint" id="hintGecerli" hidden>Yazdıkça cevap gelir: kelime sözlükte var mı, kaç puan, anlamı ne? Yoksa en yakın kelimeler önerilir.</p>
     <p class="hint" id="hintKalip" hidden><b>?</b> tek harf, <b>*</b> herhangi sayıda harf: <b>k?t?p</b> beş harfli, <b>ka*</b> ka ile başlayan, <b>*lık</b> lık ile biten.</p>
     <div class="ex">Örnek:
-      <a href="?h=kitap*" data-ornek="h=kitap*">KİTAP*</a><a href="?h=aeklm" data-ornek="h=aeklm">AEKLM</a><a href="?h=mal&amp;b=kale" data-ornek="h=mal&amp;b=kale">MAL + KALE</a><a href="?k=k%3Ft%3Fp" data-ornek="k=k?t?p">K?T?P</a><a href="?k=*l%C4%B1k&amp;u=6" data-ornek="k=*lık&amp;u=6">*LIK · 6</a>
+      <a href="?h=kitap*" data-ornek="h=kitap*">KİTAP*</a><a href="?h=aeklm" data-ornek="h=aeklm">AEKLM</a><a href="?h=mal&amp;b=kale" data-ornek="h=mal&amp;b=kale">MAL + KALE</a><a href="?k=k_t_p" data-ornek="k=k_t_p">K?T?P</a><a href="?k=*lIk&amp;u=6" data-ornek="k=*lIk&amp;u=6">*LIK · 6</a><a href="?wy=..l..&amp;ws=a||||e&amp;wg=rtsk" data-ornek="wy=..l..&amp;ws=a||||e&amp;wg=rtsk">WORDLE</a>
     </div>
   </section>
 
   <section class="b res" id="res" aria-live="polite" hidden>
     <div class="res-h"><h2 id="resTitle"></h2><div class="lens" id="lens"></div></div>
-    <div class="sortb" id="sortB" role="group" aria-label="Sıralama" hidden>Sırala: <button type="button" data-s="uz" aria-pressed="true">Harf sayısına göre</button><button type="button" data-s="puan" aria-pressed="false">Puana göre</button><span class="sp"></span><span class="pleg">Puan (joker 0):<sub class="pt t1">1–6</sub><sub class="pt t2">7–11</sub><sub class="pt t3">12–19</sub><sub class="pt t4">20+</sub></span></div>
+    <div class="sortb" id="sortB" role="group" aria-label="Sıralama" hidden>Sırala: <button type="button" data-s="uz" aria-pressed="true">Harf sayısına göre</button><button type="button" data-s="puan" aria-pressed="false">Puana göre</button><label class="tcb"><input type="checkbox" id="torbaCb"> Yalnızca torbayla kurulanlar</label><span class="sp"></span><span class="pleg">Puan (joker 0):<sub class="pt t1">1–6</sub><sub class="pt t2">7–11</sub><sub class="pt t3">12–19</sub><sub class="pt t4">20+</sub></span></div>
     <div id="resBody"></div>
+  </section>
+
+  <section class="b gunk" id="gunk" hidden aria-labelledby="gunkH">
+    <div class="gunk-i"><div class="label" id="gunkH">Günün kelimesi</div><div class="tiles big" id="gunkT"></div></div>
+    <div class="gunk-m"><p class="anlam" id="gunkD"></p><p class="mmeta" id="gunkM"></p><a class="more" id="gunkA" href="liste/">Kelime sayfası →</a></div>
   </section>
 
   <section class="info" aria-labelledby="pageTitle">
     <div class="b intro">
       <div class="label">Ücretsiz · Tarayıcıda · 60.000+ kelime</div>
       <h1 id="pageTitle">Kelime Bulucu: Harflerden Kelime Türetme ve Jokerli Kelime Bulma</h1>
-      <p>Elindeki harfleri yaz, bu harflerle kurulabilen <b>bütün Türkçe kelimeleri</b> uzundan kısaya gör. Boş taş için <b>joker</b> (*) ekle, tahtadaki harfleri <b>kelimede geçecek</b> kutusuna yaz, bulmacada bildiğin harfleri <b>kalıpla</b> ara. Bir kelimeye dokununca anlamı açılır. Arama tarayıcında yapılır; yazdıkların hiçbir yere gönderilmez.</p>
+      <p>Elindeki harfleri yaz, bu harflerle kurulabilen <b>bütün Türkçe kelimeleri</b> uzundan kısaya gör. Boş taş için <b>joker</b> (*) ekle, tahtadaki harfleri <b>kelimede geçecek</b> kutusuna yaz, bulmacada bildiğin harfleri <b>kalıpla</b> ara. Her kelimenin yanında <b>Scrabble puanı</b> yazar; <b>Wordle yardımcısı</b> ile kalan kelimeleri daralt, <b>Geçerli mi?</b> ile bir kelimenin sözlükte olup olmadığına bak. Bir kelimeye dokununca anlamı açılır. Arama tarayıcında yapılır; yazdıkların hiçbir yere gönderilmez.</p>
     </div>
     <div class="b controls">
       <h2>Kelime Bulucu kontrolleri</h2>
@@ -157,6 +179,7 @@
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">/</kbd></span></span><span>Arama kutusuna geç</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Tab</kbd></span></span><span>Harfler, kelimede geçecek ve uzunluk kutuları arasında geç</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Esc</kbd></span></span><span>Anlam penceresini kapat</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">⌫</kbd></span></span><span>Wordle'da boş kutudayken önceki kutuya dön</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--g)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Sonuçtaki bir kelimeye tıkla: anlamı açılır</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--g)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Ç, Ğ, I, İ, Ö, Ş, Ü tuşlarıyla Türkçe klavyen yoksa da yaz</span></li>
       </ul>
@@ -193,11 +216,12 @@
 <!--LISTE-->
     <div class="b links" aria-labelledby="hHazir">
       <h2 id="hHazir">Hazır kelime listeleri</h2>
+      <h3>Scrabble</h3><div class="lk"><a href="liste/en-yuksek-puanli-kelimeler/">En yüksek puanlı kelimeler</a><a href="liste/en-yuksek-puanli-2-harfli-kelimeler/">En yüksek puanlı 2 harfli</a><a href="liste/en-yuksek-puanli-3-harfli-kelimeler/">En yüksek puanlı 3 harfli</a><a href="liste/en-yuksek-puanli-4-harfli-kelimeler/">En yüksek puanlı 4 harfli</a><a href="liste/en-yuksek-puanli-5-harfli-kelimeler/">En yüksek puanlı 5 harfli</a><a href="liste/en-yuksek-puanli-6-harfli-kelimeler/">En yüksek puanlı 6 harfli</a><a href="liste/en-yuksek-puanli-7-harfli-kelimeler/">En yüksek puanlı 7 harfli</a><a href="liste/degerli-harfli-kisa-kelimeler/">J, Ğ, F, Ö, V geçen kısa kelimeler</a><a href="liste/2-harfli-kelimeler/">2 harfli kelimeler</a></div>
       <h3>Harf sayısına göre</h3><div class="lk"><a href="liste/2-harfli-kelimeler/">2 harfli<small>142</small></a><a href="liste/3-harfli-kelimeler/">3 harfli<small>765</small></a><a href="liste/4-harfli-kelimeler/">4 harfli<small>2.061</small></a><a href="liste/5-harfli-kelimeler/">5 harfli<small>5.531</small></a><a href="liste/6-harfli-kelimeler/">6 harfli<small>6.061</small></a><a href="liste/7-harfli-kelimeler/">7 harfli<small>7.898</small></a><a href="liste/8-harfli-kelimeler/">8 harfli<small>8.850</small></a><a href="liste/9-harfli-kelimeler/">9 harfli<small>7.361</small></a><a href="liste/10-harfli-kelimeler/">10 harfli<small>7.212</small></a><a href="liste/11-harfli-kelimeler/">11 harfli<small>5.414</small></a><a href="liste/12-harfli-kelimeler/">12 harfli<small>3.447</small></a><a href="liste/13-harfli-kelimeler/">13 harfli<small>2.283</small></a><a href="liste/14-harfli-kelimeler/">14 harfli<small>1.698</small></a><a href="liste/15-harfli-kelimeler/">15 harfli<small>1.028</small></a></div>
-      <h3>Harfle başlayan kelimeler</h3><div class="lk abc"><a href="liste/a-ile-baslayan-kelimeler/">A</a><a href="liste/b-ile-baslayan-kelimeler/">B</a><a href="liste/c-ile-baslayan-kelimeler/">C</a><a href="liste/ç-ile-baslayan-kelimeler/">Ç</a><a href="liste/d-ile-baslayan-kelimeler/">D</a><a href="liste/e-ile-baslayan-kelimeler/">E</a><a href="liste/f-ile-baslayan-kelimeler/">F</a><a href="liste/g-ile-baslayan-kelimeler/">G</a><a href="liste/h-ile-baslayan-kelimeler/">H</a><a href="liste/ı-ile-baslayan-kelimeler/">I</a><a href="liste/i-ile-baslayan-kelimeler/">İ</a><a href="liste/j-ile-baslayan-kelimeler/">J</a><a href="liste/k-ile-baslayan-kelimeler/">K</a><a href="liste/l-ile-baslayan-kelimeler/">L</a><a href="liste/m-ile-baslayan-kelimeler/">M</a><a href="liste/n-ile-baslayan-kelimeler/">N</a><a href="liste/o-ile-baslayan-kelimeler/">O</a><a href="liste/ö-ile-baslayan-kelimeler/">Ö</a><a href="liste/p-ile-baslayan-kelimeler/">P</a><a href="liste/r-ile-baslayan-kelimeler/">R</a><a href="liste/s-ile-baslayan-kelimeler/">S</a><a href="liste/ş-ile-baslayan-kelimeler/">Ş</a><a href="liste/t-ile-baslayan-kelimeler/">T</a><a href="liste/u-ile-baslayan-kelimeler/">U</a><a href="liste/ü-ile-baslayan-kelimeler/">Ü</a><a href="liste/v-ile-baslayan-kelimeler/">V</a><a href="liste/y-ile-baslayan-kelimeler/">Y</a><a href="liste/z-ile-baslayan-kelimeler/">Z</a></div>
-      <h3>Harfle biten kelimeler</h3><div class="lk abc"><a href="liste/a-ile-biten-kelimeler/">A</a><a href="liste/b-ile-biten-kelimeler/">B</a><a href="liste/c-ile-biten-kelimeler/">C</a><a href="liste/ç-ile-biten-kelimeler/">Ç</a><a href="liste/d-ile-biten-kelimeler/">D</a><a href="liste/e-ile-biten-kelimeler/">E</a><a href="liste/f-ile-biten-kelimeler/">F</a><a href="liste/g-ile-biten-kelimeler/">G</a><a href="liste/ğ-ile-biten-kelimeler/">Ğ</a><a href="liste/h-ile-biten-kelimeler/">H</a><a href="liste/ı-ile-biten-kelimeler/">I</a><a href="liste/i-ile-biten-kelimeler/">İ</a><a href="liste/j-ile-biten-kelimeler/">J</a><a href="liste/k-ile-biten-kelimeler/">K</a><a href="liste/l-ile-biten-kelimeler/">L</a><a href="liste/m-ile-biten-kelimeler/">M</a><a href="liste/n-ile-biten-kelimeler/">N</a><a href="liste/o-ile-biten-kelimeler/">O</a><a href="liste/ö-ile-biten-kelimeler/">Ö</a><a href="liste/p-ile-biten-kelimeler/">P</a><a href="liste/r-ile-biten-kelimeler/">R</a><a href="liste/s-ile-biten-kelimeler/">S</a><a href="liste/ş-ile-biten-kelimeler/">Ş</a><a href="liste/t-ile-biten-kelimeler/">T</a><a href="liste/u-ile-biten-kelimeler/">U</a><a href="liste/ü-ile-biten-kelimeler/">Ü</a><a href="liste/v-ile-biten-kelimeler/">V</a><a href="liste/y-ile-biten-kelimeler/">Y</a><a href="liste/z-ile-biten-kelimeler/">Z</a></div>
-      <h3>Harfle başlayan 5 harfli kelimeler</h3><div class="lk abc"><a href="liste/a-ile-baslayan-5-harfli-kelimeler/">A</a><a href="liste/b-ile-baslayan-5-harfli-kelimeler/">B</a><a href="liste/c-ile-baslayan-5-harfli-kelimeler/">C</a><a href="liste/ç-ile-baslayan-5-harfli-kelimeler/">Ç</a><a href="liste/d-ile-baslayan-5-harfli-kelimeler/">D</a><a href="liste/e-ile-baslayan-5-harfli-kelimeler/">E</a><a href="liste/f-ile-baslayan-5-harfli-kelimeler/">F</a><a href="liste/g-ile-baslayan-5-harfli-kelimeler/">G</a><a href="liste/h-ile-baslayan-5-harfli-kelimeler/">H</a><a href="liste/ı-ile-baslayan-5-harfli-kelimeler/">I</a><a href="liste/i-ile-baslayan-5-harfli-kelimeler/">İ</a><a href="liste/j-ile-baslayan-5-harfli-kelimeler/">J</a><a href="liste/k-ile-baslayan-5-harfli-kelimeler/">K</a><a href="liste/l-ile-baslayan-5-harfli-kelimeler/">L</a><a href="liste/m-ile-baslayan-5-harfli-kelimeler/">M</a><a href="liste/n-ile-baslayan-5-harfli-kelimeler/">N</a><a href="liste/o-ile-baslayan-5-harfli-kelimeler/">O</a><a href="liste/ö-ile-baslayan-5-harfli-kelimeler/">Ö</a><a href="liste/p-ile-baslayan-5-harfli-kelimeler/">P</a><a href="liste/r-ile-baslayan-5-harfli-kelimeler/">R</a><a href="liste/s-ile-baslayan-5-harfli-kelimeler/">S</a><a href="liste/ş-ile-baslayan-5-harfli-kelimeler/">Ş</a><a href="liste/t-ile-baslayan-5-harfli-kelimeler/">T</a><a href="liste/u-ile-baslayan-5-harfli-kelimeler/">U</a><a href="liste/ü-ile-baslayan-5-harfli-kelimeler/">Ü</a><a href="liste/v-ile-baslayan-5-harfli-kelimeler/">V</a><a href="liste/y-ile-baslayan-5-harfli-kelimeler/">Y</a><a href="liste/z-ile-baslayan-5-harfli-kelimeler/">Z</a></div>
-      <h3>Tümü</h3><div class="lk"><a href="liste/">Kelime listeleri dizini<small>2.163</small></a></div>
+      <h3>Harfle başlayan kelimeler</h3><div class="lk abc"><a href="liste/a-ile-baslayan-kelimeler/">A</a><a href="liste/b-ile-baslayan-kelimeler/">B</a><a href="liste/c-ile-baslayan-kelimeler/">C</a><a href="liste/c-ile-baslayan-kelimeler-2/">Ç</a><a href="liste/d-ile-baslayan-kelimeler/">D</a><a href="liste/e-ile-baslayan-kelimeler/">E</a><a href="liste/f-ile-baslayan-kelimeler/">F</a><a href="liste/g-ile-baslayan-kelimeler/">G</a><a href="liste/h-ile-baslayan-kelimeler/">H</a><a href="liste/i-ile-baslayan-kelimeler-2/">I</a><a href="liste/i-ile-baslayan-kelimeler/">İ</a><a href="liste/j-ile-baslayan-kelimeler/">J</a><a href="liste/k-ile-baslayan-kelimeler/">K</a><a href="liste/l-ile-baslayan-kelimeler/">L</a><a href="liste/m-ile-baslayan-kelimeler/">M</a><a href="liste/n-ile-baslayan-kelimeler/">N</a><a href="liste/o-ile-baslayan-kelimeler/">O</a><a href="liste/o-ile-baslayan-kelimeler-2/">Ö</a><a href="liste/p-ile-baslayan-kelimeler/">P</a><a href="liste/r-ile-baslayan-kelimeler/">R</a><a href="liste/s-ile-baslayan-kelimeler/">S</a><a href="liste/s-ile-baslayan-kelimeler-2/">Ş</a><a href="liste/t-ile-baslayan-kelimeler/">T</a><a href="liste/u-ile-baslayan-kelimeler/">U</a><a href="liste/u-ile-baslayan-kelimeler-2/">Ü</a><a href="liste/v-ile-baslayan-kelimeler/">V</a><a href="liste/y-ile-baslayan-kelimeler/">Y</a><a href="liste/z-ile-baslayan-kelimeler/">Z</a></div>
+      <h3>Harfle biten kelimeler</h3><div class="lk abc"><a href="liste/a-ile-biten-kelimeler/">A</a><a href="liste/b-ile-biten-kelimeler/">B</a><a href="liste/c-ile-biten-kelimeler/">C</a><a href="liste/c-ile-biten-kelimeler-2/">Ç</a><a href="liste/d-ile-biten-kelimeler/">D</a><a href="liste/e-ile-biten-kelimeler/">E</a><a href="liste/f-ile-biten-kelimeler/">F</a><a href="liste/g-ile-biten-kelimeler/">G</a><a href="liste/g-ile-biten-kelimeler-2/">Ğ</a><a href="liste/h-ile-biten-kelimeler/">H</a><a href="liste/i-ile-biten-kelimeler-2/">I</a><a href="liste/i-ile-biten-kelimeler/">İ</a><a href="liste/j-ile-biten-kelimeler/">J</a><a href="liste/k-ile-biten-kelimeler/">K</a><a href="liste/l-ile-biten-kelimeler/">L</a><a href="liste/m-ile-biten-kelimeler/">M</a><a href="liste/n-ile-biten-kelimeler/">N</a><a href="liste/o-ile-biten-kelimeler/">O</a><a href="liste/o-ile-biten-kelimeler-2/">Ö</a><a href="liste/p-ile-biten-kelimeler/">P</a><a href="liste/r-ile-biten-kelimeler/">R</a><a href="liste/s-ile-biten-kelimeler/">S</a><a href="liste/s-ile-biten-kelimeler-2/">Ş</a><a href="liste/t-ile-biten-kelimeler/">T</a><a href="liste/u-ile-biten-kelimeler/">U</a><a href="liste/u-ile-biten-kelimeler-2/">Ü</a><a href="liste/v-ile-biten-kelimeler/">V</a><a href="liste/y-ile-biten-kelimeler/">Y</a><a href="liste/z-ile-biten-kelimeler/">Z</a></div>
+      <h3>Harfle başlayan 5 harfli kelimeler</h3><div class="lk abc"><a href="liste/a-ile-baslayan-5-harfli-kelimeler/">A</a><a href="liste/b-ile-baslayan-5-harfli-kelimeler/">B</a><a href="liste/c-ile-baslayan-5-harfli-kelimeler/">C</a><a href="liste/c-ile-baslayan-5-harfli-kelimeler-2/">Ç</a><a href="liste/d-ile-baslayan-5-harfli-kelimeler/">D</a><a href="liste/e-ile-baslayan-5-harfli-kelimeler/">E</a><a href="liste/f-ile-baslayan-5-harfli-kelimeler/">F</a><a href="liste/g-ile-baslayan-5-harfli-kelimeler/">G</a><a href="liste/h-ile-baslayan-5-harfli-kelimeler/">H</a><a href="liste/i-ile-baslayan-5-harfli-kelimeler-2/">I</a><a href="liste/i-ile-baslayan-5-harfli-kelimeler/">İ</a><a href="liste/j-ile-baslayan-5-harfli-kelimeler/">J</a><a href="liste/k-ile-baslayan-5-harfli-kelimeler/">K</a><a href="liste/l-ile-baslayan-5-harfli-kelimeler/">L</a><a href="liste/m-ile-baslayan-5-harfli-kelimeler/">M</a><a href="liste/n-ile-baslayan-5-harfli-kelimeler/">N</a><a href="liste/o-ile-baslayan-5-harfli-kelimeler/">O</a><a href="liste/o-ile-baslayan-5-harfli-kelimeler-2/">Ö</a><a href="liste/p-ile-baslayan-5-harfli-kelimeler/">P</a><a href="liste/r-ile-baslayan-5-harfli-kelimeler/">R</a><a href="liste/s-ile-baslayan-5-harfli-kelimeler/">S</a><a href="liste/s-ile-baslayan-5-harfli-kelimeler-2/">Ş</a><a href="liste/t-ile-baslayan-5-harfli-kelimeler/">T</a><a href="liste/u-ile-baslayan-5-harfli-kelimeler/">U</a><a href="liste/u-ile-baslayan-5-harfli-kelimeler-2/">Ü</a><a href="liste/v-ile-baslayan-5-harfli-kelimeler/">V</a><a href="liste/y-ile-baslayan-5-harfli-kelimeler/">Y</a><a href="liste/z-ile-baslayan-5-harfli-kelimeler/">Z</a></div>
+      <h3>Tümü</h3><div class="lk"><a href="liste/">Kelime listeleri dizini<small>2.174</small></a></div>
     </div>
 <!--/LISTE-->
     <div class="b faq">
@@ -209,18 +233,23 @@
       <details><summary>Sözlükte kaç kelime var?</summary><p>Kelime bulucu, Kelimeler oyununun 60.000'den fazla kelimelik Türkçe sözlüğünü kullanır. Özel adlar yoktur. Kelimelerin yaklaşık 45.000'inin anlamı Vikisözlük'ten alınmıştır; bir kelimeye dokununca anlamı açılır.</p></details>
       <details><summary>Türkçe karakterleri nasıl yazarım?</summary><p>Klavyende Türkçe harf yoksa arama kutusunun altındaki Ç, Ğ, I, Ö, Ş ve Ü tuşlarını kullan. Büyük ya da küçük harf fark etmez; I ve İ ayrı harf olarak doğru yorumlanır.</p></details>
       <details><summary>Hangi oyunlarda işe yarar?</summary><p>Harflerden kelime türetilen her oyunda: Scrabble tarzı tahta oyunları, Kelimeler gibi harf çarkı oyunları, bulmaca, çengel bulmaca ve Wordle tarzı tahmin oyunları. Kelime listeleri sayfasında harfle başlayan, biten ve harf sayısına göre ayrılmış hazır listeler de var.</p></details>
+      <details><summary>Wordle yardımcısı nasıl kullanılır?</summary><p>Wordle sekmesinde yeri doğru bulunan harfleri yeşil kutulara, kelimede olan ama o yerde olmayan harfleri o kutunun altındaki sarı alana, kelimede olmayan harfleri gri alana yaz. Kalan olası beş harfli Türkçe kelimeler puana göre listelenir. Gizli Kelime gibi Wordle tarzı oyunlarda takıldığında işe yarar.</p></details>
+      <details><summary>Bir kelimenin geçerli olup olmadığını nasıl anlarım?</summary><p>Geçerli mi? sekmesine kelimeyi yaz; yazdıkça sözlükte olup olmadığı, Scrabble puanı ve anlamı görünür. Sözlükte yoksa bir harf farkla yazılan en yakın kelimeler önerilir.</p></details>
+      <details><summary>Kelimelerin yanındaki puan nedir?</summary><p>Rozetteki sayı, kelimenin Türkçe Scrabble taş puanlarıyla değeridir: A, E, İ, K, L, N, R, T 1; I, M, O, S, U 2; B, D, Ü, Y 3; C, Ç, Ş, Z 4; G, H, P 5; F, Ö, V 7; Ğ 8; J 10 puan. Jokerle tamamlanan harf 0 sayılır. Renk puanı gösterir: gri 1–6, yeşil 7–11, turuncu 12–19, altın 20 ve üstü.</p></details>
+      <details><summary>Torbayla kurulanlar süzgeci ne işe yarar?</summary><p>Türkçe Scrabble torbasında her harften sınırlı sayıda taş vardır (örneğin tek J, tek Ğ). Süzgeç açıkken, torbadaki taşlar ve iki jokerle kurulamayacak kelimeler gizlenir.</p></details>
       <details><summary>Kelime bulucu ücretsiz mi?</summary><p>Tamamen ücretsizdir; üyelik ya da indirme gerekmez. Arama senin tarayıcında yapılır, yazdığın harfler hiçbir yere gönderilmez. Sözlük bir kez yüklendikten sonra internet olmadan da çalışır.</p></details>
       <p class="src">Kelime anlamları: <a href="https://tr.wiktionary.org/" target="_blank" rel="noopener">Vikisözlük</a> (CC BY-SA). Scrabble, Hasbro ve Mattel'in; Wordle, The New York Times Company'nin markasıdır; bu araçla bağlantıları yoktur.</p>
     </div>
   </section>
   </main>
+  <div class="stick" id="stick" hidden><span class="stick-q" id="stickQ"></span><button type="button" class="go" id="stickBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>Değiştir</button></div>
   <footer class="b">
     <span>© <span id="yr">2026</span> Sedat Okutan</span>
     <nav aria-label="Diğer sayfalar"><a href="/">okutan.org</a><a href="liste/">Kelime Listeleri</a><a href="/gizli-kelime/">Gizli Kelime</a><a href="/oyunlar/">Oyunlar</a><a href="/ates-ve-su/">Ateş ve Su</a><a href="/okey/">Okey</a><a href="/tavla/">Tavla</a><a href="/101-okey/">101 Okey</a><a href="/balon/">Balon Patlat</a><a href="/kelimeler/">Kelimeler</a></nav>
   </footer>
 </div>
-<script src="motor.js?v=2" defer></script>
-<script src="ortak.js?v=3" defer></script>
-<script src="bulucu.js?v=3" defer></script>
+<script src="motor.js?v=4" defer></script>
+<script src="ortak.js?v=4" defer></script>
+<script src="bulucu.js?v=4" defer></script>
 </body>
 </html>

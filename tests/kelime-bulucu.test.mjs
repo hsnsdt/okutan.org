@@ -100,8 +100,58 @@ test('puan: Türkçe Scrabble taş değerleri, joker 0; üç dosyada aynı tablo
   const tablo = src => { const m = src.match(/PUAN = \{([\s\S]*?)\};/); return Object.fromEntries([...m[1].matchAll(/'?([a-zçğıöşü])'?: (\d+)/g)].map(x => [x[1], +x[2]])); };
   const ortak = tablo(readFileSync(new URL('../kelime-bulucu/ortak.js', import.meta.url), 'utf8'));
   assert.deepEqual(ortak, KB.PUAN);
-  const php = readFileSync(new URL('../kelime-bulucu/kelime.php', import.meta.url), 'utf8').match(/const PUAN = \[([\s\S]*?)\];/)[1];
+  const php = readFileSync(new URL('../kelime-bulucu/ortak.php', import.meta.url), 'utf8').match(/const PUAN = \[([\s\S]*?)\];/)[1];
   const phpT = Object.fromEntries([...php.matchAll(/'([a-zçğıöşü])' => (\d+)/g)].map(x => [x[1], +x[2]]));
   assert.deepEqual(phpT, KB.PUAN);
   assert.equal(Object.keys(KB.PUAN).length, 29);
+});
+
+test('ascii adres: Türkçe karakter yok, çakışanlar -2/-3', () => {
+  const s = ['asi', 'ası', 'aşı', 'kalem', 'kir', 'kır', 'çiçek'];
+  const h = KB.slugHarita(s);
+  assert.equal(h.slug('kalem'), 'kalem');
+  assert.equal(h.slug('çiçek'), 'cicek');
+  assert.equal(h.slug('asi'), 'asi');
+  assert.equal(h.slug('ası'), 'asi-2');
+  assert.equal(h.slug('aşı'), 'asi-3');
+  assert.equal(h.slug('kır'), 'kir-2');
+  assert.equal(h.kelime('asi-3'), 'aşı');
+  assert.equal(h.kelime('cicek'), 'çiçek');
+  assert.equal(h.kelime('asi-9'), null);
+});
+
+test('araç adresi: Türkçe harf büyük ASCII, ? → _', () => {
+  assert.equal(KB.aracKod('çiçek?ş'), 'CiCek_S');
+  assert.equal(KB.aracCoz('CiCek_S'), 'çiçek?ş');
+  assert.equal(KB.aracCoz(KB.aracKod('ığdır*öü')), 'ığdır*öü');
+  assert.ok(/^[\x20-\x7e]*$/.test(KB.aracKod('şğüçöı?*')));
+});
+
+test('torba: tek J, iki joker', () => {
+  assert.equal(KB.torbaFazla('kalem'), 0);
+  assert.equal(KB.torbaFazla('jüjitsu'), 1);
+  assert.equal(KB.torbaFazla('ffff'), 3);
+});
+
+test('wordle: yeşil, sarı, gri', () => {
+  const s = ['kalem', 'kelam', 'kalım', 'melek', 'lamba', 'elmas', 'kaşık'];
+  const k = r => r.map(x => x.k).sort();
+  assert.deepEqual(k(KB.wordle(s, { yesil: ['k', '', 'l', '', 'm'], sari: [], gri: '' })), ['kalem', 'kalım', 'kelam']);
+  assert.deepEqual(k(KB.wordle(s, { yesil: ['', '', '', '', ''], sari: ['', 'a', '', '', ''], gri: 'k' })), ['elmas']);
+  assert.deepEqual(k(KB.wordle(s, { yesil: ['k', '', '', '', ''], sari: [], gri: 'ı' })), ['kalem', 'kelam']);
+  // aynı harf hem yeşil hem gri: yalnızca fazladan tekrarı yasak
+  assert.deepEqual(k(KB.wordle(s, { yesil: ['', 'e', '', '', ''], sari: [], gri: 'e' })), ['kelam']);
+});
+
+test('ascii adres kuralı PHP ile aynı (php varsa)', async t => {
+  const { execFileSync } = await import('node:child_process');
+  const { existsSync } = await import('node:fs');
+  const php = ['C:/xampp/php/php.exe', '/usr/bin/php'].find(p => existsSync(p));
+  if (!php) return t.skip('php yok');
+  const s = KB.sozlukAc(readFileSync(new URL('../kelime-bulucu/sozluk.txt', import.meta.url), 'utf8'));
+  const h = KB.slugHarita(s);
+  const ornek = ['ası', 'asi', 'aşı', 'nasır', 'nasir', 'naşir', 'şasi', 'şaşı', 'sası', 'kalem', 'çiçek', 'ığdır', 'güneş', 'kır', 'kir', 'şiş', 'sis', 'şış'].filter(w => s.includes(w));
+  const kod = `require 'kelime-bulucu/ortak.php'; $o=[]; foreach (json_decode($argv[1], true) as $w) { $sl = Sozluk::slug($w); $o[$w] = [$sl, Sozluk::kelime($sl)]; } echo json_encode($o, JSON_UNESCAPED_UNICODE);`;
+  const out = JSON.parse(execFileSync(php, ['-r', kod, JSON.stringify(ornek)], { cwd: new URL('..', import.meta.url), encoding: 'utf8' }));
+  for (const w of ornek) { assert.equal(out[w][0], h.slug(w), w); assert.equal(out[w][1], w, w + ' geri'); }
 });

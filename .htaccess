@@ -10,8 +10,10 @@
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^ https://okutan.org%{REQUEST_URI} [L,R=301]
 
-  # Kelime Bulucu kelime sayfaları: /kelime-bulucu/kelime/<kelime>/ → kelime.php (tek dosya, 60.000+ sayfa)
+  # Kelime Bulucu: kelime ve liste sayfalarını PHP üretir (adreslerde Türkçe karakter yok; eski adresler 301 ile yönlenir)
   RewriteRule ^kelime-bulucu/kelime/([^/]+)/?$ kelime-bulucu/kelime.php?k=$1 [B,L,QSA]
+  RewriteRule ^kelime-bulucu/liste/?$ kelime-bulucu/liste.php [L,QSA]
+  RewriteRule ^kelime-bulucu/liste/([^/]+)/?(index\.html)?$ kelime-bulucu/liste.php?s=$1 [B,L,QSA]
 </IfModule>
 
 # Özel 404 sayfası
