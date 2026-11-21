@@ -19,15 +19,15 @@
 //   POST ?a=t_chat {code, seat, seatKey, after}  → yeni sohbet mesajları
 //   POST ?a=t_sync {code, seat, seatKey, data}   → (yalnızca Kor ile Damla) kendi anlık durumunu yazar, öbür koltuğunkini alır
 //
-// Aynı dosya düz Okey'e, Tavla'ya ve Batak'a da hizmet eder: okey/api, tavla/api ve batak/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
-// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*, Batak: bt_*), böylece sıralamalar ve masalar karışmaz.
-// Batak'ta günlük elde puan (en yüksek üstte) tutulur; diğerlerinde çekiş sayısı (en az üstte).
+// Aynı dosya düz Okey'e, Tavla'ya, Batak'a ve King'e de hizmet eder: okey/api, tavla/api, batak/api ve king/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
+// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*, Batak: bt_*, King: kg_*), böylece sıralamalar ve masalar karışmaz.
+// Batak ve King'de günlük elde puan (en yüksek üstte) tutulur; diğerlerinde çekiş sayısı (en az üstte).
 // Tavla masası iki kişiliktir (koltuk 0 ve 1). Kor ile Damla (kor-ile-damla/api, kd_*) da iki kişiliktir; masa sahibi oyunu
 // yönetmez, iki tarayıcı t_sync ile anlık durumlarını değiş tokuş eder (ok_private'ta koltuk 10 ve 11).
 declare(strict_types=1);
 $GAME = defined('OKEY_GAME') ? OKEY_GAME : '101';
-$PFX = ['okey' => 'oy_', 'tavla' => 'tv_', 'kor' => 'kd_', 'batak' => 'bt_'][$GAME] ?? 'ok_';
-$HI = $GAME === 'batak'; // günlük elde yüksek puan iyi
+$PFX = ['okey' => 'oy_', 'tavla' => 'tv_', 'kor' => 'kd_', 'batak' => 'bt_', 'king' => 'kg_'][$GAME] ?? 'ok_';
+$HI = in_array($GAME, ['batak', 'king'], true); // günlük elde yüksek puan iyi
 $MAX_SEAT = in_array($GAME, ['tavla', 'kor'], true) ? 1 : 3;
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
@@ -164,7 +164,7 @@ try {
         if (random_int(1, 40) === 1) q($db, 'DELETE FROM ok_sessions WHERE created_at < ?', [gmdate('Y-m-d H:i:s', time() - 3 * 86400)]);
         $tok = bin2hex(random_bytes(16)); $day = $mode === 'daily' ? ist_today() : null;
         q($db, 'INSERT INTO ok_sessions (token, ip, mode, day, created_at) VALUES (?, ?, ?, ?, ?)', [$tok, $ip, $mode, $day, now()]);
-        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a((['okey' => 'duz-okey-', 'batak' => 'batak-'][$GAME] ?? 'okey-') . $day) : null]);
+        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a((['okey' => 'duz-okey-', 'batak' => 'batak-', 'king' => 'king-'][$GAME] ?? 'okey-') . $day) : null]);
     }
     if ($a === 'submit') {
         $in = body();
@@ -174,18 +174,20 @@ try {
         if (!$s || (int)$s['used']) fail('bad_token');
         $mode = $s['mode']; $hands = (int)($in['hands'] ?? 0); $total = $in['total'] ?? null; $won = !empty($in['won']) ? 1 : 0;
         $level = in_array($in['level'] ?? '', ['easy', 'normal', 'hard', 'mixed'], true) ? $in['level'] : 'normal';
-        $maxHands = ['okey' => 99, 'tavla' => 25, 'batak' => 16][$GAME] ?? 11;
-        $range = ['okey' => [-400, 400], 'tavla' => [0, 30], 'batak' => [-210, 210]][$GAME] ?? [-3232, 30000];
+        $maxHands = ['okey' => 99, 'tavla' => 25, 'batak' => 16, 'king' => 20][$GAME] ?? 11;
+        $range = ['okey' => [-400, 400], 'tavla' => [0, 30], 'batak' => [-210, 210], 'king' => [-5300, 5300]][$GAME] ?? [-3232, 30000];
+        // King'de ceza elleri erken bitebilir: el başına en az süre ve şüpheli süre daha kısa
+        $minSec = ['king' => 8][$GAME] ?? 20; $flagSec = ['king' => 25][$GAME] ?? 45;
         if (!is_int($total) || $total < $range[0] || $total > $range[1]) fail('bad_total');
         if ($hands < 1 || $hands > $maxHands) fail('bad_hands');
         $elapsed = time() - strtotime($s['created_at'] . ' UTC');
-        if ($elapsed < $hands * 20) fail('too_fast');
+        if ($elapsed < $hands * $minSec) fail('too_fast');
         if ($elapsed > 6 * 3600) fail('expired');
         if ($mode === 'daily') {
             if ($hands !== 1) fail('bad_hands');
             if ((int)q($db, "SELECT COUNT(*) FROM ok_games WHERE name = ? AND mode = 'daily' AND day = ?", [$name, $s['day']])->fetchColumn()) fail('daily_done');
         }
-        $flag = ($elapsed < $hands * 45 && $won) ? 1 : 0;
+        $flag = ($elapsed < $hands * $flagSec && $won) ? 1 : 0;
         $u = q($db, 'UPDATE ok_sessions SET used = 1 WHERE token = ? AND used = 0', [$tok]); if ($u->rowCount() !== 1) fail('bad_token');
         q($db, 'INSERT INTO ok_games (name, mode, level, hands, total, won, best_open, finished, day, duration, ip, created_at, flag) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [$name, $mode, $level, $hands, $total, $won, max(0, min(999, (int)($in['bestOpen'] ?? 0))), max(0, min($maxHands, (int)($in['finished'] ?? 0))), $s['day'], $elapsed, $ip, now(), $flag]);

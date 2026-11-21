@@ -328,7 +328,11 @@
   function toast(m) { var e = $('toast'); e.textContent = m; e.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function () { e.classList.remove('show'); }, 3400); }
 
   // ================= animasyon =================
-  var reduced = function () { return matchMedia('(prefers-reduced-motion: reduce)').matches; };
+  // sayfa gizliyken animasyon oynatma (tarayıcı kare çizmez, animasyon donar); oynatılanı da süresi dolunca bitmiş say
+  var reduced = function () { return document.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches; };
+  function animDone(anim, ms) {
+    return new Promise(function (res) { var done = false; function fin() { if (!done) { done = true; res(); } } anim.onfinish = fin; setTimeout(fin, ms + 250); });
+  }
   function plateRect(seat) { var e = $('pl' + pos(seat)); return e ? e.querySelector('.av').getBoundingClientRect() : null; }
   function snapshot() {
     var r = {}; $('hand').querySelectorAll('.card').forEach(function (e) { r[e.dataset.id] = e.getBoundingClientRect(); });
@@ -354,7 +358,7 @@
     var dur = 340 * Math.min(1.2, Math.max(0.7, game ? game.speed : 1));
     var anim = g.animate([{ transform: 'translate(0,0) scale(' + s0 + ') rotate(0)' }, { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(1) rotate(' + SP_ROT[toSpotP] + 'deg)' }],
       { duration: dur, easing: 'cubic-bezier(.25,.8,.3,1)' });
-    return new Promise(function (res) { anim.onfinish = function () { g.remove(); to.style.visibility = ''; res(); }; });
+    return animDone(anim, dur).then(function () { g.remove(); to.style.visibility = ''; });
   }
   function collect(winner) {
     var target = plateRect(winner), els = [];
@@ -370,7 +374,7 @@
       var anim = g.animate([{ transform: 'translate(0,0) scale(1) rotate(' + SP_ROT[o.p] + 'deg)', opacity: 1 },
         { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(.3) rotate(' + (SP_ROT[o.p] * 3) + 'deg)', opacity: 0.15 }],
         { duration: 420, delay: i * 30, easing: 'cubic-bezier(.5,0,.7,.4)', fill: 'forwards' });
-      return new Promise(function (res) { anim.onfinish = function () { g.remove(); res(); }; });
+      return animDone(anim, 420 + i * 30).then(function () { g.remove(); });
     }));
   }
   // Bir olayı göster: ses, balon, kart uçuşu, eli toplama. Yerel oyunda, masa sahibinde ve misafirde aynı.

@@ -8,6 +8,7 @@
     ['/gizli-kelime/', 'Gizli Kelime'],
     ['/okey/', 'Okey'],
     ['/batak/', 'Batak'],
+    ['/king/', 'King'],
     ['/tavla/', 'Tavla'],
     ['/101-okey/', '101 Okey'],
     ['/balon/', 'Balon Patlat'],
