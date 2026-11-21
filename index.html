@@ -371,12 +371,12 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .proj.btk{background:radial-gradient(120% 120% at 70% 30%,#1f707b,#0b3540);border-color:#0f4651}
 .proj.btk:hover{border-color:#1f707b}.proj.btk:hover .arrow{color:#0b3540}
 .bt-fan{position:relative;width:200px;height:150px}
-.bc{position:absolute;left:50%;bottom:0;width:80px;height:112px;margin-left:-40px;border-radius:10px;background:linear-gradient(165deg,#fff,#f1eee5);box-shadow:0 0 0 1px rgba(0,0,0,.1),0 14px 22px -10px rgba(0,0,0,.65);transform-origin:50% 135%;font:900 27px/1 "Nunito",var(--sans);color:#191c24;padding:9px 0 0 10px;font-style:normal;text-align:left;transition:transform .35s}
-.bc.r{color:#d3263a}
-.bc b{display:block;font-size:20px;margin-top:2px}
-.bc::after{content:attr(data-s);position:absolute;right:9px;bottom:6px;font-size:46px;line-height:1}
-.bc:nth-child(1){transform:translateX(-36px) rotate(-15deg)}.bc:nth-child(3){transform:translateX(36px) rotate(15deg)}
-a:hover .bc:nth-child(1){transform:translateX(-44px) rotate(-21deg)}a:hover .bc:nth-child(3){transform:translateX(44px) rotate(21deg)}a:hover .bc:nth-child(2){transform:translateY(-6px)}
+.bt-fan .btc{position:absolute;left:50%;bottom:0;width:80px;height:112px;margin-left:-40px;border-radius:10px;background:linear-gradient(165deg,#fff,#f1eee5);box-shadow:0 0 0 1px rgba(0,0,0,.1),0 14px 22px -10px rgba(0,0,0,.65);transform-origin:50% 135%;font:900 27px/1 "Nunito",var(--sans);color:#191c24;padding:9px 0 0 10px;font-style:normal;text-align:left;transition:transform .35s}
+.bt-fan .btc.r{color:#d3263a}
+.bt-fan .btc b{display:block;font-size:20px;margin-top:2px}
+.bt-fan .btc::after{content:attr(data-s);position:absolute;right:9px;bottom:6px;font-size:46px;line-height:1}
+.bt-fan .btc:nth-child(1){transform:translateX(-36px) rotate(-15deg)}.bt-fan .btc:nth-child(3){transform:translateX(36px) rotate(15deg)}
+a:hover .bt-fan .btc:nth-child(1){transform:translateX(-44px) rotate(-21deg)}a:hover .bt-fan .btc:nth-child(3){transform:translateX(44px) rotate(21deg)}a:hover .bt-fan .btc:nth-child(2){transform:translateY(-6px)}
 @media (max-width:900px){.proj.ok101{flex-direction:column;align-items:stretch}.ok-viz{margin:0 auto}.ok-txt p{padding-right:0}}
 .proj.tvl{flex-direction:row;align-items:center;gap:28px;min-height:0;background:radial-gradient(120% 120% at 75% 30%,#7a4822,#3c210d);color:#f6efe1;border-color:#55301a}
 .proj.tvl .label{color:rgba(255,236,200,.7)}.proj.tvl p{color:rgba(255,240,215,.85)}
@@ -696,7 +696,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       <p data-i18n="bt.d">İhaleli Batak: elini değerlendir, ihaleyi ver, kozu seç ve elleri topla. Söylediğini tutturursan aldığın el kadar puan, tutturamazsan batarsın; botlara karşı, günlük elde ya da arkadaşlarınla online masada.</p>
       <div class="tags"><span>javascript</span><span>yapay rakip</span><span>online masa</span></div>
       </div>
-      <div class="ok-viz" aria-hidden="true"><div class="bt-fan"><i class="bc r" data-s="♥">K<b>♥</b></i><i class="bc" data-s="♠">A<b>♠</b></i><i class="bc r" data-s="♦">Q<b>♦</b></i></div></div>
+      <div class="ok-viz" aria-hidden="true"><div class="bt-fan"><i class="btc r" data-s="♥">K<b>♥</b></i><i class="btc" data-s="♠">A<b>♠</b></i><i class="btc r" data-s="♦">Q<b>♦</b></i></div></div>
     </a>
     <a class="b proj s4 gm gkl" href="/gizli-kelime/">
       <span class="arrow">→</span>
