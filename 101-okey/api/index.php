@@ -19,13 +19,15 @@
 //   POST ?a=t_chat {code, seat, seatKey, after}  → yeni sohbet mesajları
 //   POST ?a=t_sync {code, seat, seatKey, data}   → (yalnızca Kor ile Damla) kendi anlık durumunu yazar, öbür koltuğunkini alır
 //
-// Aynı dosya düz Okey'e ve Tavla'ya da hizmet eder: okey/api ve tavla/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
-// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*), böylece sıralamalar ve masalar karışmaz.
+// Aynı dosya düz Okey'e, Tavla'ya ve Batak'a da hizmet eder: okey/api, tavla/api ve batak/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
+// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*, Batak: bt_*), böylece sıralamalar ve masalar karışmaz.
+// Batak'ta günlük elde puan (en yüksek üstte) tutulur; diğerlerinde çekiş sayısı (en az üstte).
 // Tavla masası iki kişiliktir (koltuk 0 ve 1). Kor ile Damla (kor-ile-damla/api, kd_*) da iki kişiliktir; masa sahibi oyunu
 // yönetmez, iki tarayıcı t_sync ile anlık durumlarını değiş tokuş eder (ok_private'ta koltuk 10 ve 11).
 declare(strict_types=1);
 $GAME = defined('OKEY_GAME') ? OKEY_GAME : '101';
-$PFX = ['okey' => 'oy_', 'tavla' => 'tv_', 'kor' => 'kd_'][$GAME] ?? 'ok_';
+$PFX = ['okey' => 'oy_', 'tavla' => 'tv_', 'kor' => 'kd_', 'batak' => 'bt_'][$GAME] ?? 'ok_';
+$HI = $GAME === 'batak'; // günlük elde yüksek puan iyi
 $MAX_SEAT = in_array($GAME, ['tavla', 'kor'], true) ? 1 : 3;
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
@@ -138,7 +140,7 @@ try {
                 ' GROUP BY name HAVING w > 0 ORDER BY w DESC, g ASC LIMIT 20';
             return array_map(fn($r) => ['name' => $r['name'], 'wins' => (int)$r['w'], 'games' => (int)$r['g']], q($db, $sql, $since ? [$since] : [])->fetchAll());
         };
-        $daily = q($db, "SELECT name, MIN(total) AS s FROM ok_games WHERE flag = 0 AND mode = 'daily' AND day = ? GROUP BY name ORDER BY s ASC, MIN(created_at) ASC LIMIT 20", [ist_today()])->fetchAll();
+        $daily = q($db, "SELECT name, " . ($HI ? 'MAX' : 'MIN') . "(total) AS s FROM ok_games WHERE flag = 0 AND mode = 'daily' AND day = ? GROUP BY name ORDER BY s " . ($HI ? 'DESC' : 'ASC') . ", MIN(created_at) ASC LIMIT 20", [ist_today()])->fetchAll();
         out(['ok' => true, 'week' => $wins(week_start()), 'all' => $wins(null), 'day' => ist_today(),
             'daily' => array_map(fn($r) => ['name' => $r['name'], 'score' => (int)$r['s']], $daily),
             'games' => (int)q($db, 'SELECT COUNT(*) FROM ok_games')->fetchColumn()]);
@@ -146,7 +148,7 @@ try {
     if ($a === 'profile' && $m === 'GET') {
         $n = clean_name($_GET['name'] ?? null); if ($n === null) fail('bad_name');
         $r = q($db, "SELECT COUNT(*) g, SUM(won) w, MAX(best_open) bo, SUM(finished) f, MIN(created_at) first FROM ok_games WHERE name = ? AND mode <> 'daily'", [$n])->fetch();
-        $d = q($db, "SELECT COUNT(*) g, MIN(total) best FROM ok_games WHERE name = ? AND mode = 'daily'", [$n])->fetch();
+        $d = q($db, "SELECT COUNT(*) g, " . ($HI ? 'MAX' : 'MIN') . "(total) best FROM ok_games WHERE name = ? AND mode = 'daily'", [$n])->fetch();
         if (!(int)$r['g'] && !(int)$d['g']) fail('not_found', 404);
         out(['ok' => true, 'name' => $n, 'games' => (int)$r['g'], 'wins' => (int)$r['w'], 'bestOpen' => (int)$r['bo'], 'finished' => (int)$r['f'],
             'daily' => (int)$d['g'], 'bestDaily' => $d['best'] !== null ? (int)$d['best'] : null, 'first' => substr((string)$r['first'], 0, 10)]);
@@ -162,7 +164,7 @@ try {
         if (random_int(1, 40) === 1) q($db, 'DELETE FROM ok_sessions WHERE created_at < ?', [gmdate('Y-m-d H:i:s', time() - 3 * 86400)]);
         $tok = bin2hex(random_bytes(16)); $day = $mode === 'daily' ? ist_today() : null;
         q($db, 'INSERT INTO ok_sessions (token, ip, mode, day, created_at) VALUES (?, ?, ?, ?, ?)', [$tok, $ip, $mode, $day, now()]);
-        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a(($GAME === 'okey' ? 'duz-okey-' : 'okey-') . $day) : null]);
+        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a((['okey' => 'duz-okey-', 'batak' => 'batak-'][$GAME] ?? 'okey-') . $day) : null]);
     }
     if ($a === 'submit') {
         $in = body();
@@ -172,8 +174,8 @@ try {
         if (!$s || (int)$s['used']) fail('bad_token');
         $mode = $s['mode']; $hands = (int)($in['hands'] ?? 0); $total = $in['total'] ?? null; $won = !empty($in['won']) ? 1 : 0;
         $level = in_array($in['level'] ?? '', ['easy', 'normal', 'hard', 'mixed'], true) ? $in['level'] : 'normal';
-        $maxHands = ['okey' => 99, 'tavla' => 25][$GAME] ?? 11;
-        $range = ['okey' => [-400, 400], 'tavla' => [0, 30]][$GAME] ?? [-3232, 30000];
+        $maxHands = ['okey' => 99, 'tavla' => 25, 'batak' => 16][$GAME] ?? 11;
+        $range = ['okey' => [-400, 400], 'tavla' => [0, 30], 'batak' => [-210, 210]][$GAME] ?? [-3232, 30000];
         if (!is_int($total) || $total < $range[0] || $total > $range[1]) fail('bad_total');
         if ($hands < 1 || $hands > $maxHands) fail('bad_hands');
         $elapsed = time() - strtotime($s['created_at'] . ' UTC');
@@ -188,7 +190,7 @@ try {
         q($db, 'INSERT INTO ok_games (name, mode, level, hands, total, won, best_open, finished, day, duration, ip, created_at, flag) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [$name, $mode, $level, $hands, $total, $won, max(0, min(999, (int)($in['bestOpen'] ?? 0))), max(0, min($maxHands, (int)($in['finished'] ?? 0))), $s['day'], $elapsed, $ip, now(), $flag]);
         $rank = null;
-        if ($mode === 'daily') $rank = 1 + (int)q($db, "SELECT COUNT(*) FROM (SELECT name FROM ok_games WHERE mode = 'daily' AND day = ? AND flag = 0 GROUP BY name HAVING MIN(total) < ?) t", [$s['day'], $total])->fetchColumn();
+        if ($mode === 'daily') $rank = 1 + (int)q($db, "SELECT COUNT(*) FROM (SELECT name FROM ok_games WHERE mode = 'daily' AND day = ? AND flag = 0 GROUP BY name HAVING " . ($HI ? 'MAX(total) > ?' : 'MIN(total) < ?') . ") t", [$s['day'], $total])->fetchColumn();
         out(['ok' => true, 'rank' => $rank]);
     }
 

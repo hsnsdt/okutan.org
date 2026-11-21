@@ -368,6 +368,15 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--ink) 10%,transpare
 .proj.okd{background:radial-gradient(120% 120% at 30% 30%,#17734f,#0a3524)}
 .proj.okd .ok-rack{transform:rotate(4deg)}
 .proj.okd:hover .ok-rack{transform:rotate(0) scale(1.03)}
+.proj.btk{background:radial-gradient(120% 120% at 70% 30%,#1f707b,#0b3540);border-color:#0f4651}
+.proj.btk:hover{border-color:#1f707b}.proj.btk:hover .arrow{color:#0b3540}
+.bt-fan{position:relative;width:200px;height:150px}
+.bc{position:absolute;left:50%;bottom:0;width:80px;height:112px;margin-left:-40px;border-radius:10px;background:linear-gradient(165deg,#fff,#f1eee5);box-shadow:0 0 0 1px rgba(0,0,0,.1),0 14px 22px -10px rgba(0,0,0,.65);transform-origin:50% 135%;font:900 27px/1 "Nunito",var(--sans);color:#191c24;padding:9px 0 0 10px;font-style:normal;text-align:left;transition:transform .35s}
+.bc.r{color:#d3263a}
+.bc b{display:block;font-size:20px;margin-top:2px}
+.bc::after{content:attr(data-s);position:absolute;right:9px;bottom:6px;font-size:46px;line-height:1}
+.bc:nth-child(1){transform:rotate(-17deg)}.bc:nth-child(3){transform:rotate(17deg)}
+a:hover .bc:nth-child(1){transform:rotate(-24deg)}a:hover .bc:nth-child(3){transform:rotate(24deg)}a:hover .bc:nth-child(2){transform:translateY(-6px)}
 @media (max-width:900px){.proj.ok101{flex-direction:column;align-items:stretch}.ok-viz{margin:0 auto}.ok-txt p{padding-right:0}}
 .proj.tvl{flex-direction:row;align-items:center;gap:28px;min-height:0;background:radial-gradient(120% 120% at 75% 30%,#7a4822,#3c210d);color:#f6efe1;border-color:#55301a}
 .proj.tvl .label{color:rgba(255,236,200,.7)}.proj.tvl p{color:rgba(255,240,215,.85)}
@@ -653,6 +662,16 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
       </div>
       <div class="ok-viz" aria-hidden="true"><div class="ok-rack"><i class="ot k">7</i><i class="ot m">7</i><i class="ot y">7</i><i class="ot s">7</i><i class="ot m">11</i><i class="ot m">12</i><i class="ot m">13</i><i class="ot j">★</i></div></div>
     </a>
+    <a class="b proj s12 ok101 btk" href="/batak/">
+      <span class="arrow">→</span>
+      <div class="ok-txt">
+      <div class="label" data-i18n="bt.l">Tarayıcı oyunu · Online masa · Günlük el</div>
+      <h3 data-i18n="bt.t">Batak</h3>
+      <p data-i18n="bt.d">İhaleli Batak: elini değerlendir, ihaleyi ver, kozu seç ve elleri topla. Söylediğini tutturursan aldığın el kadar puan, tutturamazsan batarsın; botlara karşı, günlük elde ya da arkadaşlarınla online masada.</p>
+      <div class="tags"><span>javascript</span><span>yapay rakip</span><span>online masa</span></div>
+      </div>
+      <div class="ok-viz" aria-hidden="true"><div class="bt-fan"><i class="bc r" data-s="♥">K<b>♥</b></i><i class="bc" data-s="♠">A<b>♠</b></i><i class="bc r" data-s="♦">Q<b>♦</b></i></div></div>
+    </a>
     <a class="b proj s12 gkl" href="/gizli-kelime/">
       <span class="arrow">→</span>
       <div class="ok-txt">
@@ -855,7 +874,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;paddin
     "about.p":"I'm an independent developer based in İzmir. <em>I take products end to end — design, code, launch, and growing the community around them.</em> Today my focus is the web; before that I spent years building Android games and apps.",
     "f.t":"At a glance","f.loc":"Location","f.role":"Role","f.roleV":"Independent developer","f.focus":"Focus","f.focusV":"Web · Community · Tools","f.status":"Status","f.statusV":"Available",
     "c.label":"Contact","c.title":"Let's build something.",
-    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","tvl.l":"Browser game · Online table · Chat","tvl.t":"Backgammon (Tavla)","kd.l":"Browser game · Two players · Online","kd.d":"A fire-and-water two-player puzzle platformer: Ateş walks on lava, Su on water. Press plates, pull levers, ride elevators and push boxes to clear the way for each other. Play on one keyboard or online with a friend.","kb.l":"Tool · 60,000+ words · Board solver","kb.t":"Word Finder (Kelime Bulucu)","kb.d":"Find every Turkish word you can build from your letters with Scrabble scores, let the board solver find the highest-scoring move and narrow down Wordle clues. Every word has its own page with meanings, syllables and rhymes; 2,000+ word lists and an A–Z dictionary.","gk.l":"Browser game · New word every day","gk.t":"Gizli Kelime (Hidden Word)","gk.d":"Find the hidden five-letter Turkish word in six guesses: blue means the right spot, orange means elsewhere in the word. The same daily word for everyone, unlimited free play, hard mode and streaks; share your result without spoiling the word.","tvl.d":"Turkish backgammon: roll the dice, build your points, hit the blots, close your home board and bear off first; a gammon (mars) scores double. Play an easy, medium or hard bot, or a friend online with table chat.","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
+    "bp.l":"Browser game · Online ranking","ok.l":"Browser game · Online tables · Daily hand","ok.t":"101 Okey","okd.l":"Browser game · Online tables · Daily hand","okd.t":"Okey","tvl.l":"Browser game · Online table · Chat","tvl.t":"Backgammon (Tavla)","kd.l":"Browser game · Two players · Online","kd.d":"A fire-and-water two-player puzzle platformer: Ateş walks on lava, Su on water. Press plates, pull levers, ride elevators and push boxes to clear the way for each other. Play on one keyboard or online with a friend.","kb.l":"Tool · 60,000+ words · Board solver","kb.t":"Word Finder (Kelime Bulucu)","kb.d":"Find every Turkish word you can build from your letters with Scrabble scores, let the board solver find the highest-scoring move and narrow down Wordle clues. Every word has its own page with meanings, syllables and rhymes; 2,000+ word lists and an A–Z dictionary.","gk.l":"Browser game · New word every day","gk.t":"Gizli Kelime (Hidden Word)","gk.d":"Find the hidden five-letter Turkish word in six guesses: blue means the right spot, orange means elsewhere in the word. The same daily word for everyone, unlimited free play, hard mode and streaks; share your result without spoiling the word.","tvl.d":"Turkish backgammon: roll the dice, build your points, hit the blots, close your home board and bear off first; a gammon (mars) scores double. Play an easy, medium or hard bot, or a friend online with table chat.","bt.l":"Browser game · Online tables · Daily hand","bt.t":"Batak (Turkish Spades)","bt.d":"Turkish auction Batak: judge your hand, win the bid, pick trumps and take tricks. Make your bid and score every trick you took; fall short and you lose your bid. Play bots, the daily hand or friends online.","okd.d":"Classic Turkish Okey: arrange your 14 tiles into runs and sets, show the indicator, and drop your last tile in the middle to finish. Finish with the okey or seven pairs for double points; play bots, the daily hand or friends online.","ok.d":"101 Okey with real coffeehouse rules: play three bot levels, the same daily hand as everyone, or an online table with friends. Open with 101, go for pairs, take the okey; no download, no sign-up.","bp.t":"Bubble Pop","bp.d":"Match three bubbles of the same color to pop them and drop the ones cut off from the ceiling. No download, no sign-up. Enter your name and climb the leaderboard.",
     "c.text":"Freelance work, collaboration, or just saying hi. I usually reply within 24 hours."
   };
   var TR={};
