@@ -19,15 +19,15 @@
 //   POST ?a=t_chat {code, seat, seatKey, after}  → yeni sohbet mesajları
 //   POST ?a=t_sync {code, seat, seatKey, data}   → (yalnızca Kor ile Damla) kendi anlık durumunu yazar, öbür koltuğunkini alır
 //
-// Aynı dosya düz Okey'e, Tavla'ya, Batak'a ve King'e de hizmet eder: okey/api, tavla/api, batak/api ve king/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
-// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*, Batak: bt_*, King: kg_*), böylece sıralamalar ve masalar karışmaz.
-// Batak ve King'de günlük elde puan (en yüksek üstte) tutulur; diğerlerinde çekiş sayısı (en az üstte).
+// Aynı dosya düz Okey'e, Tavla'ya, Batak'a, King'e ve Pişti'ye de hizmet eder: okey/api, tavla/api, batak/api, king/api ve pisti/api, OKEY_GAME tanımlayıp bu dosyayı çağırır.
+// Oyunlar ayrı tablolar kullanır (101: ok_*, Okey: oy_*, Tavla: tv_*, Batak: bt_*, King: kg_*, Pişti: ps_*), böylece sıralamalar ve masalar karışmaz.
+// Batak, King ve Pişti'de günlük elde puan (en yüksek üstte) tutulur; diğerlerinde çekiş sayısı (en az üstte).
 // Tavla masası iki kişiliktir (koltuk 0 ve 1). Kor ile Damla (kor-ile-damla/api, kd_*) da iki kişiliktir; masa sahibi oyunu
 // yönetmez, iki tarayıcı t_sync ile anlık durumlarını değiş tokuş eder (ok_private'ta koltuk 10 ve 11).
 declare(strict_types=1);
 $GAME = defined('OKEY_GAME') ? OKEY_GAME : '101';
-$PFX = ['okey' => 'oy_', 'tavla' => 'tv_', 'kor' => 'kd_', 'batak' => 'bt_', 'king' => 'kg_'][$GAME] ?? 'ok_';
-$HI = in_array($GAME, ['batak', 'king'], true); // günlük elde yüksek puan iyi
+$PFX = ['okey' => 'oy_', 'tavla' => 'tv_', 'kor' => 'kd_', 'batak' => 'bt_', 'king' => 'kg_', 'pisti' => 'ps_'][$GAME] ?? 'ok_';
+$HI = in_array($GAME, ['batak', 'king', 'pisti'], true); // günlük elde yüksek puan iyi
 $MAX_SEAT = in_array($GAME, ['tavla', 'kor'], true) ? 1 : 3;
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
@@ -129,6 +129,12 @@ function table_row(PDO $db, $code): array {
     $t['seats'] = json_decode($t['seats'], true);
     return $t;
 }
+// masadaki en büyük koltuk: Pişti masası iki kişilik kurulabilir (opts.players = 2)
+function table_max(array $t): int {
+    global $GAME, $MAX_SEAT;
+    if ($GAME === 'pisti') { $o = json_decode((string)$t['opts'], true); if ((int)($o['players'] ?? 4) === 2) return 1; }
+    return $MAX_SEAT;
+}
 function public_seats(array $seats): array { return array_map(fn($s) => $s ? ['name' => $s['name'], 'bot' => !empty($s['bot'])] : null, $seats); }
 
 $a = $_GET['a'] ?? ''; $m = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -164,7 +170,7 @@ try {
         if (random_int(1, 40) === 1) q($db, 'DELETE FROM ok_sessions WHERE created_at < ?', [gmdate('Y-m-d H:i:s', time() - 3 * 86400)]);
         $tok = bin2hex(random_bytes(16)); $day = $mode === 'daily' ? ist_today() : null;
         q($db, 'INSERT INTO ok_sessions (token, ip, mode, day, created_at) VALUES (?, ?, ?, ?, ?)', [$tok, $ip, $mode, $day, now()]);
-        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a((['okey' => 'duz-okey-', 'batak' => 'batak-', 'king' => 'king-'][$GAME] ?? 'okey-') . $day) : null]);
+        out(['ok' => true, 'token' => $tok, 'day' => $day, 'seed' => $day ? fnv1a((['okey' => 'duz-okey-', 'batak' => 'batak-', 'king' => 'king-', 'pisti' => 'pisti-'][$GAME] ?? 'okey-') . $day) : null]);
     }
     if ($a === 'submit') {
         $in = body();
@@ -174,8 +180,8 @@ try {
         if (!$s || (int)$s['used']) fail('bad_token');
         $mode = $s['mode']; $hands = (int)($in['hands'] ?? 0); $total = $in['total'] ?? null; $won = !empty($in['won']) ? 1 : 0;
         $level = in_array($in['level'] ?? '', ['easy', 'normal', 'hard', 'mixed'], true) ? $in['level'] : 'normal';
-        $maxHands = ['okey' => 99, 'tavla' => 25, 'batak' => 16, 'king' => 20][$GAME] ?? 11;
-        $range = ['okey' => [-400, 400], 'tavla' => [0, 30], 'batak' => [-210, 210], 'king' => [-5300, 5300]][$GAME] ?? [-3232, 30000];
+        $maxHands = ['okey' => 99, 'tavla' => 25, 'batak' => 16, 'king' => 20, 'pisti' => 40][$GAME] ?? 11;
+        $range = ['okey' => [-400, 400], 'tavla' => [0, 30], 'batak' => [-210, 210], 'king' => [-5300, 5300], 'pisti' => [0, 2000]][$GAME] ?? [-3232, 30000];
         // King'de ceza elleri erken bitebilir: el başına en az süre ve şüpheli süre daha kısa
         $minSec = ['king' => 8][$GAME] ?? 20; $flagSec = ['king' => 25][$GAME] ?? 45;
         if (!is_int($total) || $total < $range[0] || $total > $range[1]) fail('bad_total');
@@ -225,7 +231,7 @@ try {
         // aynı isimle yeniden bağlanma: anahtarı yoksa yeni koltuk verilmez
         if ($t['status'] !== 'lobby') fail('started');
         foreach ($t['seats'] as $s) if ($s && mb_strtolower($s['name'], 'UTF-8') === mb_strtolower($name, 'UTF-8')) fail('name_taken');
-        $seat = -1; for ($i = 1; $i <= $MAX_SEAT; $i++) if (!$t['seats'][$i]) { $seat = $i; break; }
+        $seat = -1; for ($i = 1; $i <= table_max($t); $i++) if (!$t['seats'][$i]) { $seat = $i; break; }
         if ($seat < 0) fail('full');
         $sk = bin2hex(random_bytes(16)); $t['seats'][$seat] = ['name' => $name, 'key' => $sk];
         q($db, 'UPDATE ok_tables SET seats = ?, updated_at = ? WHERE code = ?', [json_encode($t['seats'], JSON_UNESCAPED_UNICODE), now(), $t['code']]);
@@ -240,7 +246,7 @@ try {
         $in = body(); $t = table_row($db, $in['code'] ?? '');
         if (!hash_equals($t['host_key'], (string)($in['hostKey'] ?? ''))) fail('unauthorized', 401);
         if ($GAME === 'kor' && !$t['seats'][1]) fail('need_guest');
-        for ($i = 1; $i <= $MAX_SEAT; $i++) if (!$t['seats'][$i]) $t['seats'][$i] = ['name' => ($GAME === 'tavla' ? ['Mehmet'] : ['Ayşe', 'Mehmet', 'Zeynep'])[$i - 1], 'bot' => true];
+        for ($i = 1; $i <= table_max($t); $i++) if (!$t['seats'][$i]) $t['seats'][$i] = ['name' => ($GAME === 'tavla' ? ['Mehmet'] : ['Ayşe', 'Mehmet', 'Zeynep'])[$i - 1], 'bot' => true];
         q($db, "UPDATE ok_tables SET status = 'play', seats = ?, updated_at = ?, host_seen = ? WHERE code = ?", [json_encode($t['seats'], JSON_UNESCAPED_UNICODE), now(), now(), $t['code']]);
         out(['ok' => true, 'seats' => public_seats($t['seats'])]);
     }
