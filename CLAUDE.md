@@ -33,6 +33,7 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - **Sürüm numarası:** JS değişince `index.html` içindeki `?v=N` ve o oyunun `sw.js` içindeki `CACHE` adı ile `CORE` listesi birlikte artırılır. Yoksa tarayıcı ve service worker eski dosyayı verir (yerel testte de).
 - Python ile dosya düzenlerken `'\b'` gibi kaçışlar gerçek kontrol karakterine dönüşür (bir kez regex'i bozdu). Ters bölülü metinde `chr(92)` kullan ya da Edit aracıyla düzenle; sonra `grep -c $'\x08'` ile kontrol et.
 - Sahnedeki öğelere `top`, `bot` gibi genel sınıf adları verme; sayfa başlığının `.top` kuralıyla çakışır.
+- Ana sayfaya (`index.html`) ve `/oyunlar/`'a kart görseli eklerken kısa sınıf adı kullanma, kuralları kendi kapsayıcısına bağla (`.bt-fan .btc`): Batak yelpazesindeki `.bc`, Kelimeler tahtasının `.bc` karelerini bozmuştu. Eklemeden önce `grep -n '\.ad[{,. :]' index.html` ile ara.
 - Plaka/kart yeniden çizilirken içteki balon gibi zamanlayıcılı öğeleri `outerHTML` ile kopyalama; aynı DOM düğümünü koru.
 - Sürükle-bırakta hedefi, sürüklenen öğe yeniden tıklanabilir olmadan önce bul.
 - Arka plandaki sekmede zincirleme zamanlayıcılar seyrelir; `visibilitychange` ile yenile.
