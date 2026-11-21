@@ -148,8 +148,15 @@
     d.className = 'card' + (isRed(c.s) ? ' red' : '') + (cls ? ' ' + cls : '');
     d.dataset.id = c.id;
     var lb = RANK_LB[c.r] || String(c.r), art;
-    if (c.r >= 11 && c.r <= 13) art = '<span class="pt"><svg class="cr" viewBox="0 0 40 30" aria-hidden="true"><use href="#f' + c.r + '"/></svg>' + suitSVG(c.s, 'pp') + '</span>';
-    else if (c.r === 14) art = '<span class="ring"></span>' + suitSVG(c.s, 'big ace');
+    if (c.r >= 11 && c.r <= 13) {
+      // vale, kız, papaz: klasik İngiliz deseni (assets/kart-saray.webp; sütun renk S H D C, satır J Q K)
+      // klasik İngiliz deseni kartın kendisi (köşe harfleri, çerçeve, figür olduğu gibi)
+      d.className += ' court';
+      d.style.backgroundPosition = (['S', 'H', 'D', 'C'].indexOf(c.s) * 100 / 3) + '% ' + ((c.r - 11) * 50) + '%';
+      d.setAttribute('aria-label', cardName(c));
+      return d;
+    }
+    if (c.r === 14) art = '<span class="ring"></span>' + suitSVG(c.s, 'big ace');
     else art = suitSVG(c.s, 'big');
     d.innerHTML = '<span class="ix"><b' + (lb.length > 1 ? ' class="t"' : '') + '>' + lb + '</b>' + suitSVG(c.s) + '</span>' + art;
     d.setAttribute('aria-label', cardName(c));
