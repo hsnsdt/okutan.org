@@ -14,7 +14,7 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - Oyun arayüzünde kibar, yuvarlak hatlı yazı: Nunito (`assets/fonts/Nunito-*.woff2`, kendi sunucumuzdan; `fonts.css` içinde).
 - Kontroller bölümü: Bilgisayar/Mobil sekmeleri, SVG simgeler, tuş kapakları; listelenen kısayollar gerçekten çalışmalı.
 - Tam SEO: title/description, canonical, og/twitter (og:image:alt dahil), JSON-LD (VideoGame+WebApplication, BreadcrumbList, FAQPage = sayfadaki SSS), H1 ve dizine girecek metin, 1200×630 `og.png`.
-- `sitemap.xml` (lastmod), `llms.txt`, `README.md`, ana sayfa kartı (`index.html`, TR + `data-i18n` EN), `/oyunlar/` kartı ve JSON-LD ItemList, alt bilgi oyun listesi `assets/oyunlar.js` (tek satır ekle; sayfalarda `<nav … data-oyunlar>` yalnızca sabit bağlantıları taşır, oyun sayfalarına tek tek dokunma).
+- `sitemap.xml` (lastmod), `llms.txt`, `README.md`, ana sayfa kartı (`index.html`, TR + `data-i18n` EN; oyun kartları `b proj s4 gm …` üçlü ızgara, görsel üstte, telefonda kompakt satır; yeni kart "Tüm oyunlar" kutusunun önüne), `/oyunlar/` kartı ve JSON-LD ItemList, alt bilgi oyun listesi `assets/oyunlar.js` (tek satır ekle; sayfalarda `<nav … data-oyunlar>` yalnızca sabit bağlantıları taşır, oyun sayfalarına tek tek dokunma).
 - PWA: `manifest.json`, `sw.js`, `icon-192/512/maskable-512.png` (simgeler headless Chrome ile canvas'tan üretilir).
 - Mobil test: 320/375/390 dikey, 667/844 yatay; yatay taşma olmamalı (`scrollWidth`).
 
