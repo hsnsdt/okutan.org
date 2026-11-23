@@ -1,0 +1,11 @@
+# Canlı Sohbet: sayfa (HTML) her açılışta sunucuya sorulur (değişmediyse 304).
+# Böylece yeni sürüm yüklenince kimse eski sayfayı ve eski betik sürümünü görmez.
+<FilesMatch "\.html$">
+  <IfModule mod_expires.c>
+    ExpiresActive Off
+  </IfModule>
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache"
+    Header unset Expires
+  </IfModule>
+</FilesMatch>
