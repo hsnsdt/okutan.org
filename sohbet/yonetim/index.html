@@ -112,7 +112,7 @@ label.ck input{height:auto}
 
     <section class="b">
       <h2>Kişiler</h2>
-      <div class="bar"><input id="uq" placeholder="Rumuz ara (boşsa: moderatörler, susturulanlar, yasaklılar)" style="flex:1;min-width:200px"><button class="btn btn-s" id="ubtn">Ara</button></div>
+      <div class="bar"><input id="uq" placeholder="Rumuz ara (boşsa: moderatörler, DJ'ler, susturulanlar, yasaklılar)" style="flex:1;min-width:200px"><button class="btn btn-s" id="ubtn">Ara</button></div>
       <div class="scroll"><table class="tbl"><thead><tr><th>#</th><th>Rumuz</th><th>Durum</th><th>Son görülme</th><th></th></tr></thead><tbody id="urows"></tbody></table></div>
     </section>
 
@@ -321,12 +321,14 @@ label.ck input{height:auto}
         var tn = el('td'); tn.appendChild(el('b', null, u.nick || '(rumuzsuz)')); tn.appendChild(el('div', 'note', u.iph || '')); tr.appendChild(tn);
         var st = el('td');
         if (u.op) st.appendChild(el('span', 'tag o', u.op === 2 ? 'yönetici' : 'moderatör'));
+        if (u.dj) st.appendChild(el('span', 'tag o', '🎧 DJ'));
         if (u.muted) st.appendChild(el('span', 'tag f', 'susturulu · ' + fmt(u.muted)));
         if (u.banned) st.appendChild(el('span', 'tag r', 'yasaklı · ' + (u.banned > 4e9 ? 'süresiz' : fmt(u.banned))));
         tr.appendChild(st);
         tr.appendChild(el('td', 'm', fmt(u.seen)));
         var a = el('td'), acts = el('div', 'acts');
         acts.appendChild(btn(u.op ? 'Moderatörlükten al' : 'Moderatör yap', 'ok', function () { api('admin_op', { user: u.id, op: !u.op }).then(users); }, true));
+        acts.appendChild(btn(u.dj ? "DJ'likten al" : 'DJ yap', 'ok', function () { api('admin_dj', { user: u.id, dj: !u.dj }).then(users); }));
         acts.appendChild(btn(u.muted ? 'Susturmayı kaldır' : 'Sustur 1 gün', 'warn', function () { api('admin_mute', { user: u.id, min: u.muted ? 0 : 1440 }).then(users); }));
         acts.appendChild(banBtn(u.id, u.nick, !!u.banned, users));
         acts.appendChild(btn('Kayıt', '', function () { $('lu').value = u.id; $('lip').value = ''; logq(); $('lrows').scrollIntoView({ block: 'center' }); }));

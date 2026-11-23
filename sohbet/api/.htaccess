@@ -1,5 +1,5 @@
-# Yarışmanın soru bankası (cevaplar) ve oyun motoru dışarıdan istenemez; index.php onları sunucu içinden okur.
-<FilesMatch "^(sorular\.json|oyun\.php)$">
+# Yarışmanın soru bankası (cevaplar), oyun ve radyo motorları dışarıdan istenemez; index.php onları sunucu içinden okur.
+<FilesMatch "^(sorular\.json|oyun\.php|radyo\.php)$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

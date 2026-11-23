@@ -106,6 +106,7 @@
     }
     $('ozBar').hidden = !oz;
     $('puanBtn').hidden = !M.oyunMu(S.ch);
+    $('radyoPanel').hidden = !M.radyoMu(S.ch);
     $('ozDavet').hidden = !(o && o.tip === 'o');
     $('ozEngel').hidden = !(o && o.tip === 'd' && o.diger);
     var en = !!(o && o.engelledim); $('ozEngel').title = en ? 'Engeli kaldır' : 'Engelle'; $('ozEngel').setAttribute('aria-label', $('ozEngel').title); $('ozEngel').setAttribute('aria-pressed', en);
@@ -141,6 +142,7 @@
   function switchCh(ch, keepHash) {
     if (!(M.kanalBul(ch) || M.ozelMi(ch)) || ch === S.ch && S.loaded) return;
     S.oda = null;
+    if (M.radyoMu(S.ch) && !M.radyoMu(ch)) rdDurdur(false); // oynatıcı gizlenemez: kanaldan çıkınca kapanır
     S.ch = ch; S.gen++; S.lastId = 0; S.since = 0; S.users = null; S.usersAt = 0; S.topic = null; S.slow = 0; S.loaded = false; S.pin = null; S.more = false; S.olderLoaded = false; S.atBot = true;
     if (!M.ozelMi(ch)) lsSet('sh_ch', ch);
     if (!keepHash) try { history.replaceState(null, '', location.pathname + location.search + '#' + ch); } catch (e) {}
@@ -326,7 +328,9 @@
         li.appendChild(avatar(u.nick, u.g, u.op));
         li.appendChild(el('span', 'nm nk ' + M.gSinif(u.g), u.nick));
         if (u.op) li.appendChild(rolBadge(u.op));
-        if (u.rozet) { var r = el('span', 'rz', u.rozet); r.title = 'Bu haftanın en çok kazananları: ' + u.rozet; li.appendChild(r); }
+        if (u.dj) li.appendChild(el('span', 'rz dj', '🎧 DJ'));
+        // rozet listede kısa (🏆1), tam adı ipucunda: dar kişi sütununa sığsın
+        if (u.rozet) { var sira = (/#(\d+)/.exec(u.rozet) || [])[1] || ''; var r = el('span', 'rz', '🏆' + sira); r.title = 'Bu hafta ' + u.rozet; r.setAttribute('aria-label', 'Bu hafta ' + u.rozet); li.appendChild(r); }
         li.title = (u.g ? M.CINSIYET[u.g] : '') + (u.away ? (u.g ? ' · ' : '') + 'Uzakta: ' + u.away : '');
         li.onclick = function (ev) { ev.stopPropagation(); if (ben) { mention(u.nick); closeDrawer(); return; } kisiMenu(li, u); };
         ul.appendChild(li);
@@ -391,11 +395,13 @@
     r.msgs.forEach(function (m) { addMsg(m, first); if (m.id > S.lastId) S.lastId = m.id; });
     if (r.msgs.length && !first) S.lastAct = Date.now();
     if (r.ozel) ozelGuncelle(r.ozel);
+    if (r.radyo && M.radyoMu(S.ch)) radyoGuncelle(r.radyo);
     if (first) {
       S.loaded = true; S.more = r.msgs.length >= 100; renderOlder();
       if (M.ozelMi(S.ch)) localLine(r.oda && r.oda.tip === 'd' ? 'Özel konuşma: yalnızca ikiniz görürsünüz. Rahatsız olursan engelle ya da şikâyet et.' : 'Özel oda: yalnızca davetle gelenler görür.', 's');
       else localLine('#' + (kanalAd(S.ch)) + ' kanalına girdin. ' + (r.topic || konuOf(S.ch)), 's');
       if (M.oyunMu(S.ch)) localLine('Nasıl oynanır: ' + M.OYUN_KURAL[S.ch], 's');
+      if (M.radyoMu(S.ch)) localLine('Birlikte dinle: Dinle düğmesine bas; şarkı eklemek için /çal YouTube bağlantısı yaz.', 's');
       if (!S.me || !S.me.nick) localLine('Yazmak için bir rumuz seç: /nick Rumuz ya da alttaki Rumuz düğmesi.', 's').id = 'rumuzIpucu';
     }
     if (withUsers && r.users) {
@@ -550,6 +556,8 @@
         });
         return;
       case 'puan': inp.value = ''; puanAc(); return;
+      case 'cal': radyoEkle(c.url); return;
+      case 'gec': inp.value = ''; rdAtla(); return;
       case 'msg':
         ozelMesaj(c.nick, function (ch) { send(c.text, false, ch).then(function (ok) { if (ok) inp.value = ''; }); });
         return;
@@ -648,6 +656,118 @@
     placePop(btn);
     pop.querySelector('button').focus();
   }
+  // ---------- #radyo: YouTube ile ortak dinleme ----------
+  // Sunucu sırayı ve "hangi video, ne zaman başladı" bilgisini tutar; herkes başlangıçtan geçen süre kadar ileriden çalar.
+  // YouTube'un oynatıcı betiği yalnızca Dinle'ye basınca yüklenir. Oynatıcı gizlenemez (YouTube kuralı): kanaldan çıkınca kapanır.
+  var R = { dinle: false, yt: null, hazir: false, video: null, offset: 0, sureBildirildi: {}, hataBildirildi: {} };
+  function rdBeklenen() { var s = S.radyo && S.radyo.simdi; return s ? Math.max(0, Date.now() / 1000 + R.offset - s.basla) : 0; }
+  function radyoGuncelle(st) {
+    S.radyo = st; R.offset = st.now - Date.now() / 1000;
+    var s = st.simdi;
+    $('rdBaslik').textContent = s ? s.baslik : 'Sırada şarkı yok';
+    $('rdKim').textContent = s ? 'ekleyen ' + s.nick + (s.kanal ? ' · ' + s.kanal : '') : '/çal YouTube bağlantısı ile şarkı ekle';
+    $('rdDinle').hidden = !s;
+    var at = $('rdAtla'); at.hidden = !s;
+    at.textContent = st.dj ? '⏭ Geç' : '⏭ Atla ' + st.oy + '/' + st.oyGerek; at.disabled = !st.dj && st.verdim;
+    at.title = st.dj ? 'Şarkıyı geç (DJ)' : st.verdim ? 'Oyun verildi' : 'Atlamak için oy ver';
+    $('rdSiraBtn').textContent = 'Sıra · ' + st.sira.length;
+    var ol = $('rdSira'); ol.textContent = '';
+    if (!st.sira.length) ol.appendChild(el('li', 'bos', 'Sıra boş. /çal YouTube bağlantısı ile şarkı ekle.'));
+    st.sira.forEach(function (x, i) {
+      var li = el('li'); li.appendChild(el('span', 'no', String(i + 1))); li.appendChild(el('b', null, x.baslik)); li.appendChild(el('small', null, x.nick));
+      if (st.dj || (S.me && x.u === S.me.id)) {
+        var b = el('button', null, '✕'); b.type = 'button'; b.title = 'Sıradan çıkar'; b.setAttribute('aria-label', 'Sıradan çıkar');
+        b.onclick = function () { api('radyo_sil', { key: S.key, id: x.id }).then(function (r) { if (r.ok) radyoGuncelle(r.radyo); else localLine(M.hataMetni(r.error), 'err'); }); };
+        li.appendChild(b);
+      }
+      ol.appendChild(li);
+    });
+    rdZaman();
+    if (R.dinle && M.radyoMu(S.ch)) rdSenkron();
+  }
+  function rdZaman() {
+    var s = S.radyo && S.radyo.simdi, t = rdBeklenen();
+    $('rdZaman').textContent = s ? M.sureYaz(t) + (s.sure ? ' / ' + M.sureYaz(s.sure) : '') : '';
+    $('rdBar').style.width = s && s.sure ? Math.min(100, t / s.sure * 100) + '%' : '0';
+  }
+  setInterval(function () { if (M.radyoMu(S.ch) && S.radyo) rdZaman(); }, 1000);
+  function ytYukle(cb) {
+    if (window.YT && window.YT.Player) { cb(); return; }
+    var once = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () { if (once) try { once(); } catch (e) {} cb(); };
+    if (!document.getElementById('ytApi')) { var sc = document.createElement('script'); sc.id = 'ytApi'; sc.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(sc); }
+  }
+  function rdBaslat() {
+    var s = S.radyo && S.radyo.simdi; if (!s || !M.radyoMu(S.ch)) return;
+    $('radyoPanel').classList.add('caliyor'); document.querySelector('.sh-main').classList.add('rd-acik');
+    if (R.yt) { rdSenkron(); return; }
+    var kutu = $('rdOyn'), d = document.getElementById('rdYT'); if (!d) { d = el('div'); d.id = 'rdYT'; kutu.appendChild(d); }
+    R.video = s.video;
+    R.yt = new YT.Player('rdYT', {
+      host: 'https://www.youtube-nocookie.com', videoId: s.video, width: '100%', height: '100%',
+      playerVars: { autoplay: 1, start: Math.floor(rdBeklenen()), controls: 0, disablekb: 1, rel: 0, playsinline: 1, iv_load_policy: 3, fs: 0 },
+      events: {
+        onReady: function () { R.hazir = true; try { R.yt.setVolume(+$('rdSes').value); R.yt.seekTo(rdBeklenen(), true); R.yt.playVideo(); } catch (e) {} },
+        onStateChange: function (e) {
+          var s2 = S.radyo && S.radyo.simdi;
+          if (e.data === 1 && s2 && !s2.sure && !R.sureBildirildi[s2.id]) {
+            // çalan şarkının süresini ilk dinleyen bildirir (sunucu sırayı buna göre ilerletir)
+            var dur = 0; try { dur = R.yt.getDuration(); } catch (x) {}
+            var vid = ''; try { vid = R.yt.getVideoData().video_id; } catch (x) {}
+            if (dur > 0 && vid === s2.video) { R.sureBildirildi[s2.id] = 1; api('radyo_sure', { key: S.key, id: s2.id, sure: dur }); }
+          }
+          if (e.data === 0) setTimeout(function () { poll(true); }, 1500);
+        },
+        onError: function (e) {
+          // 100/101/150: video yok ya da sahibi başka sitelerde çalınmasını kapatmış; sunucuya bildir (yeterli bildirimde geçilir)
+          var s3 = S.radyo && S.radyo.simdi;
+          if (s3 && [2, 5, 100, 101, 150, 153].indexOf(e.data) >= 0 && !R.hataBildirildi[s3.id]) {
+            R.hataBildirildi[s3.id] = 1;
+            api('radyo_hata', { key: S.key, id: s3.id, kod: e.data }).then(function (r) { if (r.ok && r.radyo) { radyoGuncelle(r.radyo); poll(true); } });
+          }
+          localLine('Bu şarkı burada çalınamıyor; dinleyenler bildirince sıradakine geçilir.', 'err');
+        }
+      }
+    });
+  }
+  function rdSenkron() {
+    if (!R.yt || !R.hazir) { if (R.dinle && !R.yt && window.YT && window.YT.Player) rdBaslat(); return; }
+    var s = S.radyo && S.radyo.simdi;
+    try {
+      if (!s) { R.yt.stopVideo(); R.video = null; return; }
+      if (R.video !== s.video) { R.video = s.video; R.yt.loadVideoById({ videoId: s.video, startSeconds: rdBeklenen() }); return; }
+      var t = R.yt.getCurrentTime(), b = rdBeklenen();
+      if (Math.abs(t - b) > 4 && (!s.sure || b < s.sure - 2)) R.yt.seekTo(b, true);
+    } catch (e) {}
+  }
+  function rdDurdur(birak) {
+    if (R.yt) { try { R.yt.destroy(); } catch (e) {} }
+    R.yt = null; R.hazir = false; R.video = null;
+    var d = document.getElementById('rdYT'); if (d) d.remove();
+    $('radyoPanel').classList.remove('caliyor'); document.querySelector('.sh-main').classList.remove('rd-acik');
+    if (birak) R.dinle = false;
+  }
+  $('rdDinle').onclick = function () { R.dinle = true; ytYukle(rdBaslat); };
+  $('rdDurdur').onclick = function () { rdDurdur(true); };
+  $('rdSes').oninput = function () { lsSet('sh_rses', this.value); if (R.yt && R.hazir) try { R.yt.setVolume(+this.value); } catch (e) {} };
+  (function () { var v = lsGet('sh_rses'); if (v !== null && v !== '') $('rdSes').value = v; })();
+  $('rdSiraBtn').onclick = function () { var o = $('rdSira'); o.hidden = !o.hidden; this.setAttribute('aria-expanded', !o.hidden); };
+  function rdAtla() {
+    var st = S.radyo; if (!st || !st.simdi) { localLine(M.hataMetni('yt_yok'), 'err'); return; }
+    api(st.dj ? 'radyo_gec' : 'radyo_oy', { key: S.key }).then(function (r) { if (r.ok) { radyoGuncelle(r.radyo); poll(true); } else localLine(M.hataMetni(r.error), 'err'); });
+  }
+  $('rdAtla').onclick = rdAtla;
+  function radyoEkle(url) {
+    if (!S.me || !S.me.nick) { openNick(); return; }
+    status('Şarkı ekleniyor…');
+    api('radyo_ekle', { key: S.key, url: url }).then(function (r) {
+      status('');
+      if (r.ok) { inp.value = ''; radyoGuncelle(r.radyo); if (!M.radyoMu(S.ch)) localLine('Şarkı #radyo sırasına eklendi.', 's'); poll(true); }
+      else if (r.error === 'slow') status('Biraz bekle: ' + (r.wait || 20) + ' sn sonra yeni şarkı ekleyebilirsin.', 4000);
+      else localLine(M.hataMetni(r.error), 'err');
+    }).catch(function () { status(''); localLine('Şarkı eklenemedi; bağlantını kontrol et.', 'err'); });
+  }
+
   // oyun puan tablosu: oyun kanalında o oyunun, başka yerde dört oyunun haftalık ilk 10'u
   function puanAc() {
     api('puan', { key: S.key, ch: S.ch }).then(function (r) {

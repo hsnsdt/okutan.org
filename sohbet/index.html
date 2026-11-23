@@ -70,6 +70,7 @@
         { "@type": "Question", "name": "Oyun masasına nasıl davet ederim?", "acceptedAnswer": { "@type": "Answer", "text": "Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur." } },
         { "@type": "Question", "name": "Mesajlar ne kadar saklanıyor?", "acceptedAnswer": { "@type": "Answer", "text": "Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır." } },
         { "@type": "Question", "name": "Rahatsız edici bir mesajı nasıl bildiririm?", "acceptedAnswer": { "@type": "Answer", "text": "Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır." } },
+        { "@type": "Question", "name": "Sohbette müzik dinlenebiliyor mu?", "acceptedAnswer": { "@type": "Answer", "text": "Evet, #radyo kanalında. /çal komutuyla YouTube bağlantısı eklersin, şarkı sıraya girer; kanaldaki herkes Dinle düğmesine basarak aynı şarkıyı aynı anda dinler. Beğenilmeyen şarkı dinleyenlerin oyuyla atlanır, DJ rozetliler sırayı yönetir. Ses YouTube üzerinden gelir; oynatıcı Dinle düğmesine basılana kadar yüklenmez." } },
         { "@type": "Question", "name": "Sohbette oyun oynanıyor mu?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. #kelime-avı kanalında karışık harflerden kelimeyi bul, #zincir kanalında öncekinin son harfiyle yeni kelime söyle, #gizli-kelime kanalında 5 harfli kelimeyi renk ipuçlarıyla tahmin et, #yarışma kanalında bilgi sorularını ilk sen bil. Puanlar haftalık tutulur; /puan ile tabloyu görürsün. Her kanalda /zar, /yazitura ve /sayi komutları da var." } },
         { "@type": "Question", "name": "Özel mesaj ve özel oda var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Var, 18 yaşından büyükler için. Kişi listesinde ya da mesajda rumuza tıklayıp Özel mesaj seçersen bire bir konuşma açılır; /msg Rumuz mesaj komutu da olur. Özel oda açıp davet bağlantısını paylaşarak istediğin kişileri çağırabilirsin. İlk kullanımda 18 yaş beyanını ve özel sohbet şartlarını onaylarsın. Özel mesajları kimse okumaz; şikâyet edilen konuşmayı yönetici inceler. Rahatsız olursan kişiyi engelleyebilir, ayarlardan özel mesajlara kapanabilirsin." } },
         { "@type": "Question", "name": "Rumuz renkleri ne anlama geliyor?", "acceptedAnswer": { "@type": "Answer", "text": "Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür." } },
@@ -119,7 +120,7 @@ h1,h2,h3{font-family:var(--round)}
 .chat{--ge:#2563eb;--gk:#db2777;--gb:#059669;--mod:#16a34a;--adm:#ff5a1f;--p-bg:#f6f7f9;--p-pane:#ffffff;--p-side:#eef1f5;--p-line:#dfe3ea;--p-line2:#9ea7b6;--p-ink:#1d2433;--p-mut:#7a8394;--p-hl:#fff4d6;--p-hl2:#ffb020;--p-sel:#2f6bff;
   --n0:#d6336c;--n1:#2f6bff;--n2:#0f9d58;--n3:#c25400;--n4:#7b3fe4;--n5:#008b9c;--n6:#c2185b;--n7:#5c7c00;--n8:#b8441f;--n9:#3d5afe;
   padding:0;overflow:hidden;color:var(--p-ink);background:var(--p-bg);font-family:var(--round);
-  display:grid;grid-template-columns:190px minmax(0,1fr) 200px;height:clamp(420px,calc(100svh - 96px),900px)}
+  display:grid;grid-template-columns:190px minmax(0,1fr) 216px;height:clamp(420px,calc(100svh - 96px),900px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chat{--ge:#6ea8ff;--gk:#ff6fb5;--gb:#34d399;--mod:#22c55e;--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
   --n0:#ff7aa8;--n1:#7aa4ff;--n2:#4fd48b;--n3:#ffa45c;--n4:#b794ff;--n5:#4fd3e0;--n6:#ff8ac0;--n7:#b6dc4f;--n8:#ff9472;--n9:#8c9eff}}
 :root[data-theme="dark"] .chat{--ge:#6ea8ff;--gk:#ff6fb5;--gb:#34d399;--mod:#22c55e;--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
@@ -247,7 +248,11 @@ h1,h2,h3{font-family:var(--round)}
 .sh-form .emo{flex:none;width:42px;height:42px;padding:0}
 .emo-pop{display:grid;grid-template-columns:repeat(8,36px);gap:2px;min-width:0}
 .emo-pop button{width:36px;height:36px;padding:0;text-align:center;font-size:20px;line-height:36px;border-radius:8px}
-.sh-ul li .rz{margin-left:auto;flex:none;font:900 10.5px var(--round);color:#b26b00;background:var(--p-hl);border-radius:999px;padding:1px 7px}
+.sh-ul li .rz{margin-left:auto;flex:none;font:900 10.5px var(--round);color:#b26b00;background:var(--p-hl);border-radius:999px;padding:1px 6px;white-space:nowrap}
+.sh-ul li .rz + .rz{margin-left:4px}
+/* kişi listesinde rol rozeti yalnızca simge (başlık zaten "Moderatörler"); tam adı ipucunda */
+.sh-ul li .rol{font-size:0;gap:0;padding:3px 4px}.sh-ul li .rol svg{width:11px;height:11px}
+.sh-ul li .nm{flex:0 1 auto}
 .sh-ul li.aw .rz{display:none}
 
 /* ayarlar: yazı boyutu, saat, klasik tema */
@@ -334,6 +339,50 @@ h1,h2,h3{font-family:var(--round)}
 .puan-oyun ol li span{float:right;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
 .puan-oyun .ben{font-size:13px;color:var(--muted);margin-top:6px}
 .puan-oyun .bos{font-size:13.5px;color:var(--muted)}
+
+/* #radyo: ortak dinleme paneli. Dinle'ye basılana kadar YouTube yüklenmez; çalarken oynatıcı en az 200×200 (YouTube kuralı) */
+.radyo{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--p-line);background:var(--p-side)}
+.rd-oyn{flex:none;display:flex;align-items:center;justify-content:center}
+.radyo.caliyor .rd-oyn{width:356px;height:200px;border-radius:12px;overflow:hidden;background:#000}
+.rd-oyn iframe,.rd-oyn #rdYT{width:100%;height:100%;border:0;display:block}
+.rd-dinle{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;border:0;border-radius:999px;background:var(--bot);color:#fff;font:900 15px var(--round);cursor:pointer}
+.rd-dinle svg{width:18px;height:18px;fill:currentColor}
+.radyo.caliyor .rd-dinle{display:none}
+.rd-bilgi{flex:1;min-width:180px;display:flex;flex-direction:column;gap:4px}
+.rd-ust{font:800 11.5px var(--round);letter-spacing:.07em;text-transform:uppercase;color:var(--p-mut)}
+.rd-baslik{font:900 15.5px/1.3 var(--round);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rd-kim{font:700 12.5px var(--round);color:var(--p-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-ilerle{height:6px;border-radius:3px;background:var(--p-line);overflow:hidden;margin-top:4px}
+.rd-ilerle i{display:block;height:100%;width:0;background:var(--bot);transition:width 1s linear}
+.rd-alt{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
+.rd-alt .zaman{font:800 12px var(--round);color:var(--p-mut);font-variant-numeric:tabular-nums;margin-right:auto}
+.rd-ses{display:none;align-items:center;gap:6px;color:var(--p-mut)}
+.radyo.caliyor .rd-ses{display:inline-flex}
+.rd-ses svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rd-ses input{width:84px;accent-color:var(--bot)}
+.rd-alt .ib.wide{height:32px;font-size:12.5px}
+#rdDurdur{display:none}.radyo.caliyor #rdDurdur{display:inline-flex}
+.rd-sira{flex-basis:100%;list-style:none;max-height:190px;overflow:auto;display:grid;gap:2px;margin:0;padding:0}
+.rd-sira li{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:9px;background:var(--p-pane);font:700 13.5px var(--round)}
+.rd-sira li .no{color:var(--p-mut);width:18px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.rd-sira li b{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}
+.rd-sira li small{color:var(--p-mut);flex:none}
+.rd-sira li button{flex:none;width:26px;height:26px;border-radius:7px;border:0;background:var(--p-bg);color:var(--p-mut);cursor:pointer}
+.rd-sira .bos{color:var(--p-mut);font-size:13px;padding:4px 8px;background:none}
+.sh-ul li .rz.dj{color:#fff;background:var(--bot)}
+/* dar ekran: oynatıcı 200×200 kare, bilgiler yanında; çok darda alt alta */
+@media (max-width:600px){.radyo.caliyor .rd-oyn{width:200px;height:200px}.radyo.caliyor .rd-bilgi{min-width:0;flex-basis:0}.rd-ses input{width:64px}}
+@media (max-width:360px){.radyo.caliyor .rd-bilgi{flex-basis:100%}}
+/* kısa yatay ekran: radyo paneli solda sütun, sohbet sağda tam yükseklik */
+@media (max-height:560px) and (orientation:landscape){
+  .sh-main.rd-acik{display:grid;grid-template-columns:224px minmax(0,1fr);grid-template-rows:auto auto auto minmax(0,1fr) auto auto auto;
+    grid-template-areas:"r t" "r b" "r p" "r l" "r y" "r s" "r f"}
+  .sh-main.rd-acik>.sh-tabs{grid-area:t}.sh-main.rd-acik>.sh-bar{grid-area:b}.sh-main.rd-acik>.sh-pin{grid-area:p}.sh-main.rd-acik>.sh-log{grid-area:l}
+  .sh-main.rd-acik>.sh-typing{grid-area:y}.sh-main.rd-acik>.sh-status{grid-area:s}.sh-main.rd-acik>.sh-form{grid-area:f}
+  .sh-main.rd-acik>.radyo{grid-area:r;flex-direction:column;flex-wrap:nowrap;align-items:stretch;border-bottom:0;border-right:1px solid var(--p-line);overflow-x:hidden;overflow-y:auto}
+  .sh-main.rd-acik .radyo.caliyor .rd-oyn{width:200px;height:200px}
+  .sh-main.rd-acik .rd-bilgi{flex:none;min-width:0}
+}
 
 /* menü */
 .pop{position:fixed;z-index:70;min-width:180px;background:var(--p-pane,#fff);color:var(--p-ink);border:1px solid var(--p-line);border-radius:12px;padding:6px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font-family:var(--round)}
@@ -470,6 +519,23 @@ footer a:hover{color:var(--ink)}
         <button class="ib" id="helpBtn" aria-label="Komutlar ve kurallar" title="Komutlar ve kurallar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4.2M12 17.6h.01"/></svg></button>
       </div>
       <div class="sh-pin" id="pinBar" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></svg><span class="px" id="pinText"></span><button class="ib" id="pinOff" aria-label="Sabit mesajı kaldır" title="Sabit mesajı kaldır" hidden>✕</button></div>
+      <div class="radyo" id="radyoPanel" hidden>
+        <div class="rd-oyn" id="rdOyn"><button class="rd-dinle" id="rdDinle" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>Dinle</button></div>
+        <div class="rd-bilgi">
+          <div class="rd-ust">🎵 Şu an çalıyor</div>
+          <b class="rd-baslik" id="rdBaslik">Sırada şarkı yok</b>
+          <span class="rd-kim" id="rdKim">/çal YouTube bağlantısı ile şarkı ekle</span>
+          <div class="rd-ilerle"><i id="rdBar"></i></div>
+          <div class="rd-alt">
+            <span class="zaman" id="rdZaman"></span>
+            <label class="rd-ses" title="Ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/></svg><input type="range" id="rdSes" min="0" max="100" value="70" aria-label="Ses"></label>
+            <button class="ib wide" id="rdDurdur" type="button">Durdur</button>
+            <button class="ib wide" id="rdAtla" type="button" hidden>⏭ Atla</button>
+            <button class="ib wide" id="rdSiraBtn" type="button" aria-expanded="false">Sıra · 0</button>
+          </div>
+        </div>
+        <ol class="rd-sira" id="rdSira" hidden></ol>
+      </div>
       <div class="sh-log" id="log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
       <button class="sh-new" id="newBelow" hidden>Yeni mesajlar ↓</button>
       <div class="sh-typing" id="typing" aria-live="polite"></div>
@@ -494,7 +560,7 @@ footer a:hover{color:var(--ink)}
     <div class="b intro">
       <div class="label">Ücretsiz · Tarayıcıda · Üyeliksiz</div>
       <h1 id="pageTitle">Canlı Sohbet: mIRC Tadında Üyeliksiz Türkçe Sohbet Odaları</h1>
-      <p>Bir rumuz seç ve yaz. Eski IRC sohbetlerinin sadeliği yeni bir arayüzde: saatli satırlar, renkli rumuzlar, kanallar ve kişi listesi. <b>#genel</b> her konu için; <b>#okey</b>, <b>#tavla</b>, <b>#kart</b> ve <b>#kelime</b> oyun arkadaşı bulmak için. mIRC'teki gibi oyun kanalları da var: <b>#kelime-avı</b>, <b>#zincir</b>, <b>#gizli-kelime</b> ve <b>#yarışma</b>. Oyunda kurduğun masanın davet bağlantısını yapıştır, tek tıkla katılınan bir karta dönüşsün.</p>
+      <p>Bir rumuz seç ve yaz. Eski IRC sohbetlerinin sadeliği yeni bir arayüzde: saatli satırlar, renkli rumuzlar, kanallar ve kişi listesi. <b>#genel</b> her konu için; <b>#okey</b>, <b>#tavla</b>, <b>#kart</b> ve <b>#kelime</b> oyun arkadaşı bulmak için. mIRC'teki gibi <b>#radyo</b>'da birlikte müzik dinlenir, oyun kanalları da var: <b>#kelime-avı</b>, <b>#zincir</b>, <b>#gizli-kelime</b> ve <b>#yarışma</b>. Oyunda kurduğun masanın davet bağlantısını yapıştır, tek tıkla katılınan bir karta dönüşsün.</p>
     </div>
     <div class="b controls">
       <h2>Canlı Sohbet kontrolleri</h2>
@@ -529,6 +595,7 @@ footer a:hover{color:var(--ink)}
           <li><code>/join #okey</code> kanal değiştirir (<code>/j</code> da olur).</li>
           <li><code>/away yemekteyim</code> seni uzakta gösterir, <code>/back</code> geri getirir.</li>
           <li><code>/clear</code> ekranı temizler, <code>/yardim</code> komutları listeler.</li>
+          <li><code>/çal YouTube bağlantısı</code> #radyo sırasına şarkı ekler, <code>/geç</code> çalan şarkıyı atlamak için oy verir (DJ'ler doğrudan geçer).</li>
           <li><code>/zar</code>, <code>/yazitura</code> ve <code>/sayi 1-100</code> herkesin gördüğü sonucu sunucu üretir; <code>/puan</code> oyun puan tablosunu açar.</li>
           <li><code>/msg Rumuz mesaj</code> özel mesaj gönderir, <code>/query Rumuz</code> özel konuşmayı açar (boşluklu rumuz: <code>/msg "Ali Veli" selam</code>).</li>
           <li>Satırı <code>/</code> ile başlatmak için <code>//</code> yaz.</li>
@@ -546,6 +613,15 @@ footer a:hover{color:var(--ink)}
           <li>Moderatörlerin yanında yeşil <b>MOD</b>, yöneticinin yanında turuncu <b>YÖNETİCİ</b> rozeti görünür (klasik görünümde rumuzun başında <b>@</b>).</li>
         </ul>
       </div>
+    </div>
+    <div class="b" id="radyo-kanal">
+      <h2>#radyo: birlikte dinle</h2>
+      <ul class="rules">
+        <li>Kanaldaki herkes aynı şarkıyı aynı anda dinler. <code>/çal</code> ile YouTube bağlantısı ekle; sıradaki şarkılar kanalın üstünde görünür.</li>
+        <li><b>Dinle</b>'ye basınca YouTube'un resmi oynatıcısı açılır; çalan şarkı başkalarıyla birkaç saniye farkla aynı yerden devam eder. Başka kanala geçince durur, dönünce kaldığı yerden değil, yayının o anki yerinden sürer.</li>
+        <li>Kişi başı sırada en çok 2 şarkı, şarkı başına en çok 10 dakika. Sahibi başka sitelerde çalınmasını kapattıysa video eklenemez.</li>
+        <li>Beğenmediğin şarkıyı <b>Atla</b> ile oyla; dinleyenlerin yarısı isterse geçilir. 🎧 <b>DJ</b> rozetliler ve moderatörler doğrudan geçer ya da sıradan siler.</li>
+      </ul>
     </div>
     <div class="b" id="oyunlar">
       <h2>Oyun kanalları</h2>
@@ -565,6 +641,7 @@ footer a:hover{color:var(--ink)}
         <li><b>Bağlantı kayıtları:</b> yasal yükümlülükler için hangi rumuz numarasının hangi IP adresi, bağlantı noktası ve zamanda mesaj gönderdiği iki yıl saklanır. Bu kayıtlarda mesaj metni yoktur; yalnızca yetkili makamların talebiyle paylaşılır.</li>
         <li>Kötüye kullanımı önlemek için IP adresinin geri döndürülemez bir özeti (hash) tutulur.</li>
         <li><b>Cinsiyet isteğe bağlıdır.</b> Seçersen rumuzunun renginden herkes görür (mavi erkek, pembe kadın, yeşil belirtmeyen); "Belirtmek istemiyorum" seçebilir, istediğin zaman değiştirebilirsin.</li>
+        <li><b>#radyo:</b> YouTube oynatıcısı yalnızca <b>Dinle</b>'ye basınca youtube-nocookie.com üzerinden yüklenir; o andan sonra YouTube'un gizlilik politikası geçerlidir. Eklediğin şarkı ve rumuzun kanalda herkese görünür.</li>
         <li><b>Özel mesajları kimse okumaz.</b> Özel konuşmadaki bir mesaj şikâyet edilirse yönetici yalnızca o konuşmayı inceler. Özel mesajlar da 30 gün saklanır; kim kime ne zaman yazdığı bağlantı kayıtlarında tutulur.</li>
         <li>Kanallardaki mesajların herkese açıktır. Silinmesini istediğin bir mesaj için <a href="mailto:sedat@okutan.org" style="text-decoration:underline">sedat@okutan.org</a> adresine yaz.</li>
       </ul>
@@ -577,6 +654,7 @@ footer a:hover{color:var(--ink)}
       <details><summary>Oyun masasına nasıl davet ederim?</summary><p>Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur.</p></details>
       <details><summary>Mesajlar ne kadar saklanıyor?</summary><p>Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır.</p></details>
       <details><summary>Rahatsız edici bir mesajı nasıl bildiririm?</summary><p>Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır.</p></details>
+      <details><summary>Sohbette müzik dinlenebiliyor mu?</summary><p>Evet, #radyo kanalında. /çal komutuyla YouTube bağlantısı eklersin, şarkı sıraya girer; kanaldaki herkes Dinle düğmesine basarak aynı şarkıyı aynı anda dinler. Beğenilmeyen şarkı dinleyenlerin oyuyla atlanır, DJ rozetliler sırayı yönetir. Ses YouTube üzerinden gelir; oynatıcı Dinle düğmesine basılana kadar yüklenmez.</p></details>
       <details><summary>Sohbette oyun oynanıyor mu?</summary><p>Evet. #kelime-avı kanalında karışık harflerden kelimeyi bul, #zincir kanalında öncekinin son harfiyle yeni kelime söyle, #gizli-kelime kanalında 5 harfli kelimeyi renk ipuçlarıyla tahmin et, #yarışma kanalında bilgi sorularını ilk sen bil. Puanlar haftalık tutulur; /puan ile tabloyu görürsün. Her kanalda /zar, /yazitura ve /sayi komutları da var.</p></details>
       <details><summary>Özel mesaj ve özel oda var mı?</summary><p>Var, 18 yaşından büyükler için. Kişi listesinde ya da mesajda rumuza tıklayıp Özel mesaj seçersen bire bir konuşma açılır; /msg Rumuz mesaj komutu da olur. Özel oda açıp davet bağlantısını paylaşarak istediğin kişileri çağırabilirsin. İlk kullanımda 18 yaş beyanını ve özel sohbet şartlarını onaylarsın. Özel mesajları kimse okumaz; şikâyet edilen konuşmayı yönetici inceler. Rahatsız olursan kişiyi engelleyebilir, ayarlardan özel mesajlara kapanabilirsin.</p></details>
       <details><summary>Rumuz renkleri ne anlama geliyor?</summary><p>Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür.</p></details>
@@ -691,6 +769,8 @@ footer a:hover{color:var(--ink)}
       <code>/away sebep</code><span>Uzakta görün</span>
       <code>/back</code><span>Geri dön</span>
       <code>/clear</code><span>Ekranı temizle</span>
+      <code>/çal bağlantı</code><span>#radyo sırasına YouTube şarkısı ekle</span>
+      <code>/geç</code><span>Çalan şarkıyı atla (oy ya da DJ)</span>
       <code>/zar</code><span>Zar at (/zar 1–5)</span>
       <code>/yazitura</code><span>Yazı-tura at</span>
       <code>/sayi 1-100</code><span>Rastgele sayı çek</span>
@@ -706,7 +786,7 @@ footer a:hover{color:var(--ink)}
     <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
   </div>
 </div>
-<script src="motor.js?v=11" defer></script>
-<script src="sohbet.js?v=11" defer></script>
+<script src="motor.js?v=15" defer></script>
+<script src="sohbet.js?v=15" defer></script>
 </body>
 </html>

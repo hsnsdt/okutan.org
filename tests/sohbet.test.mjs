@@ -133,3 +133,14 @@ test('oyun kanalları: Türkçe adla /join, eğlence komutları, puan', () => {
   assert.deepEqual(M.komut('/puan'), { t: 'puan' });
   for (const k of M.KANALLAR.filter((x) => x.oyun)) assert.ok(M.OYUN_KURAL[k.id], k.id);
 });
+
+test('radyo: /çal yalnızca YouTube bağlantısı, /geç, süre yazımı', () => {
+  assert.deepEqual(M.komut('/çal https://youtu.be/dQw4w9WgXcQ'), { t: 'cal', url: 'https://youtu.be/dQw4w9WgXcQ' });
+  assert.deepEqual(M.komut('/cal https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10'), { t: 'cal', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10' });
+  assert.equal(M.komut('/çal https://vimeo.com/123').t, 'hata');
+  assert.equal(M.komut('/çal').t, 'hata');
+  assert.deepEqual(M.komut('/geç'), { t: 'gec' });
+  assert.ok(M.radyoMu('radyo')); assert.ok(!M.radyoMu('genel'));
+  assert.equal(M.sureYaz(187), '3:07'); assert.equal(M.sureYaz(0), '0:00');
+  assert.equal(M.kanalBul('#radyo'), 'radyo');
+});

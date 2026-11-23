@@ -12,6 +12,7 @@
 //   POST ?a=op_del {key, id} · op_mute {key, nick, min} · op_pin {key, ch, id} → moderatör (op) işlemleri
 //   POST ?a=op_ban {key, user, days, wipe?, ch}       → yalnızca yönetici (op = 2): sohbetin içinden yasaklama
 //   GET  ?a=count                                      → {online, ch} herkese açık sayaç (30 sn önbellek)
+// #radyo (radyo.php): YouTube ile ortak dinleme. POST ?a=radyo · radyo_ekle {url} · radyo_sure {id, sure} · radyo_hata {id, kod} · radyo_oy · radyo_gec (DJ) · radyo_sil {id}; admin_dj {t, user, dj}
 // Oyun kanalları (avi, zincir, gizli, yarisma; motor oyun.php): cevaplar normal mesajla (say) verilir, botlar kind 'b' mesaj yazar.
 //   POST ?a=eglence {key, ch, tur: zar|yazitura|sayi, arg} · puan {key, ch} → haftalık tablo · admin_oyun {t, ch, sifirla?}
 // Özel sohbet (18+ beyanı ve kural onayı gerekir; ch = 'p' + oda numarası, poll/say/history aynı uçlar):
@@ -37,7 +38,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex');
 
-const KANALLAR = ['genel', 'okey', 'tavla', 'kart', 'kelime', 'avi', 'zincir', 'gizli', 'yarisma'];
+const KANALLAR = ['genel', 'okey', 'tavla', 'kart', 'kelime', 'radyo', 'avi', 'zincir', 'gizli', 'yarisma'];
 const MSG_DAYS = 30;          // mesajlar bu kadar gün saklanır
 const ONLINE_SEC = 70;        // bu kadar saniyedir sinyal gelmeyen kişi listeden düşer
 const PRESENCE_SEC = 15;      // "buradayım" satırı en sık bu aralıkla yazılır
@@ -46,10 +47,11 @@ const NEWBIE_SEC = 300;       // yeni gelen ilk 5 dakika: yavaş mod 5 sn
 const FLOOD_PER_MIN = 50;     // kanalda dakikada bundan fazla mesaj → 5 dakikalık otomatik yavaş mod
 const BAD_WORDS = ['amk', 'aminako', 'amına', 'orospu', 'sikti', 'sikis', 'sikerim', 'siktir', 'yarrak', 'pezevenk', 'gavat', 'kahpe', 'ibne', 'fuck', 'shit', 'bitch'];
 // bot adları birebir alınamaz ("Botan" gibi adlar engellenmesin diye içerme değil eşitlik)
-const BOT_ADLARI = ['bot', 'kelimebot', 'zincirbot', 'gizlibot', 'bilgibot', 'zar'];
+const BOT_ADLARI = ['bot', 'kelimebot', 'zincirbot', 'gizlibot', 'bilgibot', 'zar', 'radyobot'];
 const RESERVED = ['admin', 'moderator', 'yonetici', 'yönetici', 'sedatokutan', 'okutan', 'sistem', 'system', 'operator', 'nickserv', 'chanserv'];
 
 require_once __DIR__ . '/oyun.php';
+require_once __DIR__ . '/radyo.php';
 
 function out(array $d, int $c = 200): void { http_response_code($c); echo json_encode($d, JSON_UNESCAPED_UNICODE); exit; }
 function fail(string $e, int $c = 400, array $x = []): void { out(['ok' => false, 'error' => $e] + $x, $c); }
@@ -68,7 +70,7 @@ function create_tables(PDO $db): void {
     $o = ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci';
     $db->exec('CREATE TABLE IF NOT EXISTS sh_users (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, key_hash CHAR(64) NOT NULL, nick VARCHAR(16) NULL, nick_lc VARCHAR(16) NULL,
-        op TINYINT(1) NOT NULL DEFAULT 0, gender CHAR(1) NULL, ozel_onay DATETIME NULL, ozel_kapali TINYINT(1) NOT NULL DEFAULT 0, ip CHAR(64) NOT NULL, created_at DATETIME NOT NULL, last_seen DATETIME NOT NULL,
+        op TINYINT(1) NOT NULL DEFAULT 0, gender CHAR(1) NULL, ozel_onay DATETIME NULL, ozel_kapali TINYINT(1) NOT NULL DEFAULT 0, dj TINYINT(1) NOT NULL DEFAULT 0, ip CHAR(64) NOT NULL, created_at DATETIME NOT NULL, last_seen DATETIME NOT NULL,
         nick_at DATETIME NULL, muted_until DATETIME NULL, banned_until DATETIME NULL,
         UNIQUE KEY ux_key (key_hash), UNIQUE KEY ux_nick (nick_lc), KEY ix_ip (ip, created_at)
     )' . $o);
@@ -114,13 +116,14 @@ function create_tables(PDO $db): void {
         cikti TINYINT(1) NOT NULL DEFAULT 0, typing_at DATETIME NULL, PRIMARY KEY (oda_id, user_id), KEY ix_user (user_id, cikti)
     )' . $o);
     oyun_tablolar($db);
+    radyo_tablolar($db);
     $db->exec('CREATE TABLE IF NOT EXISTS sh_engel (user_id INT UNSIGNED NOT NULL, hedef_id INT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, PRIMARY KEY (user_id, hedef_id))' . $o);
 }
 // eski kurulumlara sonradan eklenen sütunlar (canlıdaki tablolar ilk sürümle oluştu)
 function migrate(PDO $db): void {
     foreach (['ALTER TABLE sh_presence ADD COLUMN typing_at DATETIME NULL', 'ALTER TABLE sh_kanal ADD COLUMN pin_id BIGINT UNSIGNED NULL',
         'ALTER TABLE sh_users ADD COLUMN gender CHAR(1) NULL', 'ALTER TABLE sh_users ADD COLUMN ozel_onay DATETIME NULL',
-        'ALTER TABLE sh_users ADD COLUMN ozel_kapali TINYINT(1) NOT NULL DEFAULT 0'] as $sql)
+        'ALTER TABLE sh_users ADD COLUMN ozel_kapali TINYINT(1) NOT NULL DEFAULT 0', 'ALTER TABLE sh_users ADD COLUMN dj TINYINT(1) NOT NULL DEFAULT 0'] as $sql)
         try { $db->exec($sql); } catch (PDOException $e) { if ($e->getCode() !== '42S21') throw $e; }
 }
 function q(PDO $db, string $sql, array $a = []): PDOStatement {
@@ -229,7 +232,7 @@ function is_banned(PDO $db, array $u, string $ip): bool {
 }
 function me_info(array $u, bool $banned): array {
     $mu = ts($u['muted_until']);
-    return ['id' => (int)$u['id'], 'nick' => $u['nick'], 'op' => (int)$u['op'], 'g' => $u['gender'] ?? null,
+    return ['id' => (int)$u['id'], 'nick' => $u['nick'], 'op' => (int)$u['op'], 'g' => $u['gender'] ?? null, 'dj' => !empty($u['dj']),
         'ozel' => ['onay' => !empty($u['ozel_onay']), 'kapali' => !empty($u['ozel_kapali'])], 'banned' => $banned, 'muted' => $mu && $mu > time() ? $mu : null];
 }
 // ---- özel sohbet ----
@@ -389,10 +392,10 @@ try {
         if ($a === 'admin_users') {
             $qn = is_string($in['q'] ?? null) ? trim($in['q']) : '';
             $rows = $qn !== ''
-                ? q($db, 'SELECT id, nick, op, created_at, last_seen, muted_until, banned_until, LEFT(ip, 10) AS iph FROM sh_users WHERE nick LIKE ? ORDER BY last_seen DESC LIMIT 50',
+                ? q($db, 'SELECT id, nick, op, dj, created_at, last_seen, muted_until, banned_until, LEFT(ip, 10) AS iph FROM sh_users WHERE nick LIKE ? ORDER BY last_seen DESC LIMIT 50',
                     ['%' . str_replace(['%', '_'], ['\%', '\_'], mb_substr($qn, 0, 16)) . '%'])->fetchAll()
-                : q($db, 'SELECT id, nick, op, created_at, last_seen, muted_until, banned_until, LEFT(ip, 10) AS iph FROM sh_users WHERE nick IS NOT NULL AND (op > 0 OR muted_until > ? OR banned_until > ?) ORDER BY last_seen DESC LIMIT 100', [now(), now()])->fetchAll();
-            out(['ok' => true, 'rows' => array_map(fn($r) => ['id' => (int)$r['id'], 'nick' => $r['nick'], 'op' => (int)$r['op'], 'iph' => $r['iph'],
+                : q($db, 'SELECT id, nick, op, dj, created_at, last_seen, muted_until, banned_until, LEFT(ip, 10) AS iph FROM sh_users WHERE nick IS NOT NULL AND (op > 0 OR dj = 1 OR muted_until > ? OR banned_until > ?) ORDER BY last_seen DESC LIMIT 100', [now(), now()])->fetchAll();
+            out(['ok' => true, 'rows' => array_map(fn($r) => ['id' => (int)$r['id'], 'nick' => $r['nick'], 'op' => (int)$r['op'], 'dj' => !empty($r['dj']), 'iph' => $r['iph'],
                 'created' => ts($r['created_at']), 'seen' => ts($r['last_seen']), 'muted' => ts($r['muted_until']) > time() ? ts($r['muted_until']) : null,
                 'banned' => ts($r['banned_until']) > time() ? ts($r['banned_until']) : null], $rows)]);
         }
@@ -490,6 +493,10 @@ try {
             $rows = array_reverse(q($db, 'SELECT m.*, u.gender AS g, (SELECT COUNT(*) FROM sh_reports r WHERE r.msg_id = m.id) AS reps FROM sh_msgs m LEFT JOIN sh_users u ON u.id = m.user_id WHERE m.ch = ? ORDER BY m.id DESC LIMIT 300', ['p' . $oid])->fetchAll());
             out(['ok' => true, 'rows' => array_map(fn($r) => msg_row($r) + ['reps' => (int)$r['reps'], 'del' => $r['del_by']], $rows)]);
         }
+        if ($a === 'admin_dj') {
+            q($db, 'UPDATE sh_users SET dj = ? WHERE id = ?', [!empty($in['dj']) ? 1 : 0, (int)($in['user'] ?? 0)]);
+            out(['ok' => true]);
+        }
         if ($a === 'admin_oyun') {
             $ch = chan($in['ch'] ?? ''); if (!isset(OYUNLAR[$ch])) fail('bad_channel');
             if (!empty($in['sifirla'])) q($db, 'DELETE FROM sh_oyun WHERE ch = ?', [$ch]);
@@ -571,6 +578,7 @@ try {
         $res = ['ok' => true, 'msgs' => array_map('msg_row', $rows), 'now' => $now, 'me' => me_info($u, $banned)];
         if ($oda && $rows) { $son = (int)end($rows)['id']; if ($son > (int)$oda['okundu']) q($db, 'UPDATE sh_uyeler SET okundu = ? WHERE oda_id = ? AND user_id = ?', [$son, $oda['id'], $u['id']]); }
         if (!empty($u['ozel_onay'])) $res['ozel'] = ozel_liste($db, $u);
+        if ($ch === RADYO_KANAL) { radyo_tik($db); $res['radyo'] = radyo_durum($db, $u); }
         if ($since > 0) $res['del'] = array_map('intval', q($db, 'SELECT id FROM sh_msgs WHERE ch = ? AND del_at >= ?', [$ch, gmdate('Y-m-d H:i:s', $since - 2)])->fetchAll(PDO::FETCH_COLUMN));
         $res['typing'] = $oda
             ? q($db, 'SELECT u.nick FROM sh_uyeler y JOIN sh_users u ON u.id = y.user_id WHERE y.oda_id = ? AND y.cikti = 0 AND y.typing_at >= ? AND y.user_id <> ? LIMIT 5', [$oda['id'], ago(6), $u['id']])->fetchAll(PDO::FETCH_COLUMN)
@@ -584,8 +592,8 @@ try {
             $res['slow'] = 0; $res['topic'] = null; $res['pin'] = null; $res['oda'] = oda_bilgi($db, $oda, $u);
         } elseif (!empty($in['users'])) {
             $roz = rozetler($db);
-            $res['users'] = array_map(fn($r) => ['id' => (int)$r['user_id'], 'nick' => $r['nick'], 'op' => (int)$r['op'], 'g' => $r['g'], 'away' => $r['away'], 'rozet' => $roz[mb_substr(lc($r['nick']), 0, 40)] ?? null],
-                q($db, 'SELECT p.user_id, p.nick, p.op, p.away, u.gender AS g FROM sh_presence p LEFT JOIN sh_users u ON u.id = p.user_id WHERE p.ch = ? AND p.seen >= ? ORDER BY p.op DESC, p.nick LIMIT 300', [$ch, ago(ONLINE_SEC)])->fetchAll());
+            $res['users'] = array_map(fn($r) => ['id' => (int)$r['user_id'], 'nick' => $r['nick'], 'op' => (int)$r['op'], 'g' => $r['g'], 'away' => $r['away'], 'dj' => (bool)$r['dj'], 'rozet' => $roz[mb_substr(lc($r['nick']), 0, 40)] ?? null],
+                q($db, 'SELECT p.user_id, p.nick, p.op, p.away, u.gender AS g, u.dj FROM sh_presence p LEFT JOIN sh_users u ON u.id = p.user_id WHERE p.ch = ? AND p.seen >= ? ORDER BY p.op DESC, p.nick LIMIT 300', [$ch, ago(ONLINE_SEC)])->fetchAll());
             $res['counts'] = [];
             foreach (q($db, 'SELECT ch, COUNT(*) AS n FROM sh_presence WHERE seen >= ? GROUP BY ch', [ago(ONLINE_SEC)])->fetchAll() as $r) if (in_array($r['ch'], KANALLAR, true)) $res['counts'][$r['ch']] = (int)$r['n'];
             $k = q($db, 'SELECT slow, auto_until, topic, pin_id FROM sh_kanal WHERE ch = ?', [$ch])->fetch() ?: ['slow' => 0, 'auto_until' => null, 'topic' => null, 'pin_id' => null];
@@ -664,6 +672,9 @@ try {
         $rows = array_reverse(q($db, 'SELECT m.*, u.gender AS g FROM sh_msgs m LEFT JOIN sh_users u ON u.id = m.user_id WHERE m.ch = ? AND m.id < ? AND m.del_at IS NULL ORDER BY m.id DESC LIMIT 100', [$ch, $before])->fetchAll());
         out(['ok' => true, 'msgs' => array_map('msg_row', $rows), 'more' => count($rows) === 100]);
     }
+
+    // ---------- #radyo: ortak dinleme (radyo.php) ----------
+    if (strpos($a, 'radyo') === 0) radyo_islem($db, $a, $u, $banned, $in);
 
     // ---------- eğlence komutları ve oyun puanları ----------
     if ($a === 'eglence') {

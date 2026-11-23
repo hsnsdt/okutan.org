@@ -14,6 +14,8 @@
     { id: 'tavla', ad: 'tavla', konu: 'Tavla: rakip ara, maç sonrası sohbet.' },
     { id: 'kart', ad: 'kart', konu: 'Batak, King ve Pişti masaları.' },
     { id: 'kelime', ad: 'kelime', konu: 'Gizli Kelime, Kelime Bulucu ve Kelimeler.' },
+    // ortak dinleme: YouTube oynatıcısı ve şarkı sırası (api/radyo.php)
+    { id: 'radyo', ad: 'radyo', radyo: true, konu: 'Ortak dinleme: /çal YouTube bağlantısı ile sıraya şarkı ekle.' },
     // oyun kanalları: botu sunucuda (api/oyun.php), cevaplar normal mesajla verilir
     { id: 'avi', ad: 'kelime-avı', oyun: true, konu: 'Karışık harflerden kelimeyi ilk bulan kazanır.' },
     { id: 'zincir', ad: 'zincir', oyun: true, konu: 'Her kelime öncekinin son harfiyle başlar.' },
@@ -73,6 +75,9 @@
     return x ? x.id : null;
   }
   function oyunMu(ch) { return !!(KANAL_ID[ch] && KANAL_ID[ch].oyun); }
+  function radyoMu(ch) { return !!(KANAL_ID[ch] && KANAL_ID[ch].radyo); }
+  // saniye → 3:07
+  function sureYaz(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
 
   // Yazılan satırı komuta çevirir. "//" ile başlayan satır komut değil, düz mesajdır.
   function komut(satir) {
@@ -118,6 +123,13 @@
         if (arg && !/^\d{1,6}(\s*[-–]\s*\d{1,6})?$/.test(arg)) return { t: 'hata', msg: 'Kullanım: /sayi (1–100), /sayi 6 ya da /sayi 10-50' };
         return { t: 'eglence', tur: 'sayi', arg: arg || '' };
       }
+      case 'çal': case 'cal': case 'play': case 'radyo': {
+        if (!arg) return { t: 'hata', msg: 'Kullanım: /çal YouTube bağlantısı (ör. /çal https://youtu.be/…)' };
+        if (!/^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\/\S+$/i.test(arg) && !/^[A-Za-z0-9_-]{11}$/.test(arg)) return { t: 'hata', msg: 'Yalnızca YouTube bağlantısı eklenebilir.' };
+        return { t: 'cal', url: arg };
+      }
+      case 'geç': case 'gec': case 'skip': case 'atla':
+        return { t: 'gec' };
       case 'puan': case 'skor': case 'puanlar':
         return { t: 'puan' };
       case 'sustur': case 'mute': {
@@ -226,6 +238,13 @@
     not_admin: 'Bunu yalnızca yönetici yapabilir.',
     bad_name: 'Oda adı en az 2 karakter olmalı.',
     bad_cmd: 'Bilinmeyen komut.',
+    yt_bad: 'Bu bir YouTube video bağlantısı değil.',
+    yt_sirada: 'Bu şarkı zaten sırada ya da çalıyor.',
+    yt_kisi: 'Sırada en çok 2 şarkın olabilir; biri çalınınca yenisini ekle.',
+    yt_dolu: 'Sıra dolu (30 şarkı); biraz sonra dene.',
+    yt_gomulemez: 'Bu video bulunamadı ya da sahibi başka sitelerde çalınmasını kapatmış.',
+    yt_yok: 'Şu an çalan şarkı yok.',
+    not_dj: 'Bunu yalnızca DJ ya da moderatör yapabilir.',
     db_unavailable: 'Sohbet şu an kapalı; birazdan tekrar dene.',
     not_configured: 'Sohbet henüz kurulmadı.'
   };
@@ -234,5 +253,5 @@
   return { KANALLAR: KANALLAR, OYUNLAR: OYUNLAR, MAKS_MESAJ: MAKS_MESAJ, trKucuk: trKucuk, rumuzDuzelt: rumuzDuzelt, rumuzGecerli: rumuzGecerli,
     renk: renk, fnv1a: fnv1a, kanalBul: kanalBul, komut: komut, bahsediyor: bahsediyor, parcala: parcala, farklar: farklar, tamamla: tamamla, hataMetni: hataMetni,
     gunAnahtari: gunAnahtari, gunEtiketi: gunEtiketi, EMOJILER: EMOJILER, kanalOyun: kanalOyun,
-    gSinif: gSinif, CINSIYET: CINSIYET, basHarf: basHarf, rolAdi: rolAdi, ozelMi: ozelMi, oyunMu: oyunMu, OYUN_KURAL: OYUN_KURAL };
+    gSinif: gSinif, CINSIYET: CINSIYET, basHarf: basHarf, rolAdi: rolAdi, ozelMi: ozelMi, oyunMu: oyunMu, OYUN_KURAL: OYUN_KURAL, radyoMu: radyoMu, sureYaz: sureYaz };
 });
