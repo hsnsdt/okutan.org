@@ -70,6 +70,7 @@
         { "@type": "Question", "name": "Oyun masasına nasıl davet ederim?", "acceptedAnswer": { "@type": "Answer", "text": "Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur." } },
         { "@type": "Question", "name": "Mesajlar ne kadar saklanıyor?", "acceptedAnswer": { "@type": "Answer", "text": "Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır." } },
         { "@type": "Question", "name": "Rahatsız edici bir mesajı nasıl bildiririm?", "acceptedAnswer": { "@type": "Answer", "text": "Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır." } },
+        { "@type": "Question", "name": "Eski mIRC görünümü var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır." } },
         { "@type": "Question", "name": "Telefonda çalışır mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez." } }
       ]
     }
@@ -81,9 +82,9 @@
 :root{
   --bg:#ebebe8; --block:#ffffff; --ink:#0e0e0e; --muted:#6a6a6a; --line:#dadad6;
   --accent:#ff5a1f; --c2:#2f6bff;
-  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
-  --round:"Nunito","Inter Tight",system-ui,sans-serif;
+  --sans:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --round:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
   --r:18px; --gap:12px;
   color-scheme:light;
 }
@@ -96,7 +97,9 @@ a{color:inherit;text-decoration:none}
 button,input{font:inherit;color:inherit}
 .wrap{max-width:1180px;margin:0 auto;padding:var(--gap) 16px 40px}
 .b{background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative}
-.label{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.label{font-family:var(--mono);font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{font-family:var(--round)}
+.info h1,.info h2{font-weight:900}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px 10px 20px;margin-bottom:var(--gap)}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
 .logo img{height:24px;width:auto;display:block}
@@ -197,6 +200,56 @@ button,input{font:inherit;color:inherit}
 .sh-ul li.me{font-weight:900}
 .sh-ul .empty{color:var(--p-mut);font-size:13px;padding:6px 16px}
 .sh-ul .cls{display:none}
+
+/* gün ayırıcı, okunmamış çizgisi, eski mesajlar, sabit mesaj, yazıyor */
+.gun{display:flex;align-items:center;gap:10px;margin:10px 16px 6px;font:800 12px var(--round);color:var(--p-mut);letter-spacing:.04em}
+.gun::before,.gun::after{content:"";flex:1;height:1px;background:var(--p-line)}
+.okunmamis{display:flex;align-items:center;gap:10px;margin:8px 16px;font:900 11.5px var(--round);color:#e5484d;text-transform:uppercase;letter-spacing:.06em}
+.okunmamis::after{content:"";flex:1;height:1.5px;background:#e5484d;opacity:.7}
+.eski{display:block;margin:4px auto 10px;height:32px;padding:0 14px;border-radius:999px;border:1.5px solid var(--p-line);background:var(--p-bg);font:800 13px var(--round);color:var(--p-mut);cursor:pointer}
+.eski:hover{color:var(--p-ink);border-color:var(--p-line2)}
+.sh-pin{display:flex;align-items:center;gap:10px;padding:8px 12px 8px 16px;border-bottom:1px solid var(--p-line);background:color-mix(in srgb,var(--p-sel) 8%,var(--p-pane));font-size:14px;min-width:0}
+.sh-pin svg{flex:none;width:16px;height:16px;fill:none;stroke:var(--p-sel);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sh-pin .px{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-pin .px b{font-weight:900;margin-right:6px}
+.sh-pin .px .davet{display:inline-flex;margin:0;padding:2px 8px;border-radius:8px;vertical-align:middle}
+.sh-pin .px .davet img{width:18px;height:18px;border-radius:5px}.sh-pin .px .davet small,.sh-pin .px .davet i{display:none}
+.sh-pin .ib{width:28px;height:28px;border-radius:8px}
+.sh-typing{padding:0 16px 4px;font:700 12.5px var(--round);color:var(--p-mut);font-style:italic;min-height:0}
+.sh-typing:empty{display:none}
+.sh-form .emo{flex:none;width:42px;height:42px;padding:0}
+.emo-pop{display:grid;grid-template-columns:repeat(8,36px);gap:2px;min-width:0}
+.emo-pop button{width:36px;height:36px;padding:0;text-align:center;font-size:20px;line-height:36px;border-radius:8px}
+.sh-ul li .rz{margin-left:auto;flex:none;font:900 10.5px var(--round);color:#b26b00;background:var(--p-hl);border-radius:999px;padding:1px 7px}
+.sh-ul li.aw .rz{display:none}
+
+/* ayarlar: yazı boyutu, saat, klasik tema */
+.chat.fs-s .sh-log{font-size:13.5px}.chat.fs-l .sh-log{font-size:17px}
+.chat.no-time .ln time{display:none}
+.chat.klasik{--p-bg:#000;--p-pane:#000;--p-side:#0a0a0a;--p-line:#2a2a2a;--p-line2:#555;--p-ink:#d0d0d0;--p-mut:#7f7f7f;--p-hl:#1d1d00;--p-hl2:#fcfc00;--p-sel:#00007f;
+  --n0:#fc0000;--n1:#009300;--n2:#fc7f00;--n3:#fcfc00;--n4:#00fc00;--n5:#009393;--n6:#00ffff;--n7:#0000fc;--n8:#ff00ff;--n9:#9c009c;border-radius:6px}
+.chat.klasik .sh-main,.chat.klasik .sh-side{border-radius:0}
+.chat.klasik .sh-log{line-height:1.35}
+.chat.klasik .ln{padding-top:0;padding-bottom:0}
+.chat.klasik .ln time{color:#7f7f7f}.chat.klasik .ln time::before{content:"["}.chat.klasik .ln time::after{content:"]"}
+.chat.klasik .ln.s,.chat.klasik .ln.j{color:#009300}
+.chat.klasik .ln.e{font-style:normal;color:#9c009c}.chat.klasik .ln.e .nk{color:#9c009c}
+.chat.klasik .ln.hl{background:none;box-shadow:none;color:#fc0000}
+.chat.klasik .ln.a{border-radius:0;background:none;border-left:3px solid #fc7f00;margin:4px 0}
+.chat.klasik .sh-kl nav button,.chat.klasik .sh-tabs button,.chat.klasik .sh-form input,.chat.klasik .sh-form .nb,.chat.klasik .sh-form .send,.chat.klasik .ib,.chat.klasik .davet{border-radius:3px}
+.chat.klasik .sh-kl nav button[aria-current="true"],.chat.klasik .sh-tabs button[aria-current="true"]{background:#00007f;border-color:#00007f}
+.chat.klasik .sh-form .send{background:#00007f}
+.chat.klasik .gun{color:#009300}
+.chat.klasik .gun::before,.chat.klasik .gun::after{background:#1f3f1f}
+.opts{display:grid;gap:4px;margin-top:6px}
+.opts .seg{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 10px}
+.opts .seg button{flex:1;min-width:0;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);font:800 14px var(--round);cursor:pointer}
+.opts .seg button[aria-pressed="true"]{border-color:var(--c2);background:color-mix(in srgb,var(--c2) 12%,var(--block));color:var(--c2)}
+.opts h3{font:900 13px var(--round);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.opt input{width:20px;height:20px;margin-top:2px;accent-color:var(--c2);flex:none}
+.opt span{display:flex;flex-direction:column}.opt b{font-size:15px}.opt small{font-size:13px;color:var(--muted)}
+.mcard .opt input{width:20px;height:20px;margin:2px 0 0;padding:0}
 
 /* menü */
 .pop{position:fixed;z-index:70;min-width:180px;background:var(--p-pane,#fff);color:var(--p-ink);border:1px solid var(--p-line);border-radius:12px;padding:6px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font-family:var(--round)}
@@ -313,14 +366,18 @@ footer a:hover{color:var(--ink)}
         <span class="slow" id="slowTag" hidden></span>
         <button class="ib wide" id="usersBtn" aria-label="Kişiler" title="Kişiler"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.8c1.7.8 2.8 2.5 3 5.2"/></svg><span id="usersN">0</span></button>
         <button class="ib" id="soundBtn" aria-label="Adım geçince ses" aria-pressed="true" title="Adım geçince ses"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wv" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="mt" d="m16 9.5 5 5m0-5-5 5" hidden/></svg></button>
+        <button class="ib" id="setBtn" aria-label="Ayarlar" title="Ayarlar"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg></button>
         <button class="ib" id="helpBtn" aria-label="Komutlar ve kurallar" title="Komutlar ve kurallar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4.2M12 17.6h.01"/></svg></button>
       </div>
+      <div class="sh-pin" id="pinBar" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l-1 6 4 4H6l4-4z"/><path d="M12 13v8"/></svg><span class="px" id="pinText"></span><button class="ib" id="pinOff" aria-label="Sabit mesajı kaldır" title="Sabit mesajı kaldır" hidden>✕</button></div>
       <div class="sh-log" id="log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
       <button class="sh-new" id="newBelow" hidden>Yeni mesajlar ↓</button>
+      <div class="sh-typing" id="typing" aria-live="polite"></div>
       <div class="sh-status" id="status" role="status"></div>
       <form class="sh-form" id="form" autocomplete="off">
         <button type="button" class="nb" id="nickBtn" title="Rumuzu değiştir">Rumuz</button>
         <input id="inp" maxlength="300" enterkeyhint="send" placeholder="Mesaj yaz… (komutlar: /yardim)" aria-label="Mesaj" spellcheck="true">
+        <button type="button" class="ib emo" id="emoBtn" aria-label="Emoji" title="Emoji"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M8 14.5a4.5 4.5 0 0 0 8 0M9 9.5h.01M15 9.5h.01"/></svg></button>
         <button class="send" id="sendBtn" aria-label="Gönder"><span>Gönder</span><svg viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-3-7z"/></svg></button>
       </form>
     </section>
@@ -352,6 +409,7 @@ footer a:hover{color:var(--ink)}
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Alt</kbd><kbd class="kc">↑</kbd><kbd class="kc">↓</kbd></span></span><span>Önceki ya da sonraki kanala geç</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">PgUp</kbd><kbd class="kc w">PgDn</kbd></span></span><span>Yazarken sohbet geçmişinde yukarı ve aşağı kaydır</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Esc</kbd></span></span><span>Açık menüyü ya da pencereyi kapat</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><rect x="18" y="7" width="4" height="10" rx="2" fill="var(--accent)"/><path d="M41 14l3-4 3 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>En üste kaydırıp <b>Daha eski mesajlar</b>a tıkla</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Bir rumuza tıkla: adı mesaj kutusuna yazılır</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Satırın sağındaki <b>⋯</b> ile yanıtla ya da şikâyet et</span></li>
       </ul>
@@ -404,6 +462,7 @@ footer a:hover{color:var(--ink)}
       <details><summary>Oyun masasına nasıl davet ederim?</summary><p>Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur.</p></details>
       <details><summary>Mesajlar ne kadar saklanıyor?</summary><p>Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır.</p></details>
       <details><summary>Rahatsız edici bir mesajı nasıl bildiririm?</summary><p>Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır.</p></details>
+      <details><summary>Eski mIRC görünümü var mı?</summary><p>Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır.</p></details>
       <details><summary>Telefonda çalışır mı?</summary><p>Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez.</p></details>
     </div>
   </section>
@@ -430,6 +489,25 @@ footer a:hover{color:var(--ink)}
     <p style="font-size:13px;margin-top:10px">Girerek <a href="#kurallar" style="text-decoration:underline">sohbet kurallarını</a> kabul etmiş olursun.</p>
   </form>
 </div>
+<!-- Ayarlar -->
+<div class="modal" id="setModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Ayarlar</div>
+    <h2 id="setTitle">Görünüm ve bildirimler</h2>
+    <div class="opts">
+      <h3>Görünüm</h3>
+      <div class="seg" id="segTema"><button type="button" data-v="yeni">Yeni</button><button type="button" data-v="klasik">Klasik mIRC</button></div>
+      <h3>Yazı boyutu</h3>
+      <div class="seg" id="segBoyut"><button type="button" data-v="s">Küçük</button><button type="button" data-v="m">Orta</button><button type="button" data-v="l">Büyük</button></div>
+      <label class="opt"><input type="checkbox" id="optSaat"><span><b>Saatleri göster</b><small>Her satırın başındaki saat.</small></span></label>
+      <label class="opt"><input type="checkbox" id="optGiris"><span><b>Katıldı / ayrıldı satırları</b><small>Kanala girip çıkanları göster.</small></span></label>
+      <label class="opt"><input type="checkbox" id="optSes"><span><b>Adım geçince ses</b><small>Biri rumuzunu yazınca kısa bir çınlama.</small></span></label>
+      <label class="opt"><input type="checkbox" id="optBildirim"><span><b>Masaüstü bildirimi</b><small id="bildirimNot">Sekme arka plandayken adın geçerse bildirim gelir.</small></span></label>
+    </div>
+    <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
+  </div>
+</div>
 <!-- Komutlar -->
 <div class="modal" id="helpModal" hidden>
   <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -452,7 +530,7 @@ footer a:hover{color:var(--ink)}
     <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
   </div>
 </div>
-<script src="motor.js?v=1" defer></script>
-<script src="sohbet.js?v=1" defer></script>
+<script src="motor.js?v=3" defer></script>
+<script src="sohbet.js?v=3" defer></script>
 </body>
 </html>

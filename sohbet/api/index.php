@@ -6,12 +6,16 @@
 //   POST ?a=nick   {key, nick}                         → {nick}
 //   POST ?a=poll   {key, ch, after, since, users, away} → {msgs, del, now, users?, counts?, slow, me}
 //   POST ?a=say    {key, ch, text, me}                 → {id, text}
+//        poll ayrıca: typing (yazıyor), users istenirse kişi rozetleri ve kanalın sabit mesajı (pin)
+//   POST ?a=history {key, ch, before}                  → önceki 100 mesaj
 //   POST ?a=report {key, id}                           → 3 ayrı ağdan şikâyet gelen mesaj kendiliğinden gizlenir
-//   POST ?a=op_del {key, id} · op_mute {key, nick, min} → moderatör (op) işlemleri
+//   POST ?a=op_del {key, id} · op_mute {key, nick, min} · op_pin {key, ch, id} → moderatör (op) işlemleri
+//   GET  ?a=count                                      → {online, ch} herkese açık sayaç (30 sn önbellek)
 // Yönetim (config.php: admin_pass; 12 saatlik imzalı jeton):
 //   POST ?a=admin_login {pass} · admin_stats · admin_feed · admin_users · admin_del · admin_mute · admin_ban · admin_ipban
 //        admin_op · admin_chan · admin_notice · admin_log
 //        admin_claim {t, key, nick} → yöneticinin kendi rumuzu (ayrılmış adlar serbest, op olur)
+//        admin_words {t, add?, del?} → yasaklı kelime listesi (sh_words, koddaki temel listeye eklenir)
 //
 // Tablolar (sh_*), ilk istekte kendiliğinden oluşur:
 //   sh_users     kişi başına bir satır (rumuz, op, susturma/yasak)
@@ -59,7 +63,7 @@ function create_tables(PDO $db): void {
     )' . $o);
     $db->exec('CREATE TABLE IF NOT EXISTS sh_presence (
         user_id INT UNSIGNED NOT NULL PRIMARY KEY, ch VARCHAR(12) NOT NULL, nick VARCHAR(16) NOT NULL, op TINYINT(1) NOT NULL DEFAULT 0,
-        away VARCHAR(40) NULL, seen DATETIME NOT NULL, KEY ix_ch (ch, seen)
+        away VARCHAR(40) NULL, seen DATETIME NOT NULL, typing_at DATETIME NULL, KEY ix_ch (ch, seen)
     )' . $o);
     $db->exec("CREATE TABLE IF NOT EXISTS sh_msgs (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, ch VARCHAR(12) NOT NULL, user_id INT UNSIGNED NOT NULL, nick VARCHAR(16) NOT NULL,
@@ -80,15 +84,63 @@ function create_tables(PDO $db): void {
         ip CHAR(64) NOT NULL PRIMARY KEY, until DATETIME NOT NULL, created_at DATETIME NOT NULL, note VARCHAR(100) NULL
     )' . $o);
     $db->exec('CREATE TABLE IF NOT EXISTS sh_kanal (
-        ch VARCHAR(12) NOT NULL PRIMARY KEY, slow SMALLINT UNSIGNED NOT NULL DEFAULT 0, auto_until DATETIME NULL, topic VARCHAR(120) NULL
+        ch VARCHAR(12) NOT NULL PRIMARY KEY, slow SMALLINT UNSIGNED NOT NULL DEFAULT 0, auto_until DATETIME NULL, topic VARCHAR(120) NULL,
+        pin_id BIGINT UNSIGNED NULL
     )' . $o);
+    $db->exec('CREATE TABLE IF NOT EXISTS sh_words (word VARCHAR(30) NOT NULL PRIMARY KEY, created_at DATETIME NOT NULL)' . $o);
+    $db->exec('CREATE TABLE IF NOT EXISTS sh_rozet (nick_lc VARCHAR(40) NOT NULL PRIMARY KEY, label VARCHAR(40) NOT NULL)' . $o);
+    $db->exec('CREATE TABLE IF NOT EXISTS sh_meta (k VARCHAR(20) NOT NULL PRIMARY KEY, v VARCHAR(40) NOT NULL)' . $o);
+}
+// eski kurulumlara sonradan eklenen sütunlar (canlıdaki tablolar ilk sürümle oluştu)
+function migrate(PDO $db): void {
+    foreach (['ALTER TABLE sh_presence ADD COLUMN typing_at DATETIME NULL', 'ALTER TABLE sh_kanal ADD COLUMN pin_id BIGINT UNSIGNED NULL'] as $sql)
+        try { $db->exec($sql); } catch (PDOException $e) { if ($e->getCode() !== '42S21') throw $e; }
 }
 function q(PDO $db, string $sql, array $a = []): PDOStatement {
     try { $s = $db->prepare($sql); $s->execute($a); return $s; }
     catch (PDOException $e) {
-        if ($e->getCode() !== '42S02') throw $e;
-        create_tables($db); $s = $db->prepare($sql); $s->execute($a); return $s;
+        if ($e->getCode() === '42S02') create_tables($db);
+        elseif ($e->getCode() === '42S22') migrate($db);
+        else throw $e;
+        $s = $db->prepare($sql); $s->execute($a); return $s;
     }
+}
+// küfür listesi: koddaki temel liste + yönetimden eklenenler (sh_words); istek başına bir kez okunur
+function words(): array {
+    static $w = null;
+    if ($w === null) {
+        $w = BAD_WORDS;
+        try { foreach (q($GLOBALS['db'], 'SELECT word FROM sh_words')->fetchAll(PDO::FETCH_COLUMN) as $x) $w[] = (string)$x; } catch (Throwable $e) {}
+        $w = array_values(array_unique($w));
+    }
+    return $w;
+}
+function week_start(): string {
+    $d = new DateTime('now', new DateTimeZone('Europe/Istanbul')); $d->setTime(0, 0); $d->modify('-' . ((int)$d->format('N') - 1) . ' days');
+    $d->setTimezone(new DateTimeZone('UTC')); return $d->format('Y-m-d H:i:s');
+}
+// Oyun rozetleri: bu haftanın en çok kazanan ilk 10'u (101 Okey, Okey, Tavla, Batak, King, Pişti). 10 dakikada bir yeniden hesaplanır.
+// Oyun adları sahiplenilmez; rozet yalnızca sohbetteki rumuzla oyundaki adın aynı olduğunu gösterir.
+function rozetler(PDO $db): array {
+    $at = q($db, "SELECT v FROM sh_meta WHERE k = 'rozet_at'")->fetchColumn();
+    if (!$at || (int)$at < time() - 600) {
+        q($db, "REPLACE INTO sh_meta (k, v) VALUES ('rozet_at', ?)", [(string)time()]);
+        $best = [];
+        foreach (['ok_' => '101 Okey', 'oy_' => 'Okey', 'tv_' => 'Tavla', 'bt_' => 'Batak', 'kg_' => 'King', 'ps_' => 'Pişti'] as $p => $ad) {
+            try {
+                $s = $db->prepare("SELECT name, SUM(won) AS w FROM {$p}games WHERE flag = 0 AND mode <> 'daily' AND created_at >= ? GROUP BY name HAVING w > 0 ORDER BY w DESC, COUNT(*) ASC LIMIT 10");
+                $s->execute([week_start()]);
+                foreach ($s->fetchAll() as $i => $r) { $k = mb_substr(lc((string)$r['name']), 0, 40); if (!isset($best[$k]) || $best[$k][0] > $i) $best[$k] = [$i, $ad . ' #' . ($i + 1)]; }
+            } catch (Throwable $e) {} // oyunun tablosu henüz yoksa atla
+        }
+        $db->beginTransaction();
+        q($db, 'DELETE FROM sh_rozet');
+        foreach ($best as $k => $v) q($db, 'INSERT INTO sh_rozet (nick_lc, label) VALUES (?, ?)', [$k, $v[1]]);
+        $db->commit();
+    }
+    $out = [];
+    foreach (q($db, 'SELECT nick_lc, label FROM sh_rozet')->fetchAll() as $r) $out[$r['nick_lc']] = $r['label'];
+    return $out;
 }
 function now(): string { return gmdate('Y-m-d H:i:s'); }
 function ago(int $sec): string { return gmdate('Y-m-d H:i:s', time() - $sec); }
@@ -108,7 +160,7 @@ function clean_nick($raw, bool $reserved = true): ?string {
     $len = mb_strlen($n, 'UTF-8');
     if ($len < 2 || $len > 16 || !preg_match('/^[\p{L}\p{N}][\p{L}\p{N} ._\-]*$/u', $n)) return null;
     $f = flat($n);
-    foreach ($reserved ? array_merge(BAD_WORDS, RESERVED) : BAD_WORDS as $w) if (str_contains($f, flat($w))) return null;
+    foreach ($reserved ? array_merge(words(), RESERVED) : words() as $w) if (str_contains($f, flat($w))) return null;
     return $n;
 }
 // Mesaj metni: denetim karakterleri atılır, boşluk sadeleşir, 300 karakter; küfür *** olur; okutan.org dışındaki bağlantılar kaldırılır
@@ -120,7 +172,7 @@ function clean_text($raw): ?string {
     $t = mb_substr($t, 0, MAX_TEXT, 'UTF-8');
     $t = (string)preg_replace_callback('~\b(?:https?://|www\.)\S+|\b[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)*\.(?:com|net|org|tr|io|me|gg|ly|co|xyz|info|biz|app|link|club|site|online|ru|de|tk|ml|ga|cf|top|live|tv|to|cc|us|uk|eu|shop|store)\b(?:/\S*)?~iu',
         fn($m) => preg_match('~^(?:https?://)?(?:www\.)?okutan\.org(?:[/?#]|$)~i', $m[0]) ? $m[0] : '[bağlantı]', $t);
-    foreach (BAD_WORDS as $w) $t = (string)preg_replace('/[\p{L}\p{N}]*' . preg_quote($w, '/') . '[\p{L}\p{N}]*/iu', '***', $t);
+    foreach (words() as $w) $t = (string)preg_replace('/[\p{L}\p{N}]*' . preg_quote($w, '/') . '[\p{L}\p{N}]*/iu', '***', $t);
     return $t;
 }
 function chan($c): string { if (!is_string($c) || !in_array($c, KANALLAR, true)) fail('bad_channel'); return $c; }
@@ -131,7 +183,7 @@ function log_ev(PDO $db, array $u, string $ev, ?int $ref = null): void {
 }
 function user_by_key(PDO $db, $key): array {
     if (!is_string($key) || !preg_match('/^[a-f0-9]{32}$/', $key)) fail('bad_key', 401);
-    $u = q($db, 'SELECT u.*, p.ch AS p_ch, p.seen AS p_seen, p.away AS p_away FROM sh_users u LEFT JOIN sh_presence p ON p.user_id = u.id WHERE u.key_hash = ?',
+    $u = q($db, 'SELECT u.*, p.ch AS p_ch, p.seen AS p_seen, p.away AS p_away, p.typing_at AS p_typing FROM sh_users u LEFT JOIN sh_presence p ON p.user_id = u.id WHERE u.key_hash = ?',
         [hash('sha256', $key)])->fetch();
     if (!$u) fail('bad_key', 401);
     return $u;
@@ -176,6 +228,16 @@ function admin_check(array $cfg, $tok): void {
 }
 
 $a = $_GET['a'] ?? '';
+// herkese açık sayaç (ana sayfa, oyunlar, oyun sayfaları): kimlik istemez, 30 sn önbellekte kalır
+if ($a === 'count') {
+    try {
+        $per = [];
+        foreach (q($db, 'SELECT ch, COUNT(*) AS n FROM sh_presence WHERE seen >= ? GROUP BY ch', [ago(ONLINE_SEC)])->fetchAll() as $r) $per[$r['ch']] = (int)$r['n'];
+        header('Cache-Control: public, max-age=30');
+        header('X-LiteSpeed-Cache-Control: public,max-age=30');
+        out(['ok' => true, 'online' => array_sum($per), 'ch' => (object)$per]);
+    } catch (Throwable $e) { fail('server_error', 500); }
+}
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') fail('method', 405);
 $in = body(); $ip = ip_hash($cfg);
 
@@ -186,8 +248,8 @@ try {
         if (is_string($key) && preg_match('/^[a-f0-9]{32}$/', $key)) $u = q($db, 'SELECT * FROM sh_users WHERE key_hash = ?', [hash('sha256', $key)])->fetch() ?: null;
         if (!$u) {
             if ((bool)q($db, 'SELECT 1 FROM sh_ipbans WHERE ip = ? AND until > ?', [$ip, now()])->fetchColumn()) fail('banned', 403);
-            // aynı ağdan saatte en çok 20 yeni kişi (mobil operatörlerde çok kişi aynı IP'yi paylaşır; sınır geniş)
-            if ((int)q($db, 'SELECT COUNT(*) FROM sh_users WHERE ip = ? AND created_at >= ?', [$ip, ago(3600)])->fetchColumn() >= 20) fail('rate_limited', 429);
+            // aynı ağdan saatte en çok 30 yeni kişi (mobil operatörlerde çok kişi aynı IP'yi paylaşır; sınır geniş)
+            if ((int)q($db, 'SELECT COUNT(*) FROM sh_users WHERE ip = ? AND created_at >= ?', [$ip, ago(3600)])->fetchColumn() >= 30) fail('rate_limited', 429);
             $key = bin2hex(random_bytes(16));
             q($db, 'INSERT INTO sh_users (key_hash, ip, created_at, last_seen) VALUES (?,?,?,?)', [hash('sha256', $key), $ip, now(), now()]);
             $u = q($db, 'SELECT * FROM sh_users WHERE id = ?', [(int)$db->lastInsertId()])->fetch();
@@ -302,6 +364,17 @@ try {
             foreach ($chs as $c) sys_msg($db, $c, $text, $admin, 'a');
             out(['ok' => true]);
         }
+        if ($a === 'admin_words') {
+            // yasaklı kelimeler: koddaki temel liste değişmez; buradan eklenenler hem mesajda yıldızlanır hem rumuzda reddedilir
+            $add = is_string($in['add'] ?? null) ? lc(trim($in['add'])) : '';
+            $del = is_string($in['del'] ?? null) ? lc(trim($in['del'])) : '';
+            if ($add !== '') {
+                if (!preg_match('/^[\p{L}\p{N}]{2,30}$/u', $add)) fail('bad_word');
+                q($db, 'INSERT IGNORE INTO sh_words (word, created_at) VALUES (?, ?)', [$add, now()]);
+            }
+            if ($del !== '') q($db, 'DELETE FROM sh_words WHERE word = ?', [$del]);
+            out(['ok' => true, 'base' => BAD_WORDS, 'words' => q($db, 'SELECT word FROM sh_words ORDER BY word')->fetchAll(PDO::FETCH_COLUMN)]);
+        }
         if ($a === 'admin_claim') {
             // yöneticinin kendi sohbet rumuzu: yönetim sayfası aynı tarayıcıdaki sohbet anahtarını gönderir;
             // ayrılmış adlar (okutan, admin…) yalnızca böyle alınır, kişi moderatör olur
@@ -363,18 +436,29 @@ try {
         if ($u['nick'] && !$banned && ($u['p_ch'] !== $ch || ts($u['p_seen']) < $now - PRESENCE_SEC || (string)$u['p_away'] !== $away)) {
             q($db, 'REPLACE INTO sh_presence (user_id, ch, nick, op, away, seen) VALUES (?,?,?,?,?,?)', [$u['id'], $ch, $u['nick'], (int)$u['op'], $away !== '' ? $away : null, now()]);
             if (ts($u['last_seen']) < $now - 300) q($db, 'UPDATE sh_users SET last_seen = ? WHERE id = ?', [now(), $u['id']]);
+            $u['p_typing'] = null;
         }
+        // "yazıyor…": yazarken en sık 3 sn'de bir, bırakınca bir kez yazılır
+        $typing = !empty($in['typing']) && $u['nick'] && !$banned;
+        $tt = ts($u['p_typing']);
+        if ($typing && (!$tt || $tt < $now - 3)) q($db, 'UPDATE sh_presence SET typing_at = ? WHERE user_id = ?', [now(), $u['id']]);
+        elseif (!$typing && $tt && $tt >= $now - 6) q($db, 'UPDATE sh_presence SET typing_at = NULL WHERE user_id = ?', [$u['id']]);
         $rows = $after > 0
             ? q($db, 'SELECT * FROM sh_msgs WHERE ch = ? AND id > ? AND del_at IS NULL ORDER BY id LIMIT 200', [$ch, $after])->fetchAll()
             : array_reverse(q($db, 'SELECT * FROM sh_msgs WHERE ch = ? AND del_at IS NULL ORDER BY id DESC LIMIT 100', [$ch])->fetchAll());
         $res = ['ok' => true, 'msgs' => array_map('msg_row', $rows), 'now' => $now, 'me' => me_info($u, $banned)];
         if ($since > 0) $res['del'] = array_map('intval', q($db, 'SELECT id FROM sh_msgs WHERE ch = ? AND del_at >= ?', [$ch, gmdate('Y-m-d H:i:s', $since - 2)])->fetchAll(PDO::FETCH_COLUMN));
+        $res['typing'] = q($db, 'SELECT nick FROM sh_presence WHERE ch = ? AND typing_at >= ? AND user_id <> ? LIMIT 5', [$ch, ago(6), $u['id']])->fetchAll(PDO::FETCH_COLUMN);
         if (!empty($in['users'])) {
-            $res['users'] = array_map(fn($r) => ['id' => (int)$r['user_id'], 'nick' => $r['nick'], 'op' => (bool)$r['op'], 'away' => $r['away']],
+            $roz = rozetler($db);
+            $res['users'] = array_map(fn($r) => ['id' => (int)$r['user_id'], 'nick' => $r['nick'], 'op' => (bool)$r['op'], 'away' => $r['away'], 'rozet' => $roz[mb_substr(lc($r['nick']), 0, 40)] ?? null],
                 q($db, 'SELECT user_id, nick, op, away FROM sh_presence WHERE ch = ? AND seen >= ? ORDER BY op DESC, nick LIMIT 300', [$ch, ago(ONLINE_SEC)])->fetchAll());
             $res['counts'] = [];
             foreach (q($db, 'SELECT ch, COUNT(*) AS n FROM sh_presence WHERE seen >= ? GROUP BY ch', [ago(ONLINE_SEC)])->fetchAll() as $r) $res['counts'][$r['ch']] = (int)$r['n'];
-            $k = kanal_row($db, $ch); $res['slow'] = slow_of($k); $res['topic'] = $k['topic'];
+            $k = q($db, 'SELECT slow, auto_until, topic, pin_id FROM sh_kanal WHERE ch = ?', [$ch])->fetch() ?: ['slow' => 0, 'auto_until' => null, 'topic' => null, 'pin_id' => null];
+            $res['slow'] = slow_of($k); $res['topic'] = $k['topic'];
+            $pin = $k['pin_id'] ? q($db, 'SELECT * FROM sh_msgs WHERE id = ? AND del_at IS NULL', [(int)$k['pin_id']])->fetch() : null;
+            $res['pin'] = $pin ? msg_row($pin) : null;
         }
         if (random_int(1, 400) === 1) cleanup($db, $LOG_DAYS);
         out($res);
@@ -400,6 +484,7 @@ try {
             q($db, 'INSERT INTO sh_kanal (ch, auto_until) VALUES (?, ?) ON DUPLICATE KEY UPDATE auto_until = VALUES(auto_until)', [$ch, gmdate('Y-m-d H:i:s', time() + 300)]);
         $id = sys_msg($db, $ch, $text, $u, $kind);
         log_ev($db, $u, 'msg', $id);
+        if ($u['p_typing']) q($db, 'UPDATE sh_presence SET typing_at = NULL WHERE user_id = ?', [$u['id']]);
         if (random_int(1, 100) === 1) cleanup($db, $LOG_DAYS);
         out(['ok' => true, 'id' => $id, 'text' => $text]);
     }
@@ -417,7 +502,24 @@ try {
         out(['ok' => true, 'hidden' => $n >= 3]);
     }
 
+    if ($a === 'history') {
+        // yukarı kaydırınca: verilen mesajdan önceki 100 mesaj (eskiden yeniye)
+        $ch = chan($in['ch'] ?? ''); $before = (int)($in['before'] ?? 0); if ($before <= 0) fail('bad_id');
+        $rows = array_reverse(q($db, 'SELECT * FROM sh_msgs WHERE ch = ? AND id < ? AND del_at IS NULL ORDER BY id DESC LIMIT 100', [$ch, $before])->fetchAll());
+        out(['ok' => true, 'msgs' => array_map('msg_row', $rows), 'more' => count($rows) === 100]);
+    }
+
     // ---------- moderatör (op) ----------
+    if ($a === 'op_pin') {
+        // kanalın üstüne mesaj sabitle (id = 0: kaldır)
+        if (!(int)$u['op'] || $banned) fail('not_op', 403);
+        $ch = chan($in['ch'] ?? ''); $id = max(0, (int)($in['id'] ?? 0));
+        if ($id && !q($db, 'SELECT 1 FROM sh_msgs WHERE id = ? AND ch = ? AND del_at IS NULL', [$id, $ch])->fetchColumn()) fail('no_msg', 404);
+        q($db, 'INSERT INTO sh_kanal (ch, pin_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE pin_id = VALUES(pin_id)', [$ch, $id ?: null]);
+        log_ev($db, $u, 'op_pin', $id ?: null);
+        sys_msg($db, $ch, $u['nick'] . ($id ? ' bir mesajı sabitledi.' : ' sabit mesajı kaldırdı.'));
+        out(['ok' => true]);
+    }
     if ($a === 'op_del' || $a === 'op_mute') {
         if (!(int)$u['op'] || $banned) fail('not_op', 403);
         if ($a === 'op_del') {

@@ -118,6 +118,13 @@ label.ck input{height:auto}
     </section>
 
     <section class="b">
+      <h2>Yasaklı kelimeler</h2>
+      <div class="bar"><input id="wadd" maxlength="30" placeholder="Kelime ya da parça (ör. reklamsite)" style="flex:1;min-width:200px"><button class="btn btn-a" id="wbtn">Ekle</button></div>
+      <div class="acts" id="words"></div>
+      <p class="note">İçinde bu parça geçen kelime mesajda *** olur, rumuzda reddedilir. Yalnızca harf ve rakam (2–30). Koddaki temel liste (gri) buradan silinmez.</p>
+    </section>
+
+    <section class="b">
       <h2>IP yasakları</h2>
       <div id="ipbans"></div>
       <p class="note">IP yasağı aynı ağı paylaşan herkesi etkiler (mobil operatörlerde binlerce kişi aynı IP'yi kullanabilir); kısa tut.</p>
@@ -161,7 +168,7 @@ label.ck input{height:auto}
     }).catch(function () {});
   };
 
-  function start() { $('loginForm').hidden = true; $('app').hidden = false; $('logout').hidden = false; stats(); loadFeed(true); users(); }
+  function start() { $('loginForm').hidden = true; $('app').hidden = false; $('logout').hidden = false; stats(); loadFeed(true); users(); words(); }
 
   function stats() {
     api('admin_stats').then(function (j) {
@@ -297,6 +304,18 @@ label.ck input{height:auto}
     }).catch(function () {});
   }
   $('lbtn').onclick = logq;
+
+  function words(body) {
+    api('admin_words', body || {}).then(function (j) {
+      if (!j.ok) { $('wadd').setCustomValidity(j.error === 'bad_word' ? 'Yalnızca harf ve rakam, 2–30 karakter' : j.error); $('wadd').reportValidity(); return; }
+      $('wadd').setCustomValidity(''); $('wadd').value = '';
+      var w = $('words'); w.textContent = '';
+      j.base.forEach(function (x) { w.appendChild(el('span', 'tag', x)); });
+      j.words.forEach(function (x) { var t = el('span', 'tag f', x + ' '); var b = btn('✕', 'bad', function () { words({ del: x }); }); b.style.height = '22px'; b.style.padding = '0 6px'; t.appendChild(b); w.appendChild(t); });
+    }).catch(function () {});
+  }
+  $('wbtn').onclick = function () { var v = $('wadd').value.trim(); if (v) words({ add: v }); };
+  $('wadd').onkeydown = function (e) { if (e.key === 'Enter') $('wbtn').click(); };
 
   // kendi rumuzun: sohbet sayfası aynı sitede; anahtarı bu tarayıcının localStorage'ından okunur
   $('mybtn').onclick = function () {

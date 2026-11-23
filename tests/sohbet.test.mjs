@@ -83,3 +83,21 @@ test('kanal adları sunucudakiyle aynı', async () => {
   const phpList = m[1].split(',').map((s) => s.trim().replace(/'/g, ''));
   assert.deepEqual(phpList, M.KANALLAR.map((k) => k.id));
 });
+
+test('gün etiketi: bugün, dün, tarih', () => {
+  const simdi = new Date(2026, 10, 23, 15, 0).getTime() / 1000;
+  assert.equal(M.gunEtiketi(new Date(2026, 10, 23, 0, 5).getTime() / 1000, simdi), 'Bugün');
+  assert.equal(M.gunEtiketi(new Date(2026, 10, 22, 23, 59).getTime() / 1000, simdi), 'Dün');
+  assert.equal(M.gunEtiketi(new Date(2026, 10, 21, 12).getTime() / 1000, simdi), '21 Kasım 2026');
+  assert.equal(M.gunAnahtari(new Date(2026, 0, 5, 10).getTime() / 1000), 20260105);
+});
+
+test('oyun → kanal eşlemesi, ortak sohbet modülüyle aynı', async () => {
+  assert.equal(M.kanalOyun('batak'), 'kart'); assert.equal(M.kanalOyun('101-okey'), 'okey'); assert.equal(M.kanalOyun('yok'), 'genel');
+  const fs = await import('node:fs');
+  const js = fs.readFileSync(new URL('../assets/okey-sohbet.js', import.meta.url), 'utf8');
+  const m = /var SOHBET_KANAL = (\{[^}]+\})/.exec(js);
+  assert.ok(m, 'okey-sohbet.js SOHBET_KANAL bulunamadı');
+  const map = JSON.parse(m[1].replace(/'/g, '"'));
+  for (const k of Object.keys(M.OYUNLAR)) assert.equal(map[k], M.kanalOyun(k), k);
+});

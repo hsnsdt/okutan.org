@@ -145,4 +145,32 @@
     if ((e.key === 't' || e.key === 'T') && ctx()) { e.preventDefault(); if (panel.hidden) open(); else close(); }
   });
   window.OkeySohbet = { open: open, close: close, send: send };
+
+  // ---------- Canlı Sohbet'te duyur: bekleme odasındaki davet bağlantısını /sohbet/ kanalına taşır ----------
+  // Kanal eşlemesi sohbet/motor.js'teki OYUN_KANAL ile aynı (test denetler).
+  var SOHBET_KANAL = {'101-okey': 'okey', 'okey': 'okey', 'tavla': 'tavla', 'batak': 'kart', 'king': 'kart', 'pisti': 'kart', 'ates-ve-su': 'genel'};
+  (function duyur() {
+    var link = document.getElementById('lobbyLink'), wa = document.getElementById('lobbyWa'), modal = document.getElementById('lobbyModal');
+    if (!link || !wa || document.getElementById('lobbySohbet')) return;
+    var oyun = location.pathname.split('/')[1] || '', kanal = SOHBET_KANAL[oyun] || 'genel';
+    var b = document.createElement('button');
+    b.className = 'btn btn-g'; b.id = 'lobbySohbet'; b.type = 'button';
+    b.innerHTML = 'Sohbette duyur <small style="font-weight:600;opacity:.75">#' + kanal + '</small>';
+    b.title = 'Davet bağlantısını Canlı Sohbet\'in #' + kanal + ' kanalına yaz';
+    b.onclick = function () { if (link.value) window.open('/sohbet/?duyur=' + encodeURIComponent(link.value) + '#' + kanal, '_blank', 'noopener'); };
+    wa.parentNode.appendChild(b);
+    // dar ekranda WhatsApp ile yan yana sığmaz: kendi satırına iner
+    wa.parentNode.classList.add('row2-duyur');
+    var st = document.createElement('style');
+    st.textContent = '.row2-duyur{flex-wrap:wrap}#lobbySohbet small{margin-left:4px}@media (max-width:480px){.row2-duyur #lobbySohbet,.row2-duyur #lobbyWa{flex:1 1 100%}}';
+    document.head.appendChild(st);
+    // bekleme odası açılınca sohbette kaç kişi olduğunu göster (sunucu 30 sn önbellekte tutar)
+    if (modal && window.MutationObserver) new MutationObserver(function () {
+      if (modal.hidden) return;
+      fetch('/sohbet/api/?a=count').then(function (r) { return r.json(); }).then(function (j) {
+        var n = j && j.ok && j.ch ? (j.ch[kanal] || 0) : 0;
+        b.querySelector('small').textContent = '#' + kanal + (n ? ' · ' + n + ' kişi' : '');
+      }).catch(function () {});
+    }).observe(modal, { attributes: true, attributeFilter: ['hidden'] });
+  })();
 })();

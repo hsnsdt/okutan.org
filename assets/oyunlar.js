@@ -41,5 +41,20 @@
       }
     }
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  // Canlı Sohbet sayacı: sayfada [data-sohbet-sayi] varsa doldurur, kutusunu ([data-sohbet-kutu]) açar.
+  // Yalnızca bu öğesi olan sayfalar istek atar; sunucu 30 sn önbellekte tutar.
+  function sohbetSayi() {
+    var els = document.querySelectorAll('[data-sohbet-sayi]');
+    if (!els.length || !window.fetch) return;
+    fetch('/sohbet/api/?a=count').then(function (r) { return r.json(); }).then(function (j) {
+      if (!j || !j.ok) return;
+      var en = (document.documentElement.lang || '').slice(0, 2) === 'en', n = j.online | 0;
+      for (var i = 0; i < els.length; i++) {
+        els[i].textContent = n ? (en ? n + (n === 1 ? ' person' : ' people') + ' chatting now' : n + ' kişi şu an sohbette') : (en ? 'Be the first in the chat' : 'Sohbete ilk sen gel');
+        var k = els[i].closest('[data-sohbet-kutu]'); if (k) k.hidden = false;
+      }
+    }).catch(function () {});
+  }
+  function basla() { run(); sohbetSayi(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', basla); else basla();
 })();

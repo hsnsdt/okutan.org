@@ -154,3 +154,62 @@ test('yönetici kendi rumuzunu alır: ayrılmış ad serbest, op olur; başkası
   assert.equal(p.me.nick, 'okutan'); assert.equal(p.me.op, true);
   assert.equal((await post('nick', { key: b.key, nick: 'Okutan' })).error, 'bad_nick');
 });
+
+test('herkese açık sayaç GET ile çalışır ve önbelleğe izin verir', async () => {
+  const a = await kisi('Sayac' + RUN);
+  await post('poll', { key: a.key, ch: 'tavla', after: 0 });
+  const r = await fetch(API + '?a=count');
+  assert.match(r.headers.get('cache-control') || '', /max-age=30/);
+  const j = await r.json();
+  assert.equal(j.ok, true); assert.ok(j.online >= 1); assert.ok(j.ch.tavla >= 1);
+});
+
+test('yazıyor: başkasında görünür, bırakınca kaybolur', async () => {
+  const a = await kisi('Yaziyor' + RUN), b = await kisi('Bakan' + RUN);
+  await post('poll', { key: a.key, ch: 'kelime', after: 0 });
+  await post('poll', { key: a.key, ch: 'kelime', after: 0, typing: 1 });
+  assert.ok((await post('poll', { key: b.key, ch: 'kelime', after: 0 })).typing.includes('Yaziyor' + RUN));
+  assert.ok(!(await post('poll', { key: a.key, ch: 'kelime', after: 0, typing: 1 })).typing.includes('Yaziyor' + RUN), 'kendini görmez');
+  await post('poll', { key: a.key, ch: 'kelime', after: 0, typing: 0 });
+  assert.ok(!(await post('poll', { key: b.key, ch: 'kelime', after: 0 })).typing.includes('Yaziyor' + RUN));
+});
+
+test('eski mesajlar: before öncesini eskiden yeniye verir', async () => {
+  const t = await adminTok(), a = await kisi('Eskici' + RUN);
+  for (let i = 0; i < 3; i++) await post('admin_notice', { t, ch: 'okey', text: 'eski ' + i + ' ' + RUN });
+  const p = await post('poll', { key: a.key, ch: 'okey', after: 0 });
+  const last = p.msgs.at(-1).id;
+  const h = await post('history', { key: a.key, ch: 'okey', before: last });
+  assert.equal(h.ok, true); assert.ok(h.msgs.every((m) => m.id < last));
+  assert.deepEqual(h.msgs.map((m) => m.id), [...h.msgs.map((m) => m.id)].sort((x, y) => x - y));
+  assert.equal(h.msgs.at(-1).x, 'eski 1 ' + RUN);
+});
+
+test('sabit mesaj: yalnızca op sabitler, yoklamada pin gelir, silinince düşer', async () => {
+  const t = await adminTok(), a = await kisi('Pinci' + RUN), b = await kisi('Pinsiz' + RUN);
+  const s = await post('say', { key: b.key, ch: 'genel', text: 'sabitlenecek ' + RUN });
+  assert.equal((await post('op_pin', { key: b.key, ch: 'genel', id: s.id })).error, 'not_op');
+  await post('admin_op', { t, user: a.me.id, op: 1 });
+  assert.equal((await post('op_pin', { key: a.key, ch: 'genel', id: s.id })).ok, true);
+  let p = await post('poll', { key: b.key, ch: 'genel', after: 0, users: 1 });
+  assert.equal(p.pin.id, s.id);
+  await post('admin_del', { t, id: s.id });
+  p = await post('poll', { key: b.key, ch: 'genel', after: 0, users: 1 });
+  assert.equal(p.pin, null);
+  assert.ok('rozet' in p.users[0], 'kişilerde rozet alanı var');
+  await post('op_pin', { key: a.key, ch: 'genel', id: 0 }); await post('admin_op', { t, user: a.me.id, op: 0 });
+});
+
+test('yönetimden eklenen yasaklı kelime mesajda yıldızlanır, rumuzda reddedilir', async () => {
+  const t = await adminTok();
+  assert.equal((await post('admin_words', { t, add: 'x y' })).error, 'bad_word');
+  const w = 'zz' + RUN + 'kotu';
+  const j = await post('admin_words', { t, add: w.toUpperCase() });
+  assert.ok(j.words.includes(w)); assert.ok(j.base.includes('amk'));
+  const a = await kisi('Kelimeci' + RUN);
+  const s = await post('say', { key: a.key, ch: 'genel', text: 'bu ' + w + 'ler gitsin' });
+  assert.equal(s.text, 'bu *** gitsin');
+  const z = await kisi();
+  assert.equal((await post('nick', { key: z.key, nick: w.slice(0, 16) })).error, 'bad_nick');
+  assert.ok(!(await post('admin_words', { t, del: w })).words.includes(w));
+});

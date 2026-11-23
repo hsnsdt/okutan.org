@@ -20,6 +20,10 @@
   // Davet bağlantısı verilebilen oyunlar: yol → görünen ad
   var OYUNLAR = { '101-okey': '101 Okey', 'okey': 'Okey', 'tavla': 'Tavla', 'batak': 'Batak', 'king': 'King', 'pisti': 'Pişti', 'ates-ve-su': 'Ateş ve Su' };
 
+  // Oyunun davetinin düşeceği kanal (oyunlardaki "Sohbette duyur" düğmesi de aynı eşlemeyi kullanır: assets/okey-sohbet.js)
+  var OYUN_KANAL = { '101-okey': 'okey', 'okey': 'okey', 'tavla': 'tavla', 'batak': 'kart', 'king': 'kart', 'pisti': 'kart', 'ates-ve-su': 'genel' };
+  function kanalOyun(oyun) { return OYUN_KANAL[oyun] || 'genel'; }
+
   var MAKS_MESAJ = 300;
 
   function trKucuk(s) { return String(s).replace(/I/g, 'ı').replace(/İ/g, 'i').toLowerCase(); }
@@ -129,6 +133,22 @@
     return list[(sira || 0) % list.length];
   }
 
+  // Gün ayırıcı etiketi: aynı gün "Bugün", bir önceki "Dün", daha eskisi "21 Kasım 2026" (yerel saat)
+  var AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  function gunAnahtari(t) { var d = new Date(t * 1000); return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
+  function gunEtiketi(t, simdi) {
+    var d = new Date(t * 1000), n = new Date((simdi || Date.now() / 1000) * 1000);
+    var bugun = new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime(), o = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    var fark = Math.round((bugun - o) / 86400000);
+    if (fark === 0) return 'Bugün';
+    if (fark === 1) return 'Dün';
+    return d.getDate() + ' ' + AYLAR[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  // Emoji seçici (sık kullanılanlar)
+  var EMOJILER = ['😀', '😂', '🤣', '😊', '😍', '😎', '🤔', '😅', '😢', '😡', '😴', '🙄', '👍', '👎', '👏', '🙏', '🤝', '👋', '💪', '🔥', '❤️', '💔', '⭐', '🎉',
+    '☕', '🍵', '🍀', '🎲', '🃏', '♠️', '♥️', '♦️', '♣️', '🏆', '😇', '😏', '😬', '🤗', '🤐', '👀'];
+
   // Sunucu hata kodlarının Türkçesi
   var HATALAR = {
     slow: 'Biraz yavaş: birkaç saniye sonra tekrar yaz.',
@@ -149,5 +169,6 @@
   function hataMetni(kod) { return HATALAR[kod] || 'Bir şey ters gitti; tekrar dene.'; }
 
   return { KANALLAR: KANALLAR, OYUNLAR: OYUNLAR, MAKS_MESAJ: MAKS_MESAJ, trKucuk: trKucuk, rumuzDuzelt: rumuzDuzelt, rumuzGecerli: rumuzGecerli,
-    renk: renk, fnv1a: fnv1a, kanalBul: kanalBul, komut: komut, bahsediyor: bahsediyor, parcala: parcala, farklar: farklar, tamamla: tamamla, hataMetni: hataMetni };
+    renk: renk, fnv1a: fnv1a, kanalBul: kanalBul, komut: komut, bahsediyor: bahsediyor, parcala: parcala, farklar: farklar, tamamla: tamamla, hataMetni: hataMetni,
+    gunAnahtari: gunAnahtari, gunEtiketi: gunEtiketi, EMOJILER: EMOJILER, kanalOyun: kanalOyun };
 });

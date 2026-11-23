@@ -53,10 +53,10 @@ AddType text/plain .txt
   ExpiresByType text/html "access plus 10 minutes"
 </IfModule>
 
-# Ortak site betiği (alt bilgi oyun listesi + Google Tag Manager): tarayıcı her açılışta
-# sunucuya sorar (değişmediyse 304, birkaç yüz bayt). Böylece bu dosyadaki değişiklik
-# sayfalara dokunmadan herkese hemen ulaşır; sayaç eski kopya yüzünden kaçırmaz.
-<FilesMatch "^oyunlar\.js$">
+# Ortak site betikleri (alt bilgi oyun listesi + Google Tag Manager; oyunların masa sohbeti +
+# "Sohbette duyur"): tarayıcı her açılışta sunucuya sorar (değişmediyse 304, birkaç yüz bayt).
+# Böylece bu dosyalardaki değişiklik sayfalara dokunmadan herkese ulaşır.
+<FilesMatch "^(oyunlar|okey-sohbet)\.js$">
   <IfModule mod_expires.c>
     ExpiresActive Off
   </IfModule>
