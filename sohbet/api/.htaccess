@@ -1,0 +1,10 @@
+# Yarışmanın soru bankası (cevaplar) ve oyun motoru dışarıdan istenemez; index.php onları sunucu içinden okur.
+<FilesMatch "^(sorular\.json|oyun\.php)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
