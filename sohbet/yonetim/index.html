@@ -101,6 +101,16 @@ label.ck input{height:auto}
     </section>
 
     <section class="b">
+      <h2>Şikâyet edilen özel konuşmalar</h2>
+      <p class="note" style="margin:-6px 0 10px">Özel mesajları yalnızca şikâyet edilince görürsün. İnceledikten sonra "İncelendi" de; konuşma yeniden kapanır. Toplam özel konuşma: <b id="ozToplam">0</b></p>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Konuşma</th><th>Kişiler</th><th>Şikâyet</th><th>Son mesaj</th><th></th></tr></thead><tbody id="ozRows"></tbody></table></div>
+      <div id="ozOku" hidden style="margin-top:14px">
+        <h2 id="ozOkuBaslik" style="font-size:16px"></h2>
+        <div class="scroll"><table class="tbl"><thead><tr><th>Saat</th><th>Rumuz</th><th>Mesaj</th><th></th></tr></thead><tbody id="ozMsgs"></tbody></table></div>
+      </div>
+    </section>
+
+    <section class="b">
       <h2>Kişiler</h2>
       <div class="bar"><input id="uq" placeholder="Rumuz ara (boşsa: moderatörler, susturulanlar, yasaklılar)" style="flex:1;min-width:200px"><button class="btn btn-s" id="ubtn">Ara</button></div>
       <div class="scroll"><table class="tbl"><thead><tr><th>#</th><th>Rumuz</th><th>Durum</th><th>Son görülme</th><th></th></tr></thead><tbody id="urows"></tbody></table></div>
@@ -168,7 +178,46 @@ label.ck input{height:auto}
     }).catch(function () {});
   };
 
-  function start() { $('loginForm').hidden = true; $('app').hidden = false; $('logout').hidden = false; stats(); loadFeed(true); users(); words(); }
+  function start() { $('loginForm').hidden = true; $('app').hidden = false; $('logout').hidden = false; stats(); loadFeed(true); users(); words(); ozel(); }
+
+  // şikâyet edilen özel konuşmalar
+  function ozel() {
+    api('admin_ozel').then(function (j) {
+      if (!j.ok) return;
+      $('ozToplam').textContent = j.toplam;
+      var tb = $('ozRows'); tb.textContent = '';
+      if (!j.rows.length) { var tr0 = el('tr'), td0 = el('td', 'empty', 'Şikâyet edilen özel konuşma yok.'); td0.colSpan = 5; tr0.appendChild(td0); tb.appendChild(tr0); }
+      j.rows.forEach(function (r) {
+        var tr = el('tr', 'rep');
+        var ad = r.tip === 'd' ? 'Bire bir' : 'Oda: ' + (r.ad || '');
+        var t1 = el('td'); t1.appendChild(el('b', null, ad)); if (r.kapali) t1.appendChild(el('span', 'tag r', ' kapalı')); tr.appendChild(t1);
+        tr.appendChild(el('td', null, r.uyeler.map(function (u) { return u.nick + ' #' + u.id; }).join(', ')));
+        tr.appendChild(el('td', 'm', String(r.reps)));
+        tr.appendChild(el('td', 'm', fmt(r.son)));
+        var ta = el('td'), acts = el('div', 'acts');
+        acts.appendChild(btn('Oku', 'ok', function () { ozelOku(r, ad); }));
+        acts.appendChild(btn(r.kapali ? 'Aç' : 'Kapat', 'warn', function () { api('admin_ozel_kapat', { ch: r.ch, kapali: !r.kapali }).then(ozel); }));
+        acts.appendChild(btn('İncelendi', '', function () { api('admin_ozel_tamam', { ch: r.ch }).then(function () { $('ozOku').hidden = true; ozel(); }); }, true));
+        ta.appendChild(acts); tr.appendChild(ta); tb.appendChild(tr);
+      });
+    }).catch(function () {});
+  }
+  function ozelOku(r, ad) {
+    api('admin_ozel_oku', { ch: r.ch }).then(function (j) {
+      if (!j.ok) return;
+      $('ozOku').hidden = false; $('ozOkuBaslik').textContent = ad + ' · ' + r.uyeler.map(function (u) { return u.nick; }).join(', ');
+      var tb = $('ozMsgs'); tb.textContent = '';
+      j.rows.forEach(function (m) {
+        var tr = el('tr', m.reps ? 'rep' : '');
+        tr.appendChild(el('td', 'm', fmt(m.t)));
+        var tn = el('td'); tn.appendChild(el('b', null, m.u ? m.n : 'sistem')); if (m.u) tn.appendChild(el('div', 'note', '#' + m.u)); tr.appendChild(tn);
+        var tx = el('td', 'x', (m.k === 'e' ? '* ' : m.k === 's' ? '*** ' : '') + m.x); if (m.reps) tx.appendChild(el('span', 'tag f', ' ' + m.reps + ' şikâyet')); tr.appendChild(tx);
+        var ta = el('td'); if (m.u) ta.appendChild(banBtn(m.u, m.n, false, function () { ozelOku(r, ad); })); tr.appendChild(ta);
+        tb.appendChild(tr);
+      });
+      $('ozOku').scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+  }
 
   function stats() {
     api('admin_stats').then(function (j) {
@@ -259,7 +308,7 @@ label.ck input{height:auto}
   });
   CH.forEach(function (c) { [$('fch'), $('nch')].forEach(function (s) { var o = el('option', null, '#' + c); o.value = c; s.appendChild(o); }); });
   $('fch').onchange = function () { feed.ch = this.value; feed.user = 0; $('fuser').hidden = true; loadFeed(true); };
-  $('refresh').onclick = function () { stats(); loadFeed(true); };
+  $('refresh').onclick = function () { stats(); loadFeed(true); ozel(); };
   $('moreBtn').onclick = function () { loadFeed(false); };
 
   function users() {

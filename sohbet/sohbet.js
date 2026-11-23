@@ -1,7 +1,8 @@
 /* Canlı Sohbet — arayüz. Kurallar motor.js'te (window.SohbetMotor), sunucu api/index.php.
    Yoklama: görünür sekmede 2,5 sn (bir süre sessizse 5 sn), arka planda 20 sn; aynı anda tek istek.
    Katıldı/ayrıldı satırları kişi listesinin farkından burada üretilir (veritabanına yazılmaz).
-   Ayarlar (görünüm, yazı boyutu, saat, giriş/çıkış, ses, bildirim) localStorage 'sh_ayar'da. */
+   Ayarlar (görünüm, yazı boyutu, saat, giriş/çıkış, ses, bildirim) localStorage 'sh_ayar'da.
+   Özel sohbet: ch = 'p' + oda numarası (bire bir ya da özel oda); 18+ ve kural onayı ister, kenar çubuğunda "Özel" listesi. */
 (function () {
   'use strict';
   var M = window.SohbetMotor, API = '/sohbet/api/', root = document.documentElement;
@@ -15,7 +16,8 @@
     key: lsGet('sh_key'), me: null, ch: 'genel', lastId: 0, since: 0, gen: 0,
     users: null, usersAt: 0, counts: {}, slow: 0, topic: null, pin: null, more: false,
     away: '', inflight: false, timer: 0, fails: 0, lastAct: Date.now(), loaded: false, typingUntil: 0,
-    atBot: true, hist: [], histIdx: -1, tab: null, unread: 0, mention: false, sending: false, mutedTimer: 0
+    atBot: true, hist: [], histIdx: -1, tab: null, unread: 0, mention: false, sending: false, mutedTimer: 0,
+    ozel: [], oda: null, ozelSon: {}, ozelYeni: 0, bekleyenOda: null, onayCb: null
   };
   var AYAR = { tema: 'yeni', boyut: 'm', saat: true, giris: lsGet('sh_joins') !== '0', ses: lsGet('sh_ses') !== '0', bildirim: false };
   try { var kayitli = JSON.parse(lsGet('sh_ayar') || 'null'); if (kayitli) for (var k in AYAR) if (k in kayitli) AYAR[k] = kayitli[k]; } catch (e) {}
@@ -46,8 +48,15 @@
     $('optBildirim').checked = AYAR.bildirim && izin === 'granted';
     $('optBildirim').disabled = izin === 'yok' || izin === 'denied';
     $('bildirimNot').textContent = izin === 'yok' ? 'Bu tarayıcı bildirimleri desteklemiyor.' : izin === 'denied' ? 'Bildirim izni kapalı; tarayıcı ayarlarından açabilirsin.' : 'Sekme arka plandayken adın geçerse bildirim gelir.';
+    var oz = S.me && S.me.ozel;
+    $('optOzelSatir').hidden = !(oz && oz.onay);
+    $('optOzelKapali').checked = !!(oz && oz.kapali);
     renderSound();
   }
+  $('optOzelKapali').onchange = function () {
+    var v = this.checked;
+    api('ozel_ayar', { key: S.key, kapali: v ? 1 : 0 }).then(function (r) { if (r.ok && S.me) S.me.ozel.kapali = v; });
+  };
   [['segTema', 'tema'], ['segBoyut', 'boyut']].forEach(function (p) {
     $(p[0]).addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; AYAR[p[1]] = b.dataset.v; ayarKaydet(); ayarUygula(); stick(true); });
   });
@@ -63,6 +72,7 @@
 
   // ---------- kanallar ----------
   function konuOf(ch) { var k = M.KANALLAR.filter(function (x) { return x.id === ch; })[0]; return k ? k.konu : ''; }
+  var KILIT = '<svg class="kilit" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
   function renderChannels() {
     var nav = $('chList'), tabs = $('chTabs');
     nav.textContent = ''; tabs.textContent = '';
@@ -80,14 +90,54 @@
       tabs.appendChild(t);
       if (k.id === S.ch) setTimeout(function () { try { t.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) {} }, 0);
     });
-    $('chName').textContent = '#' + S.ch;
-    $('topic').textContent = S.topic || konuOf(S.ch);
-    var sl = $('slowTag'); sl.hidden = !(S.slow > 1); sl.textContent = 'Yavaş mod · ' + S.slow + ' sn';
+    renderOzel();
+    var oz = M.ozelMi(S.ch), o = S.oda;
+    if (!oz) { $('chName').textContent = '#' + S.ch; $('topic').textContent = S.topic || konuOf(S.ch); }
+    else {
+      var ad = o ? (o.tip === 'd' ? (o.diger ? o.diger.nick : '?') : o.ad) : ozelAd(S.ch);
+      $('chName').innerHTML = KILIT; $('chName').appendChild(document.createTextNode(ad));
+      $('topic').textContent = !o ? 'Özel konuşma' : o.kapali ? 'Bu konuşma yönetici tarafından kapatıldı.' : o.tip === 'd'
+        ? (o.engelledim ? 'Bu kişiyi engelledin.' : 'Özel konuşma · yalnızca ikiniz görürsünüz')
+        : 'Özel oda · ' + ((S.users || []).length) + ' üye · davetle girilir';
+    }
+    $('ozBar').hidden = !oz;
+    $('ozDavet').hidden = !(o && o.tip === 'o');
+    $('ozEngel').hidden = !(o && o.tip === 'd' && o.diger);
+    var en = !!(o && o.engelledim); $('ozEngel').title = en ? 'Engeli kaldır' : 'Engelle'; $('ozEngel').setAttribute('aria-label', $('ozEngel').title); $('ozEngel').setAttribute('aria-pressed', en);
+    $('ozCik').title = o && o.tip === 'o' ? 'Odadan ayrıl' : 'Konuşmayı kapat'; $('ozCik').setAttribute('aria-label', $('ozCik').title);
+    var sl = $('slowTag'); sl.hidden = oz || !(S.slow > 1); sl.textContent = 'Yavaş mod · ' + S.slow + ' sn';
+  }
+  function ozelAd(ch) { var x = S.ozel.filter(function (z) { return z.ch === ch; })[0]; return x ? x.ad : 'Özel'; }
+  // kenar çubuğunda ve telefondaki sekmelerde özel konuşmalar
+  function renderOzel() {
+    var nav = $('ozList'), tabs = $('chTabs');
+    nav.textContent = '';
+    var list = S.ozel.slice();
+    if (M.ozelMi(S.ch) && !list.some(function (x) { return x.ch === S.ch; })) list.unshift({ ch: S.ch, tip: S.oda ? S.oda.tip : 'o', ad: ozelAd(S.ch), yeni: false });
+    if (!list.length) nav.appendChild(el('div', 'bos', 'Rumuza tıkla → Özel mesaj'));
+    list.forEach(function (x) {
+      var b = el('button', x.yeni && x.ch !== S.ch ? 'yeni' : null); b.type = 'button'; b.setAttribute('aria-current', x.ch === S.ch);
+      if (x.tip === 'd') b.appendChild(avatar(x.ad, x.g, 0)); else b.insertAdjacentHTML('beforeend', KILIT);
+      b.appendChild(el('span', 'ad', x.ad));
+      if (x.yeni && x.ch !== S.ch) b.appendChild(el('span', 'nokta'));
+      b.title = x.tip === 'd' ? 'Özel mesaj: ' + x.ad : 'Özel oda: ' + x.ad;
+      b.onclick = function () { switchCh(x.ch); };
+      nav.appendChild(b);
+      var t = el('button'); t.type = 'button'; t.setAttribute('role', 'tab'); t.setAttribute('aria-current', x.ch === S.ch); t.setAttribute('aria-selected', x.ch === S.ch);
+      t.insertAdjacentHTML('beforeend', KILIT); t.appendChild(document.createTextNode(x.ad));
+      if (x.yeni && x.ch !== S.ch) t.appendChild(el('span', 'nokta'));
+      t.onclick = function () { switchCh(x.ch); };
+      tabs.appendChild(t);
+    });
+    var arti = el('button', 'oz-arti'); arti.type = 'button'; arti.textContent = '+ Özel';
+    arti.onclick = function () { ozelGerekli(function () { openModal('odaModal'); }); };
+    tabs.appendChild(arti);
   }
   function switchCh(ch, keepHash) {
-    if (!M.kanalBul(ch) || ch === S.ch && S.loaded) return;
+    if (!(M.kanalBul(ch) || M.ozelMi(ch)) || ch === S.ch && S.loaded) return;
+    S.oda = null;
     S.ch = ch; S.gen++; S.lastId = 0; S.since = 0; S.users = null; S.usersAt = 0; S.topic = null; S.slow = 0; S.loaded = false; S.pin = null; S.more = false; S.olderLoaded = false; S.atBot = true;
-    lsSet('sh_ch', ch);
+    if (!M.ozelMi(ch)) lsSet('sh_ch', ch);
     if (!keepHash) try { history.replaceState(null, '', location.pathname + location.search + '#' + ch); } catch (e) {}
     log.textContent = ''; $('users').textContent = ''; $('typing').textContent = ''; renderPin(); closePop(); closeDrawer();
     renderChannels();
@@ -251,26 +301,27 @@
 
   // ---------- kişi listesi ----------
   function renderUsers() {
-    var ul = $('users'), list = S.users || [];
+    var ul = $('users'), list = S.users || [], oz = M.ozelMi(S.ch);
     ul.textContent = '';
     if (!list.length) ul.appendChild(el('li', 'empty', S.users ? 'Kanalda şu an kimse yok.' : 'Yükleniyor…'));
-    var mods = list.filter(function (u) { return u.op; }), diger = list.filter(function (u) { return !u.op; });
-    [[mods, 'Moderatörler'], [diger, 'Çevrimiçi']].forEach(function (grup) {
+    var gruplar = oz ? [[list, 'Üyeler']] : [[list.filter(function (u) { return u.op; }), 'Moderatörler'], [list.filter(function (u) { return !u.op; }), 'Çevrimiçi']];
+    gruplar.forEach(function (grup) {
       if (!grup[0].length) return;
-      ul.appendChild(el('h3', null, grup[1] + ' · ' + grup[0].length));
+      if (!oz) ul.appendChild(el('h3', null, grup[1] + ' · ' + grup[0].length));
       grup[0].forEach(function (u) {
-        var li = el('li', (u.away ? 'aw' : '') + (S.me && u.id === S.me.id ? ' me' : ''));
+        var ben = S.me && u.id === S.me.id;
+        var li = el('li', (u.away ? 'aw' : '') + (u.cevrimdisi ? ' off' : '') + (ben ? ' me' : ''));
         li.appendChild(avatar(u.nick, u.g, u.op));
         li.appendChild(el('span', 'nm nk ' + M.gSinif(u.g), u.nick));
         if (u.op) li.appendChild(rolBadge(u.op));
         if (u.rozet) { var r = el('span', 'rz', u.rozet); r.title = 'Bu haftanın en çok kazananları: ' + u.rozet; li.appendChild(r); }
         li.title = (u.g ? M.CINSIYET[u.g] : '') + (u.away ? (u.g ? ' · ' : '') + 'Uzakta: ' + u.away : '');
-        li.onclick = function () { mention(u.nick); closeDrawer(); };
+        li.onclick = function (ev) { ev.stopPropagation(); if (ben) { mention(u.nick); closeDrawer(); return; } kisiMenu(li, u); };
         ul.appendChild(li);
       });
     });
     $('usersN').textContent = list.length;
-    $('usersTitle').textContent = 'Kişiler · ' + list.length;
+    $('usersTitle').textContent = (oz ? 'Üyeler · ' : 'Kişiler · ') + list.length;
   }
   function mention(nick) {
     var v = inp.value;
@@ -303,6 +354,12 @@
         if (gen !== S.gen) { poll(true); return; }
         if (!r.ok) {
           if (r.error === 'bad_key') { S.key = null; lsSet('sh_key', ''); hello(); return; }
+          if (r.error === 'no_room' || r.error === 'ozel_onay') {
+            var giden = S.ch; S.ozel = S.ozel.filter(function (x) { return x.ch !== giden; });
+            status(M.hataMetni(r.error), 4000); switchCh(lsGet('sh_ch') && M.kanalBul(lsGet('sh_ch')) || 'genel');
+            if (r.error === 'ozel_onay') openOnay(function () { switchCh(giden); });
+            return;
+          }
           throw new Error(r.error || 'server_error');
         }
         if (S.fails) { status('Bağlantı yeniden kuruldu.', 2500); S.fails = 0; }
@@ -321,13 +378,16 @@
     (r.del || []).forEach(delMsg);
     r.msgs.forEach(function (m) { addMsg(m, first); if (m.id > S.lastId) S.lastId = m.id; });
     if (r.msgs.length && !first) S.lastAct = Date.now();
+    if (r.ozel) ozelGuncelle(r.ozel);
     if (first) {
       S.loaded = true; S.more = r.msgs.length >= 100; renderOlder();
-      localLine('#' + S.ch + ' kanalına girdin. ' + (r.topic || konuOf(S.ch)), 's');
+      if (M.ozelMi(S.ch)) localLine(r.oda && r.oda.tip === 'd' ? 'Özel konuşma: yalnızca ikiniz görürsünüz. Rahatsız olursan engelle ya da şikâyet et.' : 'Özel oda: yalnızca davetle gelenler görür.', 's');
+      else localLine('#' + S.ch + ' kanalına girdin. ' + (r.topic || konuOf(S.ch)), 's');
       if (!S.me || !S.me.nick) localLine('Yazmak için bir rumuz seç: /nick Rumuz ya da alttaki Rumuz düğmesi.', 's').id = 'rumuzIpucu';
     }
     if (withUsers && r.users) {
-      if (S.users && !first) {
+      if (r.oda) S.oda = r.oda;
+      if (S.users && !first && !M.ozelMi(S.ch)) {
         var f = M.farklar(S.users, r.users), me = S.me && S.me.nick;
         f.gelen.forEach(function (n) { if (n !== me) localLine('→ ' + n + ' katıldı', 'j'); });
         f.giden.forEach(function (n) { if (n !== me) localLine('← ' + n + ' ayrıldı', 'j'); });
@@ -344,17 +404,35 @@
   }
   function updateTitle() {
     if (!document.hidden) { S.unread = 0; S.mention = false; }
-    document.title = (S.mention ? '(!) ' : S.unread ? '(' + S.unread + ') ' : '') + BASE_TITLE;
+    document.title = (S.ozelYeni ? '(✉) ' : '') + (S.mention ? '(!) ' : S.unread ? '(' + S.unread + ') ' : '') + BASE_TITLE;
+  }
+  // özel konuşma listesi: başka konuşmaya yeni mesaj gelince ses ve (arka plandaysa) bildirim
+  function ozelGuncelle(list) {
+    var once = JSON.stringify(S.ozel), ilk = !S.ozelIlk;
+    S.ozelIlk = true;
+    list.forEach(function (x) {
+      if (x.ch === S.ch) x.yeni = false;
+      var eski = S.ozelSon[x.ch];
+      if (x.yeni && !ilk && (eski === undefined || x.son > eski)) {
+        ping();
+        if (AYAR.bildirim && 'Notification' in window && Notification.permission === 'granted' && document.hidden)
+          try { var n = new Notification((x.tip === 'd' ? 'Özel mesaj: ' : 'Özel oda: ') + x.ad, { icon: '/sohbet/icon-192.png', tag: 'sohbet-' + x.ch }); n.onclick = function () { window.focus(); switchCh(x.ch); n.close(); }; } catch (e) {}
+      }
+      S.ozelSon[x.ch] = x.son;
+    });
+    S.ozel = list;
+    S.ozelYeni = list.filter(function (x) { return x.yeni; }).length;
+    if (JSON.stringify(list) !== once) renderChannels();
   }
   document.addEventListener('visibilitychange', function () { updateTitle(); if (!document.hidden) { S.lastAct = Date.now(); poll(true); } });
   window.addEventListener('online', function () { poll(true); });
-  window.addEventListener('hashchange', function () { var c = M.kanalBul(location.hash); if (c) switchCh(c, true); });
+  window.addEventListener('hashchange', function () { var h = location.hash.slice(1), c = M.ozelMi(h) ? h : M.kanalBul(location.hash); if (c) switchCh(c, true); });
 
   // ---------- masaüstü bildirimi ----------
   function notify(m) {
     if (!AYAR.bildirim || !('Notification' in window) || Notification.permission !== 'granted') return;
     try {
-      var n = new Notification('#' + S.ch + ' · ' + m.n, { body: m.x.slice(0, 140), icon: '/sohbet/icon-192.png', tag: 'sohbet-' + m.id });
+      var n = new Notification((M.ozelMi(S.ch) ? 'Özel · ' : '#' + S.ch + ' · ') + m.n, { body: m.x.slice(0, 140), icon: '/sohbet/icon-192.png', tag: 'sohbet-' + m.id });
       n.onclick = function () { window.focus(); n.close(); };
     } catch (e) {}
   }
@@ -391,14 +469,15 @@
       // rumuzu olup rengini seçmemiş olanlara bir kez sorulur
       else if (r.me.nick && !r.me.g && !r.me.banned && !lsGet('sh_g_soruldu')) { lsSet('sh_g_soruldu', '1'); openNick(true); }
       poll(true);
+      if (S.bekleyenOda) setTimeout(odaDaveti, 400);
     }).catch(function () { status('Sunucuya ulaşılamadı. Yeniden deneniyor…'); setTimeout(hello, 10000); });
   }
 
   // ---------- gönderme ----------
-  function send(text, me) {
+  function send(text, me, ch) {
     if (!S.me || !S.me.nick) { openNick(); return Promise.resolve(false); }
     S.sending = true; $('sendBtn').disabled = true;
-    return api('say', { key: S.key, ch: S.ch, text: text, me: !!me }).then(function (r) {
+    return api('say', { key: S.key, ch: ch || S.ch, text: text, me: !!me }).then(function (r) {
       S.sending = false; $('sendBtn').disabled = inp.disabled;
       if (r.ok) {
         S.lastAct = Date.now(); S.typingUntil = 0;
@@ -408,6 +487,7 @@
       if (r.error === 'slow' && r.wait) status('Yavaş mod: ' + r.wait + ' sn sonra tekrar yaz.', 3500);
       else if (r.error === 'muted' || r.error === 'banned') poll(true);
       else if (r.error === 'need_nick') openNick();
+      else if (r.error === 'ozel_onay') openOnay();
       else status(M.hataMetni(r.error), 4000);
       return false;
     }).catch(function () { S.sending = false; $('sendBtn').disabled = false; status('Gönderilemedi; bağlantını kontrol et.', 4000); return false; });
@@ -415,6 +495,7 @@
   function setNick(nick, g) {
     return api('nick', { key: S.key, nick: nick, g: g }).then(function (r) {
       if (!r.ok) return r.error;
+      if (S.bekleyenOda) setTimeout(odaDaveti, 300);
       var renk = S.me.g !== r.g;
       S.me.nick = r.nick; S.me.g = r.g; setMe(S.me); lsSet('sh_nick', r.nick);
       var ip = $('rumuzIpucu'); if (ip) ip.remove();
@@ -446,6 +527,10 @@
         setNick(c.nick).then(function (err) { if (err) localLine(M.hataMetni(err), 'err'); else inp.value = ''; });
         return;
       case 'join': inp.value = ''; switchCh(c.ch); return;
+      case 'query': inp.value = ''; ozelMesaj(c.nick); return;
+      case 'msg':
+        ozelMesaj(c.nick, function (ch) { send(c.text, false, ch).then(function (ok) { if (ok) inp.value = ''; }); });
+        return;
       case 'away':
         inp.value = '';
         S.away = c.back ? '' : (c.reason || 'uzakta');
@@ -520,15 +605,18 @@
     var mine = S.me && m.u === S.me.id;
     pop = el('div', 'pop'); pop.setAttribute('role', 'menu');
     function item(t, fn, cls) { var b = el('button', cls || null, t); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.onclick = function () { closePop(); fn(); }; pop.appendChild(b); return b; }
+    var oz = M.ozelMi(S.ch);
     item('Yanıtla', function () { mention(m.n); });
+    if (!mine && !oz && m.u) item('Özel mesaj', function () { ozelMesaj(m.n); });
     if (!mine) item('Şikâyet et', function () {
       if (!S.me || !S.me.nick) { openNick(); return; }
       api('report', { key: S.key, id: m.id }).then(function (r) {
-        localLine(r.ok ? (r.hidden ? 'Şikâyetin alındı; mesaj gizlendi.' : 'Şikâyetin alındı. Teşekkürler.') : M.hataMetni(r.error), r.ok ? 's' : 'err');
+        localLine(r.ok ? (r.inceleme ? 'Şikâyetin alındı; yönetici bu konuşmayı inceleyecek.' : r.hidden ? 'Şikâyetin alındı; mesaj gizlendi.' : 'Şikâyetin alındı. Teşekkürler.') : M.hataMetni(r.error), r.ok ? 's' : 'err');
         if (r.hidden) delMsg(m.id);
       });
     }, 'd');
-    if (S.me && S.me.op) {
+    if (!mine && m.u && S.me && S.me.op === 2 && m.op !== 2) item('Yasakla… (yönetici)', function () { setTimeout(function () { yasakMenu(btn, m.u, m.n); }, 0); }, 'd');
+    if (S.me && S.me.op && !oz) {
       if (!S.pin || S.pin.id !== m.id) item('Kanala sabitle (moderatör)', function () { setPin(m.id); });
       item('Sil (moderatör)', function () { api('op_del', { key: S.key, id: m.id }).then(function (r) { if (r.ok) delMsg(m.id); else localLine(M.hataMetni(r.error), 'err'); }); }, 'd');
       if (!mine) item('10 dk sustur (moderatör)', function () { opMute(m.n, 10); }, 'd');
@@ -537,6 +625,123 @@
     line.classList.add('menu');
     placePop(btn);
     pop.querySelector('button').focus();
+  }
+  // kişi listesinde rumuza tıklayınca
+  function kisiMenu(li, u) {
+    closePop();
+    pop = el('div', 'pop'); pop.setAttribute('role', 'menu');
+    function item(t, fn, cls) { var b = el('button', cls || null, t); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.onclick = function () { closePop(); closeDrawer(); fn(); }; pop.appendChild(b); }
+    item('Rumuzu yaz', function () { mention(u.nick); });
+    if (!M.ozelMi(S.ch) || (S.oda && S.oda.tip === 'o')) item('Özel mesaj', function () { ozelMesaj(u.nick); });
+    if (S.oda && S.oda.tip === 'o' && S.oda.sahip) item('Odadan çıkar', function () {
+      api('oda_at', { key: S.key, ch: S.ch, user: u.id }).then(function (r) { if (r.ok) poll(true); else localLine(M.hataMetni(r.error), 'err'); });
+    }, 'd');
+    if (S.me && S.me.op === 2 && u.op !== 2) item('Yasakla… (yönetici)', function () { setTimeout(function () { yasakMenu(li, u.id, u.nick); }, 0); }, 'd');
+    chat.appendChild(pop); placePop(li);
+    pop.querySelector('button').focus();
+  }
+  // yönetici: süre seç, yasakla (son 24 saatteki kanal mesajları da gizlenir)
+  function yasakMenu(anchor, uid, nick) {
+    closePop();
+    pop = el('div', 'pop'); pop.setAttribute('role', 'menu');
+    pop.appendChild(el('div', null, nick + ' yasaklansın:')).style.cssText = 'font:800 13px var(--round);padding:6px 12px;color:var(--p-mut)';
+    [[1, '1 gün'], [7, '7 gün'], [30, '30 gün'], [-1, 'Süresiz']].forEach(function (d) {
+      var b = el('button', 'd', d[1]); b.type = 'button'; b.setAttribute('role', 'menuitem');
+      b.onclick = function () {
+        closePop();
+        api('op_ban', { key: S.key, user: uid, days: d[0], wipe: 1, ch: M.ozelMi(S.ch) ? (lsGet('sh_ch') || 'genel') : S.ch }).then(function (r) {
+          if (r.ok) { log.querySelectorAll('.ln[data-u="' + uid + '"]').forEach(function (x) { if (!M.ozelMi(S.ch)) x.remove(); }); regroup(); poll(true); }
+          else localLine(M.hataMetni(r.error), 'err');
+        });
+      };
+      pop.appendChild(b);
+    });
+    chat.appendChild(pop); placePop(anchor);
+    pop.querySelector('button').focus();
+  }
+  // özel sohbet onayı gerekiyorsa önce pencere, sonra iş
+  function ozelGerekli(fn) {
+    if (!S.me || !S.me.nick) { openNick(); return; }
+    if (S.me.ozel && S.me.ozel.onay) { fn(); return; }
+    openOnay(fn);
+  }
+  function openOnay(fn) {
+    S.onayCb = fn || null;
+    $('onYas').checked = false; $('onKural').checked = false; $('onayOk').disabled = true; $('onayErr').textContent = '';
+    openModal('onayModal');
+  }
+  ['onYas', 'onKural'].forEach(function (id) { $(id).onchange = function () { $('onayOk').disabled = !($('onYas').checked && $('onKural').checked); }; });
+  $('onayForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!($('onYas').checked && $('onKural').checked)) return;
+    $('onayOk').disabled = true;
+    api('ozel_onay', { key: S.key, yas: 1, kural: 1 }).then(function (r) {
+      $('onayOk').disabled = false;
+      if (!r.ok) { $('onayErr').textContent = M.hataMetni(r.error); return; }
+      S.me.ozel = S.me.ozel || {}; S.me.ozel.onay = true;
+      closeModal($('onayModal'));
+      var cb = S.onayCb; S.onayCb = null; if (cb) cb();
+      poll(true);
+    });
+  });
+  // bire bir konuşmayı aç (gerekirse onay); cb verilirse konuşmaya mesaj gönderilir
+  function ozelMesaj(nick, cb) {
+    ozelGerekli(function () {
+      api('dm', { key: S.key, nick: nick }).then(function (r) {
+        if (!r.ok) { localLine(M.hataMetni(r.error), 'err'); return; }
+        switchCh(r.ch);
+        if (cb) cb(r.ch);
+      });
+    });
+  }
+  // özel oda: aç ya da koda katıl
+  $('ozArti').onclick = function () { ozelGerekli(function () { $('odaErr').textContent = ''; openModal('odaModal'); }); };
+  $('odaAcForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    api('oda_ac', { key: S.key, ad: $('odaAd').value }).then(function (r) {
+      if (!r.ok) { $('odaErr').textContent = M.hataMetni(r.error); return; }
+      $('odaAd').value = ''; closeModal($('odaModal')); switchCh(r.ch);
+      davetKopyala(r.kod);
+    });
+  });
+  $('odaKatilForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    api('oda_katil', { key: S.key, kod: $('odaKod').value.trim() }).then(function (r) {
+      if (!r.ok) { $('odaErr').textContent = M.hataMetni(r.error); return; }
+      $('odaKod').value = ''; closeModal($('odaModal')); switchCh(r.ch);
+    });
+  });
+  // davet bağlantısı her zaman sohbete yazılır (elle kopyalanabilsin); pano izin verirse ayrıca kopyalanır
+  function davetKopyala(kod) {
+    var u = location.origin + '/sohbet/?oda=' + kod;
+    localLine('Davet bağlantısı: ' + u, 's');
+    if (navigator.clipboard) navigator.clipboard.writeText(u).then(function () { status('Davet bağlantısı panoya kopyalandı.', 4000); }, function () {});
+  }
+  $('ozDavet').onclick = function () { if (S.oda && S.oda.kod) davetKopyala(S.oda.kod); };
+  $('ozEngel').onclick = function () {
+    var o = S.oda; if (!o || !o.diger) return;
+    api('engel', { key: S.key, user: o.diger.id, kaldir: o.engelledim ? 1 : 0 }).then(function (r) {
+      if (r.ok) { localLine(o.engelledim ? o.diger.nick + ' için engeli kaldırdın.' : o.diger.nick + ' engellendi; sana yazamaz.', 's'); S.users = null; poll(true); }
+    });
+  };
+  $('ozCik').onclick = function () {
+    var ch = S.ch;
+    api('oda_cik', { key: S.key, ch: ch }).then(function (r) {
+      if (!r.ok) { localLine(M.hataMetni(r.error), 'err'); return; }
+      S.ozel = S.ozel.filter(function (x) { return x.ch !== ch; });
+      switchCh(M.kanalBul(lsGet('sh_ch')) || 'genel');
+    });
+  };
+  // /sohbet/?oda=KOD davet bağlantısı: rumuz ve onaydan sonra odaya katılır
+  function odaDaveti() {
+    var kod = S.bekleyenOda; if (!kod || !S.me) return;
+    if (!S.me.nick) return; // rumuz seçilince setNick yeniden çağırır
+    ozelGerekli(function () {
+      S.bekleyenOda = null;
+      api('oda_katil', { key: S.key, kod: kod }).then(function (r) {
+        if (r.ok) switchCh(r.ch); else localLine(M.hataMetni(r.error), 'err');
+      });
+    });
   }
   $('emoBtn').onclick = function (ev) {
     ev.stopPropagation();
@@ -645,10 +850,15 @@
   $('yr').textContent = new Date().getFullYear();
   if ('serviceWorker' in navigator) window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
 
-  S.ch = M.kanalBul(location.hash) || M.kanalBul(lsGet('sh_ch')) || 'genel';
+  var hs = location.hash.slice(1);
+  S.ch = (M.ozelMi(hs) ? hs : M.kanalBul(location.hash)) || M.kanalBul(lsGet('sh_ch')) || 'genel';
+  (function () {
+    var kod = new URLSearchParams(location.search).get('oda');
+    if (kod && /^[A-Za-z0-9]{8}$/.test(kod)) { S.bekleyenOda = kod.toUpperCase(); try { history.replaceState(null, '', location.pathname + '#' + S.ch); } catch (e) {} }
+  })();
   duyuruHazirla();
   ayarUygula(); renderChannels(); renderUsers();
   hello();
 
-  if (/[?&]test=1/.test(location.search)) window.__sh = { S: S, AYAR: AYAR, poll: poll, switchCh: switchCh, M: M };
+  if (/[?&]test=1/.test(location.search)) window.__sh = { S: S, AYAR: AYAR, poll: poll, switchCh: switchCh, M: M, ozelMesaj: ozelMesaj };
 })();

@@ -46,7 +46,7 @@
       "name": "Canlı Sohbet",
       "url": "https://okutan.org/sohbet/",
       "image": "https://okutan.org/sohbet/og.png",
-      "description": "Üyeliksiz, tarayıcıda çalışan mIRC tadında Türkçe sohbet: sabit kanallar, rumuz, /nick ve /me komutları, kişi listesi ve oyun masası davet kartları.",
+      "description": "Üyeliksiz, tarayıcıda çalışan mIRC tadında Türkçe sohbet: sabit kanallar, rumuz, /nick ve /me komutları, kişi listesi, oyun masası davet kartları; 18 yaşından büyükler için özel mesaj ve özel odalar.",
       "applicationCategory": "CommunicationApplication",
       "operatingSystem": "Any",
       "inLanguage": "tr",
@@ -70,6 +70,7 @@
         { "@type": "Question", "name": "Oyun masasına nasıl davet ederim?", "acceptedAnswer": { "@type": "Answer", "text": "Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur." } },
         { "@type": "Question", "name": "Mesajlar ne kadar saklanıyor?", "acceptedAnswer": { "@type": "Answer", "text": "Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır." } },
         { "@type": "Question", "name": "Rahatsız edici bir mesajı nasıl bildiririm?", "acceptedAnswer": { "@type": "Answer", "text": "Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır." } },
+        { "@type": "Question", "name": "Özel mesaj ve özel oda var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Var, 18 yaşından büyükler için. Kişi listesinde ya da mesajda rumuza tıklayıp Özel mesaj seçersen bire bir konuşma açılır; /msg Rumuz mesaj komutu da olur. Özel oda açıp davet bağlantısını paylaşarak istediğin kişileri çağırabilirsin. İlk kullanımda 18 yaş beyanını ve özel sohbet şartlarını onaylarsın. Özel mesajları kimse okumaz; şikâyet edilen konuşmayı yönetici inceler. Rahatsız olursan kişiyi engelleyebilir, ayarlardan özel mesajlara kapanabilirsin." } },
         { "@type": "Question", "name": "Rumuz renkleri ne anlama geliyor?", "acceptedAnswer": { "@type": "Answer", "text": "Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür." } },
         { "@type": "Question", "name": "Eski mIRC görünümü var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır." } },
         { "@type": "Question", "name": "Telefonda çalışır mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez." } }
@@ -285,6 +286,35 @@ h1,h2,h3{font-family:var(--round)}
 .opt span{display:flex;flex-direction:column}.opt b{font-size:15px}.opt small{font-size:13px;color:var(--muted)}
 .mcard .opt input{width:20px;height:20px;margin:2px 0 0;padding:0}
 
+/* özel sohbet: kenar çubuğu listesi, başlık düğmeleri, sekmeler */
+.sh-kl .oz-h{display:flex;align-items:center;justify-content:space-between;padding:14px 10px 6px 16px}
+.sh-kl .oz-h h2{padding:0}
+.sh-kl .oz-h .ib{width:28px;height:28px;border-radius:8px}
+.sh-kl #ozList{padding-bottom:10px}
+.sh-kl #ozList button .av{width:22px;height:22px;margin:0;box-shadow:none}
+.sh-kl #ozList button .kilit,.sh-tabs .kilit{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.sh-kl #ozList button .ad{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-kl #ozList button.yeni .ad{font-weight:900}
+.sh-kl #ozList button .nokta,.sh-tabs .nokta{width:8px;height:8px;border-radius:50%;background:#e5484d;margin-left:auto;flex:none}
+.sh-kl #ozList .bos{font:700 12.5px var(--round);color:var(--p-mut);padding:2px 10px 6px}
+.oz-bar{display:flex;gap:6px;flex:none}
+.sh-bar .ttl b .kilit{width:15px;height:15px;vertical-align:-2px;margin-right:5px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sh-tabs button .nokta{display:inline-block;margin-left:5px;vertical-align:1px}
+.sh-tabs button .kilit{vertical-align:-3px;margin-right:4px}
+.sh-tabs .oz-arti{border-style:dashed}
+.sh-ul li.off{opacity:.55}
+.sh-ul li.off::after{content:"çevrimdışı";margin-left:auto;font:700 11px var(--round);color:var(--p-mut)}
+.oz-kurallar{margin:10px 0 6px 18px;color:var(--muted);font-size:14px;display:grid;gap:5px}
+.oz-kurallar b{color:var(--ink)}
+.mcard .opt input[type=checkbox]{width:20px;height:20px}
+.mcard .btn:disabled{opacity:.45;cursor:not-allowed}
+.oz-form{display:flex;gap:8px;margin:8px 0 4px}
+.oz-form input{margin:0!important;flex:1;min-width:0;height:46px!important}
+.oz-form .btn{flex:none}
+.oz-davet{display:flex;gap:8px;align-items:center;margin-top:8px}
+.oz-davet input{margin:0!important;height:42px!important;font:700 13px var(--round)!important}
+.mcard h3{font:900 14px var(--round);margin-top:16px}
+
 /* menü */
 .pop{position:fixed;z-index:70;min-width:180px;background:var(--p-pane,#fff);color:var(--p-ink);border:1px solid var(--p-line);border-radius:12px;padding:6px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font-family:var(--round)}
 .pop button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;border-radius:8px;font:800 14px var(--round);cursor:pointer;color:inherit}
@@ -337,7 +367,10 @@ h1,h2,h3{font-family:var(--round)}
   .sh-form .send{width:42px;padding:0}.sh-form .send span{display:none}.sh-form .send svg{display:block;margin:auto}
   .ln{padding-left:10px;padding-right:38px}
   .ln time{margin-right:5px}
-  .sh-bar{padding-left:12px}
+  .sh-bar{padding-left:12px;padding-right:8px;gap:5px}
+  .sh-bar .ib{width:32px;height:32px}.sh-bar .ib.wide{padding:0 7px}
+  #soundBtn,#helpBtn{display:none}
+  .sh-bar .ttl b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
 @media (max-height:560px) and (orientation:landscape){.top{display:none}.wrap{padding-top:6px}.chat{height:calc(100svh - 12px);min-height:0}}
 @media (max-height:640px) and (orientation:portrait){.top{display:none}.wrap{padding-top:6px}.chat{height:calc(100svh - 12px)}}
@@ -395,6 +428,8 @@ footer a:hover{color:var(--ink)}
     <aside class="sh-side sh-kl" aria-label="Kanallar">
       <h2>Kanallar</h2>
       <nav id="chList"></nav>
+      <div class="oz-h"><h2>Özel</h2><button class="ib" id="ozArti" aria-label="Özel oda aç ya da koda katıl" title="Özel oda aç ya da koda katıl"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button></div>
+      <nav id="ozList"></nav>
       <div class="me">Rumuz: <b id="meNick">—</b><button class="ib" id="nickBtn2" aria-label="Rumuzu değiştir" title="Rumuzu değiştir"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
     </aside>
 
@@ -403,6 +438,11 @@ footer a:hover{color:var(--ink)}
       <div class="sh-bar">
         <div class="ttl"><b id="chName">#genel</b><span id="topic"></span></div>
         <span class="slow" id="slowTag" hidden></span>
+        <div class="oz-bar" id="ozBar" hidden>
+          <button class="ib" id="ozDavet" aria-label="Davet bağlantısını kopyala" title="Davet bağlantısını kopyala"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+          <button class="ib" id="ozEngel" aria-label="Engelle" title="Engelle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></button>
+          <button class="ib" id="ozCik" aria-label="Konuşmayı kapat" title="Konuşmayı kapat"><svg viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l-5-5 5-5M5 12h11"/></svg></button>
+        </div>
         <button class="ib wide" id="usersBtn" aria-label="Kişiler" title="Kişiler"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.8c1.7.8 2.8 2.5 3 5.2"/></svg><span id="usersN">0</span></button>
         <button class="ib" id="soundBtn" aria-label="Adım geçince ses" aria-pressed="true" title="Adım geçince ses"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wv" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="mt" d="m16 9.5 5 5m0-5-5 5" hidden/></svg></button>
         <button class="ib" id="setBtn" aria-label="Ayarlar" title="Ayarlar"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg></button>
@@ -449,7 +489,7 @@ footer a:hover{color:var(--ink)}
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">PgUp</kbd><kbd class="kc w">PgDn</kbd></span></span><span>Yazarken sohbet geçmişinde yukarı ve aşağı kaydır</span></li>
         <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Esc</kbd></span></span><span>Açık menüyü ya da pencereyi kapat</span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><rect x="18" y="7" width="4" height="10" rx="2" fill="var(--accent)"/><path d="M41 14l3-4 3 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>En üste kaydırıp <b>Daha eski mesajlar</b>a tıkla</span></li>
-        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Bir rumuza tıkla: adı mesaj kutusuna yazılır</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Mesajdaki rumuza tıkla: adı mesaj kutusuna yazılır. Kişi listesinde rumuza tıkla: <b>Özel mesaj</b></span></li>
         <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Satırın sağındaki <b>⋯</b> ile yanıtla ya da şikâyet et</span></li>
       </ul>
       <ul class="ctl-grid" id="ctlMob" role="tabpanel" aria-labelledby="cTabMob" hidden>
@@ -468,6 +508,7 @@ footer a:hover{color:var(--ink)}
           <li><code>/join #okey</code> kanal değiştirir (<code>/j</code> da olur).</li>
           <li><code>/away yemekteyim</code> seni uzakta gösterir, <code>/back</code> geri getirir.</li>
           <li><code>/clear</code> ekranı temizler, <code>/yardim</code> komutları listeler.</li>
+          <li><code>/msg Rumuz mesaj</code> özel mesaj gönderir, <code>/query Rumuz</code> özel konuşmayı açar (boşluklu rumuz: <code>/msg "Ali Veli" selam</code>).</li>
           <li>Satırı <code>/</code> ile başlatmak için <code>//</code> yaz.</li>
         </ul>
       </div>
@@ -479,6 +520,7 @@ footer a:hover{color:var(--ink)}
           <li>Reklam ve sel (aynı mesajı tekrar tekrar yazmak) yasak. Başka sitelerin bağlantıları kaldırılır; okutan.org bağlantıları ve oyun davetleri serbest.</li>
           <li>Başkasının yerine geçme; yönetici ya da moderatör gibi davranma.</li>
           <li>Kuralları çiğneyenler <b>susturulur</b> ya da sohbetten <b>çıkarılır</b>. Rahatsız edici mesajı ⋯ menüsünden şikâyet et.</li>
+          <li><b>Özel sohbet</b> (bire bir mesaj ve özel odalar) yalnızca 18 yaşından büyükler içindir; ilk kullanımda şartları onaylarsın. Rahatsız olursan engelle ya da şikâyet et.</li>
           <li>Moderatörlerin yanında yeşil <b>MOD</b>, yöneticinin yanında turuncu <b>YÖNETİCİ</b> rozeti görünür (klasik görünümde rumuzun başında <b>@</b>).</li>
         </ul>
       </div>
@@ -491,7 +533,8 @@ footer a:hover{color:var(--ink)}
         <li><b>Bağlantı kayıtları:</b> yasal yükümlülükler için hangi rumuz numarasının hangi IP adresi, bağlantı noktası ve zamanda mesaj gönderdiği iki yıl saklanır. Bu kayıtlarda mesaj metni yoktur; yalnızca yetkili makamların talebiyle paylaşılır.</li>
         <li>Kötüye kullanımı önlemek için IP adresinin geri döndürülemez bir özeti (hash) tutulur.</li>
         <li><b>Cinsiyet isteğe bağlıdır.</b> Seçersen rumuzunun renginden herkes görür (mavi erkek, pembe kadın, yeşil belirtmeyen); "Belirtmek istemiyorum" seçebilir, istediğin zaman değiştirebilirsin.</li>
-        <li>Mesajların herkese açıktır; özel mesaj yoktur. Silinmesini istediğin bir mesaj için <a href="mailto:sedat@okutan.org" style="text-decoration:underline">sedat@okutan.org</a> adresine yaz.</li>
+        <li><b>Özel mesajları kimse okumaz.</b> Özel konuşmadaki bir mesaj şikâyet edilirse yönetici yalnızca o konuşmayı inceler. Özel mesajlar da 30 gün saklanır; kim kime ne zaman yazdığı bağlantı kayıtlarında tutulur.</li>
+        <li>Kanallardaki mesajların herkese açıktır. Silinmesini istediğin bir mesaj için <a href="mailto:sedat@okutan.org" style="text-decoration:underline">sedat@okutan.org</a> adresine yaz.</li>
       </ul>
     </div>
     <div class="b faq">
@@ -502,6 +545,7 @@ footer a:hover{color:var(--ink)}
       <details><summary>Oyun masasına nasıl davet ederim?</summary><p>Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur.</p></details>
       <details><summary>Mesajlar ne kadar saklanıyor?</summary><p>Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır.</p></details>
       <details><summary>Rahatsız edici bir mesajı nasıl bildiririm?</summary><p>Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır.</p></details>
+      <details><summary>Özel mesaj ve özel oda var mı?</summary><p>Var, 18 yaşından büyükler için. Kişi listesinde ya da mesajda rumuza tıklayıp Özel mesaj seçersen bire bir konuşma açılır; /msg Rumuz mesaj komutu da olur. Özel oda açıp davet bağlantısını paylaşarak istediğin kişileri çağırabilirsin. İlk kullanımda 18 yaş beyanını ve özel sohbet şartlarını onaylarsın. Özel mesajları kimse okumaz; şikâyet edilen konuşmayı yönetici inceler. Rahatsız olursan kişiyi engelleyebilir, ayarlardan özel mesajlara kapanabilirsin.</p></details>
       <details><summary>Rumuz renkleri ne anlama geliyor?</summary><p>Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür.</p></details>
       <details><summary>Eski mIRC görünümü var mı?</summary><p>Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır.</p></details>
       <details><summary>Telefonda çalışır mı?</summary><p>Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez.</p></details>
@@ -550,9 +594,44 @@ footer a:hover{color:var(--ink)}
       <label class="opt"><input type="checkbox" id="optSaat"><span><b>Saatleri göster</b><small>Her satırın başındaki saat.</small></span></label>
       <label class="opt"><input type="checkbox" id="optGiris"><span><b>Katıldı / ayrıldı satırları</b><small>Kanala girip çıkanları göster.</small></span></label>
       <label class="opt"><input type="checkbox" id="optSes"><span><b>Adım geçince ses</b><small>Biri rumuzunu yazınca kısa bir çınlama.</small></span></label>
+      <label class="opt" id="optOzelSatir" hidden><input type="checkbox" id="optOzelKapali"><span><b>Özel mesajlara kapalıyım</b><small>Kimse sana yeni özel mesaj başlatamaz; açık konuşmaların sürer.</small></span></label>
       <label class="opt"><input type="checkbox" id="optBildirim"><span><b>Masaüstü bildirimi</b><small id="bildirimNot">Sekme arka plandayken adın geçerse bildirim gelir.</small></span></label>
     </div>
     <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
+  </div>
+</div>
+<!-- Özel sohbet onayı: 18+ ve kurallar -->
+<div class="modal" id="onayModal" hidden>
+  <form class="mcard" role="dialog" aria-modal="true" aria-labelledby="onayTitle" id="onayForm">
+    <button type="button" class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Özel sohbet</div>
+    <h2 id="onayTitle">Özel sohbet şartları</h2>
+    <p>Özel mesajlar ve özel odalar yalnızca 18 yaşından büyükler içindir.</p>
+    <ul class="oz-kurallar">
+      <li><b>Taciz, tehdit, cinsel içerik ve rahatsız etmek yasak.</b> İstemeyen birine yazmaya devam etme.</li>
+      <li>Telefon, adres, okul, sosyal medya gibi <b>kişisel bilgilerini paylaşma</b>; para ya da bilgi isteyenlere güvenme.</li>
+      <li>Özel mesajları kimse okumaz. Biri <b>şikâyet ederse</b> yönetici o konuşmayı inceler.</li>
+      <li>Rahatsız olursan kişiyi <b>engelle</b> ya da mesajı <b>şikâyet et</b>. Kurallara uymayan sohbetten çıkarılır.</li>
+      <li>Mesajlar 30 gün saklanır; bağlantı kayıtları yasal süre boyunca tutulur.</li>
+    </ul>
+    <label class="opt"><input type="checkbox" id="onYas"><span><b>18 yaşından büyüğüm</b><small>Yaşını yanlış beyan etmek kuralları çiğnemektir.</small></span></label>
+    <label class="opt"><input type="checkbox" id="onKural"><span><b>Özel sohbet şartlarını okudum ve kabul ediyorum</b><small>Yukarıdaki kurallar ve <a href="#gizlilik" data-close style="text-decoration:underline">gizlilik</a> metni.</small></span></label>
+    <div class="err" id="onayErr" role="alert"></div>
+    <div class="row2"><button class="btn btn-a" id="onayOk" disabled>Kabul ediyorum</button></div>
+  </form>
+</div>
+<!-- Özel oda aç / koda katıl -->
+<div class="modal" id="odaModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="odaTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Özel sohbet</div>
+    <h2 id="odaTitle">Özel oda</h2>
+    <p>Odayı yalnızca davet bağlantısını verdiğin kişiler görür. Bire bir konuşmak için kişi listesinde rumuza tıkla.</p>
+    <h3>Yeni oda aç</h3>
+    <form class="oz-form" id="odaAcForm"><input id="odaAd" maxlength="40" placeholder="Oda adı (ör. Akşam okeyi)" aria-label="Oda adı"><button class="btn btn-a">Aç</button></form>
+    <h3>Davet koduyla katıl</h3>
+    <form class="oz-form" id="odaKatilForm"><input id="odaKod" maxlength="8" placeholder="8 karakterlik kod" aria-label="Davet kodu" autocapitalize="characters" spellcheck="false"><button class="btn btn-g">Katıl</button></form>
+    <div class="err" id="odaErr" role="alert"></div>
   </div>
 </div>
 <!-- Komutlar -->
@@ -568,6 +647,8 @@ footer a:hover{color:var(--ink)}
       <code>/away sebep</code><span>Uzakta görün</span>
       <code>/back</code><span>Geri dön</span>
       <code>/clear</code><span>Ekranı temizle</span>
+      <code>/msg Rumuz metin</code><span>Özel mesaj gönder</span>
+      <code>/query Rumuz</code><span>Özel konuşmayı aç</span>
       <code>//metin</code><span>/ ile başlayan düz mesaj</span>
       <code>Tab</code><span>Rumuzu tamamla</span>
       <code>↑ ↓</code><span>Önceki satırların</span>
@@ -577,7 +658,7 @@ footer a:hover{color:var(--ink)}
     <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
   </div>
 </div>
-<script src="motor.js?v=7" defer></script>
-<script src="sohbet.js?v=7" defer></script>
+<script src="motor.js?v=10" defer></script>
+<script src="sohbet.js?v=10" defer></script>
 </body>
 </html>

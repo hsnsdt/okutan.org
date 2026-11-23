@@ -108,3 +108,12 @@ test('cinsiyet rengi, avatar harfi, rol', () => {
   assert.equal(M.basHarf('ismail'), 'İ'); assert.equal(M.basHarf('ışık'), 'I'); assert.equal(M.basHarf('çağrı'), 'Ç'); assert.equal(M.basHarf('34lü'), '3');
   assert.equal(M.rolAdi(2), 'YÖNETİCİ'); assert.equal(M.rolAdi(1), 'MOD'); assert.equal(M.rolAdi(0), '');
 });
+
+test('/msg ve /query: tırnaklı rumuz, metinsiz /msg konuşmayı açar', () => {
+  assert.deepEqual(M.komut('/msg Ali selam nasılsın'), { t: 'msg', nick: 'Ali', text: 'selam nasılsın' });
+  assert.deepEqual(M.komut('/msg "Ali Veli" selam'), { t: 'msg', nick: 'Ali Veli', text: 'selam' });
+  assert.deepEqual(M.komut('/query Işıl'), { t: 'query', nick: 'Işıl' });
+  assert.deepEqual(M.komut('/msg Zeki'), { t: 'query', nick: 'Zeki' });
+  assert.equal(M.komut('/msg').t, 'hata');
+  assert.ok(M.ozelMi('p12')); assert.ok(!M.ozelMi('genel')); assert.ok(!M.ozelMi('p'));
+});

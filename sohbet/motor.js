@@ -49,6 +49,9 @@
   // Rol: op 1 moderatör, 2 yönetici
   function rolAdi(op) { return op === 2 ? 'YÖNETİCİ' : op ? 'MOD' : ''; }
 
+  // özel konuşma: 'p' + oda numarası (sunucu üyeliği denetler)
+  function ozelMi(ch) { return /^p\d{1,10}$/.test(String(ch || '')); }
+
   function kanalBul(s) {
     s = trKucuk(String(s || '').trim()).replace(/^#/, '');
     return KANAL_ID[s] ? s : null;
@@ -79,6 +82,14 @@
         return { t: 'clear' };
       case 'help': case 'yardim': case 'yardım': case 'komutlar': case '?':
         return { t: 'help' };
+      case 'msg': case 'query': case 'q': case 'ozel': case 'özel': {
+        // /msg Rumuz metin · /query Rumuz · boşluklu rumuz tırnakla: /msg "Ali Veli" selam
+        var mq = /^"([^"]+)"\s*([\s\S]*)$/.exec(arg) || /^(\S+)\s*([\s\S]*)$/.exec(arg);
+        if (!mq) return { t: 'hata', msg: 'Kullanım: /msg Rumuz mesaj (boşluklu rumuzu tırnağa al: /msg "Ali Veli" selam)' };
+        var hn = rumuzDuzelt(mq[1]), ht = mq[2].trim();
+        if (!rumuzGecerli(hn)) return { t: 'hata', msg: 'Rumuz geçersiz: ' + hn };
+        return ad === 'msg' && ht ? { t: 'msg', nick: hn, text: ht } : { t: 'query', nick: hn };
+      }
       case 'sustur': case 'mute': {
         var mm = /^(.+?)(?:\s+(\d{1,3}))?$/.exec(arg);
         if (!mm) return { t: 'hata', msg: 'Kullanım: /sustur Rumuz 10 (dakika, en çok 60)' };
@@ -171,6 +182,19 @@
     not_op: 'Bunu yalnızca moderatörler yapabilir.',
     no_user: 'Bu rumuzda kimse yok.',
     rate_limited: 'Çok fazla deneme; biraz sonra tekrar dene.',
+    ozel_onay: 'Özel sohbet için önce 18 yaş beyanını ve kuralları onayla.',
+    need_both: 'İki kutuyu da işaretlemelisin.',
+    karsi_onay: 'Bu kişi özel sohbeti açmamış.',
+    karsi_kapali: 'Bu kişi özel mesaj almıyor.',
+    engelli: 'Bu konuşmada engel var; mesaj gönderilemez.',
+    kendin: 'Kendine özel mesaj gönderemezsin.',
+    no_room: 'Oda bulunamadı ya da kapatıldı.',
+    oda_dolu: 'Oda dolu (en çok 50 kişi).',
+    atildin: 'Bu odadan çıkarıldın.',
+    room_closed: 'Bu konuşma yönetici tarafından kapatıldı.',
+    not_owner: 'Bunu yalnızca oda sahibi yapabilir.',
+    not_admin: 'Bunu yalnızca yönetici yapabilir.',
+    bad_name: 'Oda adı en az 2 karakter olmalı.',
     db_unavailable: 'Sohbet şu an kapalı; birazdan tekrar dene.',
     not_configured: 'Sohbet henüz kurulmadı.'
   };
@@ -179,5 +203,5 @@
   return { KANALLAR: KANALLAR, OYUNLAR: OYUNLAR, MAKS_MESAJ: MAKS_MESAJ, trKucuk: trKucuk, rumuzDuzelt: rumuzDuzelt, rumuzGecerli: rumuzGecerli,
     renk: renk, fnv1a: fnv1a, kanalBul: kanalBul, komut: komut, bahsediyor: bahsediyor, parcala: parcala, farklar: farklar, tamamla: tamamla, hataMetni: hataMetni,
     gunAnahtari: gunAnahtari, gunEtiketi: gunEtiketi, EMOJILER: EMOJILER, kanalOyun: kanalOyun,
-    gSinif: gSinif, CINSIYET: CINSIYET, basHarf: basHarf, rolAdi: rolAdi };
+    gSinif: gSinif, CINSIYET: CINSIYET, basHarf: basHarf, rolAdi: rolAdi, ozelMi: ozelMi };
 });
