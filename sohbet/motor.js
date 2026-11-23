@@ -13,8 +13,20 @@
     { id: 'okey', ad: 'okey', konu: 'Okey ve 101 Okey: masa kur, davet bağlantını paylaş.' },
     { id: 'tavla', ad: 'tavla', konu: 'Tavla: rakip ara, maç sonrası sohbet.' },
     { id: 'kart', ad: 'kart', konu: 'Batak, King ve Pişti masaları.' },
-    { id: 'kelime', ad: 'kelime', konu: 'Gizli Kelime, Kelime Bulucu ve Kelimeler.' }
+    { id: 'kelime', ad: 'kelime', konu: 'Gizli Kelime, Kelime Bulucu ve Kelimeler.' },
+    // oyun kanalları: botu sunucuda (api/oyun.php), cevaplar normal mesajla verilir
+    { id: 'avi', ad: 'kelime-avı', oyun: true, konu: 'Karışık harflerden kelimeyi ilk bulan kazanır.' },
+    { id: 'zincir', ad: 'zincir', oyun: true, konu: 'Her kelime öncekinin son harfiyle başlar.' },
+    { id: 'gizli', ad: 'gizli-kelime', oyun: true, konu: '5 harfli kelimeyi renk ipuçlarıyla ilk bulan kazanır.' },
+    { id: 'yarisma', ad: 'yarışma', oyun: true, konu: 'Bilgi yarışması: soruyu ilk bilen kazanır.' }
   ];
+  // oyun kanalına girince gösterilen kısa kurallar
+  var OYUN_KURAL = {
+    avi: 'Bot karışık harfler yazar; harfleri dizip kelimeyi tek kelime olarak yaz. 20 ve 40. saniyede ipucu gelir, 60 saniyede cevap açıklanır. Ne kadar az ipucuyla bulursan o kadar çok puan.',
+    zincir: 'Tek kelime yaz: öncekinin son harfiyle başlamalı ve sözlükte olmalı (ğ ile biten kelimede bir önceki harf). Söylenen tekrar edilmez. Her kelime +1, 7 harf ve üstü +2; üst üste ikinci kelimen puan almaz.',
+    gizli: '5 harfli tahminini tek kelime olarak yaz. 🟦 doğru yerde, 🟧 kelimede var ama başka yerde, ⬜ yok. Herkesin 6 hakkı var; ne kadar erken bulursan o kadar çok puan.',
+    yarisma: 'Cevabı mesaj olarak yaz; büyük/küçük harf ve Türkçe karakter fark etmez. İpucusuz bilen 3, bir ipucuyla 2, iki ipucuyla 1 puan alır.'
+  };
   var KANAL_ID = {}; KANALLAR.forEach(function (k) { KANAL_ID[k.id] = k; });
 
   // Davet bağlantısı verilebilen oyunlar: yol → görünen ad
@@ -52,10 +64,15 @@
   // özel konuşma: 'p' + oda numarası (sunucu üyeliği denetler)
   function ozelMi(ch) { return /^p\d{1,10}$/.test(String(ch || '')); }
 
+  function katla(s) { return trKucuk(s).replace(/[çğıöşü]/g, function (c) { return { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' }[c]; }); }
+  // kanal kimliği ya da görünen adı (#kelime-avı, #kelime-avi, #yarisma…)
   function kanalBul(s) {
     s = trKucuk(String(s || '').trim()).replace(/^#/, '');
-    return KANAL_ID[s] ? s : null;
+    if (KANAL_ID[s]) return s;
+    var k = katla(s), x = KANALLAR.filter(function (c) { return katla(c.ad) === k; })[0];
+    return x ? x.id : null;
   }
+  function oyunMu(ch) { return !!(KANAL_ID[ch] && KANAL_ID[ch].oyun); }
 
   // Yazılan satırı komuta çevirir. "//" ile başlayan satır komut değil, düz mesajdır.
   function komut(satir) {
@@ -90,6 +107,19 @@
         if (!rumuzGecerli(hn)) return { t: 'hata', msg: 'Rumuz geçersiz: ' + hn };
         return ad === 'msg' && ht ? { t: 'msg', nick: hn, text: ht } : { t: 'query', nick: hn };
       }
+      case 'zar': case 'dice': {
+        var nz = arg ? parseInt(arg, 10) : 2;
+        if (!(nz >= 1 && nz <= 5)) return { t: 'hata', msg: 'Kullanım: /zar ya da /zar 1–5 (zar sayısı)' };
+        return { t: 'eglence', tur: 'zar', arg: nz };
+      }
+      case 'yazitura': case 'yazıtura': case 'yazı-tura': case 'yazi-tura': case 'yt': case 'coin':
+        return { t: 'eglence', tur: 'yazitura' };
+      case 'sayi': case 'sayı': case 'rastgele': {
+        if (arg && !/^\d{1,6}(\s*[-–]\s*\d{1,6})?$/.test(arg)) return { t: 'hata', msg: 'Kullanım: /sayi (1–100), /sayi 6 ya da /sayi 10-50' };
+        return { t: 'eglence', tur: 'sayi', arg: arg || '' };
+      }
+      case 'puan': case 'skor': case 'puanlar':
+        return { t: 'puan' };
       case 'sustur': case 'mute': {
         var mm = /^(.+?)(?:\s+(\d{1,3}))?$/.exec(arg);
         if (!mm) return { t: 'hata', msg: 'Kullanım: /sustur Rumuz 10 (dakika, en çok 60)' };
@@ -195,6 +225,7 @@
     not_owner: 'Bunu yalnızca oda sahibi yapabilir.',
     not_admin: 'Bunu yalnızca yönetici yapabilir.',
     bad_name: 'Oda adı en az 2 karakter olmalı.',
+    bad_cmd: 'Bilinmeyen komut.',
     db_unavailable: 'Sohbet şu an kapalı; birazdan tekrar dene.',
     not_configured: 'Sohbet henüz kurulmadı.'
   };
@@ -203,5 +234,5 @@
   return { KANALLAR: KANALLAR, OYUNLAR: OYUNLAR, MAKS_MESAJ: MAKS_MESAJ, trKucuk: trKucuk, rumuzDuzelt: rumuzDuzelt, rumuzGecerli: rumuzGecerli,
     renk: renk, fnv1a: fnv1a, kanalBul: kanalBul, komut: komut, bahsediyor: bahsediyor, parcala: parcala, farklar: farklar, tamamla: tamamla, hataMetni: hataMetni,
     gunAnahtari: gunAnahtari, gunEtiketi: gunEtiketi, EMOJILER: EMOJILER, kanalOyun: kanalOyun,
-    gSinif: gSinif, CINSIYET: CINSIYET, basHarf: basHarf, rolAdi: rolAdi, ozelMi: ozelMi };
+    gSinif: gSinif, CINSIYET: CINSIYET, basHarf: basHarf, rolAdi: rolAdi, ozelMi: ozelMi, oyunMu: oyunMu, OYUN_KURAL: OYUN_KURAL };
 });

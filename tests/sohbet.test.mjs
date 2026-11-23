@@ -117,3 +117,19 @@ test('/msg ve /query: tırnaklı rumuz, metinsiz /msg konuşmayı açar', () => 
   assert.equal(M.komut('/msg').t, 'hata');
   assert.ok(M.ozelMi('p12')); assert.ok(!M.ozelMi('genel')); assert.ok(!M.ozelMi('p'));
 });
+
+test('oyun kanalları: Türkçe adla /join, eğlence komutları, puan', () => {
+  assert.deepEqual(M.komut('/join #kelime-avı'), { t: 'join', ch: 'avi' });
+  assert.deepEqual(M.komut('/j #kelime-avi'), { t: 'join', ch: 'avi' });
+  assert.deepEqual(M.komut('/join yarışma'), { t: 'join', ch: 'yarisma' });
+  assert.deepEqual(M.komut('/join #gizli-kelime'), { t: 'join', ch: 'gizli' });
+  assert.ok(M.oyunMu('zincir')); assert.ok(!M.oyunMu('genel'));
+  assert.deepEqual(M.komut('/zar'), { t: 'eglence', tur: 'zar', arg: 2 });
+  assert.deepEqual(M.komut('/zar 3'), { t: 'eglence', tur: 'zar', arg: 3 });
+  assert.equal(M.komut('/zar 9').t, 'hata');
+  assert.deepEqual(M.komut('/yt'), { t: 'eglence', tur: 'yazitura' });
+  assert.deepEqual(M.komut('/sayı 10-50'), { t: 'eglence', tur: 'sayi', arg: '10-50' });
+  assert.equal(M.komut('/sayi abc').t, 'hata');
+  assert.deepEqual(M.komut('/puan'), { t: 'puan' });
+  for (const k of M.KANALLAR.filter((x) => x.oyun)) assert.ok(M.OYUN_KURAL[k.id], k.id);
+});

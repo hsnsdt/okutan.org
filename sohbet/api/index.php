@@ -12,6 +12,8 @@
 //   POST ?a=op_del {key, id} · op_mute {key, nick, min} · op_pin {key, ch, id} → moderatör (op) işlemleri
 //   POST ?a=op_ban {key, user, days, wipe?, ch}       → yalnızca yönetici (op = 2): sohbetin içinden yasaklama
 //   GET  ?a=count                                      → {online, ch} herkese açık sayaç (30 sn önbellek)
+// Oyun kanalları (avi, zincir, gizli, yarisma; motor oyun.php): cevaplar normal mesajla (say) verilir, botlar kind 'b' mesaj yazar.
+//   POST ?a=eglence {key, ch, tur: zar|yazitura|sayi, arg} · puan {key, ch} → haftalık tablo · admin_oyun {t, ch, sifirla?}
 // Özel sohbet (18+ beyanı ve kural onayı gerekir; ch = 'p' + oda numarası, poll/say/history aynı uçlar):
 //   POST ?a=ozel_onay {key, yas, kural} · ozel_ayar {key, kapali} · engel {key, user, kaldir?}
 //   POST ?a=dm {key, nick} → {ch} bire bir · oda_ac {key, ad} → {ch, kod} · oda_katil {key, kod} · oda_cik {key, ch} · oda_at {key, ch, user}
@@ -35,7 +37,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex');
 
-const KANALLAR = ['genel', 'okey', 'tavla', 'kart', 'kelime'];
+const KANALLAR = ['genel', 'okey', 'tavla', 'kart', 'kelime', 'avi', 'zincir', 'gizli', 'yarisma'];
 const MSG_DAYS = 30;          // mesajlar bu kadar gün saklanır
 const ONLINE_SEC = 70;        // bu kadar saniyedir sinyal gelmeyen kişi listeden düşer
 const PRESENCE_SEC = 15;      // "buradayım" satırı en sık bu aralıkla yazılır
@@ -43,7 +45,11 @@ const MAX_TEXT = 300;
 const NEWBIE_SEC = 300;       // yeni gelen ilk 5 dakika: yavaş mod 5 sn
 const FLOOD_PER_MIN = 50;     // kanalda dakikada bundan fazla mesaj → 5 dakikalık otomatik yavaş mod
 const BAD_WORDS = ['amk', 'aminako', 'amına', 'orospu', 'sikti', 'sikis', 'sikerim', 'siktir', 'yarrak', 'pezevenk', 'gavat', 'kahpe', 'ibne', 'fuck', 'shit', 'bitch'];
+// bot adları birebir alınamaz ("Botan" gibi adlar engellenmesin diye içerme değil eşitlik)
+const BOT_ADLARI = ['bot', 'kelimebot', 'zincirbot', 'gizlibot', 'bilgibot', 'zar'];
 const RESERVED = ['admin', 'moderator', 'yonetici', 'yönetici', 'sedatokutan', 'okutan', 'sistem', 'system', 'operator', 'nickserv', 'chanserv'];
+
+require_once __DIR__ . '/oyun.php';
 
 function out(array $d, int $c = 200): void { http_response_code($c); echo json_encode($d, JSON_UNESCAPED_UNICODE); exit; }
 function fail(string $e, int $c = 400, array $x = []): void { out(['ok' => false, 'error' => $e] + $x, $c); }
@@ -107,6 +113,7 @@ function create_tables(PDO $db): void {
         oda_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NOT NULL, katildi DATETIME NOT NULL, okundu BIGINT UNSIGNED NOT NULL DEFAULT 0,
         cikti TINYINT(1) NOT NULL DEFAULT 0, typing_at DATETIME NULL, PRIMARY KEY (oda_id, user_id), KEY ix_user (user_id, cikti)
     )' . $o);
+    oyun_tablolar($db);
     $db->exec('CREATE TABLE IF NOT EXISTS sh_engel (user_id INT UNSIGNED NOT NULL, hedef_id INT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, PRIMARY KEY (user_id, hedef_id))' . $o);
 }
 // eski kurulumlara sonradan eklenen sütunlar (canlıdaki tablolar ilk sürümle oluştu)
@@ -153,6 +160,13 @@ function rozetler(PDO $db): array {
                 foreach ($s->fetchAll() as $i => $r) { $k = mb_substr(lc((string)$r['name']), 0, 40); if (!isset($best[$k]) || $best[$k][0] > $i) $best[$k] = [$i, $ad . ' #' . ($i + 1)]; }
             } catch (Throwable $e) {} // oyunun tablosu henüz yoksa atla
         }
+        foreach (OYUNLAR as $g => $og) {
+            try {
+                foreach (q($db, 'SELECT nick, puan FROM sh_puan WHERE oyun = ? AND hafta = ? ORDER BY puan DESC LIMIT 10', [$g, hafta()])->fetchAll() as $i => $r) {
+                    $k = mb_substr(lc((string)$r['nick']), 0, 40); if (!isset($best[$k]) || $best[$k][0] > $i) $best[$k] = [$i, $og['ad'] . ' #' . ($i + 1)];
+                }
+            } catch (Throwable $e) {}
+        }
         $db->beginTransaction();
         q($db, 'DELETE FROM sh_rozet');
         foreach ($best as $k => $v) q($db, 'INSERT INTO sh_rozet (nick_lc, label) VALUES (?, ?)', [$k, $v[1]]);
@@ -180,6 +194,7 @@ function clean_nick($raw, bool $reserved = true): ?string {
     $len = mb_strlen($n, 'UTF-8');
     if ($len < 2 || $len > 16 || !preg_match('/^[\p{L}\p{N}][\p{L}\p{N} ._\-]*$/u', $n)) return null;
     $f = flat($n);
+    if (in_array($f, BOT_ADLARI, true)) return null;
     foreach ($reserved ? array_merge(words(), RESERVED) : words() as $w) if (str_contains($f, flat($w))) return null;
     return $n;
 }
@@ -475,6 +490,12 @@ try {
             $rows = array_reverse(q($db, 'SELECT m.*, u.gender AS g, (SELECT COUNT(*) FROM sh_reports r WHERE r.msg_id = m.id) AS reps FROM sh_msgs m LEFT JOIN sh_users u ON u.id = m.user_id WHERE m.ch = ? ORDER BY m.id DESC LIMIT 300', ['p' . $oid])->fetchAll());
             out(['ok' => true, 'rows' => array_map(fn($r) => msg_row($r) + ['reps' => (int)$r['reps'], 'del' => $r['del_by']], $rows)]);
         }
+        if ($a === 'admin_oyun') {
+            $ch = chan($in['ch'] ?? ''); if (!isset(OYUNLAR[$ch])) fail('bad_channel');
+            if (!empty($in['sifirla'])) q($db, 'DELETE FROM sh_oyun WHERE ch = ?', [$ch]);
+            $o = q($db, 'SELECT * FROM sh_oyun WHERE ch = ?', [$ch])->fetch();
+            out(['ok' => true, 'oyun' => $o ? ['tur' => (int)$o['tur'], 'durum' => $o['durum'], 'cevap' => $o['cevap'], 'veri' => json_decode((string)$o['veri'], true), 'basla' => ts($o['basla']), 'ipucu' => (int)$o['ipucu']] : null]);
+        }
         if ($a === 'admin_log') {
             // yasal kayıt sorgusu: kişi numarasına ya da IP'ye göre (mesaj metni burada yok)
             $w = []; $args = [];
@@ -543,6 +564,7 @@ try {
             if ($typing && (!$tt || $tt < $now - 3)) q($db, 'UPDATE sh_presence SET typing_at = ? WHERE user_id = ?', [now(), $u['id']]);
             elseif (!$typing && $tt && $tt >= $now - 6) q($db, 'UPDATE sh_presence SET typing_at = NULL WHERE user_id = ?', [$u['id']]);
         }
+        if (!$oda && isset(OYUNLAR[$ch])) oyun_tik($db, $ch);
         $rows = $after > 0
             ? q($db, 'SELECT m.*, u.gender AS g FROM sh_msgs m LEFT JOIN sh_users u ON u.id = m.user_id WHERE m.ch = ? AND m.id > ? AND m.del_at IS NULL ORDER BY m.id LIMIT 200', [$ch, $after])->fetchAll()
             : array_reverse(q($db, 'SELECT m.*, u.gender AS g FROM sh_msgs m LEFT JOIN sh_users u ON u.id = m.user_id WHERE m.ch = ? AND m.del_at IS NULL ORDER BY m.id DESC LIMIT 100', [$ch])->fetchAll());
@@ -593,12 +615,13 @@ try {
         $k = $oda ? ['slow' => 0, 'auto_until' => '2000-01-01 00:00:00'] : kanal_row($db, $ch);
         $slow = max(slow_of($k), ts($u['created_at']) > time() - NEWBIE_SEC ? 5 : 0, 1);
         if ($lastT > time() - $slow) fail('slow', 429, ['wait' => $lastT + $slow - time()]);
-        if ($last && $last['text'] === $text && $lastT > time() - 120) fail('dup', 429);
+        // aynı mesajı tekrar yazma engeli; oyun kanallarında yok (aynı tahmin ya da cevap yeniden denenebilir)
+        if (!isset(OYUNLAR[$ch]) && $last && $last['text'] === $text && $lastT > time() - 120) fail('dup', 429);
         if ((int)q($db, 'SELECT COUNT(*) FROM sh_msgs WHERE user_id = ? AND created_at >= ?', [$u['id'], ago(60)])->fetchColumn() >= 15) fail('slow', 429, ['wait' => 10]);
         // aynı ağdan çok hesapla akıtma
         if ((int)q($db, "SELECT COUNT(*) FROM sh_log WHERE ip = ? AND ev = 'msg' AND created_at >= ?", [ip_raw(), ago(60)])->fetchColumn() >= 40) fail('slow', 429, ['wait' => 10]);
         // kanalda sel: otomatik 5 dakikalık yavaş mod
-        if (!$oda && !($k['auto_until'] && ts($k['auto_until']) > time()) && (int)q($db, 'SELECT COUNT(*) FROM sh_msgs WHERE ch = ? AND created_at >= ?', [$ch, ago(60)])->fetchColumn() >= FLOOD_PER_MIN)
+        if (!$oda && !($k['auto_until'] && ts($k['auto_until']) > time()) && (int)q($db, 'SELECT COUNT(*) FROM sh_msgs WHERE ch = ? AND user_id > 0 AND created_at >= ?', [$ch, ago(60)])->fetchColumn() >= FLOOD_PER_MIN)
             q($db, 'INSERT INTO sh_kanal (ch, auto_until) VALUES (?, ?) ON DUPLICATE KEY UPDATE auto_until = VALUES(auto_until)', [$ch, gmdate('Y-m-d H:i:s', time() + 300)]);
         $id = sys_msg($db, $ch, $text, $u, $kind);
         log_ev($db, $u, 'msg', $id);
@@ -609,6 +632,7 @@ try {
             if ($oda['tip'] === 'd') q($db, 'UPDATE sh_uyeler SET cikti = 0 WHERE oda_id = ? AND cikti = 1', [$oda['id']]);
         }
         if ($u['p_typing']) q($db, 'UPDATE sh_presence SET typing_at = NULL WHERE user_id = ?', [$u['id']]);
+        if (!$oda && $kind === 'm' && isset(OYUNLAR[$ch])) oyun_mesaj($db, $ch, $u, $text);
         if (random_int(1, 100) === 1) cleanup($db, $LOG_DAYS);
         out(['ok' => true, 'id' => $id, 'text' => $text]);
     }
@@ -639,6 +663,24 @@ try {
         $ch = $in['ch'] ?? ''; hedef($db, $u, $ch); $before = (int)($in['before'] ?? 0); if ($before <= 0) fail('bad_id');
         $rows = array_reverse(q($db, 'SELECT m.*, u.gender AS g FROM sh_msgs m LEFT JOIN sh_users u ON u.id = m.user_id WHERE m.ch = ? AND m.id < ? AND m.del_at IS NULL ORDER BY m.id DESC LIMIT 100', [$ch, $before])->fetchAll());
         out(['ok' => true, 'msgs' => array_map('msg_row', $rows), 'more' => count($rows) === 100]);
+    }
+
+    // ---------- eğlence komutları ve oyun puanları ----------
+    if ($a === 'eglence') {
+        if ($banned) fail('banned', 403);
+        if (!$u['nick']) fail('need_nick');
+        if ($u['muted_until'] && ts($u['muted_until']) > time()) fail('muted', 403, ['until' => ts($u['muted_until'])]);
+        $ch = $in['ch'] ?? ''; $oda = hedef($db, $u, $ch);
+        if ($oda && (int)$oda['kapali']) fail('room_closed', 403);
+        if ((int)q($db, "SELECT COUNT(*) FROM sh_log WHERE user_id = ? AND ev = 'eglence' AND created_at >= ?", [$u['id'], ago(5)])->fetchColumn() >= 1) fail('slow', 429, ['wait' => 5]);
+        $id = (int)eglence($db, $ch, $u, (string)($in['tur'] ?? ''), $in['arg'] ?? null);
+        log_ev($db, $u, 'eglence', $id);
+        if ($oda) q($db, 'UPDATE sh_odalar SET son_id = ?, son_at = ? WHERE id = ?', [$id, now(), $oda['id']]);
+        out(['ok' => true, 'id' => $id]);
+    }
+    if ($a === 'puan') {
+        $ch = is_string($in['ch'] ?? null) ? $in['ch'] : '';
+        out(['ok' => true, 'tablo' => puan_tablosu($db, $u, $ch)]);
     }
 
     // ---------- özel sohbet ----------

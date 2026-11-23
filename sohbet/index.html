@@ -46,7 +46,7 @@
       "name": "Canlı Sohbet",
       "url": "https://okutan.org/sohbet/",
       "image": "https://okutan.org/sohbet/og.png",
-      "description": "Üyeliksiz, tarayıcıda çalışan mIRC tadında Türkçe sohbet: sabit kanallar, rumuz, /nick ve /me komutları, kişi listesi, oyun masası davet kartları; 18 yaşından büyükler için özel mesaj ve özel odalar.",
+      "description": "Üyeliksiz, tarayıcıda çalışan mIRC tadında Türkçe sohbet: sabit kanallar, botlu oyun kanalları (kelime avı, kelime zinciri, gizli kelime, bilgi yarışması), rumuz, /nick ve /me komutları, kişi listesi, oyun masası davet kartları; 18 yaşından büyükler için özel mesaj ve özel odalar.",
       "applicationCategory": "CommunicationApplication",
       "operatingSystem": "Any",
       "inLanguage": "tr",
@@ -70,6 +70,7 @@
         { "@type": "Question", "name": "Oyun masasına nasıl davet ederim?", "acceptedAnswer": { "@type": "Answer", "text": "Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur." } },
         { "@type": "Question", "name": "Mesajlar ne kadar saklanıyor?", "acceptedAnswer": { "@type": "Answer", "text": "Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır." } },
         { "@type": "Question", "name": "Rahatsız edici bir mesajı nasıl bildiririm?", "acceptedAnswer": { "@type": "Answer", "text": "Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır." } },
+        { "@type": "Question", "name": "Sohbette oyun oynanıyor mu?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. #kelime-avı kanalında karışık harflerden kelimeyi bul, #zincir kanalında öncekinin son harfiyle yeni kelime söyle, #gizli-kelime kanalında 5 harfli kelimeyi renk ipuçlarıyla tahmin et, #yarışma kanalında bilgi sorularını ilk sen bil. Puanlar haftalık tutulur; /puan ile tabloyu görürsün. Her kanalda /zar, /yazitura ve /sayi komutları da var." } },
         { "@type": "Question", "name": "Özel mesaj ve özel oda var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Var, 18 yaşından büyükler için. Kişi listesinde ya da mesajda rumuza tıklayıp Özel mesaj seçersen bire bir konuşma açılır; /msg Rumuz mesaj komutu da olur. Özel oda açıp davet bağlantısını paylaşarak istediğin kişileri çağırabilirsin. İlk kullanımda 18 yaş beyanını ve özel sohbet şartlarını onaylarsın. Özel mesajları kimse okumaz; şikâyet edilen konuşmayı yönetici inceler. Rahatsız olursan kişiyi engelleyebilir, ayarlardan özel mesajlara kapanabilirsin." } },
         { "@type": "Question", "name": "Rumuz renkleri ne anlama geliyor?", "acceptedAnswer": { "@type": "Answer", "text": "Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür." } },
         { "@type": "Question", "name": "Eski mIRC görünümü var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır." } },
@@ -315,6 +316,25 @@ h1,h2,h3{font-family:var(--round)}
 .oz-davet input{margin:0!important;height:42px!important;font:700 13px var(--round)!important}
 .mcard h3{font:900 14px var(--round);margin-top:16px}
 
+/* oyun kanalları: bot mesajları, kanal listesinde "Oyunlar" başlığı, puan tablosu */
+.chat{--bot:#7c3aed}
+.sh-kl nav .kl-h{font:800 11.5px var(--round);letter-spacing:.08em;text-transform:uppercase;color:var(--p-mut);padding:12px 8px 4px}
+.ln.b{margin:4px 12px;padding:8px 44px 8px 10px;border-radius:12px;background:color-mix(in srgb,var(--bot) 8%,var(--p-pane));border:1px solid color-mix(in srgb,var(--bot) 22%,transparent)}
+.ln.b .av{background:var(--bot)}.ln.b .av svg{width:20px;height:20px}
+.ln.b .hd .nk{color:var(--bot);cursor:default}
+.ln.b .hd .nk:hover{text-decoration:none}
+.rol.bot{background:var(--bot)}
+.ln.b .tx{letter-spacing:.01em}
+.chat.klasik .ln.b{margin:0;padding:0 40px 0 16px;border:0;border-radius:0;background:none}
+.chat.klasik .ln.b .hd .nk,.chat.klasik .ln.b .tx{color:#c000c0}
+.puan-oyun{margin-top:14px}
+.puan-oyun h3{margin:0 0 6px}
+.puan-oyun ol{margin:0 0 0 22px;display:grid;gap:3px;font-size:14.5px}
+.puan-oyun ol li b{font-weight:900}
+.puan-oyun ol li span{float:right;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.puan-oyun .ben{font-size:13px;color:var(--muted);margin-top:6px}
+.puan-oyun .bos{font-size:13.5px;color:var(--muted)}
+
 /* menü */
 .pop{position:fixed;z-index:70;min-width:180px;background:var(--p-pane,#fff);color:var(--p-ink);border:1px solid var(--p-line);border-radius:12px;padding:6px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font-family:var(--round)}
 .pop button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;border-radius:8px;font:800 14px var(--round);cursor:pointer;color:inherit}
@@ -438,6 +458,7 @@ footer a:hover{color:var(--ink)}
       <div class="sh-bar">
         <div class="ttl"><b id="chName">#genel</b><span id="topic"></span></div>
         <span class="slow" id="slowTag" hidden></span>
+        <button class="ib" id="puanBtn" aria-label="Puan tablosu" title="Puan tablosu" hidden><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></button>
         <div class="oz-bar" id="ozBar" hidden>
           <button class="ib" id="ozDavet" aria-label="Davet bağlantısını kopyala" title="Davet bağlantısını kopyala"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
           <button class="ib" id="ozEngel" aria-label="Engelle" title="Engelle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></button>
@@ -473,7 +494,7 @@ footer a:hover{color:var(--ink)}
     <div class="b intro">
       <div class="label">Ücretsiz · Tarayıcıda · Üyeliksiz</div>
       <h1 id="pageTitle">Canlı Sohbet: mIRC Tadında Üyeliksiz Türkçe Sohbet Odaları</h1>
-      <p>Bir rumuz seç ve yaz. Eski IRC sohbetlerinin sadeliği yeni bir arayüzde: saatli satırlar, renkli rumuzlar, kanallar ve kişi listesi. <b>#genel</b> her konu için; <b>#okey</b>, <b>#tavla</b>, <b>#kart</b> ve <b>#kelime</b> oyun arkadaşı bulmak için. Oyunda kurduğun masanın davet bağlantısını yapıştır, tek tıkla katılınan bir karta dönüşsün.</p>
+      <p>Bir rumuz seç ve yaz. Eski IRC sohbetlerinin sadeliği yeni bir arayüzde: saatli satırlar, renkli rumuzlar, kanallar ve kişi listesi. <b>#genel</b> her konu için; <b>#okey</b>, <b>#tavla</b>, <b>#kart</b> ve <b>#kelime</b> oyun arkadaşı bulmak için. mIRC'teki gibi oyun kanalları da var: <b>#kelime-avı</b>, <b>#zincir</b>, <b>#gizli-kelime</b> ve <b>#yarışma</b>. Oyunda kurduğun masanın davet bağlantısını yapıştır, tek tıkla katılınan bir karta dönüşsün.</p>
     </div>
     <div class="b controls">
       <h2>Canlı Sohbet kontrolleri</h2>
@@ -508,6 +529,7 @@ footer a:hover{color:var(--ink)}
           <li><code>/join #okey</code> kanal değiştirir (<code>/j</code> da olur).</li>
           <li><code>/away yemekteyim</code> seni uzakta gösterir, <code>/back</code> geri getirir.</li>
           <li><code>/clear</code> ekranı temizler, <code>/yardim</code> komutları listeler.</li>
+          <li><code>/zar</code>, <code>/yazitura</code> ve <code>/sayi 1-100</code> herkesin gördüğü sonucu sunucu üretir; <code>/puan</code> oyun puan tablosunu açar.</li>
           <li><code>/msg Rumuz mesaj</code> özel mesaj gönderir, <code>/query Rumuz</code> özel konuşmayı açar (boşluklu rumuz: <code>/msg "Ali Veli" selam</code>).</li>
           <li>Satırı <code>/</code> ile başlatmak için <code>//</code> yaz.</li>
         </ul>
@@ -524,6 +546,16 @@ footer a:hover{color:var(--ink)}
           <li>Moderatörlerin yanında yeşil <b>MOD</b>, yöneticinin yanında turuncu <b>YÖNETİCİ</b> rozeti görünür (klasik görünümde rumuzun başında <b>@</b>).</li>
         </ul>
       </div>
+    </div>
+    <div class="b" id="oyunlar">
+      <h2>Oyun kanalları</h2>
+      <ul class="rules">
+        <li><b>#kelime-avı:</b> bot karışık harfler yazar; harfleri dizip kelimeyi ilk yazan kazanır. 20 ve 40. saniyede ipucu, 60. saniyede cevap.</li>
+        <li><b>#zincir:</b> her kelime öncekinin son harfiyle başlar ve sözlükte olmalı; söylenen tekrar edilmez.</li>
+        <li><b>#gizli-kelime:</b> 5 harfli kelimeyi tahmin et; bot her tahmine 🟦 doğru yer, 🟧 başka yer, ⬜ yok diye cevap verir. Herkesin 6 hakkı var.</li>
+        <li><b>#yarışma:</b> genel kültür, coğrafya, tarih, edebiyat ve atasözü soruları; ilk bilen kazanır.</li>
+        <li>Kelimeler Kelime Bulucu'nun 60.000+ kelimelik sözlüğünden gelir. Puanlar haftalık; <code>/puan</code> ya da kanal başlığındaki kupa düğmesiyle tabloyu görürsün.</li>
+      </ul>
     </div>
     <div class="b" id="gizlilik">
       <h2>Gizlilik ve kayıtlar</h2>
@@ -545,6 +577,7 @@ footer a:hover{color:var(--ink)}
       <details><summary>Oyun masasına nasıl davet ederim?</summary><p>Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur.</p></details>
       <details><summary>Mesajlar ne kadar saklanıyor?</summary><p>Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır.</p></details>
       <details><summary>Rahatsız edici bir mesajı nasıl bildiririm?</summary><p>Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır.</p></details>
+      <details><summary>Sohbette oyun oynanıyor mu?</summary><p>Evet. #kelime-avı kanalında karışık harflerden kelimeyi bul, #zincir kanalında öncekinin son harfiyle yeni kelime söyle, #gizli-kelime kanalında 5 harfli kelimeyi renk ipuçlarıyla tahmin et, #yarışma kanalında bilgi sorularını ilk sen bil. Puanlar haftalık tutulur; /puan ile tabloyu görürsün. Her kanalda /zar, /yazitura ve /sayi komutları da var.</p></details>
       <details><summary>Özel mesaj ve özel oda var mı?</summary><p>Var, 18 yaşından büyükler için. Kişi listesinde ya da mesajda rumuza tıklayıp Özel mesaj seçersen bire bir konuşma açılır; /msg Rumuz mesaj komutu da olur. Özel oda açıp davet bağlantısını paylaşarak istediğin kişileri çağırabilirsin. İlk kullanımda 18 yaş beyanını ve özel sohbet şartlarını onaylarsın. Özel mesajları kimse okumaz; şikâyet edilen konuşmayı yönetici inceler. Rahatsız olursan kişiyi engelleyebilir, ayarlardan özel mesajlara kapanabilirsin.</p></details>
       <details><summary>Rumuz renkleri ne anlama geliyor?</summary><p>Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür.</p></details>
       <details><summary>Eski mIRC görünümü var mı?</summary><p>Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır.</p></details>
@@ -634,6 +667,17 @@ footer a:hover{color:var(--ink)}
     <div class="err" id="odaErr" role="alert"></div>
   </div>
 </div>
+<!-- Oyun puanları -->
+<div class="modal" id="puanModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="puanTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Oyun kanalları · bu hafta</div>
+    <h2 id="puanTitle">Puan tablosu</h2>
+    <p>Haftalık puanlar pazartesi sıfırlanır. Haftanın ilk 10'u kişi listesinde rozetle görünür.</p>
+    <div id="puanIcerik"></div>
+    <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
+  </div>
+</div>
 <!-- Komutlar -->
 <div class="modal" id="helpModal" hidden>
   <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -647,6 +691,10 @@ footer a:hover{color:var(--ink)}
       <code>/away sebep</code><span>Uzakta görün</span>
       <code>/back</code><span>Geri dön</span>
       <code>/clear</code><span>Ekranı temizle</span>
+      <code>/zar</code><span>Zar at (/zar 1–5)</span>
+      <code>/yazitura</code><span>Yazı-tura at</span>
+      <code>/sayi 1-100</code><span>Rastgele sayı çek</span>
+      <code>/puan</code><span>Oyun puan tablosu</span>
       <code>/msg Rumuz metin</code><span>Özel mesaj gönder</span>
       <code>/query Rumuz</code><span>Özel konuşmayı aç</span>
       <code>//metin</code><span>/ ile başlayan düz mesaj</span>
@@ -658,7 +706,7 @@ footer a:hover{color:var(--ink)}
     <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
   </div>
 </div>
-<script src="motor.js?v=10" defer></script>
-<script src="sohbet.js?v=10" defer></script>
+<script src="motor.js?v=11" defer></script>
+<script src="sohbet.js?v=11" defer></script>
 </body>
 </html>

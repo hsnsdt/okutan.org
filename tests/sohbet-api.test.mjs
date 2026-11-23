@@ -204,7 +204,7 @@ test('yönetimden eklenen yasaklı kelime mesajda yıldızlanır, rumuzda redded
   const t = await adminTok();
   assert.equal((await post('admin_words', { t, add: 'x y' })).error, 'bad_word');
   const w = 'zz' + RUN + 'kotu';
-  const j = await post('admin_words', { t, add: w.toUpperCase() });
+  const j = await post('admin_words', { t, add: w.toLocaleUpperCase('tr-TR') });
   assert.ok(j.words.includes(w)); assert.ok(j.base.includes('amk'));
   const a = await kisi('Kelimeci' + RUN);
   const s = await post('say', { key: a.key, ch: 'genel', text: 'bu ' + w + 'ler gitsin' });
