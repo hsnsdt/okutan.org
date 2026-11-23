@@ -364,7 +364,8 @@
     S.inflight = true; clearTimeout(S.timer);
     var gen = S.gen, wantUsers = !S.users || Date.now() - S.usersAt > 10000 || force;
     var typing = Date.now() < S.typingUntil && inp.value.trim() !== '' && inp.value[0] !== '/';
-    api('poll', { key: S.key, ch: S.ch, after: S.lastId, since: S.since, users: wantUsers ? 1 : 0, away: S.away, typing: typing ? 1 : 0 })
+    api('poll', { key: S.key, ch: S.ch, after: S.lastId, since: S.since, users: wantUsers ? 1 : 0, away: S.away, typing: typing ? 1 : 0,
+      dinle: M.radyoMu(S.ch) && R.dinle ? 1 : 0 }) // #radyo'da dinleyen sinyali: dinleyen yoksa radyo bekler
       .then(function (r) {
         S.inflight = false;
         if (gen !== S.gen) { poll(true); return; }
@@ -660,13 +661,19 @@
   // Sunucu sırayı ve "hangi video, ne zaman başladı" bilgisini tutar; herkes başlangıçtan geçen süre kadar ileriden çalar.
   // YouTube'un oynatıcı betiği yalnızca Dinle'ye basınca yüklenir. Oynatıcı gizlenemez (YouTube kuralı): kanaldan çıkınca kapanır.
   var R = { dinle: false, yt: null, hazir: false, video: null, offset: 0, sureBildirildi: {}, hataBildirildi: {} };
-  function rdBeklenen() { var s = S.radyo && S.radyo.simdi; return s ? Math.max(0, Date.now() / 1000 + R.offset - s.basla) : 0; }
+  function rdBeklenen() {
+    var s = S.radyo && S.radyo.simdi; if (!s) return 0;
+    if (s.durak) return s.konum || 0; // dinleyen yokken duraklamış: kaldığı saniye
+    return Math.max(0, Date.now() / 1000 + R.offset - s.basla);
+  }
   function radyoGuncelle(st) {
     S.radyo = st; R.offset = st.now - Date.now() / 1000;
     var s = st.simdi;
-    $('rdBaslik').textContent = s ? s.baslik : 'Sırada şarkı yok';
-    $('rdKim').textContent = s ? 'ekleyen ' + s.nick + (s.kanal ? ' · ' + s.kanal : '') : '/çal YouTube bağlantısı ile şarkı ekle';
-    $('rdDinle').hidden = !s;
+    var ilk = !s && st.sira.length ? st.sira[0] : null;
+    $('rdBaslik').textContent = s ? s.baslik : ilk ? 'Sıradaki: ' + ilk.baslik : 'Sırada şarkı yok';
+    $('rdKim').textContent = s ? 'ekleyen ' + s.nick + (s.kanal ? ' · ' + s.kanal : '') + (s.durak ? ' · ⏸ dinleyen yok, bekliyor' : '')
+      : ilk ? 'Dinle\'ye basınca başlar · ekleyen ' + ilk.nick : '/çal YouTube bağlantısı ile şarkı ekle';
+    $('rdDinle').hidden = !(s || ilk);
     var at = $('rdAtla'); at.hidden = !s;
     at.textContent = st.dj ? '⏭ Geç' : '⏭ Atla ' + st.oy + '/' + st.oyGerek; at.disabled = !st.dj && st.verdim;
     at.title = st.dj ? 'Şarkıyı geç (DJ)' : st.verdim ? 'Oyun verildi' : 'Atlamak için oy ver';
@@ -731,8 +738,8 @@
     });
   }
   function rdSenkron() {
-    if (!R.yt || !R.hazir) { if (R.dinle && !R.yt && window.YT && window.YT.Player) rdBaslat(); return; }
     var s = S.radyo && S.radyo.simdi;
+    if (!R.yt || !R.hazir) { if (R.dinle && !R.yt && s && !s.durak && window.YT && window.YT.Player) rdBaslat(); return; }
     try {
       if (!s) { R.yt.stopVideo(); R.video = null; return; }
       if (R.video !== s.video) { R.video = s.video; R.yt.loadVideoById({ videoId: s.video, startSeconds: rdBeklenen() }); return; }
@@ -747,7 +754,12 @@
     $('radyoPanel').classList.remove('caliyor'); document.querySelector('.sh-main').classList.remove('rd-acik');
     if (birak) R.dinle = false;
   }
-  $('rdDinle').onclick = function () { R.dinle = true; ytYukle(rdBaslat); };
+  // Dinle: dinleyen sinyali başlar; sıradaki şarkı beklemedeyse sunucu onu şimdi başlatır (baştan çalar)
+  function rdDinlemeyeBasla() {
+    R.dinle = true; status('Radyo açılıyor…', 4000);
+    ytYukle(function () { if (S.radyo && S.radyo.simdi && !S.radyo.simdi.durak) rdBaslat(); poll(true); });
+  }
+  $('rdDinle').onclick = rdDinlemeyeBasla;
   $('rdDurdur').onclick = function () { rdDurdur(true); };
   $('rdSes').oninput = function () { lsSet('sh_rses', this.value); if (R.yt && R.hazir) try { R.yt.setVolume(+this.value); } catch (e) {} };
   (function () { var v = lsGet('sh_rses'); if (v !== null && v !== '') $('rdSes').value = v; })();
@@ -760,9 +772,11 @@
   function radyoEkle(url) {
     if (!S.me || !S.me.nick) { openNick(); return; }
     status('Şarkı ekleniyor…');
-    api('radyo_ekle', { key: S.key, url: url }).then(function (r) {
+    var burada = M.radyoMu(S.ch);
+    if (burada && !R.dinle) { R.dinle = true; ytYukle(function () { rdSenkron(); }); } // #radyo'da ekleyen otomatik dinler: şarkı onun için baştan başlar
+    api('radyo_ekle', { key: S.key, url: url, dinle: burada ? 1 : 0 }).then(function (r) {
       status('');
-      if (r.ok) { inp.value = ''; radyoGuncelle(r.radyo); if (!M.radyoMu(S.ch)) localLine('Şarkı #radyo sırasına eklendi.', 's'); poll(true); }
+      if (r.ok) { inp.value = ''; radyoGuncelle(r.radyo); if (!burada) localLine('Şarkı #radyo sırasına eklendi; dinlemek için #radyo kanalına gel.', 's'); poll(true); }
       else if (r.error === 'slow') status('Biraz bekle: ' + (r.wait || 20) + ' sn sonra yeni şarkı ekleyebilirsin.', 4000);
       else localLine(M.hataMetni(r.error), 'err');
     }).catch(function () { status(''); localLine('Şarkı eklenemedi; bağlantını kontrol et.', 'err'); });

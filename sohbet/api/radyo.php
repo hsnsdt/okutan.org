@@ -6,6 +6,8 @@
 // Video süresini YouTube'dan almak API anahtarı ister; onun yerine ilk dinleyenin oynatıcısı bildirir (radyo_sure, 5–RADYO_MAX_SN arası).
 // oEmbed gömmeye kapalı videoların hepsini yakalamaz (hata 150); oynatıcı bildirir, dinleyenlerden yeterlisi bildirince geçilir (radyo_hata).
 // Süre bildirilmezse şarkı en geç RADYO_MAX_SN sonra geçer. Sıra ilerletme yoklamada (radyo_tik) yapılır, satırlar kilitlenir.
+// Dinleyen yoksa radyo bekler: Dinle'ye basmış kişilerin oynatıcısı yoklamada sinyal gönderir (sh_radyo_dinleyen). Son RADYO_DINLE_SN içinde
+// sinyal yoksa çalan şarkı duraklar (kaldığı saniye `duraklat`ta) ve sıradaki başlamaz; biri dinlemeye başlayınca kaldığı yerden sürer.
 // Eklenen bağlantı YouTube oEmbed ile doğrulanır: video yoksa ya da sahibi gömmeyi kapattıysa sıraya girmez; başlık oradan gelir.
 
 const RADYO_KANAL = 'radyo';
@@ -13,17 +15,19 @@ const RADYO_MAX_SN = 600;     // en uzun şarkı (10 dk); daha uzunu bildirilinc
 const RADYO_SIRA_MAX = 30;    // sıradaki en çok şarkı
 const RADYO_KISI_MAX = 2;     // kişi başı sırada bekleyen şarkı
 const RADYO_EKLE_SN = 20;     // iki ekleme arası en az süre (kişi başı)
+const RADYO_DINLE_SN = 25;    // dinleyen sinyali bu kadar süre geçerli (arka plandaki sekme 20 sn'de bir yoklar)
 
 function radyo_tablolar(PDO $db): void {
     $o = ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_turkish_ci';
     // durum: 0 sırada, 1 çalıyor, 2 bitti, 3 geçildi, 4 silindi
     $db->exec('CREATE TABLE IF NOT EXISTS sh_radyo (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, video CHAR(11) NOT NULL, baslik VARCHAR(160) NOT NULL, kanal VARCHAR(80) NULL,
-        user_id INT UNSIGNED NOT NULL, nick VARCHAR(16) NOT NULL, eklendi DATETIME NOT NULL, basla DATETIME NULL, sure SMALLINT UNSIGNED NULL,
+        user_id INT UNSIGNED NOT NULL, nick VARCHAR(16) NOT NULL, eklendi DATETIME NOT NULL, basla DATETIME NULL, sure SMALLINT UNSIGNED NULL, duraklat INT NULL,
         durum TINYINT UNSIGNED NOT NULL DEFAULT 0, KEY ix_durum (durum, id), KEY ix_user (user_id, durum)
     )' . $o);
     $db->exec('CREATE TABLE IF NOT EXISTS sh_radyo_oy (sira_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NOT NULL, PRIMARY KEY (sira_id, user_id))' . $o);
     // oynatıcının "burada çalınamaz" bildirimi (YouTube hata 100/101/150…): yeterli dinleyen bildirince şarkı geçilir
+    $db->exec('CREATE TABLE IF NOT EXISTS sh_radyo_dinleyen (user_id INT UNSIGNED NOT NULL PRIMARY KEY, seen DATETIME NOT NULL, KEY ix_seen (seen))' . $o);
     $db->exec('CREATE TABLE IF NOT EXISTS sh_radyo_hata (sira_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NOT NULL, kod SMALLINT NOT NULL, PRIMARY KEY (sira_id, user_id))' . $o);
 }
 
@@ -55,29 +59,43 @@ function yt_bilgi(string $id): ?array {
 function radyo_bot(PDO $db, string $text): void { sys_msg($db, RADYO_KANAL, $text, ['id' => 0, 'nick' => 'RadyoBot', 'op' => 0], 'b'); }
 function dj_mi(array $u): bool { return (int)$u['op'] > 0 || !empty($u['dj']); }
 
-// sırayı ilerletir: çalan bittiyse sıradakini başlatır (en çok birkaç adım; uzun sessizlikte biriken şarkılar atlanır)
+function dinleyen_say(PDO $db): int { return (int)q($db, 'SELECT COUNT(*) FROM sh_radyo_dinleyen WHERE seen >= ?', [ago(RADYO_DINLE_SN)])->fetchColumn(); }
+function dinliyor(PDO $db, array $u): void {
+    $s = q($db, 'SELECT seen FROM sh_radyo_dinleyen WHERE user_id = ?', [$u['id']])->fetchColumn();
+    if (!$s || (int)ts($s) < time() - 5) q($db, 'REPLACE INTO sh_radyo_dinleyen (user_id, seen) VALUES (?, ?)', [$u['id'], now()]);
+}
+// sırayı ilerletir: çalan bittiyse sıradakini başlatır; dinleyen yoksa çalanı duraklatır, sıradakini başlatmaz
 function radyo_tik(PDO $db): void {
-    $c = q($db, 'SELECT id, basla, sure FROM sh_radyo WHERE durum = 1 ORDER BY id LIMIT 1')->fetch();
-    $now = time();
+    $now = time(); $dinleyen = dinleyen_say($db) > 0;
+    $c = q($db, 'SELECT id, basla, sure, duraklat FROM sh_radyo WHERE durum = 1 ORDER BY id LIMIT 1')->fetch();
+    // kilitsiz ön kontrol: yapılacak iş yoksa yazmadan çık
     if ($c) {
-        $bitis = (int)ts($c['basla']) + ($c['sure'] ? (int)$c['sure'] + 2 : RADYO_MAX_SN);
-        if ($now < $bitis) return;
-    } elseif (!q($db, 'SELECT 1 FROM sh_radyo WHERE durum = 0 LIMIT 1')->fetchColumn()) return;
+        if ($c['duraklat'] !== null) { if (!$dinleyen) return; }
+        elseif ($dinleyen && $now < (int)ts($c['basla']) + ($c['sure'] ? (int)$c['sure'] + 2 : RADYO_MAX_SN)) return;
+    } elseif (!$dinleyen || !q($db, 'SELECT 1 FROM sh_radyo WHERE durum = 0 LIMIT 1')->fetchColumn()) return;
     $db->beginTransaction();
     try {
-        // çalan bittiyse sıradaki, öncekinin bittiği andan başlamış sayılır; kimse yokken biten şarkılar böylece art arda geçer
         for ($i = 0; $i < 40; $i++) {
             $c = q($db, 'SELECT * FROM sh_radyo WHERE durum = 1 ORDER BY id LIMIT 1 FOR UPDATE')->fetch();
             if ($c) {
+                if ($c['duraklat'] !== null) {
+                    // duraklamış şarkı dinleyen gelince kaldığı yerden sürer
+                    if ($dinleyen) q($db, 'UPDATE sh_radyo SET basla = ?, duraklat = NULL WHERE id = ?', [gmdate('Y-m-d H:i:s', $now - (int)$c['duraklat']), $c['id']]);
+                    break;
+                }
                 $bitis = (int)ts($c['basla']) + ($c['sure'] ? (int)$c['sure'] + 2 : RADYO_MAX_SN);
-                if ($now < $bitis) break;
+                if ($now < $bitis) {
+                    if (!$dinleyen) q($db, 'UPDATE sh_radyo SET duraklat = ? WHERE id = ?', [max(0, $now - (int)ts($c['basla'])), $c['id']]);
+                    break;
+                }
                 q($db, 'UPDATE sh_radyo SET durum = 2 WHERE id = ?', [$c['id']]);
                 $ref = $bitis;
             } else $ref = $now;
+            if (!$dinleyen) break; // sıradaki ancak biri dinlerken başlar
             $n = q($db, 'SELECT * FROM sh_radyo WHERE durum = 0 ORDER BY id LIMIT 1 FOR UPDATE')->fetch();
             if (!$n) break;
             $bas = max($ref, $now - RADYO_MAX_SN);
-            q($db, 'UPDATE sh_radyo SET durum = 1, basla = ? WHERE id = ?', [gmdate('Y-m-d H:i:s', $bas), $n['id']]);
+            q($db, 'UPDATE sh_radyo SET durum = 1, basla = ?, duraklat = NULL WHERE id = ?', [gmdate('Y-m-d H:i:s', $bas), $n['id']]);
             if ($now - $bas < 30) radyo_bot($db, '🎵 Şimdi çalıyor: ' . $n['baslik'] . ' (ekleyen ' . $n['nick'] . ')');
         }
         $db->commit();
@@ -85,17 +103,19 @@ function radyo_tik(PDO $db): void {
 }
 function radyo_durum(PDO $db, array $u): array {
     $row = fn($r) => ['id' => (int)$r['id'], 'video' => $r['video'], 'baslik' => $r['baslik'], 'kanal' => $r['kanal'], 'nick' => $r['nick'], 'u' => (int)$r['user_id'],
-        'basla' => $r['basla'] ? ts($r['basla']) : null, 'sure' => $r['sure'] ? (int)$r['sure'] : null];
+        'basla' => $r['basla'] ? ts($r['basla']) : null, 'sure' => $r['sure'] ? (int)$r['sure'] : null,
+        'durak' => isset($r['duraklat']) && $r['duraklat'] !== null, 'konum' => isset($r['duraklat']) && $r['duraklat'] !== null ? (int)$r['duraklat'] : null];
     $c = q($db, 'SELECT * FROM sh_radyo WHERE durum = 1 ORDER BY id LIMIT 1')->fetch();
     $sira = q($db, 'SELECT * FROM sh_radyo WHERE durum = 0 ORDER BY id LIMIT ' . RADYO_SIRA_MAX)->fetchAll();
     $oy = $c ? (int)q($db, 'SELECT COUNT(*) FROM sh_radyo_oy WHERE sira_id = ?', [$c['id']])->fetchColumn() : 0;
     $verdim = $c ? (bool)q($db, 'SELECT 1 FROM sh_radyo_oy WHERE sira_id = ? AND user_id = ?', [$c['id'], $u['id']])->fetchColumn() : false;
-    return ['simdi' => $c ? $row($c) : null, 'sira' => array_map($row, $sira), 'oy' => $oy, 'oyGerek' => radyo_oy_esik($db), 'verdim' => $verdim, 'dj' => dj_mi($u), 'now' => time()];
+    return ['simdi' => $c ? $row($c) : null, 'sira' => array_map($row, $sira), 'oy' => $oy, 'oyGerek' => radyo_oy_esik($db), 'verdim' => $verdim, 'dj' => dj_mi($u),
+        'dinleyen' => dinleyen_say($db), 'now' => time()];
 }
-// atlamak için gereken oy: kanalda dinleyenlerin yarısı, en az 2
+// atlamak için gereken oy: dinleyenlerin yarısı (en az 2); tek dinleyen (ya da kimse) varsa 1
 function radyo_oy_esik(PDO $db): int {
-    $n = (int)q($db, 'SELECT COUNT(*) FROM sh_presence WHERE ch = ? AND seen >= ?', [RADYO_KANAL, ago(70)])->fetchColumn();
-    return max(2, (int)ceil($n / 2));
+    $n = dinleyen_say($db);
+    return $n <= 1 ? 1 : max(2, (int)ceil($n / 2));
 }
 function radyo_gec(PDO $db, int $id, string $neden): void {
     q($db, 'UPDATE sh_radyo SET durum = 3 WHERE id = ? AND durum = 1', [$id]);
@@ -105,7 +125,7 @@ function radyo_gec(PDO $db, int $id, string $neden): void {
 
 // ---------- uçlar (index.php çağırır; $u doğrulanmış kişi, $banned) ----------
 function radyo_islem(PDO $db, string $a, array $u, bool $banned, array $in): void {
-    if ($a === 'radyo') { radyo_tik($db); out(['ok' => true, 'radyo' => radyo_durum($db, $u)]); }
+    if ($a === 'radyo') { if (!empty($in['dinle'])) dinliyor($db, $u); radyo_tik($db); out(['ok' => true, 'radyo' => radyo_durum($db, $u)]); }
     if ($banned) fail('banned', 403);
     if (!$u['nick']) fail('need_nick');
     if ($a === 'radyo_ekle') {
@@ -122,6 +142,7 @@ function radyo_islem(PDO $db, string $a, array $u, bool $banned, array $in): voi
         q($db, 'INSERT INTO sh_radyo (video, baslik, kanal, user_id, nick, eklendi) VALUES (?,?,?,?,?,?)', [$id, $b['baslik'], $b['kanal'], $u['id'], $u['nick'], now()]);
         $yeni = (int)$db->lastInsertId();
         log_ev($db, $u, 'radyo', $yeni);
+        if (!empty($in['dinle'])) dinliyor($db, $u);
         $once = (int)q($db, 'SELECT COUNT(*) FROM sh_radyo WHERE durum IN (0, 1) AND id < ?', [$yeni])->fetchColumn();
         radyo_bot($db, '➕ ' . $u['nick'] . ' sıraya ekledi: ' . $b['baslik'] . ($once ? ' (' . $once . ' şarkı sonra)' : ''));
         radyo_tik($db);
@@ -143,7 +164,7 @@ function radyo_islem(PDO $db, string $a, array $u, bool $banned, array $in): voi
         $c = q($db, 'SELECT id, baslik FROM sh_radyo WHERE id = ? AND durum = 1', [$id])->fetch(); if (!$c) out(['ok' => true]);
         q($db, 'INSERT IGNORE INTO sh_radyo_hata (sira_id, user_id, kod) VALUES (?,?,?)', [$id, $u['id'], $kod]);
         $n = (int)q($db, 'SELECT COUNT(*) FROM sh_radyo_hata WHERE sira_id = ?', [$id])->fetchColumn();
-        $dinleyen = (int)q($db, 'SELECT COUNT(*) FROM sh_presence WHERE ch = ? AND seen >= ?', [RADYO_KANAL, ago(70)])->fetchColumn();
+        $dinleyen = dinleyen_say($db);
         // tek kişi sahte bildirimle şarkı atlatamasın: en az 2 bildirim (kanalda tek dinleyen varsa 1)
         if ($n >= min(2, max(1, $dinleyen))) radyo_gec($db, $id, 'Burada çalınamıyor (sahibi başka sitelerde çalınmasını kapatmış), geçildi: ' . $c['baslik']);
         out(['ok' => true, 'radyo' => radyo_durum($db, $u)]);

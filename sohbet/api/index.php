@@ -123,8 +123,9 @@ function create_tables(PDO $db): void {
 function migrate(PDO $db): void {
     foreach (['ALTER TABLE sh_presence ADD COLUMN typing_at DATETIME NULL', 'ALTER TABLE sh_kanal ADD COLUMN pin_id BIGINT UNSIGNED NULL',
         'ALTER TABLE sh_users ADD COLUMN gender CHAR(1) NULL', 'ALTER TABLE sh_users ADD COLUMN ozel_onay DATETIME NULL',
-        'ALTER TABLE sh_users ADD COLUMN ozel_kapali TINYINT(1) NOT NULL DEFAULT 0', 'ALTER TABLE sh_users ADD COLUMN dj TINYINT(1) NOT NULL DEFAULT 0'] as $sql)
-        try { $db->exec($sql); } catch (PDOException $e) { if ($e->getCode() !== '42S21') throw $e; }
+        'ALTER TABLE sh_users ADD COLUMN ozel_kapali TINYINT(1) NOT NULL DEFAULT 0', 'ALTER TABLE sh_users ADD COLUMN dj TINYINT(1) NOT NULL DEFAULT 0', 'ALTER TABLE sh_radyo ADD COLUMN duraklat INT NULL'] as $sql)
+        // 42S21: sütun zaten var; 42S02: tablo henüz yok (ilk kullanımda zaten yeni şemayla oluşur)
+        try { $db->exec($sql); } catch (PDOException $e) { if (!in_array($e->getCode(), ['42S21', '42S02'], true)) throw $e; }
 }
 function q(PDO $db, string $sql, array $a = []): PDOStatement {
     try { $s = $db->prepare($sql); $s->execute($a); return $s; }
@@ -578,7 +579,7 @@ try {
         $res = ['ok' => true, 'msgs' => array_map('msg_row', $rows), 'now' => $now, 'me' => me_info($u, $banned)];
         if ($oda && $rows) { $son = (int)end($rows)['id']; if ($son > (int)$oda['okundu']) q($db, 'UPDATE sh_uyeler SET okundu = ? WHERE oda_id = ? AND user_id = ?', [$son, $oda['id'], $u['id']]); }
         if (!empty($u['ozel_onay'])) $res['ozel'] = ozel_liste($db, $u);
-        if ($ch === RADYO_KANAL) { radyo_tik($db); $res['radyo'] = radyo_durum($db, $u); }
+        if ($ch === RADYO_KANAL) { if (!empty($in['dinle']) && !$banned) dinliyor($db, $u); radyo_tik($db); $res['radyo'] = radyo_durum($db, $u); }
         if ($since > 0) $res['del'] = array_map('intval', q($db, 'SELECT id FROM sh_msgs WHERE ch = ? AND del_at >= ?', [$ch, gmdate('Y-m-d H:i:s', $since - 2)])->fetchAll(PDO::FETCH_COLUMN));
         $res['typing'] = $oda
             ? q($db, 'SELECT u.nick FROM sh_uyeler y JOIN sh_users u ON u.id = y.user_id WHERE y.oda_id = ? AND y.cikti = 0 AND y.typing_at >= ? AND y.user_id <> ? LIMIT 5', [$oda['id'], ago(6), $u['id']])->fetchAll(PDO::FETCH_COLUMN)

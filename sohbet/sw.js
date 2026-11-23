@@ -1,8 +1,8 @@
 /* Canlı Sohbet — service worker (sayfa kabuğu internetsiz de açılır; sohbet ağ ister)
    - Sayfa: önce ağ, yoksa önbellek · Statik dosyalar: önbellekten, arkada tazele · API hiç önbelleğe girmez
    motor.js / sohbet.js sürümü değişince CACHE ve CORE'u da güncelle. */
-var CACHE = 'sohbet-v15';
-var CORE = ['./', 'motor.js?v=15', 'sohbet.js?v=15', 'manifest.json', 'icon-192.png', 'img/erkek.webp', 'img/kadin.webp', 'img/belirtmeyen.webp', '/assets/fonts/fonts.css',
+var CACHE = 'sohbet-v16';
+var CORE = ['./', 'motor.js?v=16', 'sohbet.js?v=16', 'manifest.json', 'icon-192.png', 'img/erkek.webp', 'img/kadin.webp', 'img/belirtmeyen.webp', '/assets/fonts/fonts.css',
   '/assets/fonts/Nunito-latin.woff2', '/assets/fonts/Nunito-latin-ext.woff2',
   '/assets/logo.svg', '/assets/logo-dark.svg'];
 self.addEventListener('install', function (e) {
