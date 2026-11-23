@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yönetim — Canlı Sohbet</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/sohbet/favicon-32.png" type="image/png">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+:root{--bg:#ebebe8;--block:#fff;--ink:#0e0e0e;--muted:#6a6a6a;--line:#dadad6;--accent:#2f6bff;--ok:#16a34a;--bad:#dc2626;--warn:#d97706;
+  --sans:"Inter Tight",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;--ok:#22c55e;--bad:#f87171;--warn:#fbbf24;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;--ok:#22c55e;--bad:#f87171;--warn:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:12px 16px 40px;display:grid;gap:12px}
+#app{display:grid;gap:12px}
+.b{background:var(--block);border:1px solid var(--line);border-radius:18px;padding:22px}
+.label{font:500 11.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:24px;font-weight:800;letter-spacing:-.03em}
+h2{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px}
+.top a{color:var(--muted);text-decoration:none;font:500 13px var(--mono)}
+.btn{height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 13.5px var(--sans);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn-a{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-s{height:30px;padding:0 10px;font-size:12.5px;border-radius:8px}
+.btn.ok{color:var(--ok)}.btn.bad{color:var(--bad)}.btn.warn{color:var(--warn)}
+.btn.sure{background:var(--bad);border-color:var(--bad);color:#fff}
+input,select{height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 14px var(--sans);padding:0 12px;outline:none;min-width:0}
+input:focus,select:focus{border-color:var(--accent)}
+label.ck{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--muted)}
+label.ck input{height:auto}
+.login{max-width:380px;margin:12vh auto 0;display:grid;gap:12px}
+.msg{min-height:20px;font-size:13.5px;color:var(--bad)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.kpi b{display:block;font-size:24px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi.f b{color:var(--warn)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.tabs{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px}
+.tabs button{border:0;background:none;height:32px;padding:0 12px;border-radius:9px;font:600 12.5px var(--sans);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--block);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;font:500 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 6px;border-bottom:1px solid var(--line)}
+.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl td.m{font:500 12px var(--mono);color:var(--muted);white-space:nowrap}
+.tbl td.x{max-width:420px;overflow-wrap:anywhere}
+.tbl tr.del td{opacity:.5}.tbl tr.del td.a{opacity:1}
+.tbl tr.rep td{background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.acts{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font:600 10.5px var(--mono);padding:2px 7px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.tag.f{color:var(--warn);border-color:var(--warn)}.tag.r{color:var(--bad);border-color:var(--bad)}.tag.o{color:var(--accent);border-color:var(--accent)}
+.scroll{overflow-x:auto}
+.empty{color:var(--muted);padding:20px 0;text-align:center}
+.more{margin-top:12px;text-align:center}
+.chs{display:grid;gap:8px}
+.chs .r{display:grid;grid-template-columns:90px 70px 110px 1fr auto;gap:8px;align-items:center}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+.pop{position:absolute;z-index:10;background:var(--block);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 18px 40px -16px rgba(0,0,0,.4);display:grid;gap:8px;min-width:240px}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.chs .r{grid-template-columns:1fr 1fr}.chs .r input[data-topic]{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="b top"><div><div class="label">Canlı Sohbet</div><h1>Yönetim</h1></div><div><a href="/sohbet/">← Sohbete dön</a> <button class="btn btn-s" id="logout" hidden>Çıkış</button></div></header>
+
+  <form class="b login" id="loginForm" autocomplete="off">
+    <h2>Giriş</h2>
+    <input type="password" id="pass" placeholder="Yönetim şifresi" autocomplete="current-password" required>
+    <button class="btn btn-a" type="submit">Giriş yap</button>
+    <div class="msg" id="loginMsg"></div>
+  </form>
+
+  <div id="app" hidden>
+    <section class="b"><div class="kpis" id="kpis"></div><div class="note" id="sizes"></div></section>
+
+    <section class="b">
+      <h2>Mesajlar</h2>
+      <div class="bar">
+        <div class="tabs" role="tablist">
+          <button data-o="" aria-selected="true">Son</button>
+          <button data-o="rep" aria-selected="false">Şikâyetli</button>
+          <button data-o="del" aria-selected="false">Gizlenen</button>
+        </div>
+        <select id="fch"><option value="">Bütün kanallar</option></select>
+        <button class="btn btn-s" id="refresh">Yenile</button>
+        <span class="note" id="fuser" hidden></span>
+      </div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Saat</th><th>Kanal</th><th>Rumuz</th><th>Mesaj</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="more"><button class="btn" id="moreBtn" hidden>Daha eski</button></div>
+    </section>
+
+    <section class="b">
+      <h2>Kişiler</h2>
+      <div class="bar"><input id="uq" placeholder="Rumuz ara (boşsa: moderatörler, susturulanlar, yasaklılar)" style="flex:1;min-width:200px"><button class="btn btn-s" id="ubtn">Ara</button></div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>#</th><th>Rumuz</th><th>Durum</th><th>Son görülme</th><th></th></tr></thead><tbody id="urows"></tbody></table></div>
+    </section>
+
+    <section class="b">
+      <h2>Kanallar</h2>
+      <div class="chs" id="chs"></div>
+      <p class="note">Yavaş mod: kişi başına iki mesaj arasındaki en az saniye (0 = kapalı). Kanalda dakikada 50'den fazla mesaj olursa 5 dakikalık otomatik yavaş mod açılır.</p>
+    </section>
+
+    <section class="b">
+      <h2>Duyuru</h2>
+      <div class="bar"><select id="nch"><option value="*">Bütün kanallar</option></select><input id="ntext" maxlength="300" placeholder="Duyuru metni (Sedat Okutan adıyla görünür)" style="flex:1;min-width:200px"><button class="btn btn-a" id="nbtn">Gönder</button></div>
+    </section>
+
+    <section class="b">
+      <h2>IP yasakları</h2>
+      <div id="ipbans"></div>
+      <p class="note">IP yasağı aynı ağı paylaşan herkesi etkiler (mobil operatörlerde binlerce kişi aynı IP'yi kullanabilir); kısa tut.</p>
+    </section>
+
+    <section class="b">
+      <h2>Yasal kayıt sorgusu</h2>
+      <div class="bar"><input id="lu" placeholder="Kişi numarası" inputmode="numeric" style="width:140px"><input id="lip" placeholder="ya da IP adresi" style="width:200px"><button class="btn btn-s" id="lbtn">Sorgula</button></div>
+      <div class="scroll"><table class="tbl"><thead><tr><th>Zaman (UTC)</th><th>#</th><th>Rumuz</th><th>Olay</th><th>IP</th><th>Port</th><th>Ref</th></tr></thead><tbody id="lrows"></tbody></table></div>
+      <p class="note" id="lnote"></p>
+    </section>
+  </div>
+</div>
+<script>
+(function () {
+  'use strict';
+  var API = '/sohbet/api/', CH = ['genel', 'okey', 'tavla', 'kart', 'kelime'];
+  var $ = function (id) { return document.getElementById(id); };
+  var tok = null; try { tok = sessionStorage.getItem('sh_admin'); } catch (e) {}
+  var feed = { o: '', ch: '', user: 0, before: 0 };
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function api(a, b) {
+    b = b || {}; if (a !== 'admin_login') b.t = tok;
+    return fetch(API + '?a=' + a, { method: 'POST', body: JSON.stringify(b) }).then(function (r) { return r.json(); }).then(function (j) {
+      if (!j.ok && j.error === 'unauthorized') { logout(); throw new Error('unauthorized'); }
+      return j;
+    });
+  }
+  function fmt(t) { if (!t) return '—'; var d = new Date(t * 1000); return d.toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+  // iki adımlı düğme: ilk tıkta "Emin misin?", ikincide işlem (tarayıcı onay penceresi açılmaz)
+  function sure(b, fn) { b.onclick = function () { if (!b.classList.contains('sure')) { var t = b.textContent; b.classList.add('sure'); b.textContent = 'Emin misin?'; setTimeout(function () { b.classList.remove('sure'); b.textContent = t; }, 3000); return; } fn(); }; }
+  function btn(t, cls, fn, confirm) { var b = el('button', 'btn btn-s ' + (cls || ''), t); b.type = 'button'; if (confirm) sure(b, fn); else b.onclick = fn; return b; }
+
+  function logout() { tok = null; try { sessionStorage.removeItem('sh_admin'); } catch (e) {} $('app').hidden = true; $('loginForm').hidden = false; $('logout').hidden = true; }
+  $('logout').onclick = logout;
+  $('loginForm').onsubmit = function (e) {
+    e.preventDefault(); $('loginMsg').textContent = '';
+    api('admin_login', { pass: $('pass').value }).then(function (j) {
+      if (!j.ok) { $('loginMsg').textContent = j.error === 'wrong_pass' ? 'Şifre yanlış.' : j.error === 'rate_limited' ? 'Çok fazla deneme; bir saat sonra tekrar dene.' : j.error === 'admin_disabled' ? "config.php'de admin_pass tanımlı değil." : 'Giriş yapılamadı.'; return; }
+      tok = j.token; try { sessionStorage.setItem('sh_admin', tok); } catch (e) {} $('pass').value = ''; start();
+    }).catch(function () {});
+  };
+
+  function start() { $('loginForm').hidden = true; $('app').hidden = false; $('logout').hidden = false; stats(); loadFeed(true); users(); }
+
+  function stats() {
+    api('admin_stats').then(function (j) {
+      var k = $('kpis'); k.textContent = '';
+      var mb = j.size.reduce(function (s, x) { return s + (+x.mb || 0); }, 0);
+      [['Şu an çevrimiçi', j.online], ['Son 24 saat mesaj', j.msgs24], ['Rumuz', j.users], ['Şikâyetli (24 sa)', j.reports, j.reports ? 'f' : ''], ['Veritabanı', mb.toFixed(1) + ' MB'], ['Kayıt süresi', j.logDays + ' gün']].forEach(function (x) {
+        var d = el('div', 'kpi ' + (x[2] || '')); d.appendChild(el('span', 'label', x[0])); d.appendChild(el('b', null, String(x[1]))); k.appendChild(d);
+      });
+      $('sizes').textContent = 'Tablolar: ' + j.size.map(function (x) { return x.t + ' ' + x.mb + ' MB (~' + x.r + ' satır)'; }).join(' · ');
+      var per = {}; j.perCh.forEach(function (x) { per[x.ch] = +x.n; });
+      var set = {}; j.kanallar.forEach(function (x) { set[x.ch] = x; });
+      var c = $('chs'); c.textContent = '';
+      CH.forEach(function (ch) {
+        var s = set[ch] || {}, r = el('div', 'r');
+        r.appendChild(el('b', null, '#' + ch));
+        r.appendChild(el('span', 'note', (per[ch] || 0) + ' kişi'));
+        var slow = el('input'); slow.type = 'number'; slow.min = 0; slow.max = 300; slow.value = s.slow || 0; slow.title = 'Yavaş mod (sn)'; r.appendChild(slow);
+        var topic = el('input'); topic.placeholder = 'Konu (boşsa varsayılan)'; topic.value = s.topic || ''; topic.maxLength = 120; topic.dataset.topic = 1; r.appendChild(topic);
+        var auto = s.auto_until && new Date(s.auto_until.replace(' ', 'T') + 'Z') > new Date();
+        var acts = el('div', 'acts');
+        acts.appendChild(btn('Kaydet', 'ok', function () { api('admin_chan', { ch: ch, slow: +slow.value || 0, topic: topic.value, autoOff: auto }).then(stats); }));
+        if (auto) acts.appendChild(el('span', 'tag f', 'otomatik yavaş mod'));
+        r.appendChild(acts); c.appendChild(r);
+      });
+      var ib = $('ipbans'); ib.textContent = '';
+      if (!j.ipbans.length) ib.appendChild(el('p', 'note', 'IP yasağı yok.'));
+      j.ipbans.forEach(function (x) {
+        var r = el('div', 'bar'); r.appendChild(el('span', 'tag', x.ip + '…')); r.appendChild(el('span', 'note', (x.note || '') + ' · bitiş ' + x.until + ' UTC'));
+        r.appendChild(btn('Kaldır', 'warn', function () { api('admin_ipban', { ip: x.ip }).then(stats); }));
+        ib.appendChild(r);
+      });
+    }).catch(function () {});
+  }
+
+  function actionsFor(r, done) {
+    var a = el('div', 'acts');
+    if (r.del) a.appendChild(btn('Geri al', 'ok', function () { api('admin_del', { id: r.id, undo: 1 }).then(done); }));
+    else a.appendChild(btn('Gizle', 'bad', function () { api('admin_del', { id: r.id }).then(done); }));
+    if (r.u) {
+      a.appendChild(btn(r.muted ? 'Susturmayı kaldır' : 'Sustur 1 sa', 'warn', function () { api('admin_mute', { user: r.u, min: r.muted ? 0 : 60 }).then(done); }));
+      a.appendChild(banBtn(r.u, r.n, r.banned, done));
+      a.appendChild(btn('Mesajları', '', function () { feed.user = r.u; $('fuser').hidden = false; $('fuser').textContent = '#' + r.u + ' ' + r.n + ' (temizle: kanal seç)'; loadFeed(true); }));
+    }
+    return a;
+  }
+  function banBtn(uid, nick, banned, done) {
+    if (banned) return btn('Yasağı kaldır', 'ok', function () { api('admin_ban', { user: uid, days: 0 }).then(done); });
+    var b = btn('Yasakla…', 'bad', function (ev) {
+      var old = document.querySelector('.pop'); if (old) old.remove();
+      var p = el('div', 'pop'), days = el('select');
+      [['1', '1 gün'], ['7', '7 gün'], ['30', '30 gün'], ['-1', 'Süresiz']].forEach(function (o) { var op = el('option', null, o[1]); op.value = o[0]; days.appendChild(op); });
+      var wipe = el('label', 'ck'), wi = el('input'); wi.type = 'checkbox'; wi.checked = true; wipe.appendChild(wi); wipe.appendChild(document.createTextNode('Son 24 saatteki mesajlarını gizle'));
+      var ipl = el('label', 'ck'), ii = el('input'); ii.type = 'checkbox'; ipl.appendChild(ii); ipl.appendChild(document.createTextNode('Aynı ağı 24 saat kapat'));
+      p.appendChild(el('b', null, nick + ' yasaklansın mı?')); p.appendChild(days); p.appendChild(wipe); p.appendChild(ipl);
+      var row = el('div', 'acts');
+      row.appendChild(btn('Yasakla', 'sure', function () { api('admin_ban', { user: uid, days: +days.value, wipe: wi.checked, ipHours: ii.checked ? 24 : 0 }).then(function () { p.remove(); done(); stats(); }); }));
+      row.appendChild(btn('Vazgeç', '', function () { p.remove(); }));
+      p.appendChild(row);
+      var rc = b.getBoundingClientRect(); p.style.left = Math.max(8, Math.min(window.innerWidth - 260, rc.left + window.scrollX - 120)) + 'px'; p.style.top = (rc.bottom + window.scrollY + 6) + 'px';
+      document.body.appendChild(p);
+    });
+    return b;
+  }
+
+  function loadFeed(reset) {
+    if (reset) { feed.before = 0; $('rows').textContent = ''; }
+    api('admin_feed', { ch: feed.ch, only: feed.o, user: feed.user, before: feed.before }).then(function (j) {
+      var tb = $('rows');
+      if (reset && !j.rows.length) { var tr0 = el('tr'), td0 = el('td', 'empty', 'Mesaj yok.'); td0.colSpan = 5; tr0.appendChild(td0); tb.appendChild(tr0); }
+      j.rows.forEach(function (r) {
+        var tr = el('tr', (r.del ? 'del ' : '') + (r.reps ? 'rep' : ''));
+        tr.appendChild(el('td', 'm', fmt(r.t)));
+        tr.appendChild(el('td', 'm', '#' + r.ch));
+        var tn = el('td'); tn.appendChild(el('b', null, r.u ? (r.op ? '@' : '') + r.n : r.k === 'a' ? r.n : 'sistem')); tn.appendChild(el('div', 'note', '#' + r.u + ' · ' + (r.iph || '') + (r.muted ? ' · susturulu' : '') + (r.banned ? ' · yasaklı' : ''))); tr.appendChild(tn);
+        var tx = el('td', 'x', (r.k === 'e' ? '* ' : r.k === 'a' ? '[duyuru] ' : r.k === 's' || r.k === 'n' ? '*** ' : '') + r.x);
+        if (r.reps) tx.appendChild(el('span', 'tag f', ' ' + r.reps + ' şikâyet'));
+        if (r.del) tx.appendChild(el('span', 'tag r', ' gizlendi: ' + r.del));
+        tr.appendChild(tx);
+        var ta = el('td', 'a'); ta.appendChild(actionsFor(r, function () { loadFeed(true); stats(); })); tr.appendChild(ta);
+        tb.appendChild(tr);
+      });
+      if (j.rows.length) feed.before = j.rows[j.rows.length - 1].id;
+      $('moreBtn').hidden = j.rows.length < 100;
+    }).catch(function () {});
+  }
+  document.querySelectorAll('.tabs button').forEach(function (b) {
+    b.onclick = function () { document.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-selected', x === b); }); feed.o = b.dataset.o; loadFeed(true); };
+  });
+  CH.forEach(function (c) { [$('fch'), $('nch')].forEach(function (s) { var o = el('option', null, '#' + c); o.value = c; s.appendChild(o); }); });
+  $('fch').onchange = function () { feed.ch = this.value; feed.user = 0; $('fuser').hidden = true; loadFeed(true); };
+  $('refresh').onclick = function () { stats(); loadFeed(true); };
+  $('moreBtn').onclick = function () { loadFeed(false); };
+
+  function users() {
+    api('admin_users', { q: $('uq').value }).then(function (j) {
+      var tb = $('urows'); tb.textContent = '';
+      if (!j.rows.length) { var tr0 = el('tr'), td0 = el('td', 'empty', 'Kimse yok.'); td0.colSpan = 5; tr0.appendChild(td0); tb.appendChild(tr0); }
+      j.rows.forEach(function (u) {
+        var tr = el('tr');
+        tr.appendChild(el('td', 'm', '#' + u.id));
+        var tn = el('td'); tn.appendChild(el('b', null, u.nick || '(rumuzsuz)')); tn.appendChild(el('div', 'note', u.iph || '')); tr.appendChild(tn);
+        var st = el('td');
+        if (u.op) st.appendChild(el('span', 'tag o', 'moderatör'));
+        if (u.muted) st.appendChild(el('span', 'tag f', 'susturulu · ' + fmt(u.muted)));
+        if (u.banned) st.appendChild(el('span', 'tag r', 'yasaklı · ' + (u.banned > 4e9 ? 'süresiz' : fmt(u.banned))));
+        tr.appendChild(st);
+        tr.appendChild(el('td', 'm', fmt(u.seen)));
+        var a = el('td'), acts = el('div', 'acts');
+        acts.appendChild(btn(u.op ? 'Moderatörlükten al' : 'Moderatör yap', 'ok', function () { api('admin_op', { user: u.id, op: !u.op }).then(users); }, true));
+        acts.appendChild(btn(u.muted ? 'Susturmayı kaldır' : 'Sustur 1 gün', 'warn', function () { api('admin_mute', { user: u.id, min: u.muted ? 0 : 1440 }).then(users); }));
+        acts.appendChild(banBtn(u.id, u.nick, !!u.banned, users));
+        acts.appendChild(btn('Kayıt', '', function () { $('lu').value = u.id; $('lip').value = ''; logq(); $('lrows').scrollIntoView({ block: 'center' }); }));
+        a.appendChild(acts); tr.appendChild(a); tb.appendChild(tr);
+      });
+    }).catch(function () {});
+  }
+  $('ubtn').onclick = users; $('uq').onkeydown = function (e) { if (e.key === 'Enter') users(); };
+
+  $('nbtn').onclick = function () {
+    var t = $('ntext').value.trim(); if (!t) return;
+    api('admin_notice', { ch: $('nch').value, text: t }).then(function (j) { if (j.ok) { $('ntext').value = ''; loadFeed(true); } });
+  };
+
+  function logq() {
+    api('admin_log', { user: +$('lu').value || 0, ip: $('lip').value.trim() }).then(function (j) {
+      var tb = $('lrows'); tb.textContent = '';
+      $('lnote').textContent = j.ok ? j.rows.length + ' kayıt (en çok 500, yeniden eskiye).' : 'Kişi numarası ya da IP gir.';
+      (j.rows || []).forEach(function (r) {
+        var tr = el('tr');
+        [new Date(r.t * 1000).toISOString().replace('T', ' ').slice(0, 19), '#' + r.u, r.n || '', r.ev, r.ip, r.port || '', r.ref || ''].forEach(function (v, i) { tr.appendChild(el('td', i === 2 || i === 3 ? '' : 'm', String(v))); });
+        tb.appendChild(tr);
+      });
+    }).catch(function () {});
+  }
+  $('lbtn').onclick = logq;
+  document.addEventListener('click', function (e) { var p = document.querySelector('.pop'); if (p && !p.contains(e.target) && !e.target.closest('.btn')) p.remove(); });
+
+  if (tok) start();
+})();
+</script>
+</body>
+</html>

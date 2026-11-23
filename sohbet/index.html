@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Canlı Sohbet — Üyeliksiz Türkçe Sohbet Odaları, mIRC Tadında | okutan.org</title>
+<meta name="description" content="Canlı Sohbet: üye olmadan, indirmeden Türkçe sohbet. mIRC tadında kanallar (#genel, #okey, #tavla, #kart, #kelime), /nick ve /me komutları, kişi listesi ve tek tıkla oyun masası davetleri. Ücretsiz, tarayıcıda, telefonda da çalışır.">
+<meta name="author" content="Sedat Okutan">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#f6f7f9">
+<link rel="canonical" href="https://okutan.org/sohbet/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="okutan.org">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="Canlı Sohbet — mIRC Tadında Türkçe Sohbet Odaları">
+<meta property="og:description" content="Üyeliksiz, indirmeden Türkçe sohbet: #genel, #okey, #tavla, #kart ve #kelime kanalları, /nick ve /me komutları, oyun masası davetleri.">
+<meta property="og:url" content="https://okutan.org/sohbet/">
+<meta property="og:image" content="https://okutan.org/sohbet/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Canlı Sohbet: koyu zeminde kanal listesi, saatli renkli rumuzlu sohbet satırları ve bir Okey masası davet kartı">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@okutanapp">
+<meta name="twitter:creator" content="@okutanapp">
+<meta name="twitter:title" content="Canlı Sohbet — mIRC Tadında Türkçe Sohbet Odaları">
+<meta name="twitter:description" content="Üyeliksiz, indirmeden Türkçe sohbet: #genel, #okey, #tavla, #kart ve #kelime kanalları, /nick ve /me komutları, oyun masası davetleri.">
+<meta name="twitter:image" content="https://okutan.org/sohbet/og.png">
+<meta name="twitter:image:alt" content="Canlı Sohbet: koyu zeminde kanal listesi, saatli renkli rumuzlu sohbet satırları ve bir Okey masası davet kartı">
+<meta name="keywords" content="canlı sohbet, sohbet odaları, türkçe sohbet, üyeliksiz sohbet, mirc, mirc sohbet, irc sohbet, chat, online sohbet, okey sohbet, tavla sohbet, okutan">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sohbet">
+<link rel="preload" href="/assets/fonts/Nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://okutan.org/sohbet/#app",
+      "name": "Canlı Sohbet",
+      "url": "https://okutan.org/sohbet/",
+      "image": "https://okutan.org/sohbet/og.png",
+      "description": "Üyeliksiz, tarayıcıda çalışan mIRC tadında Türkçe sohbet: sabit kanallar, rumuz, /nick ve /me komutları, kişi listesi ve oyun masası davet kartları.",
+      "applicationCategory": "CommunicationApplication",
+      "operatingSystem": "Any",
+      "inLanguage": "tr",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TRY" },
+      "author": { "@type": "Person", "@id": "https://okutan.org/#person", "name": "Sedat Okutan", "url": "https://okutan.org/" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "okutan.org", "item": "https://okutan.org/" },
+        { "@type": "ListItem", "position": 2, "name": "Canlı Sohbet", "item": "https://okutan.org/sohbet/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Sohbet için üye olmak gerekiyor mu?", "acceptedAnswer": { "@type": "Answer", "text": "Hayır. Bir rumuz seçip hemen yazmaya başlarsın. Rumuzun bu tarayıcıya bağlı gizli bir anahtarla senin adına ayrılır; başkası aynı rumuzu alamaz. Tarayıcı verilerini silersen yeni bir rumuz seçmen gerekir." } },
+        { "@type": "Question", "name": "Hangi kanallar var?", "acceptedAnswer": { "@type": "Answer", "text": "#genel her konu için, #okey Okey ve 101 Okey için, #tavla tavla için, #kart Batak, King ve Pişti için, #kelime de Gizli Kelime, Kelime Bulucu ve Kelimeler için. Soldaki listeden ya da /join #kanal komutuyla geçersin." } },
+        { "@type": "Question", "name": "Hangi komutları kullanabilirim?", "acceptedAnswer": { "@type": "Answer", "text": "/nick YeniRumuz rumuzunu değiştirir, /me çay koyuyor eylem satırı yazar, /join #okey kanal değiştirir, /away sebep seni uzakta gösterir, /back geri getirir, /clear ekranı temizler, /yardim bütün komutları listeler. Satırı / ile başlatmak istersen // yaz." } },
+        { "@type": "Question", "name": "Oyun masasına nasıl davet ederim?", "acceptedAnswer": { "@type": "Answer", "text": "Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur." } },
+        { "@type": "Question", "name": "Mesajlar ne kadar saklanıyor?", "acceptedAnswer": { "@type": "Answer", "text": "Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır." } },
+        { "@type": "Question", "name": "Rahatsız edici bir mesajı nasıl bildiririm?", "acceptedAnswer": { "@type": "Answer", "text": "Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır." } },
+        { "@type": "Question", "name": "Telefonda çalışır mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez." } }
+      ]
+    }
+  ]
+}
+</script>
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+:root{
+  --bg:#ebebe8; --block:#ffffff; --ink:#0e0e0e; --muted:#6a6a6a; --line:#dadad6;
+  --accent:#ff5a1f; --c2:#2f6bff;
+  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --round:"Nunito","Inter Tight",system-ui,sans-serif;
+  --r:18px; --gap:12px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--gap) 16px 40px}
+.b{background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px 10px 20px;margin-bottom:var(--gap)}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo img{height:24px;width:auto;display:block}
+:root[data-theme="dark"] .logo .l-light{display:none}
+:root:not([data-theme="dark"]) .logo .l-dark{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo .l-light{display:none}:root:not([data-theme="light"]) .logo .l-dark{display:inline}}
+.crumb{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;padding-left:14px;border-left:1px solid var(--line)}
+.crumb b{color:var(--ink);font-weight:500}
+.ctrl{height:34px;min-width:34px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--block);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.ctrl:hover{border-color:var(--muted)}
+@media (max-width:560px){.crumb{display:none}}
+
+/* ============ sohbet alanı ============ */
+.chat{--p-bg:#f6f7f9;--p-pane:#ffffff;--p-side:#eef1f5;--p-line:#dfe3ea;--p-line2:#9ea7b6;--p-ink:#1d2433;--p-mut:#7a8394;--p-hl:#fff4d6;--p-hl2:#ffb020;--p-sel:#2f6bff;
+  --n0:#d6336c;--n1:#2f6bff;--n2:#0f9d58;--n3:#c25400;--n4:#7b3fe4;--n5:#008b9c;--n6:#c2185b;--n7:#5c7c00;--n8:#b8441f;--n9:#3d5afe;
+  padding:0;overflow:hidden;color:var(--p-ink);background:var(--p-bg);font-family:var(--round);
+  display:grid;grid-template-columns:190px minmax(0,1fr) 200px;height:clamp(420px,calc(100svh - 96px),900px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chat{--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
+  --n0:#ff7aa8;--n1:#7aa4ff;--n2:#4fd48b;--n3:#ffa45c;--n4:#b794ff;--n5:#4fd3e0;--n6:#ff8ac0;--n7:#b6dc4f;--n8:#ff9472;--n9:#8c9eff}}
+:root[data-theme="dark"] .chat{--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
+  --n0:#ff7aa8;--n1:#7aa4ff;--n2:#4fd48b;--n3:#ffa45c;--n4:#b794ff;--n5:#4fd3e0;--n6:#ff8ac0;--n7:#b6dc4f;--n8:#ff9472;--n9:#8c9eff}
+.chat .c0{color:var(--n0)}.chat .c1{color:var(--n1)}.chat .c2{color:var(--n2)}.chat .c3{color:var(--n3)}.chat .c4{color:var(--n4)}
+.chat .c5{color:var(--n5)}.chat .c6{color:var(--n6)}.chat .c7{color:var(--n7)}.chat .c8{color:var(--n8)}.chat .c9{color:var(--n9)}
+.sh-side{background:var(--p-side);display:flex;flex-direction:column;min-height:0}
+.sh-side h2{font:800 11.5px var(--round);letter-spacing:.08em;text-transform:uppercase;color:var(--p-mut);padding:14px 16px 8px}
+.sh-kl{border-right:1px solid var(--p-line)}
+.sh-kl nav{display:flex;flex-direction:column;gap:2px;padding:0 8px 10px;overflow:auto}
+.sh-kl nav button{display:flex;align-items:center;gap:8px;height:38px;padding:0 10px;border:0;border-radius:10px;background:none;cursor:pointer;font:800 15px var(--round);color:var(--p-ink);text-align:left}
+.sh-kl nav button:hover{background:var(--p-pane)}
+.sh-kl nav button[aria-current="true"]{background:var(--p-sel);color:#fff}
+.sh-kl nav button .h{opacity:.55;font-weight:900}
+.sh-kl nav button small{margin-left:auto;font:800 12px var(--round);opacity:.7;font-variant-numeric:tabular-nums}
+.sh-kl .me{margin-top:auto;padding:12px 14px;border-top:1px solid var(--p-line);font-size:13px;color:var(--p-mut);display:flex;align-items:center;gap:8px;min-width:0}
+.sh-kl .me b{color:var(--p-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sh-kl .me button{margin-left:auto;flex:none}
+
+.sh-main{display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--p-pane)}
+.sh-bar{display:flex;align-items:center;gap:8px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--p-line);min-height:56px}
+.sh-bar .ttl{min-width:0;flex:1}
+.sh-bar .ttl b{font:900 17px var(--round);display:block;line-height:1.2}
+.sh-bar .ttl span{display:block;font-size:13px;color:var(--p-mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-bar .slow{flex:none;font:800 12px var(--round);color:#b26b00;background:var(--p-hl);border-radius:999px;padding:3px 10px}
+.ib{flex:none;width:36px;height:36px;border-radius:11px;border:1.5px solid var(--p-line);background:var(--p-bg);color:var(--p-mut);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;transition:color .15s,border-color .15s}
+.ib:hover{color:var(--p-ink);border-color:var(--p-line2)}
+.ib svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ib.wide{width:auto;padding:0 10px;font:800 13px var(--round)}
+.ib[aria-pressed="true"]{color:var(--p-ink)}
+.sh-tabs{display:none}
+
+.sh-log{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:10px 0 6px;font-size:15px;line-height:1.5;overscroll-behavior:contain}
+.ln{position:relative;padding:2px 44px 2px 16px;word-wrap:break-word;overflow-wrap:anywhere}
+.ln:hover{background:color-mix(in srgb,var(--p-bg) 70%,transparent)}
+.ln time{font:700 12px var(--round);color:var(--p-mut);font-variant-numeric:tabular-nums;margin-right:8px;user-select:none}
+.ln .nk{font-weight:900;cursor:pointer}
+.ln .nk:hover{text-decoration:underline}
+.ln.e{font-style:italic}
+.ln.e .nk::before{content:"* ";font-style:normal}
+.ln.s,.ln.j{color:var(--p-mut);font-size:13.5px}
+.ln.j{padding-top:0;padding-bottom:0}
+.ln.s .tx::before{content:"*** ";font-weight:900}
+.ln.a{margin:6px 12px;padding:8px 12px 8px 14px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,var(--p-pane));border-left:4px solid var(--accent)}
+.ln.a .nk{color:var(--accent)}
+.ln.hl{background:var(--p-hl);box-shadow:inset 3px 0 0 var(--p-hl2)}
+.ln.err{color:#d23}
+.ln .op{color:var(--p-mut);font-weight:900}
+.ln .tx a{color:var(--p-sel);text-decoration:underline;text-underline-offset:2px}
+.ln .lm{position:absolute;right:8px;top:2px;width:28px;height:24px;border-radius:8px;border:0;background:var(--p-bg);color:var(--p-mut);cursor:pointer;opacity:0;font:900 15px/1 var(--round)}
+.ln:hover .lm,.ln .lm:focus-visible,.ln.menu .lm{opacity:1}
+@media (hover:none){.ln .lm{opacity:.55}}
+.davet{display:flex;align-items:center;gap:12px;max-width:380px;margin:6px 0 4px;padding:10px 12px;border-radius:14px;border:1.5px solid var(--p-line);background:var(--p-bg);font-style:normal;text-decoration:none!important;color:var(--p-ink)!important}
+.davet:hover{border-color:var(--p-sel)}
+.davet img{width:40px;height:40px;border-radius:10px;flex:none}
+.davet span{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.davet b{font:900 15px var(--round)}
+.davet small{font:700 12.5px var(--round);color:var(--p-mut)}
+.davet i{margin-left:auto;flex:none;font:900 13px var(--round);font-style:normal;color:#fff;background:var(--p-sel);border-radius:999px;padding:6px 12px}
+.sh-new{position:absolute;left:50%;transform:translateX(-50%);bottom:76px;border:0;border-radius:999px;background:var(--p-sel);color:#fff;font:800 13px var(--round);padding:7px 14px;cursor:pointer;box-shadow:0 8px 20px -8px rgba(0,0,0,.5);z-index:3}
+.sh-main{position:relative}
+
+.sh-form{display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--p-line)}
+.sh-form .nb{flex:none;max-width:140px;height:42px;padding:0 12px;border-radius:12px;border:1.5px solid var(--p-line);background:var(--p-bg);cursor:pointer;font:900 14px var(--round);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-form input{flex:1;min-width:0;height:42px;padding:0 14px;border-radius:12px;border:1.5px solid var(--p-line);background:var(--p-bg);font:600 15.5px var(--round);color:var(--p-ink);outline:none}
+.sh-form input:focus{border-color:var(--p-sel)}
+.sh-form input:disabled{opacity:.6}
+.sh-form .send{flex:none;height:42px;padding:0 16px;border-radius:12px;border:0;background:var(--p-sel);color:#fff;font:900 14.5px var(--round);cursor:pointer}
+.sh-form .send svg{display:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sh-form .send:disabled{opacity:.5;cursor:default}
+.sh-status{padding:0 16px 8px;font:700 12.5px var(--round);color:var(--p-mut);min-height:0}
+.sh-status:empty{display:none}
+
+.sh-ul{border-left:1px solid var(--p-line)}
+.sh-ul ul{list-style:none;overflow:auto;padding:0 8px 12px;display:flex;flex-direction:column;gap:1px}
+.sh-ul li{display:flex;align-items:center;gap:6px;height:30px;padding:0 8px;border-radius:8px;font:800 14px var(--round);cursor:pointer;white-space:nowrap;overflow:hidden}
+.sh-ul li:hover{background:var(--p-pane)}
+.sh-ul li .o{color:var(--p-mut);width:10px;flex:none}
+.sh-ul li.aw{opacity:.5}
+.sh-ul li.aw::after{content:"uzakta";margin-left:auto;font:700 11px var(--round);color:var(--p-mut)}
+.sh-ul li.me{font-weight:900}
+.sh-ul .empty{color:var(--p-mut);font-size:13px;padding:6px 16px}
+.sh-ul .cls{display:none}
+
+/* menü */
+.pop{position:fixed;z-index:70;min-width:180px;background:var(--p-pane,#fff);color:var(--p-ink);border:1px solid var(--p-line);border-radius:12px;padding:6px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);font-family:var(--round)}
+.pop button{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;border-radius:8px;font:800 14px var(--round);cursor:pointer;color:inherit}
+.pop button:hover{background:var(--p-bg)}
+.pop button.d{color:#d23}
+
+/* pencereler */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.mcard{position:relative;width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;background:var(--block);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:26px;box-shadow:0 30px 70px -30px rgba(0,0,0,.6);font-family:var(--round)}
+.mcard h2{font-size:28px;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin:8px 0 10px}
+.mcard p{color:var(--muted);font-size:15px}
+.mcard .label{font-family:var(--round);font-weight:800}
+.mclose{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+.mcard input{width:100%;height:48px;margin:14px 0 6px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font:800 17px var(--round);outline:none}
+.mcard input:focus{border-color:var(--c2)}
+.mcard .err{color:#d23;font-size:14px;min-height:21px;font-weight:700}
+.mcard ul{margin:10px 0 0 18px;color:var(--muted);font-size:14px;display:grid;gap:4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:46px;padding:0 16px;border-radius:12px;font:800 15px var(--round);border:0;cursor:pointer}
+.btn-a{background:var(--c2);color:#fff}
+.btn-g{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.row2{display:flex;gap:8px;margin-top:16px}.row2 .btn{flex:1}
+.cmds{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:12px;font-size:14px}
+.cmds code{font:800 13.5px var(--round);color:var(--ink);white-space:nowrap}
+.cmds span{color:var(--muted)}
+
+/* telefon ve dar ekran: kanallar üstte sekme, kişiler çekmece */
+@media (max-width:860px){
+  .chat{grid-template-columns:minmax(0,1fr);height:calc(100svh - 92px);min-height:380px}
+  .sh-kl{display:none}
+  .sh-tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;border-bottom:1px solid var(--p-line);background:var(--p-side);scrollbar-width:none}
+  .sh-tabs::-webkit-scrollbar{display:none}
+  .sh-tabs button{flex:none;height:32px;padding:0 12px;border-radius:999px;border:1.5px solid var(--p-line);background:var(--p-pane);font:800 14px var(--round);cursor:pointer;white-space:nowrap}
+  .sh-tabs button[aria-current="true"]{background:var(--p-sel);border-color:var(--p-sel);color:#fff}
+  .sh-tabs button small{font-weight:800;opacity:.7;margin-left:4px}
+  .sh-ul{position:fixed;top:0;right:0;bottom:0;width:min(280px,82vw);z-index:65;border-left:1px solid var(--p-line);box-shadow:-20px 0 50px -20px rgba(0,0,0,.5);transform:translateX(105%);transition:transform .2s}
+  .sh-ul.open{transform:none}
+  .sh-ul .cls{display:inline-flex;position:absolute;top:8px;right:8px}
+  .shade{position:fixed;inset:0;z-index:64;background:rgba(0,0,0,.35)}
+}
+@media (min-width:861px){#usersBtn{display:none}.shade{display:none!important}}
+@media (max-width:520px){
+  .wrap{padding-left:8px;padding-right:8px}
+  .sh-form{padding:8px}
+  .sh-form .nb{max-width:84px;padding:0 9px;font-size:13px}
+  .sh-form .send{width:42px;padding:0}.sh-form .send span{display:none}.sh-form .send svg{display:block;margin:auto}
+  .ln{padding-left:10px;padding-right:38px}
+  .ln time{margin-right:5px}
+  .sh-bar{padding-left:12px}
+}
+@media (max-height:560px) and (orientation:landscape){.top{display:none}.wrap{padding-top:6px}.chat{height:calc(100svh - 12px);min-height:0}}
+@media (max-height:640px) and (orientation:portrait){.top{display:none}.wrap{padding-top:6px}.chat{height:calc(100svh - 12px)}}
+
+/* bilgi bölümleri */
+.info{margin-top:var(--gap);display:grid;gap:var(--gap)}
+.intro{padding:30px}
+.intro h1{font-size:clamp(30px,4.2vw,46px);font-weight:800;letter-spacing:-.035em;line-height:1.05;margin:12px 0 14px;max-width:860px}
+.intro p{color:var(--muted);font-size:17px;max-width:780px}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+@media (max-width:820px){.cols2{grid-template-columns:1fr}}
+.info h2{font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px}
+.rules{list-style:none;display:grid;gap:9px;color:var(--muted);font-size:15px}
+.rules li{padding-left:18px;position:relative}
+.rules li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.rules b,.rules code{color:var(--ink)}
+.rules code{font:700 14px var(--mono)}
+.faq details{border-top:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:500 18px var(--mono);color:var(--muted)}
+.faq details[open] summary::after{content:"−"}
+.faq details p{color:var(--muted);font-size:15px;margin-top:8px}
+.controls{padding:28px}
+.ctabs{display:inline-flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ctabs button{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 18px 0 14px;border-radius:999px;border:1px solid var(--line);background:var(--block);color:var(--ink);cursor:pointer;font-size:15px}
+.ctabs button small{font-size:12.5px;color:var(--muted)}
+.ctabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.ctabs button[aria-selected="true"] small{color:rgba(255,255,255,.85)}
+.ctl-grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:8px}
+.ctl{display:flex;align-items:center;gap:16px;min-height:76px;padding:10px 16px 10px 10px;border-radius:14px;background:var(--bg);border:1px solid var(--line);font-size:15px;line-height:1.4}
+.ctl-ic{flex:none;min-width:70px;height:56px;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.ctl-ic .ic{width:44px;height:56px;overflow:visible}
+.kcs{display:inline-flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.kc{min-width:40px;height:40px;padding:0 9px;border-radius:9px;border:1px solid var(--line);border-bottom-width:4px;background:linear-gradient(180deg,var(--block),color-mix(in srgb,var(--bg) 60%,var(--block)));box-shadow:0 2px 4px -2px rgba(0,0,0,.25);display:inline-flex;align-items:center;justify-content:center;font:700 15px var(--sans);color:var(--ink);white-space:nowrap}
+.kc.w{font-size:12.5px;min-width:56px}
+@media (max-width:560px){.controls{padding:20px}.intro{padding:22px}.ctl{gap:10px}.ctl-ic{min-width:0}.kc{min-width:34px;height:36px;padding:0 7px}.kc.w{min-width:46px;font-size:12px}}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 20px;margin-top:var(--gap);font-family:var(--mono);font-size:12px;color:var(--muted)}
+footer nav{display:flex;gap:6px 16px;flex-wrap:wrap}
+footer a:hover{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="b top">
+    <div class="brand">
+      <a href="/" class="logo" aria-label="okutan.org"><img class="l-light" src="/assets/logo.svg" width="96" height="26" alt="okutan"><img class="l-dark" src="/assets/logo-dark.svg" width="96" height="26" alt="okutan"></a>
+      <span class="crumb"><b>Canlı Sohbet</b></span>
+    </div>
+    <button class="ctrl" id="themeBtn" aria-label="Tema"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  </header>
+
+  <main class="b chat" id="chat" aria-label="Canlı sohbet">
+    <aside class="sh-side sh-kl" aria-label="Kanallar">
+      <h2>Kanallar</h2>
+      <nav id="chList"></nav>
+      <div class="me">Rumuz: <b id="meNick">—</b><button class="ib" id="nickBtn2" aria-label="Rumuzu değiştir" title="Rumuzu değiştir"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
+    </aside>
+
+    <section class="sh-main">
+      <div class="sh-tabs" id="chTabs" role="tablist" aria-label="Kanallar"></div>
+      <div class="sh-bar">
+        <div class="ttl"><b id="chName">#genel</b><span id="topic"></span></div>
+        <span class="slow" id="slowTag" hidden></span>
+        <button class="ib wide" id="usersBtn" aria-label="Kişiler" title="Kişiler"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.8c1.7.8 2.8 2.5 3 5.2"/></svg><span id="usersN">0</span></button>
+        <button class="ib" id="soundBtn" aria-label="Adım geçince ses" aria-pressed="true" title="Adım geçince ses"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wv" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="mt" d="m16 9.5 5 5m0-5-5 5" hidden/></svg></button>
+        <button class="ib" id="helpBtn" aria-label="Komutlar ve kurallar" title="Komutlar ve kurallar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4.2M12 17.6h.01"/></svg></button>
+      </div>
+      <div class="sh-log" id="log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
+      <button class="sh-new" id="newBelow" hidden>Yeni mesajlar ↓</button>
+      <div class="sh-status" id="status" role="status"></div>
+      <form class="sh-form" id="form" autocomplete="off">
+        <button type="button" class="nb" id="nickBtn" title="Rumuzu değiştir">Rumuz</button>
+        <input id="inp" maxlength="300" enterkeyhint="send" placeholder="Mesaj yaz… (komutlar: /yardim)" aria-label="Mesaj" spellcheck="true">
+        <button class="send" id="sendBtn" aria-label="Gönder"><span>Gönder</span><svg viewBox="0 0 24 24"><path d="M4 12 20 4l-6 16-3-7z"/></svg></button>
+      </form>
+    </section>
+
+    <aside class="sh-side sh-ul" id="userPane" aria-label="Kanaldaki kişiler">
+      <h2 id="usersTitle">Kişiler</h2>
+      <button class="ib cls" id="usersClose" aria-label="Kapat">✕</button>
+      <ul id="users"></ul>
+    </aside>
+  </main>
+  <div class="shade" id="shade" hidden></div>
+
+  <section class="info" aria-labelledby="pageTitle">
+    <div class="b intro">
+      <div class="label">Ücretsiz · Tarayıcıda · Üyeliksiz</div>
+      <h1 id="pageTitle">Canlı Sohbet: mIRC Tadında Üyeliksiz Türkçe Sohbet Odaları</h1>
+      <p>Bir rumuz seç ve yaz. Eski IRC sohbetlerinin sadeliği yeni bir arayüzde: saatli satırlar, renkli rumuzlar, kanallar ve kişi listesi. <b>#genel</b> her konu için; <b>#okey</b>, <b>#tavla</b>, <b>#kart</b> ve <b>#kelime</b> oyun arkadaşı bulmak için. Oyunda kurduğun masanın davet bağlantısını yapıştır, tek tıkla katılınan bir karta dönüşsün.</p>
+    </div>
+    <div class="b controls">
+      <h2>Canlı Sohbet kontrolleri</h2>
+      <div class="ctabs" role="tablist" aria-label="Cihaz">
+        <button role="tab" id="cTabDesk" aria-controls="ctlDesk" aria-selected="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M7 15h10"/></svg><b>Bilgisayar</b><small>Klavye ve fare</small></button>
+        <button role="tab" id="cTabMob" aria-controls="ctlMob" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><b>Mobil</b><small>Telefon ve tablette</small></button>
+      </div>
+      <ul class="ctl-grid" id="ctlDesk" role="tabpanel" aria-labelledby="cTabDesk">
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Enter ↵</kbd></span></span><span>Mesajı ya da komutu gönder</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Tab ⇥</kbd></span></span><span>Rumuzu tamamla; tekrar bas, sıradaki rumuz gelsin</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">↑</kbd><kbd class="kc">↓</kbd></span></span><span>Önceki gönderdiğin satırları geri getir</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Alt</kbd><kbd class="kc">↑</kbd><kbd class="kc">↓</kbd></span></span><span>Önceki ya da sonraki kanala geç</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">PgUp</kbd><kbd class="kc w">PgDn</kbd></span></span><span>Yazarken sohbet geçmişinde yukarı ve aşağı kaydır</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Esc</kbd></span></span><span>Açık menüyü ya da pencereyi kapat</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Bir rumuza tıkla: adı mesaj kutusuna yazılır</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Satırın sağındaki <b>⋯</b> ile yanıtla ya da şikâyet et</span></li>
+      </ul>
+      <ul class="ctl-grid" id="ctlMob" role="tabpanel" aria-labelledby="cTabMob" hidden>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="13" y="14" width="10" height="6" rx="3" fill="var(--accent)"/><rect x="25" y="14" width="10" height="6" rx="3" fill="#cdd6e6" stroke="currentColor" stroke-width="1"/></svg></span><span>Üstteki kanal sekmelerine dokunarak kanal değiştir</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="30" cy="17" r="4" fill="var(--accent)"/><path d="M14 30h20M14 36h14M14 42h17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>Sağ üstteki kişi düğmesiyle kanaldakileri gör</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="13" y="42" width="17" height="8" rx="3" fill="#cdd6e6" stroke="currentColor" stroke-width="1.2"/><rect x="31" y="42" width="5" height="8" rx="2" fill="var(--accent)"/></svg></span><span>Alttaki kutuya yaz, gönder okuna dokun</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M14 28h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="33" cy="28" r="3.2" fill="var(--accent)"/></svg></span><span>Satırdaki <b>⋯</b> düğmesine dokun: yanıtla ya da şikâyet et</span></li>
+      </ul>
+    </div>
+    <div class="cols2">
+      <div class="b">
+        <h2>Komutlar</h2>
+        <ul class="rules">
+          <li><code>/nick Rumuz</code> rumuzunu değiştirir.</li>
+          <li><code>/me çay koyuyor</code> eylem satırı yazar: <i>* Rumuz çay koyuyor</i>.</li>
+          <li><code>/join #okey</code> kanal değiştirir (<code>/j</code> da olur).</li>
+          <li><code>/away yemekteyim</code> seni uzakta gösterir, <code>/back</code> geri getirir.</li>
+          <li><code>/clear</code> ekranı temizler, <code>/yardim</code> komutları listeler.</li>
+          <li>Satırı <code>/</code> ile başlatmak için <code>//</code> yaz.</li>
+        </ul>
+      </div>
+      <div class="b" id="kurallar">
+        <h2>Sohbet kuralları</h2>
+        <ul class="rules">
+          <li>Küfür, hakaret, taciz, nefret söylemi ve cinsel içerik yasak. Küfür kendiliğinden yıldızlanır.</li>
+          <li>Telefon, adres, okul, sosyal medya gibi <b>kişisel bilgilerini paylaşma</b>; başkasınınkini de isteme.</li>
+          <li>Reklam ve sel (aynı mesajı tekrar tekrar yazmak) yasak. Başka sitelerin bağlantıları kaldırılır; okutan.org bağlantıları ve oyun davetleri serbest.</li>
+          <li>Başkasının yerine geçme; yönetici ya da moderatör gibi davranma.</li>
+          <li>Kuralları çiğneyenler <b>susturulur</b> ya da sohbetten <b>çıkarılır</b>. Rahatsız edici mesajı ⋯ menüsünden şikâyet et.</li>
+          <li>Moderatörlerin rumuzunun başında <b>@</b> görünür.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="b" id="gizlilik">
+      <h2>Gizlilik ve kayıtlar</h2>
+      <ul class="rules">
+        <li><b>Hesap yok.</b> Rumuzun bu tarayıcıda saklanan gizli bir anahtara bağlıdır; sunucu anahtarın kendisini değil, yalnızca özetini tutar.</li>
+        <li><b>Mesajlar 30 gün</b> saklanır, sonra kendiliğinden silinir. Kanalda son 100 mesaj görünür.</li>
+        <li><b>Bağlantı kayıtları:</b> yasal yükümlülükler için hangi rumuz numarasının hangi IP adresi, bağlantı noktası ve zamanda mesaj gönderdiği iki yıl saklanır. Bu kayıtlarda mesaj metni yoktur; yalnızca yetkili makamların talebiyle paylaşılır.</li>
+        <li>Kötüye kullanımı önlemek için IP adresinin geri döndürülemez bir özeti (hash) tutulur.</li>
+        <li>Mesajların herkese açıktır; özel mesaj yoktur. Silinmesini istediğin bir mesaj için <a href="mailto:sedat@okutan.org" style="text-decoration:underline">sedat@okutan.org</a> adresine yaz.</li>
+      </ul>
+    </div>
+    <div class="b faq">
+      <h2>Sık sorulan sorular</h2>
+      <details><summary>Sohbet için üye olmak gerekiyor mu?</summary><p>Hayır. Bir rumuz seçip hemen yazmaya başlarsın. Rumuzun bu tarayıcıya bağlı gizli bir anahtarla senin adına ayrılır; başkası aynı rumuzu alamaz. Tarayıcı verilerini silersen yeni bir rumuz seçmen gerekir.</p></details>
+      <details><summary>Hangi kanallar var?</summary><p>#genel her konu için, #okey Okey ve 101 Okey için, #tavla tavla için, #kart Batak, King ve Pişti için, #kelime de Gizli Kelime, Kelime Bulucu ve Kelimeler için. Soldaki listeden ya da /join #kanal komutuyla geçersin.</p></details>
+      <details><summary>Hangi komutları kullanabilirim?</summary><p>/nick YeniRumuz rumuzunu değiştirir, /me çay koyuyor eylem satırı yazar, /join #okey kanal değiştirir, /away sebep seni uzakta gösterir, /back geri getirir, /clear ekranı temizler, /yardim bütün komutları listeler. Satırı / ile başlatmak istersen // yaz.</p></details>
+      <details><summary>Oyun masasına nasıl davet ederim?</summary><p>Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur.</p></details>
+      <details><summary>Mesajlar ne kadar saklanıyor?</summary><p>Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır.</p></details>
+      <details><summary>Rahatsız edici bir mesajı nasıl bildiririm?</summary><p>Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır.</p></details>
+      <details><summary>Telefonda çalışır mı?</summary><p>Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez.</p></details>
+    </div>
+  </section>
+  <footer class="b">
+    <span>© <span id="yr">2026</span> Sedat Okutan</span>
+    <nav aria-label="Diğer sayfalar" data-oyunlar><a href="/">okutan.org</a><a href="/oyunlar/">Oyunlar</a></nav><script src="/assets/oyunlar.js?v=2" defer></script>
+  </footer>
+</div>
+
+<!-- Rumuz -->
+<div class="modal" id="nickModal" hidden>
+  <form class="mcard" role="dialog" aria-modal="true" aria-labelledby="nickTitle" id="nickForm">
+    <button type="button" class="mclose" data-close aria-label="Kapat" id="nickClose">✕</button>
+    <div class="label">Canlı Sohbet</div>
+    <h2 id="nickTitle">Rumuzunu seç</h2>
+    <p>Üyelik yok. Rumuzun bu tarayıcıya ayrılır; başkası alamaz.</p>
+    <input id="nickInp" maxlength="16" autocomplete="nickname" placeholder="ör. Kahveci" aria-label="Rumuz" spellcheck="false">
+    <div class="err" id="nickErr" role="alert"></div>
+    <ul>
+      <li>Küfür, hakaret ve reklam yok; kişisel bilgilerini paylaşma.</li>
+      <li>Mesajlar 30 gün saklanır. <a href="#gizlilik" style="text-decoration:underline">Gizlilik ve kayıtlar</a></li>
+    </ul>
+    <div class="row2"><button class="btn btn-a" id="nickOk">Sohbete gir</button></div>
+    <p style="font-size:13px;margin-top:10px">Girerek <a href="#kurallar" style="text-decoration:underline">sohbet kurallarını</a> kabul etmiş olursun.</p>
+  </form>
+</div>
+<!-- Komutlar -->
+<div class="modal" id="helpModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Yardım</div>
+    <h2 id="helpTitle">Komutlar</h2>
+    <div class="cmds">
+      <code>/nick Rumuz</code><span>Rumuzunu değiştir</span>
+      <code>/me eylem</code><span>Eylem satırı: * Rumuz eylem</span>
+      <code>/join #kanal</code><span>Kanal değiştir (/j)</span>
+      <code>/away sebep</code><span>Uzakta görün</span>
+      <code>/back</code><span>Geri dön</span>
+      <code>/clear</code><span>Ekranı temizle</span>
+      <code>//metin</code><span>/ ile başlayan düz mesaj</span>
+      <code>Tab</code><span>Rumuzu tamamla</span>
+      <code>↑ ↓</code><span>Önceki satırların</span>
+      <code>Alt + ↑ ↓</code><span>Kanal değiştir</span>
+    </div>
+    <p style="margin-top:14px;font-size:14px">Oyun masası davet bağlantısını yapıştır; tek tıkla katılınan karta dönüşür. <a href="#kurallar" data-close style="text-decoration:underline">Sohbet kuralları</a></p>
+    <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
+  </div>
+</div>
+<script src="motor.js?v=1" defer></script>
+<script src="sohbet.js?v=1" defer></script>
+</body>
+</html>

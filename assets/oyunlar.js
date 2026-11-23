@@ -23,7 +23,8 @@
     ['/101-okey/', '101 Okey'],
     ['/balon/', 'Balon Patlat'],
     ['/kelime-bulucu/', 'Kelime Bulucu'],
-    ['/kelimeler/', 'Kelimeler']
+    ['/kelimeler/', 'Kelimeler'],
+    ['/sohbet/', 'Sohbet']
   ];
   function run() {
     var here = location.pathname;
