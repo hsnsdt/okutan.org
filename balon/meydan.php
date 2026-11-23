@@ -33,12 +33,7 @@ $img = $name ? 'https://okutan.org/balon/api/og.php?id=' . $id : 'https://okutan
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-KRP75675"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-</script>
+<script src="/assets/oyunlar.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $h($title) ?></title>
 <meta name="robots" content="noindex">

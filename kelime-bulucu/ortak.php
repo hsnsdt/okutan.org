@@ -149,12 +149,7 @@ function sayfa_bas(array $o): void {
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-KRP75675"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-</script>
+<script src="/assets/oyunlar.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title><?= h($o['baslik']) ?></title>
 <?php if ($can): ?>

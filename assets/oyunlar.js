@@ -1,3 +1,12 @@
+/* Google Tag Manager — tüm sayfalarda bu dosya üzerinden yüklenir (kimlik tek yerde). */
+(function () {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  var g = document.createElement('script'); g.async = true;
+  g.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-KRP75675';
+  document.head.appendChild(g);
+})();
 /* Alt bilgideki oyun bağlantıları — tek yerden yönetilir.
    Kullanım: <nav ... data-oyunlar>sabit bağlantılar</nav> + <script src="/assets/oyunlar.js" defer></script>
    Betik listede olmayan oyunları ekler, bulunulan sayfayı atlar; [data-oyunlar-yer] varsa onun önüne koyar.
