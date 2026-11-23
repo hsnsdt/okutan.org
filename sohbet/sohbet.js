@@ -112,9 +112,13 @@
     s.appendChild(document.createTextNode(nick));
     return s;
   }
+  var MEGAFON = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4a1 1 0 0 0 1 1h3l6 4V5L7 9H4a1 1 0 0 0-1 1z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+  // avatar resmi cinsiyete göre: erkek, kadın, belirtmeyen (sohbet/img/*.webp)
+  var AVATAR = { e: 'erkek', k: 'kadin', b: 'belirtmeyen' };
   function avatar(nick, g, op) {
-    var a = el('span', 'av ' + M.gSinif(g) + (op === 2 ? ' op2' : op ? ' op' : ''), M.basHarf(nick));
-    a.setAttribute('aria-hidden', 'true');
+    var a = el('span', 'av ' + M.gSinif(g) + (op === 2 ? ' op2' : op ? ' op' : ''));
+    var i = el('img'); i.src = '/sohbet/img/' + (AVATAR[g] || 'belirtmeyen') + '.webp'; i.alt = ''; i.width = 36; i.height = 36; i.decoding = 'async';
+    a.appendChild(i); a.setAttribute('aria-hidden', 'true');
     return a;
   }
   function rolBadge(op) {
@@ -159,7 +163,8 @@
     var saat = el('time', null, hhmm(m.t));
     if (m.k === 'm' || m.k === 'a') {
       var op = m.k === 'a' ? 2 : m.op;
-      d.appendChild(avatar(m.n, m.g, op));
+      if (m.k === 'a') { var dv = el('span', 'av duyuru'); dv.innerHTML = MEGAFON; dv.setAttribute('aria-hidden', 'true'); d.appendChild(dv); }
+      else d.appendChild(avatar(m.n, m.g, op));
       if (m.k === 'm') d.appendChild(el('time', 'gt', hhmm(m.t)));
       var bd = el('div', 'bd'), hd = el('div', 'hd');
       hd.appendChild(saat); hd.appendChild(nickSpan(m.n, op, m.g)); if (op) hd.appendChild(rolBadge(op));

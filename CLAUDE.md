@@ -52,3 +52,4 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - Online iki oyunculu deneme: ikinci oyuncuyu Node betiğiyle API üzerinden oynat ya da ikinci sekmeyi `localhost:8765` kökeninden aç (localStorage ayrı kalır).
 - Ateş ve Su: `?test=1` `window.__kd` (dünya `w`, `load(i)`, `net`) açar; `&dpr=N` çizim çözünürlüğünü artırır (yakın inceleme).
 - Test bitince yerel `ok_* / oy_* / tv_* / bt_* / kg_* / ps_* / kd_* / sh_*` tablolarını sil, sunucuları kapat.
+- MySQL'i zorla öldürme (`Stop-Process`): InnoDB tablosu yarım kalır ("doesn't exist in engine", sahipsiz `.ibd` dosyası; `C:\xampp\mysql\data\<db>\` içinden silinir). Düzgün kapat: `C:\xampp\mysql\bin\mysqladmin.exe -u root shutdown`.

@@ -155,7 +155,9 @@ h1,h2,h3{font-family:var(--round)}
 .ln{position:relative;display:flex;gap:12px;padding:8px 44px 2px 14px;overflow-wrap:anywhere}
 .ln:hover{background:color-mix(in srgb,var(--p-bg) 75%,transparent)}
 .ln.grp{padding-top:1px}
-.av{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--g);color:#fff;font:900 15px/1 var(--round);margin-top:2px;user-select:none}
+.av{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--g);margin-top:2px;user-select:none}
+.av img{width:100%;height:100%;border-radius:50%;display:block}
+.av.duyuru{background:var(--adm)}.av.duyuru svg{width:19px;height:19px}
 .av.op{box-shadow:0 0 0 2px var(--p-pane),0 0 0 4px var(--mod)}
 .av.op2{box-shadow:0 0 0 2px var(--p-pane),0 0 0 4px var(--adm)}
 .ln.grp .av{visibility:hidden;height:0;margin:0}
@@ -267,7 +269,7 @@ h1,h2,h3{font-family:var(--round)}
 .chat.klasik .ln.e .bd{font-style:normal;color:#9c009c}.chat.klasik .ln.e .tx .nk{color:#9c009c}.chat.klasik .ln.e .tx .nk::before{content:"* "}
 .chat.klasik .ln.hl{background:none;box-shadow:none}.chat.klasik .ln.hl .tx{color:#fc0000}
 .chat.klasik .ln.a{border-radius:0;background:none;border:0;border-left:3px solid #fc7f00;margin:4px 0;padding:0 40px 0 13px}
-.chat.klasik .sh-ul li .av{display:flex;width:8px;height:8px;font-size:0;border-radius:50%;box-shadow:none!important}
+.chat.klasik .sh-ul li .av{display:flex;width:8px;height:8px;border-radius:50%;box-shadow:none!important}.chat.klasik .sh-ul li .av img{display:none}
 .chat.klasik .sh-kl nav button,.chat.klasik .sh-tabs button,.chat.klasik .sh-form input,.chat.klasik .sh-form .nb,.chat.klasik .sh-form .send,.chat.klasik .ib,.chat.klasik .davet{border-radius:3px}
 .chat.klasik .sh-kl nav button[aria-current="true"],.chat.klasik .sh-tabs button[aria-current="true"]{background:#00007f;border-color:#00007f}
 .chat.klasik .sh-form .send{background:#00007f}
@@ -300,7 +302,7 @@ h1,h2,h3{font-family:var(--round)}
 .mcard input:focus{border-color:var(--c2)}
 .cins{display:flex;gap:6px;margin:2px 0 4px}
 .cins button{flex:1;min-width:0;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font:800 13.5px/1.15 var(--round);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;padding:4px 6px;color:var(--ink)}
-.cins button i{width:10px;height:10px;border-radius:50%;flex:none}
+.cins button img{width:28px;height:28px;border-radius:50%;flex:none}
 .cins button[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--block));color:var(--c)}
 .cins-not{font-size:13px!important;margin-bottom:4px}
 .mcard .err{color:#d23;font-size:14px;min-height:21px;font-weight:700}
@@ -520,9 +522,9 @@ footer a:hover{color:var(--ink)}
     <p>Üyelik yok. Rumuzun bu tarayıcıya ayrılır; başkası alamaz.</p>
     <input id="nickInp" maxlength="16" autocomplete="nickname" placeholder="ör. Kahveci" aria-label="Rumuz" spellcheck="false">
     <div class="cins" id="cins" role="group" aria-label="Cinsiyet">
-      <button type="button" data-g="e" aria-pressed="false" style="--c:#2563eb"><i style="background:#2563eb"></i>Erkek</button>
-      <button type="button" data-g="k" aria-pressed="false" style="--c:#db2777"><i style="background:#db2777"></i>Kadın</button>
-      <button type="button" data-g="b" aria-pressed="false" style="--c:#059669"><i style="background:#059669"></i>Belirtmek istemiyorum</button>
+      <button type="button" data-g="e" aria-pressed="false" style="--c:#2563eb"><img src="img/erkek.webp" alt="" width="28" height="28">Erkek</button>
+      <button type="button" data-g="k" aria-pressed="false" style="--c:#db2777"><img src="img/kadin.webp" alt="" width="28" height="28">Kadın</button>
+      <button type="button" data-g="b" aria-pressed="false" style="--c:#059669"><img src="img/belirtmeyen.webp" alt="" width="28" height="28">Belirtmek istemiyorum</button>
     </div>
     <p class="cins-not">Rumuzunun rengini belirler ve herkese görünür. İstersen belirtme; sonradan değiştirebilirsin.</p>
     <div class="err" id="nickErr" role="alert"></div>
@@ -575,7 +577,7 @@ footer a:hover{color:var(--ink)}
     <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
   </div>
 </div>
-<script src="motor.js?v=5" defer></script>
-<script src="sohbet.js?v=5" defer></script>
+<script src="motor.js?v=7" defer></script>
+<script src="sohbet.js?v=7" defer></script>
 </body>
 </html>
