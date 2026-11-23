@@ -81,7 +81,7 @@ label.ck input{height:auto}
     <section class="b">
       <h2>Sohbetteki rumuzun</h2>
       <div class="bar"><input id="mynick" maxlength="16" placeholder="ör. okutan" style="width:220px"><button class="btn btn-a" id="mybtn">Rumuzu al</button></div>
-      <p class="note" id="mynote">Bu tarayıcıdaki sohbet rumuzunu ayarlar. Ayrılmış adlar (okutan, admin…) yalnızca buradan alınır; rumuzun başında @ görünür (moderatör).</p>
+      <p class="note" id="mynote">Bu tarayıcıdaki sohbet rumuzunu ayarlar. Ayrılmış adlar (okutan, admin…) yalnızca buradan alınır; rumuzunun yanında YÖNETİCİ rozeti görünür.</p>
     </section>
 
     <section class="b">
@@ -271,7 +271,7 @@ label.ck input{height:auto}
         tr.appendChild(el('td', 'm', '#' + u.id));
         var tn = el('td'); tn.appendChild(el('b', null, u.nick || '(rumuzsuz)')); tn.appendChild(el('div', 'note', u.iph || '')); tr.appendChild(tn);
         var st = el('td');
-        if (u.op) st.appendChild(el('span', 'tag o', 'moderatör'));
+        if (u.op) st.appendChild(el('span', 'tag o', u.op === 2 ? 'yönetici' : 'moderatör'));
         if (u.muted) st.appendChild(el('span', 'tag f', 'susturulu · ' + fmt(u.muted)));
         if (u.banned) st.appendChild(el('span', 'tag r', 'yasaklı · ' + (u.banned > 4e9 ? 'süresiz' : fmt(u.banned))));
         tr.appendChild(st);
@@ -324,7 +324,7 @@ label.ck input{height:auto}
     if (!key) { $('mynote').textContent = 'Bu tarayıcıda sohbet anahtarı yok: önce /sohbet/ sayfasını bir kez aç, sonra buraya dön.'; return; }
     if (!n) return;
     api('admin_claim', { key: key, nick: n }).then(function (j) {
-      $('mynote').textContent = j.ok ? 'Tamam: sohbette artık @' + j.nick + ' olarak görünüyorsun (kişi #' + j.id + '). Sohbet sekmesini yenile.'
+      $('mynote').textContent = j.ok ? 'Tamam: sohbette artık ' + j.nick + ' (YÖNETİCİ rozetiyle) olarak görünüyorsun (kişi #' + j.id + '). Sohbet sekmesini yenile.'
         : j.error === 'bad_nick' ? 'Bu rumuz kullanılamaz: 2–16 karakter; harf, rakam, boşluk, nokta, alt çizgi, tire.'
         : j.error === 'bad_key' ? 'Sohbet anahtarı tanınmadı: /sohbet/ sayfasını açıp yenile, sonra tekrar dene.' : 'Olmadı: ' + j.error;
       if (j.ok) users();

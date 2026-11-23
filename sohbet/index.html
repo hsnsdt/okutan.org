@@ -70,6 +70,7 @@
         { "@type": "Question", "name": "Oyun masasına nasıl davet ederim?", "acceptedAnswer": { "@type": "Answer", "text": "Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur." } },
         { "@type": "Question", "name": "Mesajlar ne kadar saklanıyor?", "acceptedAnswer": { "@type": "Answer", "text": "Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır." } },
         { "@type": "Question", "name": "Rahatsız edici bir mesajı nasıl bildiririm?", "acceptedAnswer": { "@type": "Answer", "text": "Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır." } },
+        { "@type": "Question", "name": "Rumuz renkleri ne anlama geliyor?", "acceptedAnswer": { "@type": "Answer", "text": "Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür." } },
         { "@type": "Question", "name": "Eski mIRC görünümü var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır." } },
         { "@type": "Question", "name": "Telefonda çalışır mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez." } }
       ]
@@ -113,16 +114,16 @@ h1,h2,h3{font-family:var(--round)}
 @media (max-width:560px){.crumb{display:none}}
 
 /* ============ sohbet alanı ============ */
-.chat{--p-bg:#f6f7f9;--p-pane:#ffffff;--p-side:#eef1f5;--p-line:#dfe3ea;--p-line2:#9ea7b6;--p-ink:#1d2433;--p-mut:#7a8394;--p-hl:#fff4d6;--p-hl2:#ffb020;--p-sel:#2f6bff;
+.chat{--ge:#2563eb;--gk:#db2777;--gb:#059669;--mod:#16a34a;--adm:#ff5a1f;--p-bg:#f6f7f9;--p-pane:#ffffff;--p-side:#eef1f5;--p-line:#dfe3ea;--p-line2:#9ea7b6;--p-ink:#1d2433;--p-mut:#7a8394;--p-hl:#fff4d6;--p-hl2:#ffb020;--p-sel:#2f6bff;
   --n0:#d6336c;--n1:#2f6bff;--n2:#0f9d58;--n3:#c25400;--n4:#7b3fe4;--n5:#008b9c;--n6:#c2185b;--n7:#5c7c00;--n8:#b8441f;--n9:#3d5afe;
   padding:0;overflow:hidden;color:var(--p-ink);background:var(--p-bg);font-family:var(--round);
   display:grid;grid-template-columns:190px minmax(0,1fr) 200px;height:clamp(420px,calc(100svh - 96px),900px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chat{--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chat{--ge:#6ea8ff;--gk:#ff6fb5;--gb:#34d399;--mod:#22c55e;--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
   --n0:#ff7aa8;--n1:#7aa4ff;--n2:#4fd48b;--n3:#ffa45c;--n4:#b794ff;--n5:#4fd3e0;--n6:#ff8ac0;--n7:#b6dc4f;--n8:#ff9472;--n9:#8c9eff}}
-:root[data-theme="dark"] .chat{--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
+:root[data-theme="dark"] .chat{--ge:#6ea8ff;--gk:#ff6fb5;--gb:#34d399;--mod:#22c55e;--p-bg:#111215;--p-pane:#16181c;--p-side:#0d0e11;--p-line:#262a31;--p-line2:#4a5260;--p-ink:#e9edf3;--p-mut:#8a93a2;--p-hl:#3a2f12;--p-hl2:#ffb020;--p-sel:#5b8cff;
   --n0:#ff7aa8;--n1:#7aa4ff;--n2:#4fd48b;--n3:#ffa45c;--n4:#b794ff;--n5:#4fd3e0;--n6:#ff8ac0;--n7:#b6dc4f;--n8:#ff9472;--n9:#8c9eff}
-.chat .c0{color:var(--n0)}.chat .c1{color:var(--n1)}.chat .c2{color:var(--n2)}.chat .c3{color:var(--n3)}.chat .c4{color:var(--n4)}
-.chat .c5{color:var(--n5)}.chat .c6{color:var(--n6)}.chat .c7{color:var(--n7)}.chat .c8{color:var(--n8)}.chat .c9{color:var(--n9)}
+.chat .g-e{--g:var(--ge)}.chat .g-k{--g:var(--gk)}.chat .g-b{--g:var(--gb)}
+.chat .nk{color:var(--g,var(--p-ink))}
 .sh-side{background:var(--p-side);display:flex;flex-direction:column;min-height:0}
 .sh-side h2{font:800 11.5px var(--round);letter-spacing:.08em;text-transform:uppercase;color:var(--p-mut);padding:14px 16px 8px}
 .sh-kl{border-right:1px solid var(--p-line)}
@@ -149,24 +150,43 @@ h1,h2,h3{font-family:var(--round)}
 .ib[aria-pressed="true"]{color:var(--p-ink)}
 .sh-tabs{display:none}
 
-.sh-log{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:10px 0 6px;font-size:15px;line-height:1.5;overscroll-behavior:contain}
-.ln{position:relative;padding:2px 44px 2px 16px;word-wrap:break-word;overflow-wrap:anywhere}
-.ln:hover{background:color-mix(in srgb,var(--p-bg) 70%,transparent)}
-.ln time{font:700 12px var(--round);color:var(--p-mut);font-variant-numeric:tabular-nums;margin-right:8px;user-select:none}
+.sh-log{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:8px 0 8px;font-size:15px;line-height:1.45;overscroll-behavior:contain}
+/* mesaj: avatar + başlık (rumuz, rol, saat) + metin; aynı kişinin 5 dk içindeki mesajları gruplanır */
+.ln{position:relative;display:flex;gap:12px;padding:8px 44px 2px 14px;overflow-wrap:anywhere}
+.ln:hover{background:color-mix(in srgb,var(--p-bg) 75%,transparent)}
+.ln.grp{padding-top:1px}
+.av{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--g);color:#fff;font:900 15px/1 var(--round);margin-top:2px;user-select:none}
+.av.op{box-shadow:0 0 0 2px var(--p-pane),0 0 0 4px var(--mod)}
+.av.op2{box-shadow:0 0 0 2px var(--p-pane),0 0 0 4px var(--adm)}
+.ln.grp .av{visibility:hidden;height:0;margin:0}
+.ln .gt{display:none;position:absolute;left:8px;top:4px;width:46px;text-align:center;font:700 10.5px var(--round);color:var(--p-mut);font-variant-numeric:tabular-nums}
+.ln.grp:hover .gt{display:block}
+.bd{flex:1;min-width:0}
+.hd{display:flex;align-items:center;gap:7px;line-height:1.25;margin-bottom:2px;flex-wrap:wrap}
+.hd .nk{order:1}.hd .rol{order:2}.hd time{order:3}
+.ln.grp .hd{display:none}
+.ln time{font:700 11.5px var(--round);color:var(--p-mut);font-variant-numeric:tabular-nums;user-select:none}
 .ln .nk{font-weight:900;cursor:pointer}
 .ln .nk:hover{text-decoration:underline}
-.ln.e{font-style:italic}
-.ln.e .nk::before{content:"* ";font-style:normal}
-.ln.s,.ln.j{color:var(--p-mut);font-size:13.5px}
-.ln.j{padding-top:0;padding-bottom:0}
-.ln.s .tx::before{content:"*** ";font-weight:900}
-.ln.a{margin:6px 12px;padding:8px 12px 8px 14px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,var(--p-pane));border-left:4px solid var(--accent)}
-.ln.a .nk{color:var(--accent)}
-.ln.hl{background:var(--p-hl);box-shadow:inset 3px 0 0 var(--p-hl2)}
-.ln.err{color:#d23}
-.ln .op{color:var(--p-mut);font-weight:900}
+.opx{display:none}
+.rol{display:inline-flex;align-items:center;gap:3px;font:900 9.5px/1 var(--round);letter-spacing:.05em;color:#fff;background:var(--mod);border-radius:5px;padding:3px 6px 3px 4px}
+.rol svg{width:10px;height:10px;fill:currentColor}
+.rol.adm{background:var(--adm)}
+.ln.e .bd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-style:italic}
+.ln.e .bd time{order:2;font-style:normal}
+.ln.e .av{transform:scale(.72);margin-top:-4px;margin-bottom:-6px}
+.ln.e .tx .nk::before{content:"* ";font-style:normal}
+.ln.s,.ln.j{justify-content:center;padding:3px 16px;color:var(--p-mut);font-size:13px}
+.ln.s .tx,.ln.j .tx{background:var(--p-bg);border-radius:999px;padding:2px 12px;text-align:center}
+.ln.s time,.ln.j time{display:none}
+.ln.err .tx{color:#d23}
+.ln.a{margin:8px 12px;padding:10px 44px 10px 12px;border-radius:14px;background:color-mix(in srgb,var(--adm) 9%,var(--p-pane));border:1px solid color-mix(in srgb,var(--adm) 30%,transparent)}
+.ln.a .av{background:var(--adm)}
+.ln.a .hd .nk{color:var(--adm)}
+.ln.hl{background:color-mix(in srgb,var(--p-hl2) 13%,transparent);box-shadow:inset 3px 0 0 var(--p-hl2)}
 .ln .tx a{color:var(--p-sel);text-decoration:underline;text-underline-offset:2px}
-.ln .lm{position:absolute;right:8px;top:2px;width:28px;height:24px;border-radius:8px;border:0;background:var(--p-bg);color:var(--p-mut);cursor:pointer;opacity:0;font:900 15px/1 var(--round)}
+.ln .lm{position:absolute;right:8px;top:6px;width:28px;height:24px;border-radius:8px;border:0;background:var(--p-bg);color:var(--p-mut);cursor:pointer;opacity:0;font:900 15px/1 var(--round)}
+.ln.grp .lm{top:0}
 .ln:hover .lm,.ln .lm:focus-visible,.ln.menu .lm{opacity:1}
 @media (hover:none){.ln .lm{opacity:.55}}
 .davet{display:flex;align-items:center;gap:12px;max-width:380px;margin:6px 0 4px;padding:10px 12px;border-radius:14px;border:1.5px solid var(--p-line);background:var(--p-bg);font-style:normal;text-decoration:none!important;color:var(--p-ink)!important}
@@ -192,9 +212,12 @@ h1,h2,h3{font-family:var(--round)}
 
 .sh-ul{border-left:1px solid var(--p-line)}
 .sh-ul ul{list-style:none;overflow:auto;padding:0 8px 12px;display:flex;flex-direction:column;gap:1px}
-.sh-ul li{display:flex;align-items:center;gap:6px;height:30px;padding:0 8px;border-radius:8px;font:800 14px var(--round);cursor:pointer;white-space:nowrap;overflow:hidden}
+.sh-ul h3{font:900 11px var(--round);letter-spacing:.07em;text-transform:uppercase;color:var(--p-mut);padding:10px 8px 4px}
+.sh-ul li{display:flex;align-items:center;gap:8px;height:36px;padding:0 8px;border-radius:9px;font:800 14px var(--round);cursor:pointer;white-space:nowrap;overflow:hidden}
+.sh-ul li .av{width:26px;height:26px;font-size:11.5px;margin:0}
+.sh-ul li .av.op,.sh-ul li .av.op2{box-shadow:0 0 0 2px var(--p-side),0 0 0 3.5px var(--mod)}.sh-ul li .av.op2{box-shadow:0 0 0 2px var(--p-side),0 0 0 3.5px var(--adm)}
+.sh-ul li .nm{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .sh-ul li:hover{background:var(--p-pane)}
-.sh-ul li .o{color:var(--p-mut);width:10px;flex:none}
 .sh-ul li.aw{opacity:.5}
 .sh-ul li.aw::after{content:"uzakta";margin-left:auto;font:700 11px var(--round);color:var(--p-mut)}
 .sh-ul li.me{font-weight:900}
@@ -230,12 +253,21 @@ h1,h2,h3{font-family:var(--round)}
   --n0:#fc0000;--n1:#009300;--n2:#fc7f00;--n3:#fcfc00;--n4:#00fc00;--n5:#009393;--n6:#00ffff;--n7:#0000fc;--n8:#ff00ff;--n9:#9c009c;border-radius:6px}
 .chat.klasik .sh-main,.chat.klasik .sh-side{border-radius:0}
 .chat.klasik .sh-log{line-height:1.35}
-.chat.klasik .ln{padding-top:0;padding-bottom:0}
-.chat.klasik .ln time{color:#7f7f7f}.chat.klasik .ln time::before{content:"["}.chat.klasik .ln time::after{content:"]"}
-.chat.klasik .ln.s,.chat.klasik .ln.j{color:#009300}
-.chat.klasik .ln.e{font-style:normal;color:#9c009c}.chat.klasik .ln.e .nk{color:#9c009c}
-.chat.klasik .ln.hl{background:none;box-shadow:none;color:#fc0000}
-.chat.klasik .ln.a{border-radius:0;background:none;border-left:3px solid #fc7f00;margin:4px 0}
+.chat.klasik{--ge:#4f8cff;--gk:#ff4fd8;--gb:#00c8c8;--mod:#00b000;--adm:#fc7f00}
+.chat.klasik .ln{display:block;padding:0 40px 0 16px}
+.chat.klasik .av,.chat.klasik .gt,.chat.klasik .rol{display:none}
+.chat.klasik .bd,.chat.klasik .hd,.chat.klasik .tx,.chat.klasik .ln.grp .hd,.chat.klasik .ln.e .bd{display:inline}
+.chat.klasik .ln time{color:#7f7f7f;margin-right:6px}.chat.klasik .ln time::before{content:"["}.chat.klasik .ln time::after{content:"]"}
+.chat.klasik .hd .nk::before{content:"<"}.chat.klasik .hd .nk::after{content:">"}.chat.klasik .hd{margin-right:6px}
+.chat.klasik .opx{display:inline}
+.chat.klasik .ln.s,.chat.klasik .ln.j{color:#009300;font-size:inherit}
+.chat.klasik .ln.s .tx,.chat.klasik .ln.j .tx{background:none;padding:0;border-radius:0}
+.chat.klasik .ln.s time,.chat.klasik .ln.j time{display:inline}
+.chat.klasik .ln.s .tx::before{content:"*** "}
+.chat.klasik .ln.e .bd{font-style:normal;color:#9c009c}.chat.klasik .ln.e .tx .nk{color:#9c009c}.chat.klasik .ln.e .tx .nk::before{content:"* "}
+.chat.klasik .ln.hl{background:none;box-shadow:none}.chat.klasik .ln.hl .tx{color:#fc0000}
+.chat.klasik .ln.a{border-radius:0;background:none;border:0;border-left:3px solid #fc7f00;margin:4px 0;padding:0 40px 0 13px}
+.chat.klasik .sh-ul li .av{display:flex;width:8px;height:8px;font-size:0;border-radius:50%;box-shadow:none!important}
 .chat.klasik .sh-kl nav button,.chat.klasik .sh-tabs button,.chat.klasik .sh-form input,.chat.klasik .sh-form .nb,.chat.klasik .sh-form .send,.chat.klasik .ib,.chat.klasik .davet{border-radius:3px}
 .chat.klasik .sh-kl nav button[aria-current="true"],.chat.klasik .sh-tabs button[aria-current="true"]{background:#00007f;border-color:#00007f}
 .chat.klasik .sh-form .send{background:#00007f}
@@ -266,6 +298,11 @@ h1,h2,h3{font-family:var(--round)}
 .mclose{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
 .mcard input{width:100%;height:48px;margin:14px 0 6px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font:800 17px var(--round);outline:none}
 .mcard input:focus{border-color:var(--c2)}
+.cins{display:flex;gap:6px;margin:2px 0 4px}
+.cins button{flex:1;min-width:0;min-height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font:800 13.5px/1.15 var(--round);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;padding:4px 6px;color:var(--ink)}
+.cins button i{width:10px;height:10px;border-radius:50%;flex:none}
+.cins button[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--block));color:var(--c)}
+.cins-not{font-size:13px!important;margin-bottom:4px}
 .mcard .err{color:#d23;font-size:14px;min-height:21px;font-weight:700}
 .mcard ul{margin:10px 0 0 18px;color:var(--muted);font-size:14px;display:grid;gap:4px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:46px;padding:0 16px;border-radius:12px;font:800 15px var(--round);border:0;cursor:pointer}
@@ -440,7 +477,7 @@ footer a:hover{color:var(--ink)}
           <li>Reklam ve sel (aynı mesajı tekrar tekrar yazmak) yasak. Başka sitelerin bağlantıları kaldırılır; okutan.org bağlantıları ve oyun davetleri serbest.</li>
           <li>Başkasının yerine geçme; yönetici ya da moderatör gibi davranma.</li>
           <li>Kuralları çiğneyenler <b>susturulur</b> ya da sohbetten <b>çıkarılır</b>. Rahatsız edici mesajı ⋯ menüsünden şikâyet et.</li>
-          <li>Moderatörlerin rumuzunun başında <b>@</b> görünür.</li>
+          <li>Moderatörlerin yanında yeşil <b>MOD</b>, yöneticinin yanında turuncu <b>YÖNETİCİ</b> rozeti görünür (klasik görünümde rumuzun başında <b>@</b>).</li>
         </ul>
       </div>
     </div>
@@ -451,6 +488,7 @@ footer a:hover{color:var(--ink)}
         <li><b>Mesajlar 30 gün</b> saklanır, sonra kendiliğinden silinir. Kanalda son 100 mesaj görünür.</li>
         <li><b>Bağlantı kayıtları:</b> yasal yükümlülükler için hangi rumuz numarasının hangi IP adresi, bağlantı noktası ve zamanda mesaj gönderdiği iki yıl saklanır. Bu kayıtlarda mesaj metni yoktur; yalnızca yetkili makamların talebiyle paylaşılır.</li>
         <li>Kötüye kullanımı önlemek için IP adresinin geri döndürülemez bir özeti (hash) tutulur.</li>
+        <li><b>Cinsiyet isteğe bağlıdır.</b> Seçersen rumuzunun renginden herkes görür (mavi erkek, pembe kadın, yeşil belirtmeyen); "Belirtmek istemiyorum" seçebilir, istediğin zaman değiştirebilirsin.</li>
         <li>Mesajların herkese açıktır; özel mesaj yoktur. Silinmesini istediğin bir mesaj için <a href="mailto:sedat@okutan.org" style="text-decoration:underline">sedat@okutan.org</a> adresine yaz.</li>
       </ul>
     </div>
@@ -462,6 +500,7 @@ footer a:hover{color:var(--ink)}
       <details><summary>Oyun masasına nasıl davet ederim?</summary><p>Okey, 101 Okey, Tavla, Batak, King, Pişti ya da Ateş ve Su'da online masa kurup davet bağlantısını sohbete yapıştır. Bağlantı, oyunun adı ve masa koduyla bir davet kartına dönüşür; tıklayan doğrudan masaya oturur.</p></details>
       <details><summary>Mesajlar ne kadar saklanıyor?</summary><p>Kanalda son 100 mesaj görünür. Mesajlar 30 gün saklanıp silinir. Yasal yükümlülükler için yalnızca bağlantı kayıtları (rumuz numarası, IP adresi, bağlantı noktası ve zaman; mesaj metni olmadan) iki yıl tutulur ve yalnızca yetkili makamların talebiyle paylaşılır.</p></details>
       <details><summary>Rahatsız edici bir mesajı nasıl bildiririm?</summary><p>Mesajın üstüne gelip (telefonda dokunup) Şikâyet et'i seç. Farklı kişilerden şikâyet alan mesaj kendiliğinden gizlenir ve yönetici inceler. Kuralları çiğneyenler susturulur ya da sohbetten çıkarılır.</p></details>
+      <details><summary>Rumuz renkleri ne anlama geliyor?</summary><p>Rumuz ve avatar rengi, girişte isteğe bağlı seçilen cinsiyeti gösterir: mavi erkek, pembe kadın, yeşil belirtmek istemeyen. Seçim zorunlu değildir; rumuz penceresinden istediğin zaman değiştirebilirsin. Moderatörlerin yanında yeşil MOD, yöneticinin yanında turuncu YÖNETİCİ rozeti görünür.</p></details>
       <details><summary>Eski mIRC görünümü var mı?</summary><p>Var. Sağ üstteki ayarlar düğmesinden Klasik mIRC görünümünü seç: siyah zemin, köşeli kutular, köşeli parantezli saatler ve mIRC renkleriyle rumuzlar. Aynı yerden yazı boyutunu, saatleri, katıldı/ayrıldı satırlarını, sesi ve masaüstü bildirimini ayarlarsın; seçimlerin bu tarayıcıda saklanır.</p></details>
       <details><summary>Telefonda çalışır mı?</summary><p>Evet. Kanallar üstte sekme olarak, kişi listesi sağ üstteki düğmeyle açılır. Sohbet ana ekrana uygulama gibi eklenebilir. İndirme ya da kurulum gerekmez.</p></details>
     </div>
@@ -480,6 +519,12 @@ footer a:hover{color:var(--ink)}
     <h2 id="nickTitle">Rumuzunu seç</h2>
     <p>Üyelik yok. Rumuzun bu tarayıcıya ayrılır; başkası alamaz.</p>
     <input id="nickInp" maxlength="16" autocomplete="nickname" placeholder="ör. Kahveci" aria-label="Rumuz" spellcheck="false">
+    <div class="cins" id="cins" role="group" aria-label="Cinsiyet">
+      <button type="button" data-g="e" aria-pressed="false" style="--c:#2563eb"><i style="background:#2563eb"></i>Erkek</button>
+      <button type="button" data-g="k" aria-pressed="false" style="--c:#db2777"><i style="background:#db2777"></i>Kadın</button>
+      <button type="button" data-g="b" aria-pressed="false" style="--c:#059669"><i style="background:#059669"></i>Belirtmek istemiyorum</button>
+    </div>
+    <p class="cins-not">Rumuzunun rengini belirler ve herkese görünür. İstersen belirtme; sonradan değiştirebilirsin.</p>
     <div class="err" id="nickErr" role="alert"></div>
     <ul>
       <li>Küfür, hakaret ve reklam yok; kişisel bilgilerini paylaşma.</li>
@@ -530,7 +575,7 @@ footer a:hover{color:var(--ink)}
     <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
   </div>
 </div>
-<script src="motor.js?v=3" defer></script>
-<script src="sohbet.js?v=3" defer></script>
+<script src="motor.js?v=5" defer></script>
+<script src="sohbet.js?v=5" defer></script>
 </body>
 </html>

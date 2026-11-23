@@ -151,7 +151,7 @@ test('yönetici kendi rumuzunu alır: ayrılmış ad serbest, op olur; başkası
   const j = await post('admin_claim', { t, key: a.key, nick: 'okutan' });
   assert.equal(j.nick, 'okutan');
   const p = await post('poll', { key: a.key, ch: 'genel', after: 0 });
-  assert.equal(p.me.nick, 'okutan'); assert.equal(p.me.op, true);
+  assert.equal(p.me.nick, 'okutan'); assert.equal(p.me.op, 2);
   assert.equal((await post('nick', { key: b.key, nick: 'Okutan' })).error, 'bad_nick');
 });
 
@@ -212,4 +212,28 @@ test('yönetimden eklenen yasaklı kelime mesajda yıldızlanır, rumuzda redded
   const z = await kisi();
   assert.equal((await post('nick', { key: z.key, nick: w.slice(0, 16) })).error, 'bad_nick');
   assert.ok(!(await post('admin_words', { t, del: w })).words.includes(w));
+});
+
+test('cinsiyet: rumuzla seçilir, mesajda ve kişi listesinde gelir, sonradan değişir, geçersiz yok sayılır', async () => {
+  const h = await post('hello', {});
+  const n = await post('nick', { key: h.key, nick: 'Renkli' + RUN, g: 'k' });
+  assert.equal(n.g, 'k');
+  const s = await post('say', { key: h.key, ch: 'tavla', text: 'renk denemesi' });
+  let p = await post('poll', { key: h.key, ch: 'tavla', after: s.id - 1, users: 1 });
+  assert.equal(p.me.g, 'k'); assert.equal(p.msgs[0].g, 'k');
+  assert.equal(p.users.find((u) => u.nick === 'Renkli' + RUN).g, 'k');
+  assert.equal((await post('nick', { key: h.key, nick: 'Renkli' + RUN, g: 'e' })).g, 'e', 'aynı rumuzla yalnızca cinsiyet değişir');
+  p = await post('poll', { key: h.key, ch: 'tavla', after: s.id - 1 });
+  assert.equal(p.msgs[0].g, 'e', 'eski mesajın rengi de güncel');
+  assert.equal((await post('nick', { key: h.key, nick: 'Renkli' + RUN, g: 'z' })).g, 'e');
+  assert.equal(typeof p.me.op, 'number');
+});
+
+test('yönetici rumuzu op = 2 olur', async () => {
+  const t = await adminTok(), a = await kisi();
+  await post('admin_claim', { t, key: a.key, nick: 'Yonetici' + RUN });
+  const p = await post('poll', { key: a.key, ch: 'genel', after: 0 });
+  assert.equal(p.me.op, 2);
+  const n = await post('nick', { key: a.key, nick: 'Yonetici' + RUN, g: 'k' });
+  assert.equal(n.ok, true, 'ayrılmış rumuzla da cinsiyet değişir'); assert.equal(n.g, 'k');
 });

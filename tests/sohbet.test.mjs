@@ -101,3 +101,10 @@ test('oyun → kanal eşlemesi, ortak sohbet modülüyle aynı', async () => {
   const map = JSON.parse(m[1].replace(/'/g, '"'));
   for (const k of Object.keys(M.OYUNLAR)) assert.equal(map[k], M.kanalOyun(k), k);
 });
+
+test('cinsiyet rengi, avatar harfi, rol', () => {
+  assert.equal(M.gSinif('e'), 'g-e'); assert.equal(M.gSinif('k'), 'g-k');
+  assert.equal(M.gSinif('b'), 'g-b'); assert.equal(M.gSinif(null), 'g-b'); assert.equal(M.gSinif('x'), 'g-b');
+  assert.equal(M.basHarf('ismail'), 'İ'); assert.equal(M.basHarf('ışık'), 'I'); assert.equal(M.basHarf('çağrı'), 'Ç'); assert.equal(M.basHarf('34lü'), '3');
+  assert.equal(M.rolAdi(2), 'YÖNETİCİ'); assert.equal(M.rolAdi(1), 'MOD'); assert.equal(M.rolAdi(0), '');
+});

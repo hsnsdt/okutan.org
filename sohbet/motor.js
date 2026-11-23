@@ -41,6 +41,14 @@
   function fnv1a(s) { var h = 0x811c9dc5; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h; }
   function renk(nick) { return fnv1a(trKucuk(nick)) % 10; }
 
+  // Cinsiyete göre rumuz rengi: e erkek (mavi), k kadın (pembe), b ya da seçilmemiş (yeşil). CSS: .g-e .g-k .g-b
+  function gSinif(g) { return 'g-' + (g === 'e' || g === 'k' ? g : 'b'); }
+  var CINSIYET = { e: 'Erkek', k: 'Kadın', b: 'Belirtmek istemiyorum' };
+  // Avatar harfi: rumuzun ilk harfi ya da rakamı, Türkçe büyük harf (i → İ)
+  function basHarf(nick) { var c = Array.from(String(nick || '?').trim())[0] || '?'; return c.toLocaleUpperCase('tr-TR'); }
+  // Rol: op 1 moderatör, 2 yönetici
+  function rolAdi(op) { return op === 2 ? 'YÖNETİCİ' : op ? 'MOD' : ''; }
+
   function kanalBul(s) {
     s = trKucuk(String(s || '').trim()).replace(/^#/, '');
     return KANAL_ID[s] ? s : null;
@@ -170,5 +178,6 @@
 
   return { KANALLAR: KANALLAR, OYUNLAR: OYUNLAR, MAKS_MESAJ: MAKS_MESAJ, trKucuk: trKucuk, rumuzDuzelt: rumuzDuzelt, rumuzGecerli: rumuzGecerli,
     renk: renk, fnv1a: fnv1a, kanalBul: kanalBul, komut: komut, bahsediyor: bahsediyor, parcala: parcala, farklar: farklar, tamamla: tamamla, hataMetni: hataMetni,
-    gunAnahtari: gunAnahtari, gunEtiketi: gunEtiketi, EMOJILER: EMOJILER, kanalOyun: kanalOyun };
+    gunAnahtari: gunAnahtari, gunEtiketi: gunEtiketi, EMOJILER: EMOJILER, kanalOyun: kanalOyun,
+    gSinif: gSinif, CINSIYET: CINSIYET, basHarf: basHarf, rolAdi: rolAdi };
 });
