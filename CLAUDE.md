@@ -31,6 +31,7 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - Günlük modlarda tohum: FNV-1a(`'okey-'`/`'duz-okey-'`/`'batak-'`/`'king-'`/`'pisti-'`/`'balon-'` + gün), JS ve PHP'de aynı.
 
 ## Sık yapılan hatalar
+- **Önbellek katmanları (sayaç/analitik gibi herkese hemen ulaşması gereken değişiklikte önce düşün):** tarayıcı (`.htaccess` mod_expires: JS 1 gün, HTML 10 dk), oyunların service worker'ı (aynı kökenli dosyaları önce önbellekten verir) ve Kelime Bulucu sayfalarının LiteSpeed önbelleği (1 gün; temizlemek için cPanel → LiteSpeed Web Cache Manager → Flush All). Google Tag Manager ortak `assets/oyunlar.js` içinde; bu dosya `no-cache` ile verilir (`.htaccess` FilesMatch), sayfalar `?v=N` ile çağırır. Dosyanın ilk yüklenişi değişirse `?v` artırılır.
 - **Sürüm numarası:** JS değişince `index.html` içindeki `?v=N` ve o oyunun `sw.js` içindeki `CACHE` adı ile `CORE` listesi birlikte artırılır. Yoksa tarayıcı ve service worker eski dosyayı verir (yerel testte de).
 - Python ile dosya düzenlerken `'\b'` gibi kaçışlar gerçek kontrol karakterine dönüşür (bir kez regex'i bozdu). Ters bölülü metinde `chr(92)` kullan ya da Edit aracıyla düzenle; sonra `grep -c $'\x08'` ile kontrol et.
 - Sahnedeki öğelere `top`, `bot` gibi genel sınıf adları verme; sayfa başlığının `.top` kuralıyla çakışır.

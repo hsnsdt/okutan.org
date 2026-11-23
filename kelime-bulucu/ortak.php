@@ -149,7 +149,7 @@ function sayfa_bas(array $o): void {
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<script src="/assets/oyunlar.js" defer></script>
+<script src="/assets/oyunlar.js?v=2" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title><?= h($o['baslik']) ?></title>
 <?php if ($can): ?>
