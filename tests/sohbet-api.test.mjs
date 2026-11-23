@@ -140,3 +140,17 @@ test('yönetim: kanal konusu ve yavaş mod, duyuru', async () => {
   assert.ok(d); assert.equal(d.k, 'a'); assert.equal(d.n, 'Sedat Okutan');
   await post('admin_chan', { t, ch: 'kelime', slow: 0, topic: '' });
 });
+
+test('yönetici kendi rumuzunu alır: ayrılmış ad serbest, op olur; başkası alamaz', async () => {
+  const t = await adminTok();
+  const a = await kisi(), b = await kisi();
+  assert.equal((await post('nick', { key: b.key, nick: 'okutan' + RUN })).error, 'bad_nick');
+  assert.equal((await post('admin_claim', { t: 'yanlis', key: a.key, nick: 'okutan' })).error, 'unauthorized');
+  assert.equal((await post('admin_claim', { t, key: 'f'.repeat(32), nick: 'okutan' })).error, 'bad_key');
+  assert.equal((await post('admin_claim', { t, key: a.key, nick: 'amk' + RUN })).error, 'bad_nick');
+  const j = await post('admin_claim', { t, key: a.key, nick: 'okutan' });
+  assert.equal(j.nick, 'okutan');
+  const p = await post('poll', { key: a.key, ch: 'genel', after: 0 });
+  assert.equal(p.me.nick, 'okutan'); assert.equal(p.me.op, true);
+  assert.equal((await post('nick', { key: b.key, nick: 'Okutan' })).error, 'bad_nick');
+});

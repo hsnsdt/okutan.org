@@ -11,6 +11,7 @@
 // Yönetim (config.php: admin_pass; 12 saatlik imzalı jeton):
 //   POST ?a=admin_login {pass} · admin_stats · admin_feed · admin_users · admin_del · admin_mute · admin_ban · admin_ipban
 //        admin_op · admin_chan · admin_notice · admin_log
+//        admin_claim {t, key, nick} → yöneticinin kendi rumuzu (ayrılmış adlar serbest, op olur)
 //
 // Tablolar (sh_*), ilk istekte kendiliğinden oluşur:
 //   sh_users     kişi başına bir satır (rumuz, op, susturma/yasak)
@@ -100,13 +101,14 @@ function flat(string $s): string {
     $f = lc((string)preg_replace('/[^\p{L}\p{N}]/u', '', $s));
     return strtr($f, ['0' => 'o', '1' => 'i', '3' => 'e', '4' => 'a', '5' => 's', 'ı' => 'i', 'ş' => 's', 'ç' => 'c', 'ğ' => 'g', 'ö' => 'o', 'ü' => 'u']);
 }
-function clean_nick($raw): ?string {
+// $reserved = false: yalnızca yönetici kendi rumuzunu alırken (admin_claim) ayrılmış adlar serbest
+function clean_nick($raw, bool $reserved = true): ?string {
     if (!is_string($raw)) return null;
     $n = (string)preg_replace('/\s+/u', ' ', trim($raw));
     $len = mb_strlen($n, 'UTF-8');
     if ($len < 2 || $len > 16 || !preg_match('/^[\p{L}\p{N}][\p{L}\p{N} ._\-]*$/u', $n)) return null;
     $f = flat($n);
-    foreach (array_merge(BAD_WORDS, RESERVED) as $w) if (str_contains($f, flat($w))) return null;
+    foreach ($reserved ? array_merge(BAD_WORDS, RESERVED) : BAD_WORDS as $w) if (str_contains($f, flat($w))) return null;
     return $n;
 }
 // Mesaj metni: denetim karakterleri atılır, boşluk sadeleşir, 300 karakter; küfür *** olur; okutan.org dışındaki bağlantılar kaldırılır
@@ -299,6 +301,19 @@ try {
             $chs = ($in['ch'] ?? '') === '*' ? KANALLAR : [chan($in['ch'] ?? '')];
             foreach ($chs as $c) sys_msg($db, $c, $text, $admin, 'a');
             out(['ok' => true]);
+        }
+        if ($a === 'admin_claim') {
+            // yöneticinin kendi sohbet rumuzu: yönetim sayfası aynı tarayıcıdaki sohbet anahtarını gönderir;
+            // ayrılmış adlar (okutan, admin…) yalnızca böyle alınır, kişi moderatör olur
+            $u = user_by_key($db, $in['key'] ?? null);
+            $nick = clean_nick($in['nick'] ?? null, false); if ($nick === null) fail('bad_nick');
+            $lc = lc($nick);
+            $other = q($db, 'SELECT id FROM sh_users WHERE nick_lc = ? AND id <> ?', [$lc, $u['id']])->fetch();
+            if ($other) q($db, 'UPDATE sh_users SET nick = NULL, nick_lc = NULL WHERE id = ?', [$other['id']]);
+            q($db, 'UPDATE sh_users SET nick = ?, nick_lc = ?, nick_at = ?, op = 1, banned_until = NULL, muted_until = NULL WHERE id = ?', [$nick, $lc, now(), $u['id']]);
+            q($db, 'UPDATE sh_presence SET nick = ?, op = 1 WHERE user_id = ?', [$nick, $u['id']]);
+            $u['nick'] = $nick; log_ev($db, $u, 'nick');
+            out(['ok' => true, 'nick' => $nick, 'id' => (int)$u['id']]);
         }
         if ($a === 'admin_log') {
             // yasal kayıt sorgusu: kişi numarasına ya da IP'ye göre (mesaj metni burada yok)

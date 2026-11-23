@@ -79,6 +79,12 @@ label.ck input{height:auto}
     <section class="b"><div class="kpis" id="kpis"></div><div class="note" id="sizes"></div></section>
 
     <section class="b">
+      <h2>Sohbetteki rumuzun</h2>
+      <div class="bar"><input id="mynick" maxlength="16" placeholder="ör. okutan" style="width:220px"><button class="btn btn-a" id="mybtn">Rumuzu al</button></div>
+      <p class="note" id="mynote">Bu tarayıcıdaki sohbet rumuzunu ayarlar. Ayrılmış adlar (okutan, admin…) yalnızca buradan alınır; rumuzun başında @ görünür (moderatör).</p>
+    </section>
+
+    <section class="b">
       <h2>Mesajlar</h2>
       <div class="bar">
         <div class="tabs" role="tablist">
@@ -291,6 +297,21 @@ label.ck input{height:auto}
     }).catch(function () {});
   }
   $('lbtn').onclick = logq;
+
+  // kendi rumuzun: sohbet sayfası aynı sitede; anahtarı bu tarayıcının localStorage'ından okunur
+  $('mybtn').onclick = function () {
+    var key = null; try { key = localStorage.getItem('sh_key'); } catch (e) {}
+    var n = $('mynick').value.trim();
+    if (!key) { $('mynote').textContent = 'Bu tarayıcıda sohbet anahtarı yok: önce /sohbet/ sayfasını bir kez aç, sonra buraya dön.'; return; }
+    if (!n) return;
+    api('admin_claim', { key: key, nick: n }).then(function (j) {
+      $('mynote').textContent = j.ok ? 'Tamam: sohbette artık @' + j.nick + ' olarak görünüyorsun (kişi #' + j.id + '). Sohbet sekmesini yenile.'
+        : j.error === 'bad_nick' ? 'Bu rumuz kullanılamaz: 2–16 karakter; harf, rakam, boşluk, nokta, alt çizgi, tire.'
+        : j.error === 'bad_key' ? 'Sohbet anahtarı tanınmadı: /sohbet/ sayfasını açıp yenile, sonra tekrar dene.' : 'Olmadı: ' + j.error;
+      if (j.ok) users();
+    }).catch(function () {});
+  };
+  try { var cur = localStorage.getItem('sh_nick'); if (cur) $('mynick').value = cur; } catch (e) {}
   document.addEventListener('click', function (e) { var p = document.querySelector('.pop'); if (p && !p.contains(e.target) && !e.target.closest('.btn')) p.remove(); });
 
   if (tok) start();
