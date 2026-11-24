@@ -140,18 +140,9 @@
     if (!c) { d.className = 'card back' + (cls ? ' ' + cls : ''); return d; }
     d.className = 'card' + (isRed(c.s) ? ' red' : '') + (cls ? ' ' + cls : '');
     d.dataset.id = c.id;
-    var lb = RANK_LB[c.r] || String(c.r), art;
-    if (c.r >= 11 && c.r <= 13) {
-      // vale, kız, papaz: klasik İngiliz deseni (assets/kart-saray.webp; sütun renk S H D C, satır J Q K)
-      // klasik İngiliz deseni kartın kendisi (köşe harfleri, çerçeve, figür olduğu gibi)
-      d.className += ' court';
-      d.style.backgroundPosition = (['S', 'H', 'D', 'C'].indexOf(c.s) * 100 / 3) + '% ' + ((c.r - 11) * 50) + '%';
-      d.setAttribute('aria-label', cardName(c));
-      return d;
-    }
-    if (c.r === 14) art = '<span class="ring"></span>' + suitSVG(c.s, 'big ace');
-    else art = suitSVG(c.s, 'big');
-    d.innerHTML = '<span class="ix"><b' + (lb.length > 1 ? ' class="t"' : '') + '>' + lb + '</b>' + suitSVG(c.s) + '</span>' + art;
+    // kartın kendisi tek resimden (assets/kart-deste.webp; sütun 2..10 J Q K A, satır S H D C), olduğu gibi
+    d.className += ' im';
+    d.style.backgroundPosition = ((c.r - 2) * 100 / 12) + '% ' + (['S', 'H', 'D', 'C'].indexOf(c.s) * 100 / 3) + '%';
     d.setAttribute('aria-label', cardName(c));
     return d;
   }
