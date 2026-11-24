@@ -230,7 +230,7 @@
   function renderPlate(p) {
     var seat = seatAt(p), el = $('pl' + p), nm = names()[seat];
     var keep = el.querySelector('.say');
-    el.classList.toggle('turn', V.turn === seat && !V.over);
+    el.classList.toggle('turn', V.turn === seat && !V.over && !deal);
     var badge = '', bcls = '';
     if (V.phase === 'bid') {
       if (V.bids[seat] === 0) { badge = 'PAS'; bcls = 'pas'; }
@@ -238,12 +238,13 @@
       else if (seat === V.dealer) { badge = 'DAĞITAN'; bcls = 'dl'; }
     } else if (seat === V.bidder) badge = 'İHALE ' + V.bid + (V.trump ? ' ' + suitSVG(V.trump) : '');
     var line;
-    if (V.phase === 'bid' || V.phase === 'trump') line = V.counts[seat] + ' kart';
+    var cnt = deal ? deal.n[seat] : V.counts[seat];
+    if (V.phase === 'bid' || V.phase === 'trump') line = cnt + ' kart';
     else line = (seat === V.bidder ? V.tricks[seat] + '/' + V.bid : V.tricks[seat]) + ' el';
     if (game.mode !== 'daily') line += ' · <i>' + fmt(game.scores[seat]) + ' puan</i>';
     var lvl = game.levels && game.levels[seat] ? ' · ' + LEVEL_TR[game.levels[seat]] : '';
     var fan = '';
-    if (p !== 0) { var n = Math.min(13, V.counts[seat]); for (var i = 0; i < n; i++) fan += '<i></i>'; }
+    if (p !== 0) { var n = Math.min(13, V.counts[seat]); for (var i = 0; i < n; i++) fan += deal && i >= deal.n[seat] ? '<i class="dh"></i>' : '<i></i>'; }
     el.innerHTML = '<div class="av"><div class="ring"></div>' + avatarSVG(seat) + (badge ? '<span class="badge ' + bcls + '">' + badge + '</span>' : '') + '</div>' +
       '<div class="np"><b>' + esc(nm) + '</b><small>' + line + esc(lvl) + '</small></div><div class="fan">' + fan + '</div>';
     // balon aynı öğe olarak kalır: kapanma zamanlayıcısı çalışmaya devam eder
@@ -276,6 +277,7 @@
     h.forEach(function (c, i) {
       if (i > 0) { x += sp; if (c.s !== h[i - 1].s) x += G; }
       var cls = (myPlay ? (ok[c.id] ? 'ok' : 'no') : '') + (sel === c.id ? ' sel' : '') + (hintMark && hintMark.a === 'play' && hintMark.id === c.id ? ' hintpulse' : '');
+      if (deal) cls += (deal.face ? '' : ' dn') + (i >= deal.n[me] ? ' dh' : '');
       var d = cardEl(c, cls);
       d.style.left = x + 'px';
       if (fresh) { d.classList.add('deal'); d.style.animationDelay = (i * 45) + 'ms'; d.style.setProperty('--dx', (W / 2 - x - CW / 2) + 'px'); }
@@ -307,6 +309,7 @@
   function renderHint() {
     var h = '';
     if (V.over || hold) h = '';
+    else if (deal) h = deal.face ? '' : 'Kartlar dağıtılıyor… (geçmek için dokun)';
     else if (!isMyTurn()) h = waitingText();
     else if (hintMark && hintMark.text) h = '💡 ' + hintMark.text;
     else if (V.phase === 'play') {
@@ -384,6 +387,72 @@
       return animDone(anim, 420 + i * 30).then(function () { g.remove(); });
     }));
   }
+  // ================= dağıtım =================
+  // Deste dağıtanın önünde durur; kartlar kapalı olarak dağıtanın sağından başlayıp birer birer gider (motorun dağıttığı sıra).
+  // Benim kartlarım kapalı iner, dağıtım bitince açılır. Tıklayınca ya da bir tuşa basınca atlanır; sayfa gizliyken hiç oynamaz.
+  var deal = null;
+  function boardXY(el) {
+    var B = $('board').getBoundingClientRect(), k = B.width / BW || 1, r = el.getBoundingClientRect();
+    return { x: (r.left - B.left + r.width / 2) / k, y: (r.top - B.top + r.height / 2) / k, w: r.width / k };
+  }
+  function dealTargets(seat) {
+    return seat === me ? $('hand').querySelectorAll('.card') : $('pl' + pos(seat)).querySelectorAll('.fan i');
+  }
+  function skipDeal() {
+    if (!deal || deal.skip) return;
+    deal.skip = true;
+    deal.anims.forEach(function (a) { try { a.finish(); } catch (e) {} });
+  }
+  async function playDeal(dealer, order) {
+    if (!V) return;
+    if (reduced()) { render(); return; }
+    var full = V.counts.slice(), D = deal = { n: [0, 0, 0, 0], face: false, skip: false, anims: [] };
+    var live = function () { if (document.hidden && deal === D) skipDeal(); return deal === D && !D.skip; };
+    render();
+    if (!order) {
+      order = []; var given = [0, 0, 0, 0], left = full.reduce(function (a, b) { return a + b; }, 0);
+      for (var k = 0; left > 0 && k < 400; k++) { var s = (dealer + 1 + k) % 4; if (given[s] < full[s]) { order.push(s); given[s]++; left--; } }
+    }
+    var dp = boardXY($('pl' + pos(dealer)).querySelector('.av')), cx = 550, cy = 300;
+    var dx0 = cx + (dp.x - cx) * 0.42, dy0 = cy + (dp.y - cy) * 0.42;
+    var deck = cardEl(null, 'deck'); deck.style.left = (dx0 - 40) + 'px'; deck.style.top = (dy0 - 57) + 'px';
+    $('board').appendChild(deck);
+    var spd = Math.min(1.25, Math.max(0.6, game ? game.speed : 1)), gap = 34 * spd, dur = 320 * spd, sent = [0, 0, 0, 0], flights = [];
+    sfx.deal(); await sleep(260 * spd);
+    for (var i = 0; i < order.length && live(); i++) {
+      var seat = order[i], idx = sent[seat]++, ts = dealTargets(seat), t = ts[Math.min(idx, ts.length - 1)];
+      if (!t) continue;
+      var to = boardXY(t), g = cardEl(null, 'dfly'), r0 = (Math.random() * 16 - 8);
+      g.style.left = (dx0 - 40) + 'px'; g.style.top = (dy0 - 57) + 'px';
+      $('board').appendChild(g);
+      var anim = g.animate([{ transform: 'translate(0,0) rotate(' + r0 + 'deg) scale(1)' },
+        { transform: 'translate(' + (to.x - dx0) + 'px,' + (to.y - dy0) + 'px) rotate(0deg) scale(' + (to.w / 80) + ')' }],
+        { duration: dur, easing: 'cubic-bezier(.3,.75,.4,1)', fill: 'forwards' });
+      D.anims.push(anim);
+      snap(0.1 + Math.random() * 0.06, 3600 + Math.random() * 1400);
+      flights.push(animDone(anim, dur).then(function (g, seat) { return function () {
+        g.remove(); if (deal !== D) return; D.n[seat]++;
+        if (!D.skip) { if (seat === me) renderHand(); else renderPlate(pos(seat)); }
+      }; }(g, seat)));
+      await sleep(gap);
+    }
+    if (D.skip) D.anims.forEach(function (a) { try { a.finish(); } catch (e) {} });
+    await Promise.all(flights);
+    deck.remove();
+    if (deal !== D) return;
+    D.n = full.slice(); render();
+    var cards = [].slice.call($('hand').querySelectorAll('.card'));
+    if (cards.length && !D.skip && !reduced()) {
+      await Promise.all(cards.map(function (e, i) { return animDone(e.animate([{ transform: 'scaleX(1)' }, { transform: 'scaleX(0)' }], { duration: 110, delay: i * 14, fill: 'forwards' }), 110 + i * 14); }));
+      if (deal !== D) return;
+      deal = null; render();
+      sfx.pick();
+      [].slice.call($('hand').querySelectorAll('.card')).forEach(function (e, i) { e.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 130, delay: i * 14, fill: 'backwards' }); });
+      await sleep(130 + cards.length * 14);
+    } else { deal = null; render(); }
+  }
+  $('board').addEventListener('pointerdown', function () { if (deal) skipDeal(); }, true);
+
   // Bir olayı göster: ses, balon, kart uçuşu, eli toplama. Yerel oyunda, masa sahibinde ve misafirde aynı.
   async function showEvent(ev, before) {
     var nm = names();
@@ -427,7 +496,7 @@
 
   // ================= hamle katmanı =================
   function isMyTurn(phase) {
-    if (!V || !game || V.over || busy || hold) return false;
+    if (!V || !game || V.over || busy || hold || deal) return false;
     if (V.turn !== me) return false;
     if (game.mode === 'online' && !game.online.isHost && game.pending) return false;
     return !phase || V.phase === phase;
@@ -590,12 +659,13 @@
     await showEvent(res.ev, null);
     if (g !== gen) throw new Error('stale');
   }
-  var advancing = false, advanceAgain = false;
+  var advancing = false, advanceAgain = false, dealing = null;
   async function advance() {
     if (advancing) { advanceAgain = true; return; }
     advancing = true;
     try {
       save();
+      if (dealing) { await dealing; dealing = null; }
       while (st && !st.over && game.levels && game.levels[st.turn]) {
         await botTurn(st.turn);
         busy = false; refreshView(); render(); save();
@@ -628,7 +698,8 @@
     refreshView();
     $('startModal').hidden = true; $('endModal').hidden = true; $('lobbyModal').hidden = true; fit();
     if (innerHeight < 760) { try { $('stageWrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
-    render(true); save(); audio(); sfx.deal();
+    save(); audio();
+    dealing = playDeal(st.dealer);
     var first = st.turn;
     toast(first === me ? 'İhale senden başlıyor.' : 'İhale ' + names()[first] + '\'' + bulunma(names()[first]) + 'n başlıyor.');
     if (game.mode === 'online') publish();
@@ -882,14 +953,15 @@
     game.levels = pub.levels || j.seats.map(function (s) { return s && s.bot ? 'normal' : null; }); game.pending = false;
     var newHand = !V || pub.hid !== V.hid;
     V = viewFromPub(pub, j.priv);
-    if (newHand) { hold = null; sel = null; hintMark = null; $('endModal').hidden = true; if (!first) sfx.deal(); }
+    var fresh = newHand && !(pub.events && pub.events.length) && !pub.over;
+    if (newHand) { hold = null; sel = null; hintMark = null; $('endModal').hidden = true; }
     if (sel != null && !V.myHand.some(function (c) { return c.id === sel; })) sel = null;
     var evs = (pub.events || []).filter(function (e) { return e.seq > (game.lastEvent || 0); });
     if (newHand) evs = [];
     if (pub.events && pub.events.length) game.lastEvent = pub.events[pub.events.length - 1].seq;
     var e2 = pub.errs && pub.errs[me];
     if (e2 && e2.n > (game.errSeen || 0)) { game.errSeen = e2.n; fail({ error: e2.msg }); }
-    render(newHand);
+    if (fresh) await playDeal(V.dealer); else render(newHand);
     for (var k = 0; k < evs.length; k++) await showEvent(evs[k], before);
     save();
     if (pub.over && pub.result && game._endShownIdx !== pub.idx) { game._endShownIdx = pub.idx; showEnd(pub.result); }
@@ -935,6 +1007,7 @@
     if (e.key === 'Escape') { if (!$('profModal').hidden) { $('profModal').hidden = true; return; } if (!$('startModal').hidden && game && V) { $('startModal').hidden = true; return; } }
     if (!$('startModal').hidden || !$('endModal').hidden || !$('lobbyModal').hidden || !$('profModal').hidden || !V) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (deal) { skipDeal(); e.preventDefault(); return; }
     var k = e.key.toLocaleLowerCase('tr'), done = true;
     if (k === 'h') $('hintBtn').click();
     else if (k === 'm') $('muteBtn').click();

@@ -223,20 +223,20 @@
     var el = $('pl' + p), seat = seatAt(p);
     if (seat < 0 || seat >= V.n) { el.innerHTML = ''; return; }
     var nm = names()[seat], keep = el.querySelector('.say');
-    el.classList.toggle('turn', V.turn === seat && !V.over);
+    el.classList.toggle('turn', V.turn === seat && !V.over && !deal);
     var pi = V.pistis[seat] || { normal: 0, vale: 0 }, pc = pi.normal + pi.vale;
     var badge = seat === V.dealer ? '<span class="badge dl">DAĞITAN</span>' : '';
     var line = V.caps[seat] + ' kart' + (pc ? ' · <b>' + pc + ' pişti</b>' : '');
     if (N() === 4) line += ' · ' + (teamOf(seat) === teamOf(me) ? 'takımın' : 'rakip');
     var lvl = game.levels && game.levels[seat] ? ' · ' + LEVEL_TR[game.levels[seat]] : '';
     var fan = '';
-    if (p !== 0) { var n = Math.min(4, V.counts[seat]); for (var i = 0; i < n; i++) fan += '<i></i>'; }
+    if (p !== 0) { var n = Math.min(4, V.counts[seat]); for (var i = 0; i < n; i++) fan += deal && i >= deal.n[seat] ? '<i class="dh"></i>' : '<i></i>'; }
     el.innerHTML = '<div class="av"><div class="ring"></div>' + avatarSVG(seat) + badge + '</div>' +
       '<div class="np"><b>' + esc(nm) + '</b><small>' + line + esc(lvl) + '</small></div><div class="fan">' + fan + '</div>';
     el.insertBefore(keep || Object.assign(document.createElement('div'), { className: 'say' }), el.firstChild);
   }
   function renderPile() {
-    var cards = hold ? hold.pile : V.pile, el = $('pile'); el.innerHTML = '';
+    var cards = hold ? hold.pile : deal ? V.pile.slice(0, deal.pile) : V.pile, el = $('pile'); el.innerHTML = '';
     var start = Math.max(0, cards.length - 9);
     for (var i = start; i < cards.length; i++) {
       var c = cards[i], d = cardEl(c, i === cards.length - 1 ? 'topc' : '');
@@ -247,8 +247,9 @@
     $('pileCnt').textContent = cards.length ? 'Yerde ' + cards.length + ' kart' : 'Yer boş';
   }
   function renderDeck() {
-    $('deckCnt').textContent = V.deckCount;
-    $('deckBox').classList.toggle('empty', !V.deckCount);
+    var dc = V.deckCount + (deal ? deal.left : 0);
+    $('deckCnt').textContent = dc;
+    $('deckBox').classList.toggle('empty', !dc);
   }
   function renderScore() {
     var T = 2, html = '<div class="st"><span>' + (game.mode === 'daily' ? 'Bu el' : 'Puan') + '</span><span>' + (game.mode === 'daily' ? '' : 'hedef ' + game.target) + '</span></div>';
@@ -269,6 +270,7 @@
     var CW = 92, W = 600, sp = 108, total = CW + (n - 1) * sp, x0 = (W - total) / 2;
     h.forEach(function (c, i) {
       var cls = (my ? 'ok' : '') + (sel === c.id ? ' sel' : '') + (hintMark && hintMark.id === c.id ? ' hintpulse' : '');
+      if (deal) cls += (deal.face ? '' : ' dn') + (i >= deal.n[me] ? ' dh' : '');
       var d = cardEl(c, cls), x = x0 + i * sp;
       d.style.left = x + 'px';
       if (fresh) { d.classList.add('deal'); d.style.animationDelay = (i * 70) + 'ms'; d.style.setProperty('--dx', (W / 2 - x - CW / 2) + 'px'); }
@@ -278,6 +280,7 @@
   function renderHint() {
     var h = '';
     if (V.over || hold) h = '';
+    else if (deal) h = deal.face ? '' : 'Kartlar dağıtılıyor… (geçmek için dokun)';
     else if (!isMyTurn()) h = waitingText();
     else if (hintMark && hintMark.text) h = '💡 ' + hintMark.text;
     else {
@@ -354,9 +357,103 @@
       return animDone(anim, 420 + i * 25).then(function () { g.remove(); });
     }));
   }
+  // ================= dağıtım =================
+  // Kartlar desteden kapalı gider: yeni elde önce yere 4 kart (3 kapalı, sonuncusu açık), sonra dağıtanın sağından başlayıp
+  // herkese 4'er kart, birer birer (motorun sırası). Benim kartlarım kapalı iner, sonunda açılır. Tıklayınca ya da tuşla atlanır.
+  var deal = null;
+  function boardXY(el) {
+    var B = $('board').getBoundingClientRect(), k = B.width / BW || 1, r = el.getBoundingClientRect();
+    return { x: (r.left - B.left + r.width / 2) / k, y: (r.top - B.top + r.height / 2) / k, w: r.width / k };
+  }
+  function dealTargets(seat) {
+    return seat === me ? $('hand').querySelectorAll('.card') : $('pl' + pos(seat)).querySelectorAll('.fan i');
+  }
+  function skipDeal() {
+    if (!deal || deal.skip) return;
+    deal.skip = true;
+    deal.anims.forEach(function (a) { try { a.finish(); } catch (e) {} });
+  }
+  // dağıtımı başlat: kartlar henüz gelmemiş gibi çizilir (son kart yere inerken yeni el görünmesin)
+  function beginDeal(withPile) {
+    if (!V || reduced()) return null;
+    var left = V.counts.reduce(function (a, b) { return a + b; }, 0) + (withPile ? V.pile.length : 0);
+    deal = { n: [0, 0, 0, 0], pile: withPile ? 0 : 99, left: left, face: false, skip: false, anims: [] };
+    return deal;
+  }
+  async function playDeal(dealer, withPile) {
+    if (!V) return;
+    var D = deal || beginDeal(withPile);
+    if (!D) { render(); return; }
+    var live = function () { if (document.hidden && deal === D) skipDeal(); return deal === D && !D.skip; };
+    render();
+    var full = V.counts.slice(), n = V.n, order = [], given = [0, 0, 0, 0], total = full.reduce(function (a, b) { return a + b; }, 0);
+    if (withPile) for (var q = 0; q < V.pile.length; q++) order.push(-1);
+    for (var k = 0; total > 0 && k < 200; k++) { var s = (dealer + 1 + k) % n; if (given[s] < full[s]) { order.push(s); given[s]++; total--; } }
+    var src = boardXY($('deckBox')), spd = Math.min(1.25, Math.max(0.6, game ? game.speed : 1)), gap = 75 * spd, dur = 340 * spd;
+    var sent = [0, 0, 0, 0], sentPile = 0, flights = [];
+    sfx.deal(); await sleep(240 * spd);
+    for (var i = 0; i < order.length && live(); i++) {
+      var seat = order[i], face = null, to, end = 0;
+      if (seat < 0) {
+        var pi = sentPile++, pc = V.pile[pi];
+        to = boardXY($('pile')); to.w = 92; to.y += 2;
+        if (pc) { face = pc; end = rot(pc.id); } else end = (pi - 1) * 4;
+      } else {
+        var ts = dealTargets(seat), t = ts[Math.min(sent[seat]++, ts.length - 1)];
+        if (!t) continue;
+        to = boardXY(t);
+      }
+      var g = cardEl(face, 'dfly');
+      g.style.left = (src.x - 46) + 'px'; g.style.top = (src.y - 66) + 'px';
+      $('board').appendChild(g);
+      var anim = g.animate([{ transform: 'translate(0,0) rotate(' + (Math.random() * 12 - 6) + 'deg) scale(1)' },
+        { transform: 'translate(' + (to.x - src.x) + 'px,' + (to.y - src.y) + 'px) rotate(' + end + 'deg) scale(' + (to.w / 92) + ')' }],
+        { duration: dur, easing: 'cubic-bezier(.3,.75,.4,1)', fill: 'forwards' });
+      D.anims.push(anim); D.left--; renderDeck();
+      snap(0.12 + Math.random() * 0.06, 3600 + Math.random() * 1400);
+      flights.push(animDone(anim, dur).then(function (g, seat) { return function () {
+        g.remove(); if (deal !== D) return;
+        if (seat < 0) D.pile++; else D.n[seat]++;
+        if (!D.skip) { if (seat < 0) renderPile(); else if (seat === me) renderHand(); else renderPlate(pos(seat)); }
+      }; }(g, seat)));
+      await sleep(gap);
+    }
+    if (D.skip) D.anims.forEach(function (a) { try { a.finish(); } catch (e) {} });
+    await Promise.all(flights);
+    if (deal !== D) return;
+    D.n = full.slice(); D.pile = 99; D.left = 0; render();
+    var cards = [].slice.call($('hand').querySelectorAll('.card'));
+    if (cards.length && !D.skip && !reduced()) {
+      await Promise.all(cards.map(function (e, i) { return animDone(e.animate([{ transform: 'scaleX(1)' }, { transform: 'scaleX(0)' }], { duration: 120, delay: i * 30, fill: 'forwards' }), 120 + i * 30); }));
+      if (deal !== D) return;
+      deal = null; render();
+      sfx.pick();
+      [].slice.call($('hand').querySelectorAll('.card')).forEach(function (e, i) { e.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 140, delay: i * 30, fill: 'backwards' }); });
+      await sleep(140 + cards.length * 30);
+    } else { deal = null; render(); }
+  }
+  $('board').addEventListener('pointerdown', function () { if (deal) skipDeal(); }, true);
+  // yerdeki kapalı kartlar alınınca herkese gösterilir (kural)
+  async function showClosed(cards, taker) {
+    var nm = names();
+    toast('Kapalı kartlar: ' + cards.map(cardName).join(', ') + '.');
+    if (reduced()) return;
+    var box = document.createElement('div');
+    box.className = 'clsh';
+    box.innerHTML = '<b>Kapalı kartlar</b><small>' + esc(taker === me ? 'Sen aldın' : nm[taker] + ' aldı') + '</small><div class="cs"></div>';
+    cards.forEach(function (c, i) { var e = cardEl(c); e.style.animationDelay = (i * 120) + 'ms'; box.querySelector('.cs').appendChild(e); });
+    $('board').appendChild(box);
+    sfx.pick();
+    await sleep(Math.max(1600, 2300 * (game ? game.speed : 1)));
+    box.classList.add('out');
+    await sleep(220);
+    box.remove();
+  }
+
   async function showEvent(ev, before) {
     if (ev.a !== 'play') return;
     var nm = names();
+    if (ev.dealt) beginDeal(false);
     hold = { pile: ev.pile };
     render();
     sfx.card();
@@ -368,11 +465,12 @@
         say(ev.p, ev.pisti === 20 ? 'Vale piştisi!' : 'Pişti!');
       }
       await sleep(Math.max(350, (ev.pisti ? 1100 : 650) * (game ? game.speed : 1)));
+      if (ev.closedCards && ev.closedCards.length) await showClosed(ev.closedCards, ev.p);
       sfx.take();
       await collect(ev.p);
     }
     hold = null;
-    if (ev.dealt) { render(true); sfx.deal(); } else render();
+    if (ev.dealt) await playDeal(V.dealer, false); else render();
     if (ev.over && ev.rest) toast('Yerde kalan ' + ev.rest + ' kart son alana (' + (ev.restTo === me ? 'sana' : nm[ev.restTo]) + ') gitti.');
   }
 
@@ -382,16 +480,18 @@
 
   // ================= hamle katmanı =================
   function isMyTurn() {
-    if (!V || !game || V.over || busy || hold) return false;
+    if (!V || !game || V.over || busy || hold || deal) return false;
     if (V.turn !== me) return false;
     if (game.mode === 'online' && !game.online.isHost && game.pending) return false;
     return true;
   }
   function applyMove(s, p, mv) {
     if (mv.a !== 'play') return { r: { ok: false, error: 'bad_move' }, ev: null };
-    var pileBefore = pubPile(s), r = M.play(s, p, mv.id);
+    var pileBefore = pubPile(s), closedBefore = s.closed, r = M.play(s, p, mv.id);
     if (!r.ok) return { r: r, ev: null };
-    return { r: r, ev: { p: p, a: 'play', c: r.card, pile: clone(pileBefore.concat([r.card])), capture: r.capture, pisti: r.pisti, dealt: r.dealt, over: r.over, rest: r.rest || 0, restTo: s.lastTaker } };
+    var ev = { p: p, a: 'play', c: r.card, pile: clone(pileBefore.concat([r.card])), capture: r.capture, pisti: r.pisti, dealt: r.dealt, over: r.over, rest: r.rest || 0, restTo: s.lastTaker };
+    if (r.capture && closedBefore) ev.closedCards = clone(r.taken.slice(0, closedBefore));
+    return { r: r, ev: ev };
   }
   function pushEvent(ev) {
     if (!ev) return;
@@ -522,12 +622,13 @@
     await showEvent(res.ev, null);
     if (g !== gen) throw new Error('stale');
   }
-  var advancing = false, advanceAgain = false;
+  var advancing = false, advanceAgain = false, dealing = null;
   async function advance() {
     if (advancing) { advanceAgain = true; return; }
     advancing = true;
     try {
       save();
+      if (dealing) { await dealing; dealing = null; }
       while (st && !st.over && game.levels && game.levels[st.turn]) {
         await botTurn(st.turn);
         busy = false; refreshView(); render(); save();
@@ -562,7 +663,8 @@
     refreshView();
     $('startModal').hidden = true; $('endModal').hidden = true; $('lobbyModal').hidden = true; fit();
     if (innerHeight < 760) { try { $('stageWrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
-    render(true); save(); audio(); sfx.deal();
+    save(); audio();
+    dealing = playDeal(st.dealer, true);
     toast(st.turn === me ? 'İlk kart senden.' : names()[st.turn] + ' başlıyor.');
     if (game.mode === 'online') publish();
     advance();
@@ -815,14 +917,15 @@
     game.levels = pub.levels; game.pending = false;
     var newHand = !V || pub.hid !== V.hid;
     V = viewFromPub(pub, j.priv);
-    if (newHand) { hold = null; sel = null; hintMark = null; $('endModal').hidden = true; if (!first) sfx.deal(); }
+    if (newHand) { hold = null; sel = null; hintMark = null; $('endModal').hidden = true; }
+    var fresh = newHand && !(pub.events && pub.events.length) && !pub.over;
     if (sel != null && !V.myHand.some(function (c) { return c.id === sel; })) sel = null;
     var evs = (pub.events || []).filter(function (e) { return e.seq > (game.lastEvent || 0); });
     if (newHand) evs = [];
     if (pub.events && pub.events.length) game.lastEvent = pub.events[pub.events.length - 1].seq;
     var e2 = pub.errs && pub.errs[me];
     if (e2 && e2.n > (game.errSeen || 0)) { game.errSeen = e2.n; fail({ error: e2.msg }); }
-    render(newHand);
+    if (fresh) await playDeal(V.dealer, true); else render(newHand);
     for (var k = 0; k < evs.length; k++) await showEvent(evs[k], before);
     save();
     if (pub.over && pub.result && game._endShownIdx !== pub.idx) { game._endShownIdx = pub.idx; showEnd(pub.result); }
@@ -868,6 +971,7 @@
     if (e.key === 'Escape') { if (!$('profModal').hidden) { $('profModal').hidden = true; return; } if (!$('startModal').hidden && game && V) { $('startModal').hidden = true; return; } }
     if (!$('startModal').hidden || !$('endModal').hidden || !$('lobbyModal').hidden || !$('profModal').hidden || !V) return;
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (deal) { skipDeal(); e.preventDefault(); return; }
     var k = e.key.toLocaleLowerCase('tr'), done = true;
     if (k === 'h') $('hintBtn').click();
     else if (k === 'm') $('muteBtn').click();

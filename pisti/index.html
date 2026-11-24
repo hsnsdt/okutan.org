@@ -217,6 +217,18 @@ button{font:inherit;color:inherit}
 .card.back{background:#1d3f8f;background-image:radial-gradient(circle at 50% 50%,rgba(255,215,94,.9) 0 7%,transparent 7.5%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(255,255,255,.18) 15.5% 17%,transparent 17.5%),repeating-linear-gradient(45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px);
   box-shadow:inset 0 0 0 calc(var(--cw) * .06) #f6efe1,inset 0 0 0 calc(var(--cw) * .08) rgba(29,63,143,.6),0 8px 14px -8px rgba(0,0,0,.65)}
 .card.flyer{position:fixed;z-index:150;pointer-events:none;margin:0}
+/* dağıtım: deste, uçan kapalı kart, henüz gelmemiş ve kapalı duran kartlar */
+.card.dfly{position:absolute;--cw:92px;--ch:132px;z-index:30;pointer-events:none;margin:0}
+.clsh{position:absolute;left:50%;top:176px;transform:translateX(-50%);z-index:40;background:rgba(8,22,19,.88);border:2px solid rgba(255,215,94,.7);border-radius:18px;padding:12px 18px 16px;text-align:center;color:#fff;box-shadow:0 20px 40px -12px rgba(0,0,0,.8);animation:panelIn .25s ease-out;pointer-events:none}
+.clsh b{display:block;font:900 15px var(--sans);letter-spacing:.04em}
+.clsh small{display:block;font:700 12px var(--sans);color:rgba(255,255,255,.7);margin:2px 0 10px}
+.clsh .cs{display:flex;gap:10px;justify-content:center;perspective:600px}
+.clsh .card{--cw:80px;--ch:114px;animation:clflip .4s cubic-bezier(.2,.9,.3,1) backwards}
+.clsh.out{opacity:0;transition:opacity .2s}
+@keyframes clflip{from{transform:rotateY(90deg) scale(.8);opacity:0}}
+.fan i.dh,#hand .card.dh{visibility:hidden}
+#hand .card.dn::after{content:'';position:absolute;inset:0;border-radius:inherit;background:#1d3f8f;background-image:radial-gradient(circle at 50% 50%,rgba(255,215,94,.9) 0 7%,transparent 7.5%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(255,255,255,.18) 15.5% 17%,transparent 17.5%),repeating-linear-gradient(45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px);
+  box-shadow:inset 0 0 0 calc(var(--cw) * .06) #f6efe1,inset 0 0 0 calc(var(--cw) * .08) rgba(29,63,143,.6)}
 
 /* elim */
 #hand{left:250px;width:600px;bottom:12px;height:162px;z-index:7}
@@ -659,7 +671,7 @@ footer a:hover{color:var(--ink)}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="motor.js?v=1" defer></script>
-<script src="oyun.js?v=2" defer></script>
+<script src="oyun.js?v=3" defer></script>
 <script src="/assets/okey-sohbet.js?v=4" defer></script>
 </body>
 </html>

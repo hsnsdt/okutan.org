@@ -217,6 +217,13 @@ button{font:inherit;color:inherit}
 .card.back{background:#1d3f8f;background-image:radial-gradient(circle at 50% 50%,rgba(255,215,94,.9) 0 7%,transparent 7.5%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(255,255,255,.18) 15.5% 17%,transparent 17.5%),repeating-linear-gradient(45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px);
   box-shadow:inset 0 0 0 calc(var(--cw) * .06) #f6efe1,inset 0 0 0 calc(var(--cw) * .08) rgba(29,63,143,.6),0 8px 14px -8px rgba(0,0,0,.65)}
 .card.flyer{position:fixed;z-index:150;pointer-events:none;margin:0}
+/* dağıtım: deste, uçan kapalı kart, henüz gelmemiş ve kapalı duran kartlar */
+.card.deck,.card.dfly{position:absolute;--cw:80px;--ch:114px;z-index:30;pointer-events:none;margin:0}
+.card.deck{box-shadow:inset 0 0 0 calc(var(--cw) * .06) #f6efe1,inset 0 0 0 calc(var(--cw) * .08) rgba(29,63,143,.6),1px 1px 0 #d9d2c2,2px 2px 0 #c9c1ae,3px 3px 0 #d9d2c2,4px 4px 0 #b9b19e,5px 6px 12px -2px rgba(0,0,0,.55)}
+.card.dfly{z-index:31}
+.fan i.dh,#hand .card.dh{visibility:hidden}
+#hand .card.dn::after{content:'';position:absolute;inset:0;border-radius:inherit;background:#1d3f8f;background-image:radial-gradient(circle at 50% 50%,rgba(255,215,94,.9) 0 7%,transparent 7.5%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(255,255,255,.18) 15.5% 17%,transparent 17.5%),repeating-linear-gradient(45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px),repeating-linear-gradient(-45deg,rgba(255,255,255,.12) 0 3px,transparent 3px 9px);
+  box-shadow:inset 0 0 0 calc(var(--cw) * .06) #f6efe1,inset 0 0 0 calc(var(--cw) * .08) rgba(29,63,143,.6)}
 
 /* elim */
 #hand{left:172px;width:704px;bottom:12px;height:162px;z-index:7}
@@ -686,7 +693,7 @@ footer a:hover{color:var(--ink)}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="motor.js?v=2" defer></script>
-<script src="oyun.js?v=3" defer></script>
+<script src="oyun.js?v=4" defer></script>
 <script src="/assets/okey-sohbet.js?v=4" defer></script>
 </body>
 </html>

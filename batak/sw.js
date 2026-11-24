@@ -1,8 +1,8 @@
 /* Batak — service worker (botlara karşı oyun internetsiz de çalışır)
    - Sayfa: önce ağ, yoksa önbellek · Statik dosyalar: önbellekten, arkada tazele · API önbelleğe alınmaz
    oyun.js / motor.js sürümü değişince CACHE ve CORE'u da güncelle. */
-var CACHE = 'batak-v4';
-var CORE = ['./', 'oyun.js?v=4', '/assets/okey-sohbet.js?v=4', 'motor.js?v=1', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
+var CACHE = 'batak-v5';
+var CORE = ['./', 'oyun.js?v=5', '/assets/okey-sohbet.js?v=4', 'motor.js?v=1', 'manifest.json', 'icon-192.png', '/assets/fonts/fonts.css',
   '/assets/fonts/Nunito-latin.woff2', '/assets/fonts/Nunito-latin-ext.woff2', '/assets/logo.svg', '/assets/logo-dark.svg', '/favicon.svg', '/assets/kart-saray.webp'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));
