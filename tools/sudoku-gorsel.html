@@ -1,0 +1,70 @@
+<!doctype html>
+<!-- Sudoku simgeleri ve paylaşım görseli (yerel sunucu açıkken headless Chrome ile ekran görüntüsü alınır):
+     ?k=icon (512×512, köşeleri yuvarlak), ?k=mask (512×512, tam kare, güvenli alan içinde), ?k=og (1200×630)
+     chrome --headless=new --hide-scrollbars --force-device-scale-factor=1 --window-size=512,512 --screenshot=icon.png "http://127.0.0.1:8766/tools/sudoku-gorsel.html?k=icon"
+     192/64/32 boyutları 512'den küçültülür (headless en küçük pencere ~500 px). -->
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{overflow:hidden;background:transparent;font-family:"Nunito",sans-serif}
+.ic{width:512px;height:512px;display:flex;align-items:center;justify-content:center}
+.tile{width:512px;height:512px;border-radius:112px;background:radial-gradient(120% 120% at 20% 0%,#4f86ff,#2f6bff 45%,#1c45c9);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -10px 0 rgba(0,0,0,.12)}
+.mask .tile{border-radius:0}
+.mask .g{transform:scale(.78)}
+.g{display:grid;grid-template-columns:repeat(3,104px);grid-template-rows:repeat(3,104px);gap:10px;padding:14px;background:rgba(255,255,255,.28);border-radius:40px}
+.g i{font-style:normal;border-radius:22px;background:#fff;display:flex;align-items:center;justify-content:center;font:900 72px/1 "Nunito";color:#1d2433;box-shadow:0 6px 0 rgba(10,30,90,.18)}
+.g i.u{color:#2f6bff}
+.g i.e{background:rgba(255,255,255,.5);box-shadow:none}
+.g i.s{background:#ffd25e;color:#1d2433}
+
+.og{width:1200px;height:630px;position:relative;overflow:hidden;background:radial-gradient(110% 120% at 85% 10%,#24448a,#13244a 50%,#0b1530);color:#fff;display:flex;align-items:center}
+.og .txt{padding:0 0 0 84px;width:600px}
+.og .lb{font:900 22px "Nunito";letter-spacing:.12em;text-transform:uppercase;color:#9fbcff}
+.og h1{font:900 128px/1 "Nunito";letter-spacing:-.03em;margin:16px 0 22px}
+.og p{font:800 32px/1.3 "Nunito";color:rgba(255,255,255,.86)}
+.og .chips{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+.og .chips span{font:900 22px "Nunito";padding:10px 20px;border-radius:999px;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.22)}
+.og .url{position:absolute;left:84px;bottom:44px;font:900 24px "Nunito";color:#9fbcff}
+.bd{position:absolute;right:70px;top:50%;transform:translateY(-50%) rotate(4deg);display:grid;grid-template-columns:repeat(3,auto);gap:4px;padding:4px;background:#3a4458;border-radius:22px;box-shadow:0 40px 80px -30px rgba(0,0,0,.8)}
+.bx{display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:2px;background:#d5dbe6}
+.bx:nth-child(1){border-top-left-radius:18px;overflow:hidden}.bx:nth-child(3){border-top-right-radius:18px;overflow:hidden}
+.bx:nth-child(7){border-bottom-left-radius:18px;overflow:hidden}.bx:nth-child(9){border-bottom-right-radius:18px;overflow:hidden}
+.c{background:#fff;display:flex;align-items:center;justify-content:center;font:900 32px/1 "Nunito";color:#1d2433;position:relative}
+.c.u{color:#2f6bff;font-weight:800}
+.c.p{background:#eaf0fa}.c.sm{background:#d4e2ff}.c.sel{background:#b9d0ff}
+.c .n{position:absolute;inset:3px;display:grid;grid-template-columns:repeat(3,1fr);font:800 12px/1 "Nunito";color:#5b6577}
+.c .n b{display:flex;align-items:center;justify-content:center;font-weight:800}
+.c .n b.h{background:#2f6bff;color:#fff;border-radius:3px}
+</style></head><body><div id="out"></div>
+<script>
+var k = (location.search.match(/k=(\w+)/) || [])[1] || 'icon', out = document.getElementById('out');
+if (k === 'og') {
+  // yarı çözülmüş tahta: verilenler koyu, oyuncunun yazdıkları mavi, birkaç notlu kare
+  var P = '534678912672195348198342567859761423426853791713924856961537284287419635345286179';
+  var GIV = '530070000600195000098000060800060003400803001700020006060000280000419005000080079';
+  var NOTE = { 2: '124', 20: '46', 32: '27', 41: '569', 57: '178', 66: '36' }, SEL = 40;
+  var html = '<div class="og"><div class="txt"><div class="lb">Ücretsiz · Tarayıcıda · Üyeliksiz</div><h1>Sudoku</h1>' +
+    '<p>Her gün yeni bulmaca.<br>Kolaydan uzmana sınırsız oyna.</p><div class="chips"><span>Günün Sudoku\'su</span><span>Not al</span><span>İpucu</span></div></div>' +
+    '<div class="url">okutan.org/sudoku</div><div class="bd">';
+  for (var b = 0; b < 9; b++) {
+    html += '<div class="bx">';
+    for (var q = 0; q < 9; q++) {
+      var r = Math.floor(b / 3) * 3 + Math.floor(q / 3), c = (b % 3) * 3 + q % 3, i = r * 9 + c, cls = 'c', inner = '';
+      var peer = r === 4 || c === 4 || (Math.floor(r / 3) === 1 && Math.floor(c / 3) === 1);
+      if (GIV[i] !== '0') inner = GIV[i];
+      else if (!NOTE[i] && (i * 7) % 10 < 4) { inner = P[i]; cls += ' u'; }
+      else if (NOTE[i]) { inner = '<span class="n">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (d) { var on = NOTE[i].indexOf(d) >= 0; return '<b' + (on && d === 5 ? ' class="h"' : '') + '>' + (on ? d : '') + '</b>'; }).join('') + '</span>'; }
+      if (i === SEL) { cls += ' sel u'; inner = '5'; }
+      else if (inner === '5') cls += ' sm';
+      else if (peer) cls += ' p';
+      html += '<div class="' + cls + '">' + inner + '</div>';
+    }
+    html += '</div>';
+  }
+  out.innerHTML = html + '</div></div>';
+} else {
+  out.innerHTML = '<div class="ic' + (k === 'mask' ? ' mask' : '') + '"><div class="tile"><div class="g">' +
+    '<i>5</i><i class="e"></i><i class="u">3</i><i class="e"></i><i class="s">9</i><i>7</i><i class="u">1</i><i class="e"></i><i>4</i></div></div></div>';
+}
+</script></body></html>

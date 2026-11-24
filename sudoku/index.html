@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sudoku Oyna — Ücretsiz Günlük Sudoku, Kolaydan Uzmana | okutan.org</title>
+<meta name="description" content="Ücretsiz Sudoku oyna: her gün herkese aynı Günün Sudoku'su ve kolay, orta, zor, uzman seviyede sınırsız bulmaca. Not alma, ipucu, geri al, hata gösterme, süre ve seri. İndirmeden, üyeliksiz, telefonda da.">
+<meta name="author" content="Sedat Okutan">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#f4f6fa">
+<link rel="canonical" href="https://okutan.org/sudoku/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="okutan.org">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:title" content="Sudoku — Her Gün Yeni Bulmaca, Kolaydan Uzmana">
+<meta property="og:description" content="Günün Sudoku'su ve dört zorlukta sınırsız bulmaca. Not al, ipucu iste, süreni ve serini paylaş. Ücretsiz, indirmeden.">
+<meta property="og:url" content="https://okutan.org/sudoku/">
+<meta property="og:image" content="https://okutan.org/sudoku/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sudoku: koyu lacivert zemin üzerinde mavi vurgulu rakamlar ve kalem notlarıyla yarı çözülmüş 9×9 Sudoku tahtası">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@okutanapp">
+<meta name="twitter:creator" content="@okutanapp">
+<meta name="twitter:title" content="Sudoku — Her Gün Yeni Bulmaca, Kolaydan Uzmana">
+<meta name="twitter:description" content="Günün Sudoku'su ve dört zorlukta sınırsız bulmaca. Not al, ipucu iste, süreni ve serini paylaş. Ücretsiz, indirmeden.">
+<meta name="twitter:image" content="https://okutan.org/sudoku/og.png">
+<meta name="twitter:image:alt" content="Sudoku: koyu lacivert zemin üzerinde mavi vurgulu rakamlar ve kalem notlarıyla yarı çözülmüş 9×9 Sudoku tahtası">
+<meta name="keywords" content="sudoku, sudoku oyna, günlük sudoku, günün sudokusu, ücretsiz sudoku, online sudoku, zor sudoku, kolay sudoku, uzman sudoku, sudoku bulmaca, türkçe sudoku, sayı bulmacası, okutan">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sudoku">
+<link rel="preload" href="/assets/fonts/Nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["VideoGame", "WebApplication"],
+      "@id": "https://okutan.org/sudoku/#game",
+      "name": "Sudoku",
+      "url": "https://okutan.org/sudoku/",
+      "image": "https://okutan.org/sudoku/og.png",
+      "description": "Ücretsiz tarayıcı Sudoku'su: her gün herkese aynı Günün Sudoku'su, kolay, orta, zor ve uzman seviyede sınırsız tek çözümlü bulmaca, not alma, ipucu, geri al, süre ve seri.",
+      "genre": ["Bulmaca", "Mantık oyunu", "Sayı bulmacası"],
+      "gamePlatform": ["Web tarayıcısı", "Masaüstü", "Mobil"],
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any",
+      "inLanguage": "tr",
+      "isAccessibleForFree": true,
+      "numberOfPlayers": { "@type": "QuantitativeValue", "value": 1 },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TRY" },
+      "author": { "@type": "Person", "@id": "https://okutan.org/#person", "name": "Sedat Okutan", "url": "https://okutan.org/" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "okutan.org", "item": "https://okutan.org/" },
+        { "@type": "ListItem", "position": 2, "name": "Oyunlar", "item": "https://okutan.org/oyunlar/" },
+        { "@type": "ListItem", "position": 3, "name": "Sudoku", "item": "https://okutan.org/sudoku/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Sudoku nasıl oynanır?", "acceptedAnswer": { "@type": "Answer", "text": "9×9'luk tahtadaki boş kareleri 1'den 9'a kadar rakamlarla doldurursun. Her satırda, her sütunda ve kalın çizgiyle ayrılmış her 3×3 kutuda 1–9 arası rakamların her biri tam bir kez bulunmalı. Başta verilen rakamlar değiştirilemez; doğru rakamları mantıkla bulursun, tahmin gerekmez." } },
+        { "@type": "Question", "name": "Günün Sudoku'su nedir?", "acceptedAnswer": { "@type": "Answer", "text": "Her gün Türkiye saatiyle gece yarısı herkese aynı yeni bir bulmaca gelir. Zorluğu haftanın gününe göre değişir: pazartesi kolay, salı, çarşamba ve pazar orta, perşembe ve cuma zor, cumartesi uzman. Üst üste çözdüğün günler serini büyütür; sonucunu bulmacayı açık etmeden paylaşabilirsin." } },
+        { "@type": "Question", "name": "Zorluk seviyeleri nasıl belirleniyor?", "acceptedAnswer": { "@type": "Answer", "text": "Her bulmaca, insan gibi çözen bir programdan geçirilir. Kolay ve orta bulmacalar yalnızca tek aday ve gizli tek yöntemleriyle çözülür (ortada daha az rakam verilir). Zor bulmacalarda aday çiftleri ve kutu-çizgi eleme gerekir. Uzman bulmacalar bu yöntemlerle bitmez; daha ileri teknikler ister." } },
+        { "@type": "Question", "name": "Not alma (kalem) nasıl kullanılır?", "acceptedAnswer": { "@type": "Answer", "text": "Not düğmesine bas ya da klavyede N tuşuna bas; artık seçtiğin rakamlar kareye küçük aday notu olarak yazılır. Bir kareye rakam yerleştirdiğinde aynı satır, sütun ve kutudaki o rakamın notları kendiliğinden silinir (ayarlardan kapatılabilir). Bilgisayarda Shift ile birlikte rakama basarak da not alabilirsin." } },
+        { "@type": "Question", "name": "İpucu ne yapar?", "acceptedAnswer": { "@type": "Answer", "text": "İpucu, sıradaki mantıklı adımı gösterir ve o rakamı yerleştirir: yalnızca tek rakamın uyduğu bir kareyi ya da bir satırda, sütunda veya kutuda bir rakamın gelebileceği tek yeri. Yanlış bir rakam yazdıysan önce onu gösterir. Kullandığın ipucu sayısı sonuçta görünür." } },
+        { "@type": "Question", "name": "Her bulmacanın tek çözümü var mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Bütün bulmacalar tek çözümlü olacak şekilde üretilir ve her biri bilgisayarla kontrol edilir. Bu yüzden her rakam mantıkla bulunabilir; doğru çözümde tahmin etmek zorunda kalmazsın." } },
+        { "@type": "Question", "name": "Hatalarımı görebilir miyim?", "acceptedAnswer": { "@type": "Answer", "text": "Ayarlarda Hataları göster açıkken çözüme uymayan rakam hemen kırmızı görünür ve hata sayacı artar. Kapatırsan yalnızca kurala aykırı durumlar, yani aynı satır, sütun ya da kutuda tekrar eden rakamlar işaretlenir." } },
+        { "@type": "Question", "name": "Sudoku ücretsiz mi, telefonda oynanır mı?", "acceptedAnswer": { "@type": "Answer", "text": "Tamamen ücretsizdir; indirme ya da üyelik gerekmez. Telefonda kareye dokunup alttaki rakam tuşlarıyla oynanır, ana ekrana uygulama gibi eklenebilir ve internetsiz de açılır. İlerlemen bu tarayıcıda saklanır; yarım kalan bulmaca süresiyle birlikte kaldığı yerden devam eder." } }
+      ]
+    }
+  ]
+}
+</script>
+<script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+<style>
+:root{
+  --bg:#ebebe8; --block:#ffffff; --ink:#0e0e0e; --muted:#6a6a6a; --line:#dadad6;
+  --accent:#ff5a1f; --c2:#2f6bff;
+  --sans:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:18px; --gap:12px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#080808;--block:#141414;--ink:#f2f2f0;--muted:#8f8f8f;--line:#242424;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:600;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--gap) 16px 40px}
+.b{background:var(--block);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative}
+.label{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px 10px 20px;margin-bottom:var(--gap)}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo img{height:24px;width:auto;display:block}
+:root[data-theme="dark"] .logo .l-light{display:none}
+:root:not([data-theme="dark"]) .logo .l-dark{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo .l-light{display:none}:root:not([data-theme="light"]) .logo .l-dark{display:inline}}
+.crumb{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;padding-left:14px;border-left:1px solid var(--line)}
+.crumb b{color:var(--ink);font-weight:900}
+.ctrl{height:34px;min-width:34px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--block);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.ctrl:hover{border-color:var(--muted)}
+@media (max-width:560px){.crumb{display:none}}
+
+/* ============ oyun alanı ============ */
+.play{--p-bg:#f4f6fa;--p-cell:#ffffff;--p-line:#d5dbe6;--p-thick:#3a4458;--p-key:#e7ebf2;--p-ink:#1d2433;--p-mut:#7a8394;
+  --p-user:#2f6bff;--p-peer:#eaf0fa;--p-same:#d4e2ff;--p-sel:#b9d0ff;--p-bad:#e5484d;--p-badbg:#fde4e5;--p-note:#5b6577;
+  padding:16px 16px 20px;overflow:hidden;color:var(--p-ink);background:var(--p-bg)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .play{--p-bg:#101216;--p-cell:#171a20;--p-line:#2a2f39;--p-thick:#8a94a8;--p-key:#252a33;--p-ink:#eef1f6;--p-mut:#8d95a3;--p-user:#7ea6ff;--p-peer:#1c222c;--p-same:#23324f;--p-sel:#2c4677;--p-bad:#ff6b6f;--p-badbg:#3a1d21;--p-note:#9aa3b3}}
+:root[data-theme="dark"] .play{--p-bg:#101216;--p-cell:#171a20;--p-line:#2a2f39;--p-thick:#8a94a8;--p-key:#252a33;--p-ink:#eef1f6;--p-mut:#8d95a3;--p-user:#7ea6ff;--p-peer:#1c222c;--p-same:#23324f;--p-sel:#2c4677;--p-bad:#ff6b6f;--p-badbg:#3a1d21;--p-note:#9aa3b3}
+.play > *{position:relative}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;max-width:880px;margin:0 auto}
+.mtabs{display:inline-flex;gap:6px}
+.mtabs button{height:36px;padding:0 16px;border-radius:999px;border:1.5px solid var(--p-line);background:var(--p-cell);color:var(--p-ink);font:800 14px var(--sans);cursor:pointer;white-space:nowrap;transition:background .15s,border-color .15s,color .15s}
+.mtabs button:hover{border-color:var(--p-thick)}
+.mtabs button[aria-selected="true"]{background:var(--c2);border-color:var(--c2);color:#fff}
+.mtabs small{font:800 12px var(--sans);opacity:.8;margin-left:5px}
+.mtabs .sm{display:none}
+.ibtns{display:flex;gap:6px}
+.ib{width:36px;height:36px;border-radius:11px;border:1.5px solid var(--p-line);background:var(--p-key);color:var(--p-mut);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s}
+.ib:hover{color:var(--p-ink);border-color:var(--p-thick)}
+.ib svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:420px){.mtabs .lg{display:none}.mtabs .sm{display:inline}.mtabs button{padding:0 12px;font-size:13.5px}.ib{width:34px;height:34px}.ibtns{gap:4px}}
+@media (max-width:350px){.mtabs{gap:3px}.mtabs button{padding:0 9px;font-size:13px}.ib{width:31px;height:31px}.ibtns{gap:3px}.mtabs small{display:none}}
+
+.sub{max-width:880px;margin:12px auto 0;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:30px;font:800 13.5px var(--sans);color:var(--p-mut)}
+.sub b{color:var(--p-ink);font-weight:900}
+.lvls{display:inline-flex;gap:4px;flex-wrap:wrap}
+.lvls button{height:30px;padding:0 11px;border-radius:999px;border:1.5px solid var(--p-line);background:transparent;color:var(--p-mut);font:800 13px var(--sans);cursor:pointer}
+.lvls button[aria-pressed="true"]{border-color:var(--p-ink);color:var(--p-ink);background:var(--p-cell)}
+.meta{display:inline-flex;align-items:center;gap:12px;white-space:nowrap}
+.tm{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+.pz{width:30px;height:30px;border-radius:9px;border:1.5px solid var(--p-line);background:var(--p-cell);color:var(--p-ink);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.pz svg{width:14px;height:14px;fill:currentColor}
+.lvchip{display:inline-flex;align-items:center;gap:6px}
+.lvchip i{font-style:normal;padding:3px 10px;border-radius:999px;background:var(--p-cell);border:1.5px solid var(--p-line);color:var(--p-ink);font-weight:900}
+
+.game{display:flex;gap:28px;justify-content:center;align-items:flex-start;margin:14px auto 0;max-width:880px}
+/* tahta: 3×3 kutu, her kutuda 3×3 kare */
+.grid{--cs:clamp(30px,min(calc((100vw - 52px) / 9.2),calc((100svh - 330px) / 9.4)),60px);
+  position:relative;flex:none;display:grid;grid-template-columns:repeat(3,auto);gap:2px;padding:2px;background:var(--p-thick);border-radius:14px;box-shadow:0 18px 40px -26px rgba(20,30,60,.55);
+  user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.box{display:grid;grid-template-columns:repeat(3,var(--cs));grid-template-rows:repeat(3,var(--cs));gap:1px;background:var(--p-line)}
+.box:nth-child(1){border-top-left-radius:12px;overflow:hidden}.box:nth-child(3){border-top-right-radius:12px;overflow:hidden}
+.box:nth-child(7){border-bottom-left-radius:12px;overflow:hidden}.box:nth-child(9){border-bottom-right-radius:12px;overflow:hidden}
+.cell{position:relative;background:var(--p-cell);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .12s}
+.cell .v{font:800 calc(var(--cs) * .56)/1 var(--sans);color:var(--p-user)}
+.cell.g .v{color:var(--p-ink);font-weight:900}
+.cell.peer{background:var(--p-peer)}
+.cell.same{background:var(--p-same)}
+.cell.sel{background:var(--p-sel)}
+.cell.bad .v{color:var(--p-bad)}
+.cell.clash{background:var(--p-badbg)}
+.cell.sel.clash{background:var(--p-sel);box-shadow:inset 0 0 0 2px var(--p-bad)}
+.cell .n{position:absolute;inset:2px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr)}
+.cell .n i{font:800 calc(var(--cs) * .22)/1 var(--sans);font-style:normal;color:var(--p-note);display:flex;align-items:center;justify-content:center;border-radius:4px}
+.cell .n i.hl{background:var(--c2);color:#fff}
+.cell.pop .v{animation:pop .22s}
+.cell.hint{animation:hintfl 1.2s}
+.cell.win{animation:wave .6s both}
+@keyframes pop{50%{transform:scale(1.25)}}
+@keyframes hintfl{0%,100%{box-shadow:inset 0 0 0 0 transparent}30%,70%{box-shadow:inset 0 0 0 3px #ffb020}}
+@keyframes wave{40%{transform:scale(1.12);background:var(--c2)}}
+.cell.win .v{animation:wavev .6s both;animation-delay:inherit}
+@keyframes wavev{40%{color:#fff}}
+.paused{position:absolute;inset:0;z-index:3;border-radius:14px;background:color-mix(in srgb,var(--p-bg) 90%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font:900 20px var(--sans)}
+.paused button{height:46px;padding:0 26px;border-radius:999px;border:0;background:var(--c2);color:#fff;font:900 16px var(--sans);cursor:pointer}
+
+/* sağ panel: araçlar ve rakam tuşları */
+.side{width:280px;display:flex;flex-direction:column;gap:14px}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tool{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 2px 8px;border-radius:14px;border:0;background:transparent;color:var(--p-mut);font:800 12.5px var(--sans);cursor:pointer;position:relative}
+.tool:hover{color:var(--p-ink);background:var(--p-key)}
+.tool .ti{width:46px;height:46px;border-radius:50%;background:var(--p-key);display:flex;align-items:center;justify-content:center;color:var(--p-ink)}
+.tool svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tool .badge{position:absolute;top:4px;right:calc(50% - 30px);min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--c2);color:#fff;font:900 11px/20px var(--sans);text-align:center}
+.tool.on .ti{background:var(--c2);color:#fff}
+.tool.on .badge{background:var(--p-ink);color:var(--p-bg)}
+.tool:disabled{opacity:.4;cursor:default;background:transparent}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.num{position:relative;height:72px;border-radius:16px;border:0;background:var(--p-cell);box-shadow:0 1.5px 0 rgba(0,0,0,.08),inset 0 0 0 1.5px var(--p-line);color:var(--p-user);font:800 32px/1 var(--sans);cursor:pointer;transition:transform .06s,background .15s}
+.num:hover{background:var(--p-peer)}
+.num:active{transform:scale(.96)}
+.num small{position:absolute;right:9px;bottom:6px;font:800 11px var(--sans);color:var(--p-mut)}
+.num.done{opacity:.28}
+.num.done small{visibility:hidden}
+.pad.notes .num{color:var(--p-note);font-size:24px}
+.newbtn{height:46px;border-radius:14px;border:0;background:var(--c2);color:#fff;font:900 15px var(--sans);cursor:pointer}
+.newbtn:hover{filter:brightness(1.06)}
+.help{font:700 12.5px var(--sans);color:var(--p-mut);text-align:center}
+
+@media (max-width:920px){
+  .game{flex-direction:column;align-items:center;gap:12px}
+  .side{width:100%;max-width:calc(var(--cs, 40px) * 9 + 40px);gap:10px}
+  .side{--cs:clamp(30px,min(calc((100vw - 52px) / 9.2),calc((100svh - 330px) / 9.4)),60px)}
+  .pad{grid-template-columns:repeat(9,1fr);gap:4px}
+  .num{height:56px;border-radius:12px;font-size:27px}
+  .num small{right:auto;left:0;right:0;bottom:3px;text-align:center;font-size:10px}
+  .tools{gap:4px}.tool{padding:4px 2px 2px;font-size:12px}.tool .ti{width:40px;height:40px}
+  .help,.side .newbtn{display:none}
+  .play{padding:12px 8px 14px}
+}
+@media (max-width:380px){.num{height:50px;font-size:24px}.tool .ti{width:36px;height:36px}.tool svg{width:19px;height:19px}.sub{font-size:12.5px}.lvls button{height:28px;padding:0 8px;font-size:12px}}
+
+.toast{position:absolute;left:50%;top:92px;transform:translate(-50%,-8px);opacity:0;pointer-events:none;z-index:5;max-width:calc(100% - 24px);
+  background:var(--p-ink);color:var(--p-bg);font:800 14.5px var(--sans);padding:10px 18px;border-radius:999px;box-shadow:0 14px 30px -14px rgba(0,0,0,.5);transition:opacity .2s,transform .2s;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* pencereler */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.mcard{position:relative;width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;background:var(--block);color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:26px;box-shadow:0 30px 70px -30px rgba(0,0,0,.6)}
+.mcard h2{font-size:28px;font-weight:900;letter-spacing:-.02em;line-height:1.1;margin:8px 0 10px}
+.mcard p{color:var(--muted);font-size:15px}
+.mclose{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:46px;padding:0 16px;border-radius:12px;font-weight:800;font-size:15px;border:0;cursor:pointer}
+.btn-a{background:var(--accent);color:#fff}
+.btn-b{background:var(--c2);color:#fff}
+.btn-g{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.row2{display:flex;gap:8px;margin-top:16px}.row2 .btn{flex:1}
+.hrules{list-style:none;display:grid;gap:8px;margin:12px 0 4px;font-size:14.5px;color:var(--muted)}
+.hrules li{padding-left:16px;position:relative}
+.hrules li::before{content:"";position:absolute;left:1px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--c2)}
+.hrules b{color:var(--ink)}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0 4px}
+.res div,.stats div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.res b,.stats b{display:block;font-size:22px;font-weight:900;letter-spacing:-.01em;line-height:1.15;font-variant-numeric:tabular-nums}
+.res span,.stats span{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.bests{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.bests div{border-radius:12px;padding:8px 4px;text-align:center;border:1px dashed var(--line)}
+.bests b{display:block;font-size:16px;font-weight:900;font-variant-numeric:tabular-nums}
+.bests span{font-size:11px;font-weight:800;color:var(--muted)}
+.next{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font-size:14px}
+.next b{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}
+.opt{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.opt input{width:20px;height:20px;margin-top:2px;accent-color:var(--c2);flex:none}
+.opt span{display:flex;flex-direction:column}.opt b{font-size:15px}.opt small{font-size:13px;color:var(--muted)}
+
+/* bilgi bölümleri */
+.info{margin-top:var(--gap);display:grid;gap:var(--gap)}
+.intro{padding:30px}
+.intro h1{font-size:clamp(30px,4.2vw,46px);font-weight:900;letter-spacing:-.025em;line-height:1.08;margin:12px 0 14px;max-width:880px}
+.intro p{color:var(--muted);font-size:17px;max-width:800px}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+@media (max-width:820px){.cols2{grid-template-columns:1fr}}
+.info h2{font-size:24px;font-weight:900;letter-spacing:-.02em;margin-bottom:12px}
+.rules{list-style:none;display:grid;gap:9px;color:var(--muted);font-size:15px}
+.rules li{padding-left:18px;position:relative}
+.rules li::before{content:"";position:absolute;left:2px;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.rules b{color:var(--ink)}
+.faq details{border-top:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:18px;color:var(--muted)}
+.faq details[open] summary::after{content:"−"}
+.faq details p{color:var(--muted);font-size:15px;margin-top:8px}
+/* kontroller */
+.controls{padding:28px}
+.ctabs{display:inline-flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ctabs button{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 18px 0 14px;border-radius:999px;border:1px solid var(--line);background:var(--block);color:var(--ink);cursor:pointer;font-size:15px}
+.ctabs button small{font-size:12.5px;color:var(--muted)}
+.ctabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.ctabs button[aria-selected="true"] small{color:rgba(255,255,255,.85)}
+.ctl-grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:8px}
+.ctl{display:flex;align-items:center;gap:14px;min-height:76px;padding:10px 14px 10px 10px;border-radius:14px;background:var(--bg);border:1px solid var(--line);font-size:15px;line-height:1.4}
+.ctl-ic{flex:none;min-width:70px;height:56px;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.ctl-ic .ic{width:44px;height:56px;overflow:visible}
+.kcs{display:inline-flex;gap:4px;flex-wrap:nowrap}
+.kc{min-width:34px;height:38px;padding:0 7px;border-radius:9px;border:1px solid var(--line);border-bottom-width:4px;background:linear-gradient(180deg,var(--block),color-mix(in srgb,var(--bg) 60%,var(--block)));box-shadow:0 2px 4px -2px rgba(0,0,0,.25);display:inline-flex;align-items:center;justify-content:center;font:800 14px var(--sans);color:var(--ink);white-space:nowrap}
+.kc.w{font-size:12px;min-width:48px}
+@media (max-width:560px){.controls{padding:20px}.intro{padding:22px}.ctl{gap:10px;padding:10px}.ctl-ic{min-width:0}.kc{min-width:30px;height:34px;font-size:13px;padding:0 6px}.kc.w{min-width:40px;font-size:11px}}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:16px 20px;margin-top:var(--gap);font-size:12.5px;color:var(--muted)}
+footer nav{display:flex;gap:6px 16px;flex-wrap:wrap}
+footer a:hover{color:var(--ink)}
+
+/* kısa ekranlar */
+@media (max-height:700px) and (orientation:portrait){.top{display:none}.wrap{padding-top:6px}.grid{--cs:clamp(28px,min(calc((100vw - 52px) / 9.2),calc((100svh - 250px) / 9.4)),60px)}.num{height:48px}.sub{margin-top:8px}.game{margin-top:8px}}
+@media (max-height:560px) and (orientation:landscape){
+  .top{display:none}.wrap{padding-top:6px}
+  .play{padding:10px 14px 12px}
+  .sub{margin-top:6px}
+  .game{flex-direction:row;align-items:center;gap:16px;margin-top:6px;max-width:none}
+  .grid{--cs:clamp(24px,calc((100svh - 104px) / 9.3),50px)}
+  .side{width:min(300px,calc(100vw - var(--cs) * 9 - 70px));max-width:none;gap:8px}
+  .pad{grid-template-columns:repeat(5,1fr);gap:5px}.num{height:44px;font-size:22px;border-radius:11px}
+  .num small{display:none}
+  .tool{padding:2px 0;font-size:11px}.tool .ti{width:34px;height:34px}.tool svg{width:18px;height:18px}
+  .help,.side .newbtn{display:none}
+  .toast{top:60px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="b top">
+    <div class="brand">
+      <a href="/" class="logo" aria-label="okutan.org"><img class="l-light" src="/assets/logo.svg" width="96" height="26" alt="okutan"><img class="l-dark" src="/assets/logo-dark.svg" width="96" height="26" alt="okutan"></a>
+      <span class="crumb"><a href="/oyunlar/">Oyunlar</a> / <b>Sudoku</b></span>
+    </div>
+    <button class="ctrl" id="themeBtn" aria-label="Tema"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  </header>
+
+  <main class="b play" id="play" aria-label="Sudoku oyunu">
+    <div class="bar">
+      <div class="mtabs" role="tablist" aria-label="Oyun türü">
+        <button role="tab" id="tabDaily" aria-selected="true"><span class="lg">Günün Sudoku'su</span><span class="sm">Bugün</span><small id="dayNo"></small></button>
+        <button role="tab" id="tabFree" aria-selected="false">Serbest</button>
+      </div>
+      <div class="ibtns">
+        <button class="ib" id="helpBtn" aria-label="Nasıl oynanır"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4.2M12 17.6h.01"/></svg></button>
+        <button class="ib" id="statsBtn" aria-label="İstatistik"><svg viewBox="0 0 24 24"><path d="M5 20V11M12 20V5M19 20v-6"/></svg></button>
+        <button class="ib" id="setBtn" aria-label="Ayarlar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
+    </div>
+    <div class="sub">
+      <span id="subL"></span>
+      <span class="meta"><span id="errs"></span><span class="tm" id="tmBox"><b id="timer">00:00</b><button class="pz" id="pauseBtn" aria-label="Duraklat"><svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button></span></span>
+    </div>
+    <div class="game">
+      <div class="grid" id="grid" role="grid" aria-label="Sudoku tahtası">
+        <div class="paused" id="paused" hidden><span>Duraklatıldı</span><button id="resumeBtn">Devam et</button></div>
+      </div>
+      <div class="side">
+        <div class="tools">
+          <button class="tool" id="undoBtn" title="Geri al (Z)"><span class="ti"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></span>Geri al</button>
+          <button class="tool" id="eraseBtn" title="Sil (Delete)"><span class="ti"><svg viewBox="0 0 24 24"><path d="M20 20H8l-5-5 10-10 8 8-6 6"/><path d="m7 10 7 7"/></svg></span>Sil</button>
+          <button class="tool" id="noteBtn" title="Not (N)" aria-pressed="false"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg></span><span class="badge" id="noteBadge">KAPALI</span>Not</button>
+          <button class="tool" id="hintBtn" title="İpucu (H)"><span class="ti"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z"/></svg></span><span class="badge" id="hintBadge">0</span>İpucu</button>
+        </div>
+        <div class="pad" id="pad" aria-label="Rakamlar"></div>
+        <button class="newbtn" id="newBtn" hidden>Yeni bulmaca</button>
+        <p class="help" id="kbHelp">Klavye: 1–9 yaz · Shift + rakam not · N not · Z geri al · H ipucu · oklar gez</p>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <section class="info" aria-labelledby="pageTitle">
+    <div class="b intro">
+      <div class="label">Ücretsiz · Tarayıcıda · Üyeliksiz</div>
+      <h1 id="pageTitle">Sudoku: Her Gün Yeni Bulmaca, Kolaydan Uzmana Ücretsiz Oyna</h1>
+      <p>9×9'luk tahtayı 1'den 9'a kadar rakamlarla doldur: her satırda, her sütunda ve her 3×3 kutuda her rakam bir kez. Her gün Türkiye saatiyle gece yarısı herkese aynı <b>Günün Sudoku'su</b> gelir; serini koru, süreni bulmacayı açık etmeden paylaş. <b>Serbest</b> sekmesinde kolay, orta, zor ve uzman seviyede sınırsız bulmaca çöz. Bütün bulmacalar tek çözümlüdür; not alma, ipucu, geri al ve hata gösterme hazır.</p>
+    </div>
+    <div class="b controls">
+      <h2>Sudoku kontrolleri</h2>
+      <div class="ctabs" role="tablist" aria-label="Cihaz">
+        <button role="tab" id="cTabDesk" aria-controls="ctlDesk" aria-selected="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M7 15h10"/></svg><b>Bilgisayar</b><small>Klavye ve fare</small></button>
+        <button role="tab" id="cTabMob" aria-controls="ctlMob" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><b>Mobil</b><small>Telefon ve tablette</small></button>
+      </div>
+      <ul class="ctl-grid" id="ctlDesk" role="tabpanel" aria-labelledby="cTabDesk">
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="5" y="3" width="30" height="48" rx="15" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 3v19M5 22h30" stroke="currentColor" stroke-width="2.4"/><path d="M20 4.2A13.8 13.8 0 0 0 6.2 18v2.8H20z" fill="var(--accent)"/><rect x="18" y="9" width="4" height="8" rx="2" fill="currentColor"/></svg></span><span>Kareye tıklayıp seç, sağdaki rakam tuşlarıyla yaz</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">1</kbd><kbd class="kc">…</kbd><kbd class="kc">9</kbd></span></span><span>Seçili kareye rakam yaz (aynı rakam yeniden silinir)</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Shift</kbd><kbd class="kc">5</kbd></span></span><span>Kareye not (aday) ekle ya da kaldır</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">N</kbd></span></span><span>Not modunu aç / kapat</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">←</kbd><kbd class="kc">↑</kbd><kbd class="kc">→</kbd></span></span><span>Ok tuşlarıyla kareler arasında gez</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Del</kbd><kbd class="kc">0</kbd></span></span><span>Karedeki rakamı ya da notları sil (Backspace da olur)</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">Z</kbd></span></span><span>Son hamleyi geri al (Ctrl + Z da olur)</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">H</kbd></span></span><span>İpucu: sıradaki mantıklı adımı göster</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc">P</kbd></span></span><span>Duraklat / devam et (süre durur)</span></li>
+        <li class="ctl"><span class="ctl-ic"><span class="kcs"><kbd class="kc w">Esc</kbd></span></span><span>Açık pencereyi kapat</span></li>
+      </ul>
+      <ul class="ctl-grid" id="ctlMob" role="tabpanel" aria-labelledby="cTabMob" hidden>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M14 18h20v20H14z" fill="#d4e2ff" stroke="currentColor" stroke-width="1.4"/><path d="M14 24.7h20M14 31.3h20M20.7 18v20M27.3 18v20" stroke="currentColor" stroke-width=".9"/><circle cx="24" cy="28" r="4.5" fill="var(--accent)" opacity=".75"/></svg></span><span>Kareye dokunup seç</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="13" y="40" width="6" height="8" rx="1.5" fill="#cdd6e6" stroke="currentColor" stroke-width="1.2"/><rect x="21" y="40" width="6" height="8" rx="1.5" fill="var(--accent)" stroke="currentColor" stroke-width="1.2"/><rect x="29" y="40" width="6" height="8" rx="1.5" fill="#cdd6e6" stroke="currentColor" stroke-width="1.2"/></svg></span><span>Alttaki rakam tuşuna dokunarak yaz; küçük sayı o rakamdan kaç tane kaldığını gösterir</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="24" cy="30" r="8" fill="var(--accent)"/><path d="M20.5 33.5h2l5-5-2-2-5 5z" fill="#fff"/></svg></span><span><b>Not</b>'a dokun: rakamlar kareye küçük aday notu olarak yazılır</span></li>
+        <li class="ctl"><span class="ctl-ic"><svg class="ic" viewBox="0 0 48 60" aria-hidden="true"><rect x="9" y="3" width="30" height="54" rx="7" fill="var(--block)" stroke="currentColor" stroke-width="2.4"/><path d="M20 8h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="18" cy="30" r="4.5" fill="#cdd6e6" stroke="currentColor" stroke-width="1.2"/><circle cx="30" cy="30" r="4.5" fill="var(--accent)" stroke="currentColor" stroke-width="1.2"/></svg></span><span><b>Geri al</b>, <b>Sil</b> ve <b>İpucu</b> tahtanın altında; süre sağ üstte, ⏸ ile duraklat</span></li>
+      </ul>
+    </div>
+    <div class="cols2">
+      <div class="b">
+        <h2>Sudoku nasıl oynanır?</h2>
+        <ul class="rules">
+          <li>Tahta 9 satır, 9 sütun ve kalın çizgiyle ayrılmış 9 kutudan (3×3) oluşur.</li>
+          <li>Her <b>satırda</b>, her <b>sütunda</b> ve her <b>kutuda</b> 1'den 9'a kadar her rakam <b>tam bir kez</b> bulunur.</li>
+          <li>Başta verilen koyu rakamlar değişmez; boş kareleri sen doldurursun.</li>
+          <li>Emin olmadığın karelere <b>not</b> al: o kareye gelebilecek rakamları küçük yaz.</li>
+          <li>Bütün kareler doğru dolunca bulmaca biter; süren, ipucu ve hata sayın sonuçta görünür.</li>
+          <li>Her bulmacanın <b>tek çözümü</b> vardır; tahmin etmeden, mantıkla çözülür.</li>
+        </ul>
+      </div>
+      <div class="b">
+        <h2>Günün Sudoku'su ve zorluklar</h2>
+        <ul class="rules">
+          <li><b>Günün Sudoku'su</b> Türkiye saatiyle gece yarısı değişir; o gün herkes aynı bulmacayı çözer.</li>
+          <li>Zorluk haftaya göre döner: <b>pazartesi kolay</b>, salı, çarşamba ve pazar orta, <b>perşembe ve cuma zor</b>, <b>cumartesi uzman</b>.</li>
+          <li>Üst üste çözdüğün günler <b>serini</b> büyütür; süreni bulmacayı açık etmeden paylaş.</li>
+          <li><b>Serbest</b> sekmesinde dört zorlukta sınırsız bulmaca var; her zorluğun yarım kalan oyunu ayrı saklanır.</li>
+          <li>Zorluk, bulmacayı çözmek için gereken en zor tekniğe göre ölçülür; rakam sayısına bakılmaz.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="b">
+      <h2>Sudoku çözüm teknikleri</h2>
+      <ul class="rules">
+        <li><b>Tek aday (naked single):</b> Bir kareye satırı, sütunu ve kutusu yüzünden yalnızca tek rakam uyuyorsa o rakam oraya yazılır. Kolay bulmacaların çoğu bununla biter.</li>
+        <li><b>Gizli tek (hidden single):</b> Bir rakam bir satırda, sütunda ya da kutuda yalnızca tek kareye gelebiliyorsa, o karede başka aday olsa bile rakam oraya yazılır.</li>
+        <li><b>Aday çifti (naked pair):</b> Aynı satırda iki kare yalnızca aynı iki rakamı alabiliyorsa, o iki rakam satırın diğer karelerinden silinir. Zor bulmacalarda gerekir.</li>
+        <li><b>Kutu-çizgi eleme:</b> Bir kutuda bir rakamın adayları tek satırda (ya da sütunda) toplanmışsa, o rakam aynı satırın kutu dışındaki karelerine gelemez.</li>
+        <li><b>Gizli çift ve üçlüler:</b> İki ya da üç rakam bir birimde yalnızca aynı iki-üç kareye gelebiliyorsa, o karelerdeki diğer adaylar silinir. Uzman bulmacalarda daha ileri teknikler de gerekir.</li>
+        <li><b>Tarama:</b> Tahtada en çok bulunan rakamdan başla; o rakamın satır ve sütunlarını gözünle tarayıp boş kalan tek yeri bul. Rakam tuşlarındaki küçük sayı, her rakamdan kaç tane kaldığını gösterir.</li>
+      </ul>
+    </div>
+    <div class="b faq">
+      <h2>Sık sorulan sorular</h2>
+      <details><summary>Sudoku nasıl oynanır?</summary><p>9×9'luk tahtadaki boş kareleri 1'den 9'a kadar rakamlarla doldurursun. Her satırda, her sütunda ve kalın çizgiyle ayrılmış her 3×3 kutuda 1–9 arası rakamların her biri tam bir kez bulunmalı. Başta verilen rakamlar değiştirilemez; doğru rakamları mantıkla bulursun, tahmin gerekmez.</p></details>
+      <details><summary>Günün Sudoku'su nedir?</summary><p>Her gün Türkiye saatiyle gece yarısı herkese aynı yeni bir bulmaca gelir. Zorluğu haftanın gününe göre değişir: pazartesi kolay, salı, çarşamba ve pazar orta, perşembe ve cuma zor, cumartesi uzman. Üst üste çözdüğün günler serini büyütür; sonucunu bulmacayı açık etmeden paylaşabilirsin.</p></details>
+      <details><summary>Zorluk seviyeleri nasıl belirleniyor?</summary><p>Her bulmaca, insan gibi çözen bir programdan geçirilir. Kolay ve orta bulmacalar yalnızca tek aday ve gizli tek yöntemleriyle çözülür (ortada daha az rakam verilir). Zor bulmacalarda aday çiftleri ve kutu-çizgi eleme gerekir. Uzman bulmacalar bu yöntemlerle bitmez; daha ileri teknikler ister.</p></details>
+      <details><summary>Not alma (kalem) nasıl kullanılır?</summary><p>Not düğmesine bas ya da klavyede N tuşuna bas; artık seçtiğin rakamlar kareye küçük aday notu olarak yazılır. Bir kareye rakam yerleştirdiğinde aynı satır, sütun ve kutudaki o rakamın notları kendiliğinden silinir (ayarlardan kapatılabilir). Bilgisayarda Shift ile birlikte rakama basarak da not alabilirsin.</p></details>
+      <details><summary>İpucu ne yapar?</summary><p>İpucu, sıradaki mantıklı adımı gösterir ve o rakamı yerleştirir: yalnızca tek rakamın uyduğu bir kareyi ya da bir satırda, sütunda veya kutuda bir rakamın gelebileceği tek yeri. Yanlış bir rakam yazdıysan önce onu gösterir. Kullandığın ipucu sayısı sonuçta görünür.</p></details>
+      <details><summary>Her bulmacanın tek çözümü var mı?</summary><p>Evet. Bütün bulmacalar tek çözümlü olacak şekilde üretilir ve her biri bilgisayarla kontrol edilir. Bu yüzden her rakam mantıkla bulunabilir; doğru çözümde tahmin etmek zorunda kalmazsın.</p></details>
+      <details><summary>Hatalarımı görebilir miyim?</summary><p>Ayarlarda Hataları göster açıkken çözüme uymayan rakam hemen kırmızı görünür ve hata sayacı artar. Kapatırsan yalnızca kurala aykırı durumlar, yani aynı satır, sütun ya da kutuda tekrar eden rakamlar işaretlenir.</p></details>
+      <details><summary>Sudoku ücretsiz mi, telefonda oynanır mı?</summary><p>Tamamen ücretsizdir; indirme ya da üyelik gerekmez. Telefonda kareye dokunup alttaki rakam tuşlarıyla oynanır, ana ekrana uygulama gibi eklenebilir ve internetsiz de açılır. İlerlemen bu tarayıcıda saklanır; yarım kalan bulmaca süresiyle birlikte kaldığı yerden devam eder.</p></details>
+    </div>
+  </section>
+  <footer class="b">
+    <span>© <span id="yr">2026</span> Sedat Okutan</span>
+    <nav aria-label="Diğer oyunlar" data-oyunlar><a href="/">okutan.org</a><a href="/oyunlar/">Oyunlar</a></nav><script src="/assets/oyunlar.js?v=2" defer></script>
+  </footer>
+</div>
+
+<!-- Nasıl oynanır -->
+<div class="modal" id="helpModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Nasıl oynanır</div>
+    <h2 id="helpTitle">Her rakam bir kez</h2>
+    <ul class="hrules">
+      <li>Boş kareleri <b>1–9</b> rakamlarıyla doldur.</li>
+      <li>Her <b>satır</b>, her <b>sütun</b> ve her <b>3×3 kutu</b> 1'den 9'a her rakamı tam bir kez içermeli.</li>
+      <li>Kareyi seç, rakama dokun. Emin değilsen <b>Not</b>'u aç ve aday rakamları küçük yaz.</li>
+      <li>Takılırsan <b>İpucu</b> sıradaki mantıklı adımı gösterir.</li>
+      <li>Günün Sudoku'su her gece yarısı değişir; Serbest'te sınırsız bulmaca var.</li>
+    </ul>
+    <div class="row2"><button class="btn btn-b" data-close>Oynamaya başla</button></div>
+  </div>
+</div>
+<!-- Ayarlar -->
+<div class="modal" id="setModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Ayarlar</div>
+    <h2 id="setTitle">Ayarlar</h2>
+    <label class="opt"><input type="checkbox" id="optErr" checked><span><b>Hataları göster</b><small>Çözüme uymayan rakam kırmızı görünür ve hata sayılır. Kapalıyken yalnızca tekrar eden rakamlar işaretlenir.</small></span></label>
+    <label class="opt"><input type="checkbox" id="optSame" checked><span><b>Aynı rakamları vurgula</b><small>Seçili karedeki rakamı tahtanın her yerinde ve notlarda göster.</small></span></label>
+    <label class="opt"><input type="checkbox" id="optAuto" checked><span><b>Notları kendiliğinden sil</b><small>Rakam yazınca aynı satır, sütun ve kutudaki o rakamın notları silinir.</small></span></label>
+    <label class="opt"><input type="checkbox" id="optTime" checked><span><b>Süreyi göster</b><small>Kapalıyken de süre tutulur, yalnızca gizlenir.</small></span></label>
+    <div class="row2"><button class="btn btn-g" data-close>Tamam</button></div>
+  </div>
+</div>
+<!-- Sonuç ve istatistik -->
+<div class="modal" id="endModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label" id="endLabel">İstatistik</div>
+    <h2 id="endTitle">İstatistik</h2>
+    <div class="res" id="endRes" hidden></div>
+    <div class="label" style="margin-top:14px">Günün Sudoku'su</div>
+    <div class="stats" id="statGrid"></div>
+    <div class="label" style="margin-top:14px">En iyi süreler</div>
+    <div class="bests" id="bestGrid"></div>
+    <div class="next" id="nextBox"><span>Sonraki bulmaca</span><b id="nextIn">--:--:--</b></div>
+    <div class="row2"><button class="btn btn-a" id="shareBtn" hidden>Paylaş</button><button class="btn btn-g" id="freeBtn">Serbest oyna</button></div>
+  </div>
+</div>
+<!-- Yeni bulmaca onayı -->
+<div class="modal" id="newModal" hidden>
+  <div class="mcard" role="dialog" aria-modal="true" aria-labelledby="newTitle">
+    <button class="mclose" data-close aria-label="Kapat">✕</button>
+    <div class="label">Serbest oyun</div>
+    <h2 id="newTitle">Yeni bulmaca başlasın mı?</h2>
+    <p>Bu zorluktaki yarım bulmacan silinecek.</p>
+    <div class="row2"><button class="btn btn-g" data-close>Vazgeç</button><button class="btn btn-b" id="newOk">Yeni bulmaca</button></div>
+  </div>
+</div>
+<script src="motor.js?v=1" defer></script>
+<script src="oyun.js?v=1" defer></script>
+</body>
+</html>

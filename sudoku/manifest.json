@@ -1,0 +1,18 @@
+{
+  "name": "Sudoku — okutan.org",
+  "short_name": "Sudoku",
+  "description": "Her gün yeni Sudoku ve kolaydan uzmana sınırsız bulmaca: not al, ipucu iste, süreni paylaş.",
+  "lang": "tr",
+  "start_url": "/sudoku/?kaynak=uygulama",
+  "scope": "/sudoku/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6fa",
+  "theme_color": "#f4f6fa",
+  "categories": ["games", "education", "entertainment"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

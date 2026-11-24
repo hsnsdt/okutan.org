@@ -15,6 +15,7 @@
   var OYUNLAR = [
     ['/ates-ve-su/', 'Ateş ve Su'],
     ['/gizli-kelime/', 'Gizli Kelime'],
+    ['/sudoku/', 'Sudoku'],
     ['/okey/', 'Okey'],
     ['/batak/', 'Batak'],
     ['/king/', 'King'],

@@ -50,7 +50,7 @@
       "@type": "ItemList",
       "@id": "https://okutan.org/oyunlar/#list",
       "itemListOrder": "https://schema.org/ItemListUnordered",
-      "numberOfItems": 11,
+      "numberOfItems": 12,
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "url": "https://okutan.org/balon/", "name": "Balon Patlat" },
         { "@type": "ListItem", "position": 2, "url": "https://okutan.org/101-okey/", "name": "101 Okey" },
@@ -62,7 +62,8 @@
         { "@type": "ListItem", "position": 8, "url": "https://okutan.org/kelime-bulucu/", "name": "Kelime Bulucu" },
         { "@type": "ListItem", "position": 9, "url": "https://okutan.org/batak/", "name": "Batak" },
         { "@type": "ListItem", "position": 10, "url": "https://okutan.org/king/", "name": "King" },
-        { "@type": "ListItem", "position": 11, "url": "https://okutan.org/pisti/", "name": "Pişti" }
+        { "@type": "ListItem", "position": 11, "url": "https://okutan.org/pisti/", "name": "Pişti" },
+        { "@type": "ListItem", "position": 12, "url": "https://okutan.org/sudoku/", "name": "Sudoku" }
       ]
     },
     {
@@ -75,10 +76,10 @@
     {
       "@type": "FAQPage",
       "mainEntity": [
-        { "@type": "Question", "name": "Bu oyunlar ücretsiz mi?", "acceptedAnswer": { "@type": "Answer", "text": "Evet, hepsi ücretsizdir. Balon Patlat, 101 Okey, Okey, Tavla ve Gizli Kelime tarayıcıda indirme ve üyelik olmadan açılır; Kelimeler iOS'ta App Store'dan, Android'de APK olarak ücretsiz indirilir." } },
+        { "@type": "Question", "name": "Bu oyunlar ücretsiz mi?", "acceptedAnswer": { "@type": "Answer", "text": "Evet, hepsi ücretsizdir. Balon Patlat, 101 Okey, Okey, Tavla, Gizli Kelime ve Sudoku tarayıcıda indirme ve üyelik olmadan açılır; Kelimeler iOS'ta App Store'dan, Android'de APK olarak ücretsiz indirilir." } },
         { "@type": "Question", "name": "Telefonda oynanır mı?", "acceptedAnswer": { "@type": "Answer", "text": "Evet. Tarayıcı oyunları her ekrana uyum sağlar ve telefonun ana ekranına uygulama gibi eklenebilir. Kelimeler zaten bir mobil uygulamadır." } },
         { "@type": "Question", "name": "Skorum sıralamada nasıl görünür?", "acceptedAnswer": { "@type": "Answer", "text": "Oyuna başlarken adını yazman yeterli. Balon Patlat en yüksek puanları, 101 Okey galibiyetleri ve günlük el puanlarını online sıralamada gösterir." } },
-        { "@type": "Question", "name": "Günlük meydan okuma nedir?", "acceptedAnswer": { "@type": "Answer", "text": "Her gün herkes aynı oyunu oynar: Balon Patlat'ta günün bulmacası, 101 Okey'de, Okey'de, Pişti'de, Batak'ta ve King'de günün eli, Gizli Kelime'de günün kelimesi. Günde tek hakkın vardır ve sonucun günlük sıralamaya girer." } },
+        { "@type": "Question", "name": "Günlük meydan okuma nedir?", "acceptedAnswer": { "@type": "Answer", "text": "Her gün herkes aynı oyunu oynar: Balon Patlat'ta günün bulmacası, 101 Okey'de, Okey'de, Pişti'de, Batak'ta ve King'de günün eli, Gizli Kelime'de günün kelimesi, Sudoku'da günün bulmacası. Günde tek hakkın vardır ve sonucun günlük sıralamaya girer." } },
         { "@type": "Question", "name": "Arkadaşlarımla birlikte oynayabilir miyim?", "acceptedAnswer": { "@type": "Answer", "text": "101 Okey, Okey, Pişti, Batak, King ve Tavla'da online masa kurup davet bağlantısıyla arkadaşlarını çağırabilir, masada sohbet edebilirsin; boş koltuklara bot oturur. Ateş ve Su'yı aynı klavyede ya da online, ayrı cihazlardan birlikte oynarsınız. Balon Patlat'ta skorunu meydan okuma bağlantısıyla paylaşabilir, Kelimeler'de arkadaşlarınla karşılıklı oynayabilirsin. Oyun arkadaşı aramak için Canlı Sohbet'in #okey, #tavla ve #kart kanallarına masa davet bağlantını yapıştırabilirsin." } }
       ]
     }
@@ -250,6 +251,15 @@ a:hover .ps-viz .btc:nth-of-type(2){transform:translateX(4px) translateY(2px) ro
 .gkb div{display:flex;gap:6px}
 .gkb i{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:900 21px var(--sans);font-style:normal;color:#fff;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2),0 3px 0 rgba(0,0,0,.25);transition:transform .45s}
 .gkb .s2{background:linear-gradient(#4a82ff,#2f6bff)}.gkb .s1{background:linear-gradient(#ffa24d,#ff8a1f)}.gkb .s0{background:linear-gradient(#4a5468,#3d475a);color:#dfe4ee}
+.art.sd{background:radial-gradient(120% 110% at 50% 0%,#3a6cf0,#1b3c9c 55%,#0f2460)}
+.sdb{display:grid;grid-template-columns:repeat(3,auto);gap:3px;padding:3px;background:#3a4458;border-radius:12px;transform:rotate(-3deg);transition:transform .35s;box-shadow:0 18px 30px -18px rgba(0,0,0,.6)}
+.sdb b{display:grid;grid-template-columns:repeat(3,22px);grid-template-rows:repeat(3,22px);gap:1px;background:#d5dbe6}
+.sdb b:nth-child(1){border-top-left-radius:9px;overflow:hidden}.sdb b:nth-child(3){border-top-right-radius:9px;overflow:hidden}.sdb b:nth-child(7){border-bottom-left-radius:9px;overflow:hidden}.sdb b:nth-child(9){border-bottom-right-radius:9px;overflow:hidden}
+.sdb i{background:#fff;font:900 13px/22px "Nunito",var(--sans);text-align:center;color:#1d2433;font-style:normal}
+.sdb i.u{color:#2f6bff;font-weight:800}.sdb i.h{background:#d4e2ff}
+.art.sd .sdb{zoom:.76}
+.g:hover .sdb{transform:rotate(0) scale(1.04)}
+.dc.sd .dc-top{background:radial-gradient(120% 140% at 0% 0%,#3a6cf0,#0f2460)}
 .g:hover .gkb{transform:rotate(0) scale(1.04)}.g:hover .gkb div:nth-child(3) i{transform:rotateX(360deg)}
 .g:hover .gkb div:nth-child(3) i:nth-child(2){transition-delay:.06s}.g:hover .gkb div:nth-child(3) i:nth-child(3){transition-delay:.12s}.g:hover .gkb div:nth-child(3) i:nth-child(4){transition-delay:.18s}.g:hover .gkb div:nth-child(3) i:nth-child(5){transition-delay:.24s}
 .art.kb{background:radial-gradient(120% 110% at 50% 0%,#16795c,#0d3b2e 55%,#08231b)}
@@ -371,6 +381,7 @@ footer a:hover{color:var(--ink)}
           <li><img class="ic" src="/okey/icon-192.png" width="96" height="96" alt="" decoding="async"><span><b>Okey</b><small id="pDo">Yükleniyor…</small></span><span class="v" id="pDoV"></span></li>
           <li><img class="ic" src="/tavla/icon-192.png" width="96" height="96" alt="" decoding="async"><span><b>Tavla</b><small id="pTv">Yükleniyor…</small></span><span class="v" id="pTvV"></span></li>
           <li><img class="ic" src="/gizli-kelime/icon-192.png" width="96" height="96" alt="" decoding="async"><span><b>Gizli Kelime</b><small id="pGk">Günün kelimesi</small></span><span class="v" id="pGkV"></span></li>
+          <li><img class="ic" src="/sudoku/icon-192.png" width="96" height="96" alt="" decoding="async"><span><b>Sudoku</b><small id="pSd">Günün Sudoku'su</small></span><span class="v" id="pSdV"></span></li>
           <li><img class="ic" src="/kelimeler/img/app-icon.webp" width="96" height="96" alt="" decoding="async"><span><b>Kelimeler</b><small>iOS ve Android · Şehir Savaşları</small></span><span class="v"><svg class="i st" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>4.8</span></li>
         </ul>
         <div class="tot"><div><b id="tBp">—</b><span>Balon oyunu</span></div><div><b id="tOk">—</b><span>101 oyunu</span></div><div><b id="tDo">—</b><span>Okey oyunu</span></div><div><b id="tTv">—</b><span>Tavla maçı</span></div></div>
@@ -467,6 +478,17 @@ footer a:hover{color:var(--ink)}
         </div>
       </a>
 
+      <a class="b g" href="/sudoku/">
+        <div class="art sd" aria-hidden="true"><div class="sdb"><b><i>5</i><i>3</i><i></i><i>6</i><i class="u">7</i><i></i><i></i><i>9</i><i>8</i></b><b><i class="u">6</i><i>7</i><i></i><i>1</i><i>9</i><i>5</i><i></i><i></i><i class="u">2</i></b><b><i class="u">9</i><i></i><i></i><i></i><i class="u">4</i><i></i><i></i><i>6</i><i class="u">7</i></b><b><i>8</i><i></i><i class="u">9</i><i>4</i><i></i><i></i><i>7</i><i class="u">1</i><i></i></b><b><i class="u">7</i><i>6</i><i></i><i>8</i><i class="u h">5</i><i>3</i><i></i><i>2</i><i class="u">4</i></b><b><i class="u">4</i><i></i><i>3</i><i></i><i class="u">9</i><i>1</i><i></i><i></i><i>6</i></b><b><i></i><i>6</i><i class="u">1</i><i class="u">2</i><i></i><i></i><i></i><i class="u">4</i><i></i></b><b><i></i><i></i><i class="u">7</i><i>4</i><i>1</i><i>9</i><i></i><i>8</i><i></i></b><b><i>2</i><i>8</i><i></i><i class="u">6</i><i class="u">3</i><i>5</i><i></i><i>7</i><i>9</i></b></div></div>
+        <div class="body">
+          <div class="head"><img class="app" src="/sudoku/icon-192.png" width="96" height="96" alt="" decoding="async"><div><div class="label">Mantık · Bulmaca</div><h3>Sudoku</h3></div></div>
+          <p>9×9 tahtayı 1–9 rakamlarıyla doldur; her satır, sütun ve kutuda her rakam bir kez. Her gün herkese aynı bulmaca.</p>
+          <ul class="feats"><li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Günün Sudoku'su, seri ve en iyi süreler</li><li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2.5"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>Kolay, orta, zor, uzman: sınırsız bulmaca</li><li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>Not alma, ipucu, geri al, hata gösterme</li></ul>
+          <div class="live" id="lSd" aria-live="polite"></div>
+          <div class="cta"><span class="play">Oyna <b>→</b></span><span class="plat" title="Tarayıcıda: masaüstü ve mobil"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 9h19"/><circle cx="6" cy="6.5" r=".6"/><circle cx="8.5" cy="6.5" r=".6"/></svg><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2" width="11" height="20" rx="2.8"/><path d="M10.5 18.5h3"/></svg></span></div>
+        </div>
+      </a>
+
       <a class="b g" href="/kelime-bulucu/">
         <div class="art kb" aria-hidden="true"><div class="kbb"><span class="rk"><i>K</i><i>A</i><i>L</i><i>E</i><i>M</i><i class="j">*</i></span><span class="rs"><b>mak<u>a</u>le</b><b><u>r</u>eklam</b><b>kalem</b><b>kelam</b><b>emlak</b><b>elma</b></span></div></div>
         <div class="body">
@@ -545,6 +567,14 @@ footer a:hover{color:var(--ink)}
         <p>Herkese aynı beş harfli kelime, altı tahmin hakkı. Serini koru, sonucunu kelimeyi açık etmeden paylaş.</p>
         <div class="dc-foot"><span class="st" id="dGk"></span><span class="go">Oyna <b>→</b></span></div>
       </a>
+      <a class="b dc sd" href="/sudoku/">
+        <div class="dc-top">
+          <span class="ic"><img src="/sudoku/icon-192.png" width="96" height="96" alt="" decoding="async"><i class="dd"></i></span>
+          <div class="dc-t"><small>Sudoku</small><h3>Günün Sudoku'su <span id="sdNo"></span></h3></div>
+        </div>
+        <p>Herkese aynı tek çözümlü bulmaca; zorluk haftanın gününe göre değişir. Serini koru, süreni paylaş.</p>
+        <div class="dc-foot"><span class="st" id="dSd"></span><span class="go">Oyna <b>→</b></span></div>
+      </a>
     </section>
 
     <section class="b faq" aria-labelledby="faqTitle">
@@ -554,10 +584,10 @@ footer a:hover{color:var(--ink)}
         <p class="lead">Oyunlar hakkında merak edilenler. Başka bir sorun varsa ana sayfadaki iletişim bölümünden yazabilirsin.</p>
       </div>
       <div>
-        <details><summary>Bu oyunlar ücretsiz mi?</summary><p>Evet, hepsi ücretsizdir. Balon Patlat, 101 Okey, Okey, Tavla ve Gizli Kelime tarayıcıda indirme ve üyelik olmadan açılır; Kelimeler iOS'ta App Store'dan, Android'de APK olarak ücretsiz indirilir.</p></details>
+        <details><summary>Bu oyunlar ücretsiz mi?</summary><p>Evet, hepsi ücretsizdir. Balon Patlat, 101 Okey, Okey, Tavla, Gizli Kelime ve Sudoku tarayıcıda indirme ve üyelik olmadan açılır; Kelimeler iOS'ta App Store'dan, Android'de APK olarak ücretsiz indirilir.</p></details>
         <details><summary>Telefonda oynanır mı?</summary><p>Evet. Tarayıcı oyunları her ekrana uyum sağlar ve telefonun ana ekranına uygulama gibi eklenebilir. Kelimeler zaten bir mobil uygulamadır.</p></details>
         <details><summary>Skorum sıralamada nasıl görünür?</summary><p>Oyuna başlarken adını yazman yeterli. Balon Patlat en yüksek puanları, 101 Okey galibiyetleri ve günlük el puanlarını online sıralamada gösterir.</p></details>
-        <details><summary>Günlük meydan okuma nedir?</summary><p>Her gün herkes aynı oyunu oynar: Balon Patlat'ta günün bulmacası, 101 Okey'de, Okey'de, Pişti'de, Batak'ta ve King'de günün eli, Gizli Kelime'de günün kelimesi. Günde tek hakkın vardır ve sonucun günlük sıralamaya girer.</p></details>
+        <details><summary>Günlük meydan okuma nedir?</summary><p>Her gün herkes aynı oyunu oynar: Balon Patlat'ta günün bulmacası, 101 Okey'de, Okey'de, Pişti'de, Batak'ta ve King'de günün eli, Gizli Kelime'de günün kelimesi, Sudoku'da günün bulmacası. Günde tek hakkın vardır ve sonucun günlük sıralamaya girer.</p></details>
         <details><summary>Arkadaşlarımla birlikte oynayabilir miyim?</summary><p>101 Okey, Okey, Pişti, Batak, King ve Tavla'da online masa kurup davet bağlantısıyla arkadaşlarını çağırabilir, masada sohbet edebilirsin; boş koltuklara bot oturur. Ateş ve Su'yı aynı klavyede ya da online, ayrı cihazlardan birlikte oynarsınız. Balon Patlat'ta skorunu meydan okuma bağlantısıyla paylaşabilir, Kelimeler'de arkadaşlarınla karşılıklı oynayabilirsin. Oyun arkadaşı aramak için <a href="/sohbet/" style="text-decoration:underline">Canlı Sohbet</a>'in #okey, #tavla ve #kart kanallarına masa davet bağlantını yapıştırabilirsin.</p></details>
       </div>
     </section>
@@ -601,6 +631,20 @@ footer a:hover{color:var(--ink)}
     $('pGk').textContent = 'Günün kelimesi #' + no + (res ? (res === 'w' ? ' · çözdün' : ' · oynadın') : ' · seni bekliyor');
     $('pGkV').textContent = streak ? streak + ' gün seri' : '';
     $('lGk').textContent = streak ? streak + ' günlük serin var' : '';
+  })();
+  // Sudoku: sunucu yok; bu tarayıcıdaki bugünkü sonuç ve seri (1. gün 2026-11-24)
+  (function () {
+    var p = day.split('-'), t = Date.UTC(+p[0], +p[1] - 1, +p[2]), no = Math.round((t - Date.UTC(2026, 10, 24)) / 864e5) + 1;
+    var lv = ['Orta', 'Kolay', 'Orta', 'Orta', 'Zor', 'Zor', 'Uzman'][new Date(t).getUTCDay()];
+    var res = ls('sd_daily_' + day), st = null;
+    try { st = JSON.parse(ls('sd_stats') || 'null'); } catch (e) {}
+    var streak = st && (st.last === no || st.last === no - 1) ? st.streak : 0;
+    $('sdNo').textContent = '#' + no;
+    if (res) { $('dSd').textContent = 'Bugün çözdün'; $('dSd').classList.add('done'); }
+    else $('dSd').textContent = 'Bugün: ' + lv;
+    $('pSd').textContent = 'Günün Sudoku\'su #' + no + ' · ' + lv + (res ? ' · çözdün' : '');
+    $('pSdV').textContent = streak ? streak + ' gün seri' : '';
+    $('lSd').textContent = streak ? streak + ' günlük serin var' : '';
   })();
 
   function bp() {
