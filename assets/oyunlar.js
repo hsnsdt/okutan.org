@@ -18,15 +18,17 @@
   var pv = { t: 'pv', r: ref, l: (n.language || '').slice(0, 2).toLowerCase(), s: (q.get && q.get('utm_source') || '').toLowerCase().slice(0, 40) };
   if (q.get && q.get('masa')) pv.e = 'masa_davet';
   send(pv);
-  // Sayfa görünürken dakikada bir "buradayım" (en çok 45 kez): "şu an sitede" sayısı ve 1/5 dk etkin ziyaret olayı.
-  var k = 0, t = setInterval(function () {
-    if (document.hidden) return;
+  // Sayfa açık kaldıkça dakikada bir "buradayım" ("şu an sitede" = son 5 dk): arka plandaki sekme de sayılır
+  // (sohbette, masada bekleyen); en çok 8 saat. 1 ve 5 dk etkin ziyaret olayı yalnızca sekme öndeyken sayılır.
+  var k = 0, vis = 0, t = setInterval(function () {
     k++;
     var o = { t: 'hb' };
-    if (k === 1) o.e = 'engaged'; else if (k === 5) o.e = 'engaged5';
+    if (!document.hidden) { vis++; if (vis === 1) o.e = 'engaged'; else if (vis === 5) o.e = 'engaged5'; }
     send(o);
-    if (k >= 45) clearInterval(t);
+    if (k >= 480) clearInterval(t);
   }, 60000);
+  // Sekme uzun süre arkada kalıp geri gelince (telefonda zamanlayıcı durur) hemen bildir.
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && k < 480) send({ t: 'hb' }); });
 })();
 /* Google Tag Manager — tüm sayfalarda bu dosya üzerinden yüklenir (kimlik tek yerde). Botlarda ve yöneticide yüklenmez. */
 (function () {
