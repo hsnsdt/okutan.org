@@ -22,7 +22,7 @@ $on = notify_enabled();
   </div>
   <ul class="small">
     <li><b>Saatlik sağlık:</b> yalnızca durum değişince (sayfa çöktü / düzeldi, yeni PHP hatası türü, 26 saatten eski yedek, çalışmayan cron).</li>
-    <li><b>5 dakikada bir:</b> sohbette yeni şikâyet, Balon'da yeni şüpheli skor, sitede <?= (int)cfg('ALERT_ONLINE', 20) ?>+ kişi (ALERT_ONLINE).</li>
+    <li><b>15 dakikada bir:</b> sohbette yeni şikâyet, Balon'da yeni şüpheli skor, sitede <?= (int)cfg('ALERT_ONLINE', 20) ?>+ kişi (ALERT_ONLINE).</li>
     <li><b>Her gece:</b> 20 adres indeks denetimi; dizinden düşen ya da giren adres olursa.</li>
     <li><b>Pazartesi:</b> 09:00 haftalık rapor; gece yedeğinin bir kopyası (<?= cfg('BACKUP_TELEGRAM', true) !== false ? 'açık' : 'kapalı' ?>, BACKUP_TELEGRAM).</li>
   </ul>

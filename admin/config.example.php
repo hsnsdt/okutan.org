@@ -62,7 +62,7 @@ return [
     'TELEGRAM_CHAT_ID' => '',
     // Pazartesi gecesi yedeginin bir kopyasi Telegram'a gonderilsin mi (sunucu cokse de yedek elde kalsin).
     'BACKUP_TELEGRAM' => true,
-    // "Sitede su an N kisi" uyarisi esigi (5 dakikalik uyari cron'u).
+    // "Sitede su an N kisi" uyarisi esigi (15 dakikalik uyari cron'u).
     'ALERT_ONLINE' => 20,
 
     // Trafik ekranindaki huni: [[metrik, etiket], ...]. Bos ise varsayilan: pv -> ev_engaged -> ev_engaged5.

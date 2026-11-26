@@ -7,7 +7,7 @@ const CRONS = [
     'yedek' => ['Gece yedeği', 26, '30 3 * * *', 'yedek.php'],
     'saglik' => ['Saatlik sağlık kontrolü', 2, '0 * * * *', 'saglik.php'],
     'rapor' => ['Haftalık rapor', 24 * 8, '0 9 * * 1', 'rapor.php'],
-    'uyari' => ['Anlık uyarılar (5 dk)', 1, '*/5 * * * *', 'uyari.php'],
+    'uyari' => ['Anlık uyarılar (15 dk)', 1, '*/15 * * * *', 'uyari.php'],
     'indeks' => ['Gece indeks denetimi', 26, '15 4 * * *', 'indeks.php'],
 ];
 

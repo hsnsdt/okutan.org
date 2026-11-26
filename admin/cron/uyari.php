@@ -1,5 +1,5 @@
 <?php
-// Anlık uyarılar (cPanel: 5 dakikada bir). Telegram'a yalnızca yeni olanı yazar; durum PRIVATE_DIR/durum/uyari.json'da.
+// Anlık uyarılar (cPanel: 15 dakikada bir; barındırma firması daha sık çalıştırmaya izin vermiyor). Telegram'a yalnızca yeni olanı yazar; durum PRIVATE_DIR/durum/uyari.json'da.
 //   - Sohbette yeni şikâyet
 //   - Balon Patlat'ta yeni şüpheli skor (flag = 1)
 //   - Sitede şu an ALERT_ONLINE (varsayılan 20) ya da daha fazla kişi (sayı yarının altına inince yeniden kurulur)
