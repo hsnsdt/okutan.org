@@ -27,6 +27,14 @@ $on = notify_enabled();
     <li><b>Pazartesi:</b> 09:00 haftalık rapor; gece yedeğinin bir kopyası (<?= cfg('BACKUP_TELEGRAM', true) !== false ? 'açık' : 'kapalı' ?>, BACKUP_TELEGRAM).</li>
   </ul>
 </section>
+<section class="card">
+  <h2>Masaüstü bildirimi</h2>
+  <p class="small">Panel bir sekmede açıkken yeni şikâyet, şüpheli skor ya da yeni JavaScript hatası olunca bu bilgisayarda bildirim çıkar; sekme başlığında sayı görünür (ör. "(2) Özet"). Panel kapalıyken Telegram uyarıları devam eder.</p>
+  <div class="row"><button class="btn" type="button" id="notifBtn">Masaüstü bildirimlerini aç</button><span class="small muted" id="notifState"></span></div>
+</section>
+<section class="card"><h2>Aylık rapor önizlemesi <span class="muted small">(her ayın 1'i 09:00)</span></h2>
+<?php try { ?><pre class="code wrapline"><?= h(monthly_report()) ?></pre><?php } catch (Throwable $e) { echo err_box($e, 'Aylık rapor hazırlanamadı'); } ?>
+</section>
 <section class="card"><h2>Haftalık rapor önizlemesi</h2>
 <?php try { ?><pre class="code wrapline"><?= h(weekly_report()) ?></pre><?php } catch (Throwable $e) { echo err_box($e, 'Rapor hazırlanamadı'); } ?>
 </section>

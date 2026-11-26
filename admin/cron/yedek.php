@@ -10,5 +10,7 @@ cron_main('yedek', function () {
         [$ok, $err] = notify_document($r['file'], 'okutan.org haftalık veritabanı yedeği · ' . date('d.m.Y'));
         $msg .= $ok ? " · Telegram'a gönderildi" : " · Telegram'a gönderilemedi: " . $err;
     }
+    $moved = stats_compact();
+    if ($moved) $msg .= ' · ' . nf($moved) . ' eski günlük satır aylığa toplandı';
     return $msg;
 });

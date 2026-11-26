@@ -10,9 +10,33 @@ $pct = fn($a, $b) => $b > 0 ? '%' . nf($a / $b * 100) : '—';
 <h1>Oyun istatistikleri</h1>
 <nav class="tabs" aria-label="Dönem"><?php foreach ([1 => 'Bugün', 7 => '7 gün', 30 => '30 gün'] as $k => $l): ?><a href="./?view=oyunlar&amp;gun=<?= $k ?>"<?= $k === $gun ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
 
-<?php try { $ev = game_event_stats($from, $t); $sv = game_server_stats($gun); ?>
+<?php try { $ev = game_event_stats($from, $t); $sv = game_server_stats($gun);
+  // Kartlar: son 14 gün sayfa görüntüleme eğilimi; dönem başlayan + önceki döneme göre değişim; en çok yükselen öne çıkar.
+  $pfrom = day_add($from, -$gun); $pto = day_add($from, -1);
+  $cards = [];
+  foreach (GAMES as $k => [$name, $path]) {
+      $ser = [];
+      for ($d = day_add($t, -13); $d <= $t; $d = day_add($d, 1)) $ser[$d] = 0;
+      foreach (rows("SELECT day, SUM(n) n FROM stats_dim WHERE dim = 'page' AND day >= ? AND val LIKE ? GROUP BY day", [day_add($t, -13), $path . '%']) as $r) $ser[$r['day']] = (int)$r['n'];
+      $ppv = (int)val("SELECT COALESCE(SUM(n),0) FROM stats_dim WHERE dim = 'page' AND day BETWEEN ? AND ? AND val LIKE ?", [$pfrom, $pto, $path . '%']);
+      $cards[$k] = ['name' => $name, 'path' => $path, 'ser' => $ser, 'pv' => $ev[$k]['pv'], 'ppv' => $ppv, 'start' => $ev[$k]['ev']['basla'][1], 'aktif' => $sv[$k]['aktif'],
+          'g' => $ppv > 0 ? ($ev[$k]['pv'] - $ppv) / $ppv : ($ev[$k]['pv'] > 0 ? 1 : 0)];
+  }
+  uasort($cards, fn($a, $b) => $b['pv'] <=> $a['pv']);
+  $best = null; foreach ($cards as $k => $c) if ($c['pv'] >= 3 && ($best === null || $c['g'] > $cards[$best]['g'])) $best = $k;
+?>
+<div class="gcards">
+<?php foreach ($cards as $k => $c): ?>
+  <a class="gcard<?= $k === $best && $c['g'] > 0 ? ' best' : '' ?>" href="<?= h($c['path']) ?>" target="_blank" rel="noopener">
+    <div class="gt"><b><?= h($c['name']) ?></b><?= $k === $best && $c['g'] > 0 ? '<span class="pill ok">en çok yükselen</span>' : '' ?><?= $c['aktif'] ? '<span class="pill">' . nf($c['aktif']) . ' masa şu an</span>' : '' ?></div>
+    <div class="kv"><?= nf($c['pv']) ?> <?= delta_html($c['pv'], $c['ppv']) ?></div>
+    <div class="ks">sayfa görüntüleme · <?= $c['start'] ? nf($c['start']) . ' kişi başladı' : 'başlayan yok' ?></div>
+    <?= spark($c['ser']) ?>
+  </a>
+<?php endforeach ?>
+</div>
 <section class="card">
-  <h2>Oyunlar</h2>
+  <h2>Oyunlar <span class="muted small">(tablo)</span></h2>
   <div class="tw"><table class="small">
     <thead><tr><th>Oyun</th><th class="r">Sayfa</th><th class="r" title="Tekil ziyaretçi">Başlayan</th><th class="r" title="Tekil ziyaretçi">Bitiren</th><th class="r">Bitirme</th><th class="r" title="Tekil ziyaretçi">Masa açan</th><th class="r" title="Tekil ziyaretçi">Katılan</th><th class="r" title="Sıralamaya giden oyun (sunucu)">Biten oyun</th><th class="r" title="Açılan online masa (sunucu)">Masa</th><th class="r" title="Son 5 dk'da hareket olan masa / Balon'da oynayan">Şu an</th></tr></thead>
     <tbody>

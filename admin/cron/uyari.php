@@ -26,6 +26,12 @@ cron_main('uyari', function () {
         if ($f) $msgs[] = '🎈 Balon Patlat: ' . count($f) . ' yeni şüpheli skor (' . implode(', ', array_map(fn($x) => $x['name'] . ' ' . nf($x['score']), $f)) . '). ' . $panel . '?view=balon';
         $st['bp_id'] = $maxId;
     }
+    if (isset($t['stats_jserr'])) {
+        $lastJs = (string)($st['js_at'] ?? now());
+        $nj = rows('SELECT msg, src, line, last_path FROM stats_jserr WHERE first_seen > ? ORDER BY first_seen LIMIT 5', [$lastJs]);
+        if ($nj) $msgs[] = '🐞 Yeni JavaScript hatası: ' . implode(' | ', array_map(fn($e) => mb_substr($e['msg'], 0, 120) . ' (' . $e['src'] . ':' . $e['line'] . ', ' . $e['last_path'] . ')', $nj)) . ' ' . $panel . '?view=sistem&tab=jshata';
+        $st['js_at'] = now();
+    }
     $lim = max(2, (int)cfg('ALERT_ONLINE', 20));
     $n = (int)st_online()['n'];
     if ($n >= $lim && empty($st['crowd'])) { $msgs[] = '👥 Sitede şu an ' . $n . ' kişi var.'; $st['crowd'] = 1; }

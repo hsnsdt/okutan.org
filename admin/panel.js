@@ -16,6 +16,11 @@
     if (m && !window.confirm(m)) e.preventDefault();
   }, true);
 
+  // Masaüstü bildirimi izni (Bildirimler ekranı)
+  var nb = document.getElementById('notifBtn'), ns = document.getElementById('notifState');
+  function nState() { if (!ns) return; ns.textContent = !window.Notification ? 'Bu tarayıcı desteklemiyor.' : Notification.permission === 'granted' ? 'Açık ✓' : Notification.permission === 'denied' ? 'Tarayıcıda engellenmiş: site ayarlarından izin ver.' : 'Kapalı'; }
+  if (nb) { nState(); nb.addEventListener('click', function () { if (window.Notification) Notification.requestPermission().then(nState); }); }
+
   // Telefonda alt menü: açık ekranı görünür alana kaydır.
   var cur = document.querySelector('.side a[aria-current]');
   if (cur && window.matchMedia('(max-width: 860px)').matches) { try { cur.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {} }
@@ -41,7 +46,7 @@
   }
   function hideTip() { if (tip) tip.hidden = true; }
   document.addEventListener('pointermove', function (e) {
-    var g = e.target.closest && e.target.closest('svg.chart g[data-t]');
+    var g = e.target.closest && e.target.closest('svg.chart g[data-t], svg.cgrid g[data-t], .heat .hc[data-t]');
     if (g) showTip(g, e.clientX, e.clientY); else hideTip();
   });
   document.addEventListener('scroll', hideTip, true);
@@ -68,14 +73,32 @@
 
   // "Şu an sitede": [data-live-n] sayıyı, [data-live-detail] sayfa ve cihaz dökümünü gösterir (20 sn'de bir).
   var nEls = document.querySelectorAll('[data-live-n]'), dEls = document.querySelectorAll('[data-live-detail]'), timer = null;
-  if (!nEls.length && !dEls.length) return;
+  // (Canlı sayı yoksa da çalışır: başlıktaki uyarı sayısı ve masaüstü bildirimi için.)
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function setN(t) { for (var i = 0; i < nEls.length; i++) nEls[i].textContent = t; }
   function setD(h) { for (var i = 0; i < dEls.length; i++) dEls[i].innerHTML = h; }
+  // Uyarı sayaçları: sekme başlığında sayı, izin verildiyse masaüstü bildirimi (yalnızca artış olunca).
+  var baseTitle = document.title, lastAlerts = null;
+  try { lastAlerts = JSON.parse(sessionStorage.getItem('adm_alerts') || 'null'); } catch (e) {}
+  function alerts(a) {
+    if (!a) return;
+    var total = (a.sikayet || 0) + (a.supheli || 0) + (a.jshata || 0);
+    document.title = (total ? '(' + total + ') ' : '') + baseTitle;
+    if (lastAlerts && window.Notification && Notification.permission === 'granted') {
+      var msg = [];
+      if (a.sikayet > (lastAlerts.sikayet || 0)) msg.push('Sohbette yeni şikâyet (' + a.sikayet + ')');
+      if (a.supheli > (lastAlerts.supheli || 0)) msg.push("Balon'da yeni şüpheli skor (" + a.supheli + ')');
+      if (a.jshata > (lastAlerts.jshata || 0)) msg.push('Yeni JavaScript hatası (' + a.jshata + ')');
+      if (msg.length) { try { new Notification('okutan.org yönetim', { body: msg.join(' · '), tag: 'okutan-admin' }); } catch (e) {} }
+    }
+    lastAlerts = a;
+    try { sessionStorage.setItem('adm_alerts', JSON.stringify(a)); } catch (e) {}
+  }
   function load() {
     fetch('./?ajax=online', { cache: 'no-store', credentials: 'same-origin' })
       .then(function (r) { return r.json(); })
       .then(function (j) {
+        if (j && j.ok) alerts(j.alerts);
         if (!j || !j.ok) { setN('?'); setD(esc((j && j.error) || 'okunamadı')); return; }
         setN(j.n);
         var devs = j.devs.map(function (d) { return esc(d.dev) + ' ' + d.n; }).join(' · ');

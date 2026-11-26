@@ -2,7 +2,7 @@
 // Google arama: Search Console (Search Analytics, URL Inspection, Sitemaps). Kurulum talimatı bağlı değilse görünür.
 declare(strict_types=1);
 if (!defined('ADM_DIR')) exit; // yalnızca admin/index.php içinden
-$tab = in_array($_GET['tab'] ?? '', ['arama', 'indeks', 'haritalar'], true) ? $_GET['tab'] : 'arama';
+$tab = in_array($_GET['tab'] ?? '', ['arama', 'indeks', 'haritalar', 'indexnow'], true) ? $_GET['tab'] : 'arama';
 $st = gkey_status();
 $cc = function (string $c): string {
     static $tr = ['tur' => 'Türkiye', 'usa' => 'ABD', 'deu' => 'Almanya', 'aze' => 'Azerbaycan', 'nld' => 'Hollanda', 'gbr' => 'Birleşik Krallık', 'fra' => 'Fransa', 'aut' => 'Avusturya', 'bel' => 'Belçika', 'cyp' => 'Kıbrıs', 'bgr' => 'Bulgaristan', 'che' => 'İsviçre', 'swe' => 'İsveç', 'rus' => 'Rusya', 'kaz' => 'Kazakistan', 'irq' => 'Irak', 'grc' => 'Yunanistan'];
@@ -32,11 +32,22 @@ $rel = fn($u) => strpos($u, site_url()) === 0 ? (substr($u, strlen(site_url())) 
   <?php endif ?>
 </section>
 <?php endif;
-if (!$st['ok']) return; ?>
+if (!$st['ok'] && $tab !== 'indexnow') { echo '<p><a href="./?view=google&amp;tab=indexnow">IndexNow (Bing, Yandex) sekmesi</a> Search Console olmadan da çalışır.</p>'; return; } ?>
 
-<nav class="tabs"><?php foreach (['arama' => 'Arama performansı', 'indeks' => 'İndeks durumu', 'haritalar' => 'Site haritaları'] as $k => $l): ?><a href="./?view=google&amp;tab=<?= $k ?>"<?= $k === $tab ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
+<nav class="tabs"><?php foreach (['arama' => 'Arama performansı', 'indeks' => 'İndeks durumu', 'haritalar' => 'Site haritaları', 'indexnow' => 'IndexNow'] as $k => $l): ?><a href="./?view=google&amp;tab=<?= $k ?>"<?= $k === $tab ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
 
-<?php if ($tab === 'arama'):
+<?php if ($tab === 'indexnow'):
+$last = json_decode((string)(setting_get('indexnow_last', true) ?? ''), true);
+$liste = implode("\n", array_slice(sitemap_urls(), 0, 200)); ?>
+<section class="card"><h2>IndexNow: değişen sayfaları Bing ve Yandex'e bildir</h2>
+<p class="small">Yeni ya da değişen sayfaların adreslerini yaz (her satıra bir). Google IndexNow kullanmaz; Google için Search Console'daki URL denetimi ve site haritası yeterli. Yalnızca gerçekten değişen sayfaları gönder.</p>
+<?= form_open('indexnow_send', ['tab' => 'indexnow']) ?>
+  <label>Adresler<textarea name="urls" rows="10" class="mono"><?= h($liste) ?></textarea></label>
+  <button class="btn" type="submit">Bildir</button>
+</form>
+<p class="muted small">Anahtar dosyası: <code><?= h(site_url() . '/' . INDEXNOW_KEY . '.txt') ?></code><?php if ($last): ?> · son gönderim <?= h(tr_ago($last['at'])) ?>: <?= nf($last['n']) ?> adres, HTTP <?= (int)$last['code'] ?><?php endif ?></p>
+</section>
+<?php elseif ($tab === 'arama'):
 try { $d = gsc_dashboard(); $g = $d['range']; ?>
 <div class="row between"><p class="muted small">Mülk: <code><?= h(gsc_site()) ?></code> · Son 28 gün: <?= tr_date($g['start']) ?> – <?= tr_date($g['end']) ?> (önceki: <?= tr_date($g['pstart']) ?> – <?= tr_date($g['pend']) ?>). Google'ın kesinleşmiş verisi 2-3 gün geriden gelir. Önbellek 6 saat; son çekim <?= h(tr_ago($d['fetched_at'])) ?>.</p>
 <?= form_open('gsc_refresh', ['tab' => 'arama']) ?><button class="btn ghost" type="submit">Yenile</button></form></div>
@@ -61,11 +72,11 @@ try { $d = gsc_dashboard(); $g = $d['range']; ?>
     return $s . '</tbody></table></div>' . (count($rows) > $lim ? '<p class="muted small">İlk ' . $lim . ' / ' . count($rows) . ' satır.</p>' : '');
 };
 $num = ['#Gösterim' => fn($r) => nf($r['impressions']), '#Tık' => fn($r) => nf($r['clicks']), '#TO' => fn($r) => '%' . nf($r['ctr'] * 100, 1), '#Sıra' => fn($r) => nf($r['position'], 1)]; ?>
-<section class="card"><h2>En çok gösterim alan sorgular</h2><?= $tbl($d['queries'], ['Sorgu' => fn($r) => h($r['keys'][0])] + $num) ?></section>
+<section class="card"><div class="row between"><h2>En çok gösterim alan sorgular</h2><a class="csv" href="./?csv=gsc&amp;d=queries">CSV</a></div><?= $tbl($d['queries'], ['Sorgu' => fn($r) => h($r['keys'][0])] + $num) ?></section>
 <section class="card"><h2>Fırsatlar <span class="muted small">(8–20. sıra: "2. sayfa")</span></h2>
   <p class="muted small">Bu sorgularda ilk sayfaya yakınsın. Sayfanın başlığını, açıklamasını ve metnini bu sorguya göre güçlendirmek en hızlı kazançtır.</p>
   <?= $tbl($d['opps'], ['Sorgu' => fn($r) => h($r['keys'][0]), 'Sayfa' => fn($r) => '<span class="path">' . h($rel($r['keys'][1])) . '</span>'] + $num) ?></section>
-<section class="card"><h2>Sayfalar</h2><?= $tbl($d['pages'], ['Sayfa' => fn($r) => '<a class="path" href="' . h($r['keys'][0]) . '" target="_blank" rel="noopener">' . h($rel($r['keys'][0])) . '</a>'] + $num, 50) ?></section>
+<section class="card"><div class="row between"><h2>Sayfalar</h2><a class="csv" href="./?csv=gsc&amp;d=pages">CSV</a></div><?= $tbl($d['pages'], ['Sayfa' => fn($r) => '<a class="path" href="' . h($r['keys'][0]) . '" target="_blank" rel="noopener">' . h($rel($r['keys'][0])) . '</a>'] + $num, 50) ?></section>
 <div class="grid2">
   <section class="card"><h2>Ülke</h2><?= $tbl($d['countries'], ['Ülke' => fn($r) => h($cc($r['keys'][0]))] + $num, 15) ?></section>
   <section class="card"><h2>Cihaz</h2><?= $tbl($d['devices'], ['Cihaz' => fn($r) => h($dev($r['keys'][0]))] + $num) ?></section>

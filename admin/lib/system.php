@@ -9,6 +9,7 @@ const CRONS = [
     'rapor' => ['Haftalık rapor', 24 * 8, '0 9 * * 1', 'rapor.php'],
     'uyari' => ['Anlık uyarılar (15 dk)', 1, '*/15 * * * *', 'uyari.php'],
     'indeks' => ['Gece indeks denetimi', 26, '15 4 * * *', 'indeks.php'],
+    'aylik' => ['Aylık rapor', 24 * 33, '0 9 1 * *', 'aylik.php'],
 ];
 
 function health_targets(): array
@@ -168,6 +169,13 @@ function attention_items(): array
     } catch (Throwable $e) {
         $a[] = ['err', 'Durum okunamadı: ' . $e->getMessage(), 'sistem'];
     }
+    // Moderasyon ve yeni JS hataları (oyun ve sohbet tabloları UTC)
+    try {
+        $ac = alert_counts();
+        if ($ac['sikayet']) $a[] = ['warn', 'Sohbette son 24 saatte ' . $ac['sikayet'] . ' şikâyet.', 'sohbet'];
+        if ($ac['supheli']) $a[] = ['warn', "Balon Patlat'ta onay bekleyen " . $ac['supheli'] . ' şüpheli skor.', 'balon'];
+        if ($ac['jshata']) $a[] = ['err', 'Son 24 saatte ' . $ac['jshata'] . ' yeni JavaScript hata türü.', 'sistem'];
+    } catch (Throwable $e) { /* tablolar henüz yoksa sessiz değil: aşağıdaki genel blok yakalar */ $a[] = ['err', 'Uyarı sayaçları okunamadı: ' . $e->getMessage(), 'sistem']; }
     $fat = 0;
     foreach (error_log_groups() as $g) if (is_fatal($g['level']) && $g['last'] && $g['last'] > time() - 86400) $fat++;
     if ($fat) $a[] = ['err', 'Son 24 saatte ' . $fat . ' farklı ölümcül PHP hatası.', 'sistem'];

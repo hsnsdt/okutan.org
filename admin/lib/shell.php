@@ -7,9 +7,9 @@ declare(strict_types=1);
 function adm_menu(): array
 {
     return [
-        'Genel' => ['ozet' => 'Özet', 'trafik' => 'Trafik', 'google' => 'Google arama'],
+        'Genel' => ['ozet' => 'Özet', 'trafik' => 'Trafik', 'hiz' => 'Hız', 'google' => 'Google arama'],
         'Oyunlar' => ['oyunlar' => 'Oyun istatistikleri', 'balon' => 'Balon Patlat', 'sohbet' => 'Canlı Sohbet'],
-        'Site' => ['sistem' => 'Sistem', 'bildirim' => 'Bildirimler', 'notlar' => 'Notlar', 'ara' => 'Arama', 'hesap' => 'Şifre ve oturum'],
+        'Site' => ['sistem' => 'Sistem', 'duyuru' => 'Duyuru', 'bildirim' => 'Bildirimler', 'notlar' => 'Notlar', 'ara' => 'Arama', 'hesap' => 'Şifre ve oturum'],
     ];
 }
 /** Menü ikonları (24×24 çizgi, currentColor). */
@@ -28,6 +28,8 @@ function adm_icon(string $k): string
         'ara' => '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/>',
         'hesap' => '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
         'site' => '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+        'hiz' => '<path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/>',
+        'duyuru' => '<path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 9a3 3 0 0 1 0 6M19 6a7 7 0 0 1 0 12"/>',
         'tema' => '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
         'cikis' => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
     ];
@@ -185,7 +187,7 @@ function page_head(string $title, string $view = '', bool $menu = true): void
 <title><?= h($title) ?> · Yönetim</title>
 <link rel="icon" href="/favicon.svg">
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
-<link rel="stylesheet" href="./panel.css?v=6">
+<link rel="stylesheet" href="./panel.css?v=7">
 <script nonce="<?= h($n) ?>">try { localStorage.setItem('ok_admin_optout', '1'); var t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
 </head>
 <body>
@@ -216,7 +218,7 @@ function page_foot(): void
     ?>
 </main>
 <?= !empty($GLOBALS['adm_layout']) ? '</div>' : '' ?>
-<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=3"></script>
+<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=4"></script>
 </body>
 </html>
 <?php

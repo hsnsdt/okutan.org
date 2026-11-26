@@ -3,6 +3,20 @@
 // tarayıcının saat dilimi, olmazsa dil bölgesi). stats.php ve panel kullanır.
 declare(strict_types=1);
 
+/** Sayfa grubu: binlerce Kelime Bulucu sayfası tek satırda toplanır (yolculuk, hız). */
+function path_group(string $p): string
+{
+    $p = (string)preg_replace('~[?#].*$~s', '', $p);
+    if (preg_match('~^/kelime-bulucu/(kelime|liste|sozluk)/.+~', $p, $m)) return '/kelime-bulucu/' . $m[1] . '/*';
+    return mb_substr($p === '' ? '/' : $p, 0, 120);
+}
+
+/** Hız ölçümü kutucukları: LCP 250 ms, CLS 0,01, INP 25 ms adımlı; üst sınırda toplanır. */
+const VITAL_STEP = ['lcp' => 250, 'cls' => 0.01, 'inp' => 25];
+const VITAL_MAXBIN = ['lcp' => 60, 'cls' => 100, 'inp' => 60];
+/** İyi / geliştirilmeli eşikleri (Google). */
+const VITAL_LIMIT = ['lcp' => [2500, 4000], 'cls' => [0.1, 0.25], 'inp' => [200, 500]];
+
 function ua_browser(string $ua): string
 {
     $m = [

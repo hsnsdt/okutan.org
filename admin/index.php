@@ -11,6 +11,7 @@ require __DIR__ . '/lib/db.php';
 require __DIR__ . '/lib/ziyaretci.php';
 require __DIR__ . '/lib/stats.php';
 require __DIR__ . '/lib/oyun.php';
+require __DIR__ . '/lib/analiz.php';
 require __DIR__ . '/lib/google.php';
 require __DIR__ . '/lib/notify.php';
 require __DIR__ . '/lib/backup.php';
@@ -103,6 +104,29 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 [$ok, $err] = notify_document(priv_dir('yedek') . '/' . $bl[0]['file'], 'okutan.org veritabanı yedeği · ' . $bl[0]['file']);
                 flash($ok ? 'ok' : 'err', $ok ? "Son yedek Telegram'a gönderildi: " . $bl[0]['file'] : 'Gönderilemedi: ' . $err);
                 break;
+            case 'duyuru_save':
+                $text = trim((string)($_POST['text'] ?? ''));
+                $link = trim((string)($_POST['link'] ?? ''));
+                $until = preg_match('~^\d{4}-\d{2}-\d{2}$~', (string)($_POST['until'] ?? '')) ? (string)$_POST['until'] : '';
+                if ($text === '' || mb_strlen($text) > 160) throw new RuntimeException('Duyuru metni 1–160 karakter olmalı.');
+                if ($link !== '' && !preg_match('~^(/[^\s]*|https://[^\s]+)$~', $link)) throw new RuntimeException('Bağlantı / ile başlamalı (site içi) ya da https:// olmalı.');
+                duyuru_write(['active' => true, 'id' => substr(md5($text . $link . microtime()), 0, 8), 'text' => $text, 'link' => $link,
+                    'linkText' => mb_substr(trim((string)($_POST['linkText'] ?? '')), 0, 30), 'until' => $until, 'at' => now()]);
+                flash('ok', 'Duyuru yayında. Ziyaretçiler bir sonraki sayfa açılışında görür.');
+                break;
+            case 'duyuru_off':
+                $d = duyuru_read(); $d['active'] = false; duyuru_write($d);
+                flash('ok', 'Duyuru kaldırıldı.');
+                break;
+            case 'indexnow_send':
+                $urls = array_values(array_unique(array_filter(array_map('trim', preg_split('~\R~', (string)($_POST['urls'] ?? ''))),
+                    fn($u) => strpos($u, site_url() . '/') === 0)));
+                if (!$urls) throw new RuntimeException('Gönderilecek adres yok (yalnızca ' . site_url() . '/ ile başlayan adresler).');
+                [$code, $err] = indexnow_send(array_slice($urls, 0, 10000));
+                setting_set('indexnow_last', json_encode(['at' => now(), 'n' => count($urls), 'code' => $code, 'err' => $err]));
+                if ($code === 200 || $code === 202) flash('ok', count($urls) . ' adres IndexNow\'a bildirildi (HTTP ' . $code . '). Bing ve Yandex birkaç gün içinde tarar.');
+                else flash('err', 'IndexNow yanıtı: HTTP ' . $code . ($err !== '' ? ' — ' . $err : '') . '. 403 ise anahtar dosyası (kökteki ' . INDEXNOW_KEY . '.txt) sunucuda olmalı.');
+                break;
             case 'tg_find':
                 [$id, $why] = tg_find_chat();
                 if ($id === null) flash('err', $why);
@@ -145,6 +169,39 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     redirect_to($back, array_filter(['tab' => (string)($_POST['tab'] ?? '')]));
 }
 
+// ---------------- CSV ----------------
+if (isset($_GET['csv'])) {
+    if (!adm_authed()) { http_response_code(403); exit; }
+    try {
+        $gun = max(1, min(400, (int)($_GET['gun'] ?? 30)));
+        $from = day_add(today(), -($gun - 1)); $to = today();
+        switch ((string)$_GET['csv']) {
+            case 'gunluk':
+                $r = [];
+                foreach (st_series('pv', $from, $to) as $d => [$n, $u]) $r[] = [$d, $n, $u];
+                csv_send("gunluk-$from-$to.csv", ['gün', 'görüntüleme', 'tekil'], $r);
+            case 'boyut':
+                $dim = (string)($_GET['dim'] ?? 'page');
+                if (!isset($GLOBALS['DIM_TR'][$dim]) && !in_array($dim, ['entry', 'flow'], true)) throw new RuntimeException('Bilinmeyen boyut.');
+                csv_send("$dim-$from-$to.csv", [$dim, 'sayı'], array_map(fn($x) => [$x['val'], $x['n']], st_dim($dim, $from, $to, 500)));
+            case 'olay':
+                csv_send("olaylar-$from-$to.csv", ['olay', 'sayı', 'tekil'], array_map(fn($e) => [event_tr($e['metric']), $e['n'], $e['u']], st_events($from, $to)));
+            case 'gsc':
+                $d = gsc_dashboard();
+                $what = in_array($_GET['d'] ?? '', ['queries', 'pages', 'opps', 'countries', 'devices'], true) ? $_GET['d'] : 'queries';
+                csv_send("google-$what.csv", ['anahtar', 'ikinci', 'tıklama', 'gösterim', 'tıklama oranı', 'ortalama sıra'],
+                    array_map(fn($r) => [$r['keys'][0], $r['keys'][1] ?? '', $r['clicks'], $r['impressions'], round($r['ctr'] * 100, 2), round($r['position'], 1)], $d[$what]));
+            case 'jshata':
+                csv_send('js-hatalari.csv', ['mesaj', 'dosya', 'satır', 'sayı', 'ilk', 'son', 'son sayfa', 'tarayıcı', 'sistem'],
+                    array_map(fn($e) => [$e['msg'], $e['src'], $e['line'], $e['n'], $e['first_seen'], $e['last_seen'], $e['last_path'], $e['last_br'], $e['last_os']], js_errors(1000)));
+        }
+        throw new RuntimeException('Bilinmeyen CSV.');
+    } catch (Throwable $e) {
+        flash('err', 'CSV hazırlanamadı: ' . ($e instanceof GoogleError ? google_reason_tr($e) : $e->getMessage()));
+        redirect_to('trafik');
+    }
+}
+
 // ---------------- AJAX ve indirme ----------------
 if (isset($_GET['ajax'])) {
     header('Content-Type: application/json; charset=utf-8');
@@ -153,6 +210,8 @@ if (isset($_GET['ajax'])) {
         if ($_GET['ajax'] === 'online') {
             $o = st_online();
             foreach ($o['devs'] as &$d) $d['dev'] = val_tr('dev', $d['dev']);
+            unset($d);
+            try { $o['alerts'] = alert_counts(); } catch (Throwable $e) { $o['alerts'] = null; }
             echo json_encode(['ok' => true] + $o, JSON_UNESCAPED_UNICODE);
         } else { http_response_code(404); echo '{"ok":false}'; }
     } catch (Throwable $e) {

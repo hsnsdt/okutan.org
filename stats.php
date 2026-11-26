@@ -34,7 +34,7 @@ try {
     $j = json_decode($raw, true);
     if (!is_array($j)) exit;
     $t = (string)($j['t'] ?? '');
-    if (!in_array($t, ['pv', 'hb', 'ev'], true)) exit;
+    if (!in_array($t, ['pv', 'hb', 'ev', 'wv', 'err'], true)) exit;
 
     $path = (string)($j['p'] ?? '/');
     $path = preg_replace('~[?#].*$~s', '', $path);
@@ -80,8 +80,34 @@ try {
         $dim('cc', $cc !== '' ? $cc : 'XX');
         $src = strtolower((string)($j['s'] ?? ''));
         if (preg_match('~^[a-z0-9._-]{1,40}$~', $src)) $dim('src', $src);
+        // Yolculuk: site içinden gelindiyse "önceki → bu" geçişi, dışarıdan gelindiyse giriş sayfası.
+        $from = (string)($j['f'] ?? '');
+        if ($from !== '' && $from[0] === '/' && !preg_match('~[\x00-\x1F]~', $from)) $dim('flow', mb_substr(path_group($from) . ' → ' . path_group($path), 0, 191));
+        else $dim('entry', path_group($path));
+        q('INSERT INTO stats_hour (day, hour, n) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE n = n + 1', [$day, (int)date('G')]);
     }
     if ($ev !== '') $count('ev_' . $ev);
+    if ($t === 'wv') {
+        $pg = path_group($path);
+        foreach (VITAL_STEP as $m => $step) {
+            if (!isset($j[$m]) || !is_numeric($j[$m])) continue;
+            $v = (float)$j[$m];
+            if ($v < 0 || ($m !== 'cls' && $v <= 0) || $v > 600000) continue;
+            $bin = min(VITAL_MAXBIN[$m], (int)floor($v / $step));
+            q('INSERT INTO stats_vital (day, pg, dev, metric, bin, n) VALUES (?, ?, ?, ?, ?, 1) ON DUPLICATE KEY UPDATE n = n + 1', [$day, $pg, $dev, $m, $bin]);
+        }
+    }
+    if ($t === 'err') {
+        $msg = mb_substr(trim((string)preg_replace('~[\x00-\x1F]+~', ' ', (string)($j['m'] ?? ''))), 0, 255);
+        $src = mb_substr((string)preg_replace('~[^\w./-]~u', '', (string)($j['s'] ?? '')), 0, 191);
+        $ln = max(0, min(10000000, (int)($j['ln'] ?? 0))); $col = max(0, min(100000, (int)($j['c'] ?? 0)));
+        if ($msg !== '') {
+            $eh = substr(md5($msg . '|' . $src . '|' . $ln, true), 0, 16);
+            q('INSERT INTO stats_jserr (eh, msg, src, line, col, n, first_seen, last_seen, last_path, last_br, last_os, last_dev) VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?)
+               ON DUPLICATE KEY UPDATE n = n + 1, last_seen = VALUES(last_seen), last_path = VALUES(last_path), last_br = VALUES(last_br), last_os = VALUES(last_os), last_dev = VALUES(last_dev)',
+                [$eh, $msg, $src, $ln, $col, now(), now(), $path, $br, $os, $dev]);
+        }
+    }
     if ($t === 'pv' || $t === 'hb') {
         q('INSERT INTO stats_online (h, last_seen, path, dev, br, os, cc, first_seen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
            ON DUPLICATE KEY UPDATE first_seen = IF(last_seen < ?, VALUES(first_seen), COALESCE(first_seen, VALUES(first_seen))),

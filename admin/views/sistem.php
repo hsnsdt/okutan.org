@@ -2,10 +2,10 @@
 // Sistem: sağlık kontrolü, PHP hata günlüğü, veritabanı, yedekler, cron durumu, ayar anahtarları, önbellek.
 declare(strict_types=1);
 if (!defined('ADM_DIR')) exit; // yalnızca admin/index.php içinden
-$tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'veritabani', 'yedek'], true) ? $_GET['tab'] : 'genel';
+$tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'jshata', 'veritabani', 'yedek'], true) ? $_GET['tab'] : 'genel';
 ?>
 <h1>Sistem</h1>
-<nav class="tabs"><?php foreach (['genel' => 'Genel', 'hatalar' => 'PHP hataları', 'veritabani' => 'Veritabanı', 'yedek' => 'Yedekler'] as $k => $l): ?><a href="./?view=sistem&amp;tab=<?= $k ?>"<?= $k === $tab ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
+<nav class="tabs"><?php foreach (['genel' => 'Genel', 'hatalar' => 'PHP hataları', 'jshata' => 'JS hataları', 'veritabani' => 'Veritabanı', 'yedek' => 'Yedekler'] as $k => $l): ?><a href="./?view=sistem&amp;tab=<?= $k ?>"<?= $k === $tab ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
 <?php foreach (path_warnings() as $w): ?><div class="flash err"><?= h($w) ?></div><?php endforeach ?>
 
 <?php if ($tab === 'genel'): ?>
@@ -42,7 +42,21 @@ $tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'veritabani', 'yedek'],
 <li>Web kökü: <code><?= h(str_replace('\\', '/', SITE_ROOT)) ?></code></li><li>Gizli klasör: <code><?= h((string)(priv_dir() ?? '—')) ?></code><?= cfg('PRIVATE_DIR') ? '' : ' (otomatik)' ?></li></ul></section>
 </div>
 
-<?php elseif ($tab === 'hatalar'):
+<?php elseif ($tab === 'jshata'):
+try { $je = js_errors(200); ?>
+<section class="card"><div class="row between"><h2>Ziyaretçilerin tarayıcısındaki JavaScript hataları</h2><a class="csv" href="./?csv=jshata">CSV</a></div>
+<p class="muted small">Yalnızca kendi dosyalarımızdan gelen hatalar (eklenti ve başka site hataları, ağ kopmaları sayılmaz); ziyaretçi başına sayfada en çok 5. Yeni hata türü 15 dakika içinde Telegram'a gelir.</p>
+<?php if (!$je): ?><p class="okline">Kayıtlı JavaScript hatası yok.</p><?php else: ?>
+<div class="tw"><table class="small"><thead><tr><th>Mesaj</th><th>Dosya:satır</th><th class="r">Sayı</th><th>Son sayfa · tarayıcı</th><th>İlk</th><th>Son</th></tr></thead><tbody>
+<?php foreach ($je as $e): $yeni = strtotime($e['first_seen']) > time() - 86400; ?><tr class="<?= $yeni ? 'rowerr' : '' ?>">
+<td class="msg"><?= h($e['msg']) ?></td><td class="path"><?= h($e['src']) ?>:<?= (int)$e['line'] ?></td><td class="r"><?= nf($e['n']) ?></td>
+<td class="small"><span class="path"><?= h($e['last_path']) ?></span><br><span class="muted"><?= h($e['last_br'] . ' · ' . $e['last_os'] . ' · ' . val_tr('dev', $e['last_dev'])) ?></span></td>
+<td><?= h(date('d.m H:i', strtotime($e['first_seen']))) ?></td><td><?= h(tr_ago($e['last_seen'])) ?></td></tr><?php endforeach ?>
+</tbody></table></div><?php endif ?>
+</section>
+<?php } catch (Throwable $e) { echo err_box($e, 'JS hataları okunamadı'); }
+
+elseif ($tab === 'hatalar'):
 try { $files = error_log_files(); $gr = error_log_groups(); ?>
 <section class="card"><h2>PHP hata günlüğü</h2>
 <p class="muted small">Okunan dosyalar (her birinin son 2 MB'ı): <?= $files ? implode(', ', array_map(fn($f) => '<code>' . h(str_replace(str_replace('\\', '/', SITE_ROOT), '', str_replace('\\', '/', $f))) . '</code>', $files)) : 'yok' ?></p>
