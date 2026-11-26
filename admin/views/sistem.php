@@ -22,7 +22,7 @@ $tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'veritabani', 'yedek'],
 <div class="tw"><table class="small"><thead><tr><th>İş</th><th>Zamanlama</th><th>Son çalışma</th><th>Sonuç</th></tr></thead><tbody>
 <?php foreach ($cs as $k => $c): ?><tr><td><?= h($c['label']) ?></td><td><code><?= h($c['sched']) ?></code></td>
 <td><?= $c['last'] ? h(tr_date($c['last'], true)) . ' <span class="muted">(' . h(tr_ago($c['last'])) . ')</span>' : '—' ?></td>
-<td><?php if ($c['stale']): ?><span class="pill bad"><?= $c['last'] ? 'son ' . $c['hours'] . ' saattir çalışmadı' : 'hiç çalışmadı' ?></span><?php elseif ($c['status'] === 'error'): ?><span class="pill bad">hata</span><?php elseif ($c['status'] === 'running'): ?><span class="pill">çalışıyor</span><?php else: ?><span class="pill ok">tamam</span><?php endif ?> <span class="small"><?= h(mb_substr($c['message'], 0, 300)) ?></span></td></tr><?php endforeach ?>
+<td><?php if (!$c['last'] && !$c['stale']): ?><span class="pill">ilk çalışma bekleniyor</span><?php elseif ($c['stale']): ?><span class="pill bad"><?= $c['last'] ? 'son ' . $c['hours'] . ' saattir çalışmadı' : 'hiç çalışmadı' ?></span><?php elseif ($c['status'] === 'error'): ?><span class="pill bad">hata</span><?php elseif ($c['status'] === 'running'): ?><span class="pill">çalışıyor</span><?php else: ?><span class="pill ok">tamam</span><?php endif ?> <span class="small"><?= h(mb_substr($c['message'], 0, 300)) ?></span></td></tr><?php endforeach ?>
 </tbody></table></div>
 <details class="tbl"><summary>cPanel → Cron Jobs satırları</summary>
 <p class="small">Komut satırına (CLI) şunları gir. <code>~/logs</code> klasörünü bir kez oluştur.</p>

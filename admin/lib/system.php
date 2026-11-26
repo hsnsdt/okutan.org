@@ -112,7 +112,13 @@ function cron_status(): array
     foreach (CRONS as $k => [$label, $hours, $sched, $script]) {
         $r = $db[$k] ?? null;
         $last = $r['last_start'] ?? null;
-        $stale = !$last || strtotime($last) < time() - $hours * 3600;
+        if ($last) $stale = strtotime($last) < time() - $hours * 3600;
+        else {
+            // Hiç çalışmadı: panelin bu cron'u ilk gördüğü andan itibaren kendi aralığı kadar bekle (yeni kurulanı uyarma).
+            $seen = setting_get('cron_seen:' . $k, true);
+            if (!$seen) { $seen = now(); setting_set('cron_seen:' . $k, $seen); }
+            $stale = strtotime($seen) < time() - $hours * 3600;
+        }
         $out[$k] = ['label' => $label, 'hours' => $hours, 'sched' => $sched, 'script' => $script, 'last' => $last, 'end' => $r['last_end'] ?? null,
             'status' => $r['status'] ?? '', 'message' => $r['message'] ?? '', 'runs' => (int)($r['runs'] ?? 0), 'stale' => $stale];
     }
@@ -152,7 +158,7 @@ function attention_items(): array
     try {
         $h = health_last();
         if ($h) foreach ($h['res'] as $r) if (!$r['ok']) $a[] = ['err', 'Sağlık kontrolü: ' . $r['url'] . ' — ' . $r['why'], 'sistem'];
-        foreach (cron_status() as $c) if ($c['stale']) $a[] = ['warn', $c['label'] . ': ' . ($c['last'] ? 'son ' . $c['hours'] . ' saattir çalışmadı (son: ' . tr_ago($c['last']) . ')' : 'hiç çalışmadı; cPanel\'de cron kur'), 'sistem'];
+        foreach (cron_status() as $c) if ($c['stale']) $a[] = ['warn', $c['label'] . ': ' . ($c['last'] ? 'son ' . $c['hours'] . ' saattir çalışmadı (son: ' . tr_ago($c['last']) . ')' : 'hiç çalışmadı; cPanel → Cron Jobs\'ta kurulu mu bak'), 'sistem'];
             elseif ($c['status'] === 'error') $a[] = ['err', $c['label'] . ' son çalışmada hata verdi: ' . mb_substr($c['message'], 0, 200), 'sistem'];
         $bl = backup_list();
         if (!$bl) $a[] = ['warn', 'Hiç yedek yok.', 'sistem'];
