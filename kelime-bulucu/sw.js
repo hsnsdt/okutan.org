@@ -16,7 +16,8 @@ self.addEventListener('activate', function (e) {
 });
 self.addEventListener('fetch', function (e) {
   var req = e.request, url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== location.origin) return;
+  // Ortak site betikleri (sayaç, alt bilgi, masa sohbeti) önbellekten verilmez: değişiklik herkese hemen ulaşsın (.htaccess: no-cache).
+  if (req.method !== 'GET' || url.origin !== location.origin || url.pathname === '/assets/oyunlar.js' || url.pathname === '/assets/okey-sohbet.js') return;
   if (/^\/kelime-bulucu\/(liste|kelime|sozluk)\/|\.php$/.test(url.pathname)) return; // liste, kelime sayfaları ve PHP her zaman ağdan
   if (req.mode === 'navigate') {
     if (url.pathname !== KOK && url.pathname !== KOK + 'index.html') return;

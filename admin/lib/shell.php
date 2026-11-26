@@ -8,9 +8,30 @@ function adm_menu(): array
 {
     return [
         'Genel' => ['ozet' => 'Özet', 'trafik' => 'Trafik', 'google' => 'Google arama'],
-        'Oyunlar' => ['balon' => 'Balon Patlat', 'sohbet' => 'Canlı Sohbet'],
-        'Site' => ['sistem' => 'Sistem', 'bildirim' => 'Bildirimler', 'notlar' => 'Notlar', 'ara' => 'Arama'],
+        'Oyunlar' => ['oyunlar' => 'Oyun istatistikleri', 'balon' => 'Balon Patlat', 'sohbet' => 'Canlı Sohbet'],
+        'Site' => ['sistem' => 'Sistem', 'bildirim' => 'Bildirimler', 'notlar' => 'Notlar', 'ara' => 'Arama', 'hesap' => 'Şifre ve oturum'],
     ];
+}
+/** Menü ikonları (24×24 çizgi, currentColor). */
+function adm_icon(string $k): string
+{
+    static $d = [
+        'ozet' => '<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
+        'trafik' => '<path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/>',
+        'google' => '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+        'oyunlar' => '<rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4"/><circle cx="16" cy="12" r="1"/><circle cx="18" cy="14" r="1"/>',
+        'balon' => '<path d="M12 3a6 6 0 0 0-6 6c0 4 3.5 7 6 8 2.5-1 6-4 6-8a6 6 0 0 0-6-6z"/><path d="M12 17v4"/>',
+        'sohbet' => '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+        'sistem' => '<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+        'bildirim' => '<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+        'notlar' => '<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>',
+        'ara' => '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/>',
+        'hesap' => '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+        'site' => '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+        'tema' => '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+        'cikis' => '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+    ];
+    return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' . ($d[$k] ?? $d['site']) . '</svg>';
 }
 /** Menünün altındaki dış bağlantılar. */
 function adm_links(): array
@@ -51,6 +72,7 @@ function adm_boot(): void
     session_set_cookie_params(['lifetime' => 0, 'path' => '/admin/', 'secure' => adm_is_https(), 'httponly' => true, 'samesite' => 'Strict']);
     session_start();
     if (!empty($_SESSION['adm']) && ($_SESSION['seen'] ?? 0) < time() - 12 * 3600) { $_SESSION = []; session_regenerate_id(true); }
+    if (!empty($_SESSION['adm']) && ($_SESSION['pv'] ?? '0') !== pass_ver()) { $_SESSION = []; session_regenerate_id(true); }
     if (!empty($_SESSION['adm'])) $_SESSION['seen'] = time();
 }
 function adm_authed(): bool { return !empty($_SESSION['adm']); }
@@ -98,10 +120,32 @@ function login_fail_add(): void
 }
 function login_clear(): void { try { q('DELETE FROM adm_login WHERE ip_hash = ?', [ip_hash()]); } catch (DbError $e) { /* DB yoksa dosyadaki kayıt 15 dk'da düşer */ } }
 
+/**
+ * Geçerli şifre hash'i: panelden değiştirildiyse adm_settings'teki, yoksa config'teki ADMIN_PASS_HASH.
+ * ADMIN_PASS_RESET => true iken panelde belirlenen şifre yok sayılır (unutulursa kurtarma); config şifresiyle girince silinir.
+ * Veritabanına ulaşılamazsa config'teki hash geçerlidir (panel teşhis için açılabilsin).
+ */
+function admin_hash(): string
+{
+    if (!cfg('ADMIN_PASS_RESET')) {
+        try { $h = setting_get('admin_pass_hash', true); if ($h) return $h; } catch (Throwable $e) { /* DB yok: config */ }
+    }
+    return (string)cfg('ADMIN_PASS_HASH', '');
+}
+function admin_hash_source(): string
+{
+    if (cfg('ADMIN_PASS_RESET')) return 'config (ADMIN_PASS_RESET açık)';
+    try { if (setting_get('admin_pass_hash', true)) return 'panel'; } catch (Throwable $e) { return 'config (veritabanına ulaşılamadı)'; }
+    return 'config';
+}
+/** Şifre sürümü: değişince (şifre değişti / öbür oturumlar kapatıldı) eski oturumlar düşer. */
+function pass_ver(): string { try { return (string)(setting_get('admin_pass_ver', true) ?? '0'); } catch (Throwable $e) { return '0'; } }
+function pass_ver_bump(): string { $v = (string)((int)pass_ver() + 1); setting_set('admin_pass_ver', $v); return $v; }
+
 /** Giriş denemesi. Dönüş: null (başarılı) ya da hata metni. */
 function login_try(string $pass): ?string
 {
-    $hash = (string)cfg('ADMIN_PASS_HASH', '');
+    $hash = admin_hash();
     if ($hash === '') return 'Panel şifresi ayarlı değil.';
     if (login_fail_count() >= 5) return 'Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.';
     if (!password_verify($pass, $hash)) {
@@ -110,7 +154,12 @@ function login_try(string $pass): ?string
         return 'Şifre yanlış.';
     }
     login_clear();
+    if (cfg('ADMIN_PASS_RESET')) {
+        try { setting_del('admin_pass_hash'); pass_ver_bump(); flash('ok', "Panelde belirlenen şifre silindi; config şifresiyle girdin. Yeni şifre belirle ve config.php'den ADMIN_PASS_RESET satırını kaldır."); }
+        catch (Throwable $e) { /* DB yok: zaten config şifresi geçerli */ }
+    }
     session_regenerate_id(true);
+    $_SESSION['pv'] = pass_ver();
     $_SESSION['adm'] = 1;
     $_SESSION['seen'] = time();
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
@@ -136,24 +185,25 @@ function page_head(string $title, string $view = '', bool $menu = true): void
 <title><?= h($title) ?> · Yönetim</title>
 <link rel="icon" href="/favicon.svg">
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
-<link rel="stylesheet" href="./panel.css?v=5">
-<script nonce="<?= h($n) ?>">try { localStorage.setItem('ok_admin_optout', '1'); } catch (e) {}</script>
+<link rel="stylesheet" href="./panel.css?v=6">
+<script nonce="<?= h($n) ?>">try { localStorage.setItem('ok_admin_optout', '1'); var t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
 </head>
 <body>
 <?php if ($menu): ?>
 <header class="bar">
-  <a class="brand" href="./">okutan.org <span>yönetim</span></a>
+  <a class="brand" href="./"><span class="dot" aria-hidden="true">o</span>okutan.org <span class="sub">yönetim</span></a>
   <form class="search" method="get" action="./" role="search"><input type="hidden" name="view" value="ara"><input id="q" type="search" name="q" placeholder="Ara ( / )" value="<?= h($view === 'ara' ? ($_GET['q'] ?? '') : '') ?>" aria-label="Panelde ara"></form>
-  <?= form_open('logout', [], 'class="out"') ?><button type="submit" class="btn ghost">Çıkış</button></form>
+  <button type="button" class="iconbtn" id="themeBtn" aria-label="Açık / koyu tema" title="Açık / koyu tema"><?= adm_icon('tema') ?></button>
+  <?= form_open('logout', [], 'class="out"') ?><button type="submit" class="iconbtn" aria-label="Çıkış" title="Çıkış"><?= adm_icon('cikis') ?></button></form>
 </header>
 <div class="layout">
 <nav class="side" aria-label="Panel menüsü">
 <?php foreach (adm_menu() as $group => $items): ?>
   <div class="grp"><?= h($group) ?></div>
-  <ul><?php foreach ($items as $k => $label): ?><li><a href="./?view=<?= h($k) ?>"<?= $k === $view ? ' aria-current="page"' : '' ?>><?= h($label) ?><?php if (!empty($badges[$k])): ?> <b class="badge"><?= h($badges[$k]) ?></b><?php endif ?></a></li><?php endforeach ?></ul>
+  <ul><?php foreach ($items as $k => $label): ?><li><a href="./?view=<?= h($k) ?>"<?= $k === $view ? ' aria-current="page"' : '' ?>><?= adm_icon($k) ?><span class="lbl"><?= h($label) ?></span><?php if (!empty($badges[$k])): ?><b class="badge"><?= h($badges[$k]) ?></b><?php endif ?></a></li><?php endforeach ?></ul>
 <?php endforeach ?>
   <div class="grp">Bağlantılar</div>
-  <ul><?php foreach (adm_links() as $u => $l): ?><li><a href="<?= h($u) ?>"><?= h($l) ?></a></li><?php endforeach ?></ul>
+  <ul><?php foreach (adm_links() as $u => $l): ?><li><a href="<?= h($u) ?>" target="_blank" rel="noopener"><?= adm_icon('site') ?><span class="lbl"><?= h($l) ?></span></a></li><?php endforeach ?></ul>
 </nav>
 <main class="main">
 <?php else: ?>
@@ -166,7 +216,7 @@ function page_foot(): void
     ?>
 </main>
 <?= !empty($GLOBALS['adm_layout']) ? '</div>' : '' ?>
-<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=2"></script>
+<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=3"></script>
 </body>
 </html>
 <?php

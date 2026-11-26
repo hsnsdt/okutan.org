@@ -56,3 +56,24 @@ function notify(string $text): void
         notify_now($text);
     });
 }
+
+/** Dosya gönder (yedek). Dönüş: [başarılı mı, hata metni]. Telegram bot sınırı 50 MB. */
+function notify_document(string $path, string $caption = ''): array
+{
+    if (!notify_enabled()) return [false, 'Telegram ayarlı değil.'];
+    if (!is_file($path)) return [false, 'Dosya yok: ' . basename($path)];
+    if (filesize($path) > 49 * 1024 * 1024) return [false, 'Dosya Telegram sınırından (50 MB) büyük.'];
+    $ch = curl_init('https://api.telegram.org/bot' . cfg('TELEGRAM_BOT_TOKEN') . '/sendDocument');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 120, CURLOPT_CONNECTTIMEOUT => 10, CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => ['chat_id' => tg_chat_id(), 'caption' => mb_substr($caption, 0, 1000), 'document' => new CURLFile($path, 'application/gzip', basename($path))]]);
+    $res = curl_exec($ch);
+    $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $err = $res === false ? curl_error($ch) : '';
+    curl_close($ch);
+    if (function_exists('db_ping')) { try { db_ping(); } catch (Throwable $e) { /* sonraki sorgu raporlar */ } }
+    $j = json_decode((string)$res, true);
+    if ($code === 200 && !empty($j['ok'])) return [true, ''];
+    $why = $err !== '' ? $err : ('HTTP ' . $code . (isset($j['description']) ? ': ' . $j['description'] : ''));
+    adm_log('Telegram dosya gönderilemedi: ' . $why);
+    return [false, $why];
+}

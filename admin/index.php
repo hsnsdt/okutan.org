@@ -9,6 +9,7 @@ ini_set('display_errors', '0');
 require __DIR__ . '/lib/boot.php';
 require __DIR__ . '/lib/db.php';
 require __DIR__ . '/lib/stats.php';
+require __DIR__ . '/lib/oyun.php';
 require __DIR__ . '/lib/google.php';
 require __DIR__ . '/lib/notify.php';
 require __DIR__ . '/lib/backup.php';
@@ -30,7 +31,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         redirect_to('ozet');
     }
     if ($act === 'hash') {
-        if (cfg('ADMIN_PASS_HASH')) redirect_to('ozet');
+        if (admin_hash() !== '') redirect_to('ozet');
         $p = (string)($_POST['pass'] ?? '');
         if (mb_strlen($p) < 10) flash('err', 'Şifre en az 10 karakter olmalı.');
         else $_SESSION['hash_out'] = password_hash($p, PASSWORD_DEFAULT);
@@ -77,6 +78,29 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 if ($r['error'] !== null) flash('err', 'Denetim yarıda kaldı: ' . $r['done'] . '/' . $r['total'] . ' adres tamamlandı.' . "\nHata: " . $r['error']);
                 elseif ($r['total'] === 0) flash('ok', 'Denetlenecek adres yok: hepsi son 7 günde denetlendi (' . $r['skipped'] . ' adres).');
                 else flash('ok', $r['done'] . ' adres denetlendi. Bugün kullanılan kota: ' . inspect_quota_used() . '/' . (int)cfg('INSPECT_DAILY_QUOTA', 2000) . '.');
+                break;
+            case 'pass_change':
+                $cur = (string)($_POST['current'] ?? ''); $new = (string)($_POST['new'] ?? ''); $new2 = (string)($_POST['new2'] ?? '');
+                if (login_fail_count() >= 5) throw new RuntimeException('Çok fazla hatalı deneme. 15 dakika sonra tekrar dene.');
+                if (!password_verify($cur, admin_hash())) { login_fail_add(); throw new RuntimeException('Mevcut şifre yanlış.'); }
+                if (mb_strlen($new) < 10) throw new RuntimeException('Yeni şifre en az 10 karakter olmalı.');
+                if ($new !== $new2) throw new RuntimeException('Yeni şifreler birbirini tutmuyor.');
+                if ($new === $cur) throw new RuntimeException('Yeni şifre eskisiyle aynı.');
+                setting_set('admin_pass_hash', password_hash($new, PASSWORD_DEFAULT));
+                $_SESSION['pv'] = pass_ver_bump();
+                session_regenerate_id(true);
+                flash('ok', 'Şifre değişti. Öbür cihazlardaki oturumlar kapandı.' . (cfg('ADMIN_PASS_RESET') ? " Not: config.php'de ADMIN_PASS_RESET açık; kaldırmazsan yeni şifre geçerli olmaz." : ''));
+                break;
+            case 'sessions_end':
+                $_SESSION['pv'] = pass_ver_bump();
+                session_regenerate_id(true);
+                flash('ok', 'Bu oturum dışındaki bütün oturumlar kapatıldı.');
+                break;
+            case 'backup_tg':
+                $bl = backup_list();
+                if (!$bl) throw new RuntimeException('Gönderilecek yedek yok.');
+                [$ok, $err] = notify_document(priv_dir('yedek') . '/' . $bl[0]['file'], 'okutan.org veritabanı yedeği · ' . $bl[0]['file']);
+                flash($ok ? 'ok' : 'err', $ok ? "Son yedek Telegram'a gönderildi: " . $bl[0]['file'] : 'Gönderilemedi: ' . $err);
                 break;
             case 'tg_find':
                 [$id, $why] = tg_find_chat();
@@ -154,7 +178,7 @@ if (!adm_authed()) {
     page_head('Giriş', '', false);
     $hashOut = $_SESSION['hash_out'] ?? null;
     unset($_SESSION['hash_out']);
-    if (!cfg_file_exists() || !cfg('ADMIN_PASS_HASH')) {
+    if (!cfg_file_exists() || admin_hash() === '') {
         echo '<section class="card narrow"><h1>Panel kurulumu</h1>';
         if (!cfg_file_exists()) echo '<p><code>admin/config.php</code> yok. <code>admin/config.example.php</code> dosyasını <code>config.php</code> adıyla kopyalayıp doldur.</p>';
         echo '<p>Panel şifresi henüz ayarlı değil. Aşağıya bir şifre yaz; panel onun <b>hash</b>\'ini üretir (hiçbir yere kaydetmez). Çıkan satırı <code>admin/config.php</code> içine yapıştır.</p>';

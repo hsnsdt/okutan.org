@@ -18,8 +18,14 @@ $on = notify_enabled();
   <div class="row wrap">
     <?= form_open('tg_test') ?><button class="btn" type="submit"<?= $on ? '' : ' disabled' ?>>Deneme mesajı gönder</button></form>
     <?= form_open('report_send') ?><button class="btn ghost" type="submit"<?= $on ? '' : ' disabled' ?>>Haftalık raporu şimdi gönder</button></form>
+    <?= form_open('backup_tg') ?><button class="btn ghost" type="submit"<?= $on ? '' : ' disabled' ?>>Son yedeği Telegram'a gönder</button></form>
   </div>
-  <p class="muted small">Saatlik sağlık cron'u yalnızca durum değişince yazar (sayfa çöktü / düzeldi, yeni PHP hatası türü, 26 saatten eski yedek, çalışmayan cron). Haftalık rapor Pazartesi 09:00'da gelir.</p>
+  <ul class="small">
+    <li><b>Saatlik sağlık:</b> yalnızca durum değişince (sayfa çöktü / düzeldi, yeni PHP hatası türü, 26 saatten eski yedek, çalışmayan cron).</li>
+    <li><b>5 dakikada bir:</b> sohbette yeni şikâyet, Balon'da yeni şüpheli skor, sitede <?= (int)cfg('ALERT_ONLINE', 20) ?>+ kişi (ALERT_ONLINE).</li>
+    <li><b>Her gece:</b> 20 adres indeks denetimi; dizinden düşen ya da giren adres olursa.</li>
+    <li><b>Pazartesi:</b> 09:00 haftalık rapor; gece yedeğinin bir kopyası (<?= cfg('BACKUP_TELEGRAM', true) !== false ? 'açık' : 'kapalı' ?>, BACKUP_TELEGRAM).</li>
+  </ul>
 </section>
 <section class="card"><h2>Haftalık rapor önizlemesi</h2>
 <?php try { ?><pre class="code wrapline"><?= h(weekly_report()) ?></pre><?php } catch (Throwable $e) { echo err_box($e, 'Rapor hazırlanamadı'); } ?>

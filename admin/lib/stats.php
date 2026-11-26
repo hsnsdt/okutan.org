@@ -67,7 +67,13 @@ function val_tr(string $dim, string $v): string
 function event_tr(string $metric): string
 {
     $e = substr($metric, 3);
-    return ['engaged' => 'Etkin ziyaret (1 dk+ açık)', 'engaged5' => 'Uzun ziyaret (5 dk+ açık)', 'masa_davet' => 'Online masa davetiyle gelen'][$e] ?? $e;
+    $fixed = ['engaged' => 'Etkin ziyaret (1 dk+ açık)', 'engaged5' => 'Uzun ziyaret (5 dk+ açık)', 'masa_davet' => 'Online masa davetiyle gelen',
+        'sohbet_giris' => 'Sohbete bağlandı', 'sohbet_yazdi' => 'Sohbette mesaj yazdı'];
+    if (isset($fixed[$e])) return $fixed[$e];
+    if (preg_match('~^(basla|bitir|masa|katil)_([a-z0-9]+)$~', $e, $m) && function_exists('game_name_of')) {
+        return game_name_of($m[2]) . ': ' . ['basla' => 'oyun başladı', 'bitir' => 'oyun bitti', 'masa' => 'online masa açtı', 'katil' => 'masaya katıldı'][$m[1]];
+    }
+    return $e;
 }
 
 /**
@@ -83,16 +89,18 @@ function bar_chart(array $data, string $title, string $l1, ?string $l2 = null, ?
     foreach ($data as $v) $max = max($max, (float)$v[0], (float)($v[1] ?? 0));
     $W = 600; $H = 160; $pad = 2; $bw = $W / $n;
     $svg = '<svg class="chart" viewBox="0 0 ' . $W . ' ' . $H . '" preserveAspectRatio="none" role="img" aria-label="' . h($title) . '">';
+    foreach ([0.25, 0.5, 0.75] as $f) { $gy = round($H - $f * ($H - 4), 1); $svg .= '<line x1="0" y1="' . $gy . '" x2="' . $W . '" y2="' . $gy . '" class="gl"/>'; }
     $svg .= '<line x1="0" y1="' . $H . '" x2="' . $W . '" y2="' . $H . '" class="ax"/>';
     $i = 0; $keys = array_keys($data);
     foreach ($data as $k => $v) {
         $x = $i * $bw + $pad; $w = max(1, $bw - 2 * $pad);
         $h1 = $v[0] / $max * ($H - 4);
         $tip = h($fmtLabel($k)) . ': ' . $l1 . ' ' . nf($v[0]) . ($l2 !== null && $v[1] !== null ? ', ' . $l2 . ' ' . nf($v[1]) : '');
-        $svg .= '<g><title>' . $tip . '</title><rect x="' . round($x, 1) . '" y="' . round($H - $h1, 1) . '" width="' . round($w, 1) . '" height="' . round($h1, 1) . '" class="b1"/>';
+        // Değer ipucu data-t'de (panel.js gösterir); erişilebilir karşılığı alttaki "Tablo olarak gör". Boş günde de üzerine gelinebilsin diye şeffaf alan.
+        $svg .= '<g data-t="' . $tip . '"><rect x="' . round($i * $bw, 1) . '" y="0" width="' . round($bw, 1) . '" height="' . $H . '" fill="transparent"/><rect x="' . round($x, 1) . '" y="' . round($H - $h1, 1) . '" width="' . round($w, 1) . '" height="' . round($h1, 1) . '" rx="' . min(3, round($w / 3, 1)) . '" class="b1"/>';
         if ($l2 !== null && $v[1] !== null) {
             $h2 = $v[1] / $max * ($H - 4);
-            $svg .= '<rect x="' . round($x, 1) . '" y="' . round($H - $h2, 1) . '" width="' . round($w, 1) . '" height="' . round($h2, 1) . '" class="b2"/>';
+            $svg .= '<rect x="' . round($x, 1) . '" y="' . round($H - $h2, 1) . '" width="' . round($w, 1) . '" height="' . round($h2, 1) . '" rx="' . min(3, round($w / 3, 1)) . '" class="b2"/>';
         }
         $svg .= '</g>';
         $i++;
@@ -107,6 +115,18 @@ function bar_chart(array $data, string $title, string $l1, ?string $l2 = null, ?
     }
     $tb .= '</tbody></table></div></details>';
     return $svg . $leg . $tb;
+}
+/** Küçük çizgi grafik (eğilim); $vals sıralı sayılar. */
+function spark(array $vals): string
+{
+    $vals = array_values(array_map('floatval', $vals));
+    $n = count($vals);
+    if ($n < 2) return '';
+    $max = max(1, max($vals)); $W = 100; $H = 30;
+    $pts = [];
+    foreach ($vals as $i => $v) $pts[] = round($i / ($n - 1) * $W, 2) . ',' . round($H - 2 - $v / $max * ($H - 4), 2);
+    $line = implode(' ', $pts);
+    return '<svg class="spark" viewBox="0 0 ' . $W . ' ' . $H . '" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,' . $H . ' ' . $line . ' ' . $W . ',' . $H . '"/><polyline points="' . $line . '"/></svg>';
 }
 function lbl_day(string $d): string { return tr_date($d); }
 function lbl_dm(string $d): string { $t = strtotime($d); return date('j', $t) . '.' . date('m', $t); }

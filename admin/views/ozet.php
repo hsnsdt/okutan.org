@@ -19,17 +19,30 @@ $gsum = function (string $a, string $b) use ($gd): ?float {
 };
 ?>
 <h1>Özet</h1>
-<?php try { ?>
+<?php
+$att = []; try { $att = attention_items(); } catch (Throwable $e) { echo err_box($e, 'Dikkat listesi okunamadı'); }
+try {
+    [$tpv] = st_sum('pv', $t, $t); [$ypv] = st_sum('pv', day_add($t, -1), day_add($t, -1));
+    $g7 = $gsum(day_add($t, -9), $t); $gp7 = $gsum(day_add($t, -19), day_add($t, -10));
+?>
+<div class="strip">
+  <div><div class="sl">Bugün görüntüleme</div><div class="sv"><?= nf($tpv) ?></div><div class="sl"><?= delta_html($tpv, $ypv) ?> düne göre</div></div>
+  <div class="live"><div class="sl">Şu an sitede</div><div class="sv" data-live-n>…</div><div class="sl">son 5 dakika</div></div>
+  <div><div class="sl">Google tıklama (son 10 gün)</div><div class="sv"><?= $g7 === null ? '—' : nf($g7) ?></div><div class="sl"><?= $g7 !== null && $gp7 !== null ? delta_html($g7, $gp7) . ' önceki 10 güne göre' : ($gErr ? 'bağlı değil' : 'veri 2-3 gün geriden') ?></div></div>
+  <div class="<?= $att ? 'bad' : 'good' ?>"><div class="sl">Dikkat isteyen</div><div class="sv"><?= $att ? count($att) : '✓' ?></div><div class="sl"><?= $att ? 'aşağıda listelendi' : 'her şey yolunda' ?></div></div>
+</div>
+
 <div class="kpis k4">
 <?php foreach ($periods as $label => [$a, $b, $pa, $pb]):
     [$pv, $u] = st_sum('pv', $a, $b); [$ppv, $pu] = st_sum('pv', $pa, $pb);
-    $gc = $gsum($a, $b); $pgc = $gsum($pa, $pb); ?>
+    $gc = $gsum($a, $b); $pgc = $gsum($pa, $pb);
+    $sp = $a !== $b ? spark(array_column(st_series('pv', $a, $b), 0)) : ''; ?>
   <div class="kpi">
     <div class="kl"><?= h($label) ?></div>
     <div class="kv"><?= nf($pv) ?> <?= delta_html($pv, $ppv) ?></div>
-    <div class="ks">görüntüleme</div>
-    <div class="kr"><b><?= nf($u) ?></b> tekil ziyaretçi <?= delta_html($u, $pu) ?></div>
+    <div class="ks">görüntüleme · <?= nf($u) ?> tekil <?= delta_html($u, $pu) ?></div>
     <div class="kr"><b><?= $gc === null ? '—' : nf($gc) ?></b> Google tıklama <?= $gc !== null && $pgc !== null ? delta_html($gc, $pgc) : '' ?></div>
+    <?= $sp ?>
   </div>
 <?php endforeach ?>
 </div>
@@ -39,11 +52,11 @@ $gsum = function (string $a, string $b) use ($gd): ?float {
 <div class="grid2">
   <section class="card">
     <h2>Şu an sitede</h2>
-    <div id="live" data-src="./?ajax=online"><div class="big" data-n>…</div><p class="muted small">Son 5 dakikada etkin ziyaretçi · 20 sn'de bir yenilenir</p><div data-detail></div></div>
+    <div class="big" data-live-n>…</div><p class="muted small">Son 5 dakikada sinyal veren ziyaretçi · 20 sn'de bir yenilenir</p><div data-live-detail></div>
   </section>
   <section class="card">
     <h2>Dikkat isteyen işler</h2>
-    <?php $att = attention_items(); if (!$att): ?><p class="okline">Her şey yolunda.</p><?php else: ?>
+    <?php if (!$att): ?><p class="okline">Her şey yolunda.</p><?php else: ?>
     <ul class="att"><?php foreach ($att as [$lvl, $txt, $v]): ?><li class="<?= h($lvl) ?>"><a href="./?view=<?= h($v) ?>"><?= h($txt) ?></a></li><?php endforeach ?></ul>
     <?php endif ?>
   </section>

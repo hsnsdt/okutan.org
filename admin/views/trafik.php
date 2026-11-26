@@ -15,7 +15,7 @@ $funnel = (array)cfg('FUNNEL', [['pv', 'Sayfa görüntüleyen'], ['ev_engaged', 
 <div class="kpis k3">
   <?= kpi('Görüntüleme', nf($pv) . ' ' . delta_html($pv, $ppv), 'önceki ' . $gun . ' güne göre') ?>
   <?= kpi('Tekil ziyaretçi', nf($u) . ' ' . delta_html($u, $pu), $gun > 1 ? 'günlük tekillerin toplamı' : 'bugün') ?>
-  <div class="kpi"><div class="kl">Şu an sitede</div><div id="live" data-src="./?ajax=online"><div class="kv" data-n>…</div><div class="ks" data-detail></div></div></div>
+  <div class="kpi"><div class="kl">Şu an sitede</div><div class="kv" data-live-n>…</div><div class="ks" data-live-detail></div></div>
 </div>
 
 <section class="card">

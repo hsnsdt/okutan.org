@@ -1,6 +1,6 @@
 <?php
 /* Kelime Bulucu — popüler aramalar. Kimlik, IP ya da çerez tutulmaz; yalnızca aranan harf/kelime günlük olarak sayılır.
-   POST ?a=say  (t: h|k|w|g, q: arama)   → 204
+   POST ?a=say  (t: h|k|w|g, q: arama)   → 204   (g sözlükte yoksa x olarak sayılır)
    GET  ?a=populer                         → {"h":[[q,n],…],"g":[[q,n,adres],…]} (son 7 gün, 10 dk önbellek)
    Veri: veri/arama/GG-AA-YYYY.json (klasör yazılabilir olmalı; değilse sessizce sayılmaz). */
 require __DIR__ . '/ortak.php';
@@ -11,7 +11,7 @@ if ($a === 'say' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
   $t = (string)($_POST['t'] ?? '');
   $q = tr_lower(trim((string)($_POST['q'] ?? '')));
   if (!in_array($t, ['h', 'k', 'w', 'g'], true) || $q === '' || mb_strlen($q) > 24 || !preg_match('/^[a-zçğıöşü*?._|]+$/u', $q)) { http_response_code(400); exit; }
-  if ($t === 'g' && !Sozluk::var($q)) { http_response_code(204); exit; } // geçersiz kelimeler sayılmaz
+  if ($t === 'g' && !Sozluk::var($q)) $t = 'x'; // sözlükte olmayan: ayrı sayılır (popüler listede görünmez; yönetim panelinde içerik fikri)
   if ((is_dir($DIR) || @mkdir($DIR, 0755, true)) && is_writable($DIR)) {
     $f = $DIR . '/' . gmdate('Y-m-d') . '.json';
     $h = @fopen($f, 'c+');

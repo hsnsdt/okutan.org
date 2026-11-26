@@ -8,6 +8,9 @@ return [
     // Panel sifresinin hash'i. Bos ise panel /admin/ adresinde bir kurulum ekrani acar:
     // sifreni yaz, uretilen satiri buraya yapistir. Duz sifre YAZMA.
     'ADMIN_PASS_HASH' => '',
+    // Panelden sifre degistirilebilir (Sifre ve oturum ekrani; yeni hash veritabaninda tutulur). Unutursan
+    // 'ADMIN_PASS_RESET' => true yaz: config'teki sifreyle girilir, paneldeki silinir; sonra bu satiri kaldir.
+    'ADMIN_PASS_RESET' => false,
 
     // Gizli klasor: WEB KOKUNUN DISINDA olmali (yedekler, gunlukler, kilit ve durum dosyalari).
     // Bos ise otomatik: PHP'nin calistigi hesabin ev dizini + /okutan-ozel (cPanel: /home/KULLANICI/okutan-ozel).
@@ -57,6 +60,10 @@ return [
     // bota bir mesaj yaz, panel > Bildirimler > "Sohbeti bul" kimligi bulup kaydeder.
     'TELEGRAM_BOT_TOKEN' => '',
     'TELEGRAM_CHAT_ID' => '',
+    // Pazartesi gecesi yedeginin bir kopyasi Telegram'a gonderilsin mi (sunucu cokse de yedek elde kalsin).
+    'BACKUP_TELEGRAM' => true,
+    // "Sitede su an N kisi" uyarisi esigi (5 dakikalik uyari cron'u).
+    'ALERT_ONLINE' => 20,
 
     // Trafik ekranindaki huni: [[metrik, etiket], ...]. Bos ise varsayilan: pv -> ev_engaged -> ev_engaged5.
     // Metrikler: pv, ev_engaged, ev_engaged5, ev_masa_davet, ev_<okSay adi>. (Etiketler ASCII yazilmali.)

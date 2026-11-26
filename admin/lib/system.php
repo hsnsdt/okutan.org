@@ -7,6 +7,8 @@ const CRONS = [
     'yedek' => ['Gece yedeği', 26, '30 3 * * *', 'yedek.php'],
     'saglik' => ['Saatlik sağlık kontrolü', 2, '0 * * * *', 'saglik.php'],
     'rapor' => ['Haftalık rapor', 24 * 8, '0 9 * * 1', 'rapor.php'],
+    'uyari' => ['Anlık uyarılar (5 dk)', 1, '*/5 * * * *', 'uyari.php'],
+    'indeks' => ['Gece indeks denetimi', 26, '15 4 * * *', 'indeks.php'],
 ];
 
 function health_targets(): array
@@ -120,8 +122,8 @@ function cron_status(): array
 /** Ayar anahtarlarının dolu olup olmadığı (değerler gösterilmez). */
 function config_keys(): array
 {
-    $keys = ['ADMIN_PASS_HASH', 'PRIVATE_DIR', 'CRON_KEY', 'STATS_SALT', 'SITE_URL', 'TIMEZONE', 'GSC_KEY_FILE', 'GSC_SITE', 'GA4_PROPERTY',
-        'INSPECT_SITEMAP', 'INSPECT_URLS', 'HEALTH_URLS', 'ERROR_LOGS', 'BACKUP_KEEP', 'BACKUP_SKIP_DATA', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'FUNNEL'];
+    $keys = ['ADMIN_PASS_HASH', 'ADMIN_PASS_RESET', 'PRIVATE_DIR', 'CRON_KEY', 'STATS_SALT', 'SITE_URL', 'TIMEZONE', 'GSC_KEY_FILE', 'GSC_SITE', 'GA4_PROPERTY',
+        'INSPECT_SITEMAP', 'INSPECT_URLS', 'HEALTH_URLS', 'ERROR_LOGS', 'BACKUP_KEEP', 'BACKUP_SKIP_DATA', 'BACKUP_TELEGRAM', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'ALERT_ONLINE', 'FUNNEL'];
     $out = [];
     foreach ($keys as $k) $out[$k] = cfg($k) !== null;
     return $out;

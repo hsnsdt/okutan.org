@@ -18,6 +18,33 @@
   var pv = { t: 'pv', r: ref, l: (n.language || '').slice(0, 2).toLowerCase(), s: (q.get && q.get('utm_source') || '').toLowerCase().slice(0, 40) };
   if (q.get && q.get('masa')) pv.e = 'masa_davet';
   send(pv);
+  // Oyun ve sohbet olayları: sayfalara dokunmadan, oyunların kendi API çağrılarından yakalanır.
+  //   basla_<oyun> (yeni oyun), bitir_<oyun> (skor/sonuç gönderildi), masa_<oyun> (online masa açtı), katil_<oyun> (masaya katıldı)
+  //   sohbet_giris (sohbete bağlandı), sohbet_yazdi (ilk mesaj) · sunucusuz oyunlarda bitiş localStorage kaydından.
+  var oyun = (location.pathname.split('/')[1] || '').replace(/[^a-z0-9]/g, '');
+  if (oyun === '101okey') oyun = 'okey101';
+  var bir = {};
+  function olay(e, tekSefer) { if (tekSefer) { if (bir[e]) return; bir[e] = 1; } window.okSay(e); }
+  if (oyun && window.fetch) {
+    var of = window.fetch, AD = { start: 'basla', submit: 'bitir', t_create: 'masa', t_join: 'katil' };
+    window.fetch = function (u) {
+      try {
+        var m = /(?:^|\/)api\/(?:index\.php)?\?a=([a-z_]+)/.exec(typeof u === 'string' ? u : (u && u.url) || '');
+        if (m) {
+          if (oyun === 'sohbet') { if (m[1] === 'poll') olay('sohbet_giris', 1); else if (m[1] === 'say') olay('sohbet_yazdi', 1); }
+          else if (AD[m[1]]) olay(AD[m[1]] + '_' + oyun);
+        }
+      } catch (e) {}
+      return of.apply(this, arguments);
+    };
+  }
+  if ((oyun === 'sudoku' || oyun === 'gizlikelime') && window.Storage) {
+    var ss = Storage.prototype.setItem, onek = oyun === 'sudoku' ? 'sd_daily_' : 'gk_daily_';
+    Storage.prototype.setItem = function (k) {
+      try { if (this === window.localStorage && String(k).indexOf(onek) === 0 && this.getItem(k) === null) olay('bitir_' + oyun); } catch (e) {}
+      return ss.apply(this, arguments);
+    };
+  }
   // Sayfa açık kaldıkça dakikada bir "buradayım" ("şu an sitede" = son 5 dk): arka plandaki sekme de sayılır
   // (sohbette, masada bekleyen); en çok 8 saat. 1 ve 5 dk etkin ziyaret olayı yalnızca sekme öndeyken sayılır.
   var k = 0, vis = 0, t = setInterval(function () {
