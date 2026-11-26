@@ -5,7 +5,7 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 ## Kesin kurallar
 - Sitede ve metinlerde ad olarak yalnızca **"Sedat Okutan"** kullanılır.
 - Oyun özellikleri için Kelimeler'in Firebase arka ucuna dokunulmaz; site statik kalır.
-- `balon/api/config.php` (veritabanı şifreleri, `admin_pass`) **asla commit edilmez**. Her commit öncesi `git diff --cached --name-only | grep config.php` ile kontrol et. Şifreleri sohbete yazma.
+- `balon/api/config.php` (veritabanı şifreleri, `admin_pass`) ve `admin/config.php` (panel) **asla commit edilmez**. Her commit öncesi `git diff --cached --name-only | grep config.php` ile kontrol et. Şifreleri sohbete yazma.
 - Commit kimliği: `git -c user.name="Sedat Okutan" -c user.email="sedat@okutan.org" commit …` + `Co-Authored-By` satırı. Dal: `main`, push serbest.
 - **Yayın elle yapılır:** kullanıcı dosyaları FTP ile cPanel'e yükler (GitHub Actions FTP adımı sırları olmadığı için çalışmıyor). İş bitince yüklenecek dosyaların listesini ver; kullanıcı "yükledim" deyince canlıda kontrol et (dosyaları `curl` ile HEAD sürümüyle karşılaştır, API uçlarını çağır, tarayıcıda oyna).
 
@@ -30,6 +30,17 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - **Sohbet:** `assets/okey-sohbet.js`, yalnızca online masada görünür. Oyun sayfası `window.OkeySohbetHost = { ctx, say, sound }` sağlar. Uçlar: `t_say` / `t_chat` (140 karakter, küfür maskesi, hız sınırı).
 - Günlük modlarda tohum: FNV-1a(`'okey-'`/`'duz-okey-'`/`'batak-'`/`'king-'`/`'pisti-'`/`'balon-'`/`'sudoku-'` + gün), JS ve PHP'de aynı.
 
+## Yönetim paneli (`/admin/`)
+- Mimari: `admin/index.php` tek giriş; ekran = `adm_menu()` (lib/shell.php) haritasına bir satır + `admin/views/<ad>.php` (başında `if (!defined('ADM_DIR')) exit;`). Tüm POST'lar index.php'deki tek `act` switch'inden geçer, flash yazar, 303 ile yönlenir (PRG). Formlar `form_open()` ile (CSRF + `back` kendiliğinden). Ayrı sidebar yazma.
+- Ayarlar `admin/config.php` (gitignore'da, **ASCII**); her yeni anahtarı `admin/config.example.php`'ye placeholder ile ekle. DB ayarı ortak `balon/api/config.php`. Şifre yalnızca hash (`ADMIN_PASS_HASH`; boşsa panel hash üretme ekranı açar). Kaba kuvvet: `adm_login`, 15 dk'da 5 hata = kilit (DB yoksa dosyaya).
+- **Gizli dosyalar web kökü dışında:** yedekler, günlükler, durum/kilit dosyaları, Google servis hesabı anahtarı → `PRIVATE_DIR` (boşsa `~/okutan-ozel`). okutan.org ana hesabın web kökü altında olabilir; `public_path_risk()` yolu denetler, panel uyarı gösterir, yedek o durumda alınmaz.
+- DB yardımcıları (`admin/lib/db.php` → `q/rows/row/val`) hata **yutmaz**: günlüğe yazar ve `DbError` fırlatır; görünüm `err_box()` ile ekranda gösterir. Boş dizi = gerçekten kayıt yok. 42S02'de şema kurulur, 2006/2013'te bir kez yeniden bağlanır; uzun dış çağrıdan sonra `db_ping()`. Cron'larda `SET SESSION wait_timeout=900`.
+- Tablolar `stats_*`, `adm_*` site tablolarıyla aynı `utf8mb4_turkish_ci` (metin JOIN'inde collation farkı çıkmasın). Saatler PHP'nin dilimiyle (Europe/Istanbul); bağlantıda `time_zone` buna eşitlenir (oyun API'leri UTC kullanır, karıştırma).
+- **İç içe `<form>` yok:** satır içi ikincil eylemler tablonun dışındaki boş formlara `form="id"` ile bağlanır (Notlar ekranı örnek). Tüm çıktı `h()` ile.
+- Sayaç: `assets/oyunlar.js` (bot denetimi, `ok_admin_optout`, sendBeacon) → `stats.php`. GTM de bot/yöneticide yüklenmez. Yeni olay: sayfada `okSay('ad')`, huni `FUNNEL`.
+- Google: JWT elle (`openssl_sign`), jeton 55 dk `adm_settings`'te, başarısız jeton 10 dk tekrar denenmez ("Yenile" siler); Search Analytics 6 saat önbellek. URL Inspection: basışta en çok 20, günlük kota sayacı.
+- Önbellek temizle: yanıt başlığı `X-LiteSpeed-Purge: *`. Yerelde PHP sunucusu tek iş parçacıklı: sağlık kontrolünü aynı sunucuya yönlendirme (kilitlenir), hedef olarak `python -m http.server 8766` kullan.
+
 ## Sık yapılan hatalar
 - **Önbellek katmanları (sayaç/analitik gibi herkese hemen ulaşması gereken değişiklikte önce düşün):** tarayıcı (`.htaccess` mod_expires: JS 1 gün, HTML 10 dk), oyunların service worker'ı (aynı kökenli dosyaları önce önbellekten verir) ve Kelime Bulucu sayfalarının LiteSpeed önbelleği (1 gün; temizlemek için cPanel → LiteSpeed Web Cache Manager → Flush All). Google Tag Manager ortak `assets/oyunlar.js` içinde; bu dosya `no-cache` ile verilir (`.htaccess` FilesMatch), sayfalar `?v=N` ile çağırır. Dosyanın ilk yüklenişi değişirse `?v` artırılır.
 - **Sürüm numarası:** JS değişince `index.html` içindeki `?v=N` ve o oyunun `sw.js` içindeki `CACHE` adı ile `CORE` listesi birlikte artırılır. Yoksa tarayıcı ve service worker eski dosyayı verir (yerel testte de).
@@ -51,5 +62,5 @@ Sedat Okutan'ın kişisel sitesi ve tarayıcı oyunları. Statik HTML/CSS/vanill
 - API testleri: `node --test tests/okey-api.test.mjs` (101), `ADMIN_PASS=… node --test tests/sohbet-api.test.mjs`, `tests/sohbet-ozel.test.mjs`, `tests/sohbet-oyun.test.mjs` ve `tests/sohbet-radyo.test.mjs` (Sohbet; yeni kişi sınırı IP başına saatte 30: her dosyadan önce `sh_*` tablolarını sil), `BASE=… ADMIN_PASS=… node --test tests/api.test.mjs` (Balon). Canlıda çalıştırma.
 - Online iki oyunculu deneme: ikinci oyuncuyu Node betiğiyle API üzerinden oynat ya da ikinci sekmeyi `localhost:8765` kökeninden aç (localStorage ayrı kalır).
 - Ateş ve Su: `?test=1` `window.__kd` (dünya `w`, `load(i)`, `net`) açar; `&dpr=N` çizim çözünürlüğünü artırır (yakın inceleme).
-- Test bitince yerel `ok_* / oy_* / tv_* / bt_* / kg_* / ps_* / kd_* / sh_*` tablolarını sil, sunucuları kapat.
+- Test bitince yerel `ok_* / oy_* / tv_* / bt_* / kg_* / ps_* / kd_* / sh_* / stats_* / adm_*` tablolarını sil, sunucuları kapat.
 - MySQL'i zorla öldürme (`Stop-Process`): InnoDB tablosu yarım kalır ("doesn't exist in engine", sahipsiz `.ibd` dosyası; `C:\xampp\mysql\data\<db>\` içinden silinir). Düzgün kapat: `C:\xampp\mysql\bin\mysqladmin.exe -u root shutdown`.

@@ -1,0 +1,13 @@
+# Yönetim paneli — dizine eklenmez, önbelleğe alınmaz; ayar ve günlük dosyaları dışarıdan okunmaz.
+# (Burada RewriteEngine kullanılmaz: kökteki https yönlendirmesi bu klasörde de geçerli kalsın.)
+Options -Indexes
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header set Cache-Control "no-store"
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>
+<FilesMatch "^(config.*\.php|.*\.log|error_log|.*\.json|.*\.gz|.*\.md)$">
+  Require all denied
+</FilesMatch>

@@ -1,0 +1,2 @@
+# Yalnızca PHP içinden yüklenir; doğrudan erişim kapalı.
+Require all denied

@@ -16,6 +16,8 @@ kelimeler/*.MOV
 
 # Balon Patlat veritabanı şifresi depoya girmez (sunucuya elle yüklenir)
 balon/api/config.php
+# Yönetim paneli ayarları (şifre hash'i, anahtar yolları, Telegram)
+admin/config.php
 tools/.veri/
 kelime-bulucu/veri/og/
 kelime-bulucu/veri/onbellek/

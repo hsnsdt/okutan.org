@@ -1,5 +1,37 @@
-/* Google Tag Manager — tüm sayfalarda bu dosya üzerinden yüklenir (kimlik tek yerde). */
+/* Bot denetimi + birinci taraf sayaç (çerezsiz; sunucu yalnızca günlük toplam tutar, bkz. /stats.php ve /admin/).
+   Bot, otomasyon ya da şüpheli ekran görülürse ne sayaç ne de Google etiketi çalışır. Yönetim panelini açan
+   tarayıcı (localStorage ok_admin_optout) sayılmaz. Siteye özel olay: okSay('ad') (a-z, 0-9, _). */
 (function () {
+  var n = navigator, s = window.screen || {}, ua = n.userAgent || '';
+  window.okBot = !!(n.webdriver || /bot|crawl|spider|slurp|headless|phantom|lighthouse|pagespeed|selenium|puppeteer|playwright|electron/i.test(ua) ||
+    window._phantom || window.callPhantom || window.__nightmare || s.width <= 1 || s.height <= 1 || (s.width === 800 && s.height === 600) ||
+    (n.languages && n.languages.length === 0));
+  var off = false; try { off = localStorage.getItem('ok_admin_optout') === '1'; } catch (e) {}
+  window.okSay = function () {};
+  if (window.okBot || off || !n.sendBeacon || !window.JSON) return;
+  var dev = /iPad|Tablet|PlayBook|Silk|Android(?!.*Mobile)/i.test(ua) || (/Macintosh/.test(ua) && n.maxTouchPoints > 1) ? 'tablet' :
+    /Mobi|iPhone|iPod|Android|Windows Phone/i.test(ua) ? 'mobile' : 'desktop';
+  function send(o) { o.p = location.pathname; o.d = dev; try { n.sendBeacon('/stats.php', JSON.stringify(o)); } catch (e) {} }
+  window.okSay = function (e) { if (/^[a-z0-9_]{1,30}$/.test(e)) send({ t: 'ev', e: e }); };
+  var ref = ''; try { var r = document.referrer ? new URL(document.referrer) : null; if (r && r.hostname !== location.hostname) ref = r.hostname; } catch (e) {}
+  var q = {}; try { q = new URLSearchParams(location.search); } catch (e) {}
+  var pv = { t: 'pv', r: ref, l: (n.language || '').slice(0, 2).toLowerCase(), s: (q.get && q.get('utm_source') || '').toLowerCase().slice(0, 40) };
+  if (q.get && q.get('masa')) pv.e = 'masa_davet';
+  send(pv);
+  // Sayfa görünürken dakikada bir "buradayım" (en çok 45 kez): "şu an sitede" sayısı ve 1/5 dk etkin ziyaret olayı.
+  var k = 0, t = setInterval(function () {
+    if (document.hidden) return;
+    k++;
+    var o = { t: 'hb' };
+    if (k === 1) o.e = 'engaged'; else if (k === 5) o.e = 'engaged5';
+    send(o);
+    if (k >= 45) clearInterval(t);
+  }, 60000);
+})();
+/* Google Tag Manager — tüm sayfalarda bu dosya üzerinden yüklenir (kimlik tek yerde). Botlarda ve yöneticide yüklenmez. */
+(function () {
+  var off = false; try { off = localStorage.getItem('ok_admin_optout') === '1'; } catch (e) {}
+  if (window.okBot || off) return;
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
   window.gtag('js', new Date());

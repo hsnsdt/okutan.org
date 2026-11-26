@@ -20,6 +20,11 @@
   RewriteRule ^kelime-bulucu/veri/arama/ - [F,L]
 </IfModule>
 
+# PHP hata günlükleri (cPanel her klasöre "error_log" yazar) dışarıdan okunmaz; yönetim paneli okur.
+<Files "error_log">
+  Require all denied
+</Files>
+
 # Özel 404 sayfası
 ErrorDocument 404 /404.html
 

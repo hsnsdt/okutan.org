@@ -3,6 +3,9 @@ Allow: /
 Allow: /balon/api/og.php
 Disallow: /balon/api/
 Disallow: /balon/yonetim/
+Disallow: /sohbet/yonetim/
+Disallow: /admin/
+Disallow: /stats.php
 
 Sitemap: https://okutan.org/sitemap.xml
 Sitemap: https://okutan.org/kelime-bulucu/sitemap.xml
