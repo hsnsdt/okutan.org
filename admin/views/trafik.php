@@ -50,7 +50,7 @@ $funnel = (array)cfg('FUNNEL', [['pv', 'Sayfa görüntüleyen'], ['ev_engaged', 
 </section>
 
 <div class="grid2">
-<?php foreach (['page' => 30, 'ref' => 20, 'src' => 20, 'dev' => 5, 'lang' => 15] as $dim => $lim): $r = st_dim($dim, $from, $t, $lim); $sum = array_sum(array_column($r, 'n')) ?: 1; ?>
+<?php foreach (['page' => 30, 'ref' => 20, 'cc' => 20, 'dev' => 5, 'br' => 12, 'os' => 10, 'lang' => 15, 'src' => 20] as $dim => $lim): $r = st_dim($dim, $from, $t, $lim); $sum = array_sum(array_column($r, 'n')) ?: 1; ?>
   <section class="card"><h2><?= h($GLOBALS['DIM_TR'][$dim]) ?></h2>
   <?php if (!$r): ?><p class="muted">Bu dönemde veri yok.</p><?php else: ?>
   <div class="tw"><table><tbody><?php foreach ($r as $x): ?><tr>

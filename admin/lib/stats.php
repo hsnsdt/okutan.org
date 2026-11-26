@@ -43,7 +43,14 @@ function st_online(): array
     $n = (int)val('SELECT COUNT(*) FROM stats_online WHERE last_seen >= ?', [$since]);
     $pages = rows('SELECT path, COUNT(*) n FROM stats_online WHERE last_seen >= ? GROUP BY path ORDER BY n DESC LIMIT 10', [$since]);
     $devs = rows('SELECT dev, COUNT(*) n FROM stats_online WHERE last_seen >= ? GROUP BY dev ORDER BY n DESC', [$since]);
-    return ['n' => $n, 'pages' => $pages, 'devs' => $devs];
+    // Kişi kişi (kimliksiz): sayfa, cihaz, tarayıcı, sistem, ülke, ne zamandır sitede, son sinyal.
+    $people = [];
+    foreach (rows('SELECT path, dev, br, os, cc, first_seen, last_seen FROM stats_online WHERE last_seen >= ? ORDER BY last_seen DESC LIMIT 50', [$since]) as $r) {
+        $people[] = ['path' => $r['path'], 'dev' => val_tr('dev', $r['dev']), 'br' => $r['br'] ?: '—', 'os' => $r['os'] ?: '—',
+            'cc' => $r['cc'], 'ulke' => country_tr((string)$r['cc']),
+            'sure' => $r['first_seen'] ? max(0, time() - strtotime($r['first_seen'])) : null, 'son' => max(0, time() - strtotime($r['last_seen']))];
+    }
+    return ['n' => $n, 'pages' => $pages, 'devs' => $devs, 'people' => $people];
 }
 
 /** Değişim yüzdesi rozeti (▲/▼). */
@@ -56,11 +63,13 @@ function delta_html(float $cur, float $prev, bool $lowerIsBetter = false): strin
     return '<span class="dl ' . ($good ? 'up' : 'down') . '">' . ($p > 0 ? '▲' : '▼') . ' %' . nf(abs($p), abs($p) < 10 ? 1 : 0) . '</span>';
 }
 
-$GLOBALS['DIM_TR'] = ['page' => 'Sayfa', 'ref' => 'Gelinen site', 'lang' => 'Dil', 'dev' => 'Cihaz', 'src' => 'Kampanya (utm_source)'];
+$GLOBALS['DIM_TR'] = ['page' => 'Sayfa', 'ref' => 'Gelinen site', 'lang' => 'Dil', 'dev' => 'Cihaz', 'src' => 'Kampanya (utm_source)',
+    'br' => 'Tarayıcı', 'os' => 'İşletim sistemi', 'cc' => 'Ülke (saat diliminden)'];
 function val_tr(string $dim, string $v): string
 {
     if ($dim === 'dev') return ['mobile' => 'Telefon', 'tablet' => 'Tablet', 'desktop' => 'Bilgisayar'][$v] ?? $v;
     if ($dim === 'ref' && $v === 'direct') return 'Doğrudan / bilinmiyor';
+    if ($dim === 'cc') return function_exists('country_tr') ? country_tr($v === 'XX' ? '' : $v) : $v;
     if ($dim === 'lang') return ['tr' => 'Türkçe', 'en' => 'İngilizce', 'de' => 'Almanca', 'az' => 'Azerice', 'ru' => 'Rusça', 'fr' => 'Fransızca', 'ar' => 'Arapça', 'nl' => 'Felemenkçe', 'xx' => 'Bilinmiyor'][$v] ?? strtoupper($v);
     return $v;
 }

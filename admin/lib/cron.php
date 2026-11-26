@@ -6,6 +6,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/boot.php';
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/ziyaretci.php';
 require_once __DIR__ . '/stats.php';
 require_once __DIR__ . '/oyun.php';
 require_once __DIR__ . '/google.php';

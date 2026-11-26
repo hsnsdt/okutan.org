@@ -19,6 +19,7 @@ elseif (function_exists('litespeed_finish_request')) litespeed_finish_request();
 
 require __DIR__ . '/admin/lib/boot.php';
 require __DIR__ . '/admin/lib/db.php';
+require __DIR__ . '/admin/lib/ziyaretci.php';
 
 try {
     $ua = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
@@ -41,6 +42,11 @@ try {
     if ($path === '' || $path[0] !== '/') $path = '/';
     $path = mb_substr($path, 0, 191);
     $dev = in_array($j['d'] ?? '', ['mobile', 'tablet', 'desktop'], true) ? $j['d'] : 'desktop';
+    $br = ua_browser($ua);
+    $os = ua_os($ua);
+    $tz = (string)($j['z'] ?? '');
+    $lt = (string)($j['lt'] ?? '');
+    $cc = guess_country(preg_match('~^[A-Za-z_]+/[A-Za-z_/+-]{1,40}$~', $tz) ? $tz : '', preg_match('~^[a-z]{2,3}[-_][A-Z]{2}$~', $lt) ? $lt : '');
     $ev = (string)($j['e'] ?? '');
     if (!preg_match('~^[a-z0-9_]{1,30}$~', $ev)) $ev = '';
 
@@ -69,13 +75,18 @@ try {
         $lang = strtolower((string)($j['l'] ?? ''));
         $dim('lang', preg_match('~^[a-z]{2}$~', $lang) ? $lang : 'xx');
         $dim('dev', $dev);
+        $dim('br', $br);
+        $dim('os', $os);
+        $dim('cc', $cc !== '' ? $cc : 'XX');
         $src = strtolower((string)($j['s'] ?? ''));
         if (preg_match('~^[a-z0-9._-]{1,40}$~', $src)) $dim('src', $src);
     }
     if ($ev !== '') $count('ev_' . $ev);
     if ($t === 'pv' || $t === 'hb') {
-        q('INSERT INTO stats_online (h, last_seen, path, dev) VALUES (?, ?, ?, ?)
-           ON DUPLICATE KEY UPDATE last_seen = VALUES(last_seen), path = VALUES(path), dev = VALUES(dev)', [$hOn, now(), $path, $dev]);
+        q('INSERT INTO stats_online (h, last_seen, path, dev, br, os, cc, first_seen) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE first_seen = IF(last_seen < ?, VALUES(first_seen), COALESCE(first_seen, VALUES(first_seen))),
+           last_seen = VALUES(last_seen), path = VALUES(path), dev = VALUES(dev), br = VALUES(br), os = VALUES(os), cc = IF(VALUES(cc) = \'\', cc, VALUES(cc))',
+            [$hOn, now(), $path, $dev, $br, $os, $cc, now(), date('Y-m-d H:i:s', time() - 900)]);
     }
     // Ara sıra temizlik (cron kurulmamış olsa da tablolar büyümesin).
     if (mt_rand(1, 200) === 1) {

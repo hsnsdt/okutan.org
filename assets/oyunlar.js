@@ -11,7 +11,10 @@
   if (window.okBot || off || !n.sendBeacon || !window.JSON) return;
   var dev = /iPad|Tablet|PlayBook|Silk|Android(?!.*Mobile)/i.test(ua) || (/Macintosh/.test(ua) && n.maxTouchPoints > 1) ? 'tablet' :
     /Mobi|iPhone|iPod|Android|Windows Phone/i.test(ua) ? 'mobile' : 'desktop';
-  function send(o) { o.p = location.pathname; o.d = dev; try { n.sendBeacon('/stats.php', JSON.stringify(o)); } catch (e) {} }
+  var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+  var lt = (n.language || '').replace('_', '-');
+  // Ülke tahmini için yalnızca saat dilimi ve dil etiketi gider (IP'den konum sorgulanmaz).
+  function send(o) { o.p = location.pathname; o.d = dev; o.z = tz; o.lt = lt; try { n.sendBeacon('/stats.php', JSON.stringify(o)); } catch (e) {} }
   window.okSay = function (e) { if (/^[a-z0-9_]{1,30}$/.test(e)) send({ t: 'ev', e: e }); };
   var ref = ''; try { var r = document.referrer ? new URL(document.referrer) : null; if (r && r.hostname !== location.hostname) ref = r.hostname; } catch (e) {}
   var q = {}; try { q = new URLSearchParams(location.search); } catch (e) {}

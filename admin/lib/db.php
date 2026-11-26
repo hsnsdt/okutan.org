@@ -10,6 +10,7 @@ final class Db
 {
     public static ?PDO $pdo = null;
     public static bool $schemaDone = false;
+    public static bool $migrated = false;
     public static ?string $failed = null; // bu istekte bağlantı kurulamadıysa tekrar denenmez (her deneme saniyeler sürebilir)
 }
 
@@ -52,6 +53,7 @@ function q(string $sql, array $a = [], int $try = 0): PDOStatement
         $code = (string)$e->getCode();
         $drv = (int)($e->errorInfo[1] ?? 0);
         if ($code === '42S02' && !Db::$schemaDone && $try < 2) { db_schema(); return q($sql, $a, $try + 1); }
+        if ($code === '42S22' && !Db::$migrated && $try < 2) { db_migrate(); return q($sql, $a, $try + 1); }
         if (($drv === 2006 || $drv === 2013) && $try < 2) { Db::$pdo = null; return q($sql, $a, $try + 1); }
         adm_log('SQL hatası: ' . $e->getMessage() . ' | ' . preg_replace('/\s+/', ' ', $sql));
         throw new DbError('Sorgu başarısız: ' . $e->getMessage());
@@ -77,6 +79,26 @@ function setting_set(string $k, ?string $v, ?int $ttl = null): void
 }
 function setting_del(string $prefix): void { q('DELETE FROM adm_settings WHERE k LIKE ?', [$prefix . '%']); }
 
+/** Sonradan eklenen sütunlar (eski kurulumlar): 42S22 gelince bir kez çalışır; sütun zaten varsa (1060) geçilir. */
+function db_migrate(): void
+{
+    Db::$migrated = true;
+    $alter = [
+        "ALTER TABLE stats_online ADD COLUMN br VARCHAR(16) NOT NULL DEFAULT ''",
+        "ALTER TABLE stats_online ADD COLUMN os VARCHAR(16) NOT NULL DEFAULT ''",
+        "ALTER TABLE stats_online ADD COLUMN cc CHAR(2) NOT NULL DEFAULT ''",
+        "ALTER TABLE stats_online ADD COLUMN first_seen DATETIME NULL",
+    ];
+    foreach ($alter as $s) {
+        try { db()->exec($s); }
+        catch (PDOException $e) {
+            if ((int)($e->errorInfo[1] ?? 0) === 1060) continue;
+            adm_log('Göç başarısız: ' . $e->getMessage());
+            throw new DbError('Tablo güncellenemedi: ' . $e->getMessage());
+        }
+    }
+}
+
 /** Tüm panel tabloları — site tablolarıyla aynı karakter seti ve collation (metin JOIN'lerinde sorun çıkmasın). */
 function db_schema(): void
 {
@@ -90,7 +112,8 @@ function db_schema(): void
         "CREATE TABLE IF NOT EXISTS stats_seen (day DATE NOT NULL, metric VARCHAR(40) NOT NULL, h BINARY(16) NOT NULL,
             PRIMARY KEY (day, metric, h))",
         "CREATE TABLE IF NOT EXISTS stats_online (h BINARY(16) NOT NULL PRIMARY KEY, last_seen DATETIME NOT NULL,
-            path VARCHAR(191) NOT NULL, dev VARCHAR(8) NOT NULL, KEY ix_seen (last_seen))",
+            path VARCHAR(191) NOT NULL, dev VARCHAR(8) NOT NULL, br VARCHAR(16) NOT NULL DEFAULT '', os VARCHAR(16) NOT NULL DEFAULT '',
+            cc CHAR(2) NOT NULL DEFAULT '', first_seen DATETIME NULL, KEY ix_seen (last_seen))",
         "CREATE TABLE IF NOT EXISTS adm_settings (k VARCHAR(191) NOT NULL PRIMARY KEY, v MEDIUMTEXT NULL,
             expires_at DATETIME NULL, updated_at DATETIME NOT NULL)",
         "CREATE TABLE IF NOT EXISTS adm_login (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, ip_hash CHAR(64) NOT NULL,

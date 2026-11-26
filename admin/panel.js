@@ -79,8 +79,13 @@
         if (!j || !j.ok) { setN('?'); setD(esc((j && j.error) || 'okunamadı')); return; }
         setN(j.n);
         var devs = j.devs.map(function (d) { return esc(d.dev) + ' ' + d.n; }).join(' · ');
-        var pages = j.pages.map(function (p) { return '<li><span class="path">' + esc(p.path) + '</span> <b>' + p.n + '</b></li>'; }).join('');
-        setD((devs ? '<div class="small">' + devs + '</div>' : '') + (pages ? '<ul class="hits small">' + pages + '</ul>' : (j.n ? '' : '<p class="muted small">Şu an kimse yok.</p>')));
+        function dk(s) { if (s == null) return '—'; return s < 60 ? s + ' sn' : s < 3600 ? Math.floor(s / 60) + ' dk' : Math.floor(s / 3600) + ' sa ' + Math.floor(s % 3600 / 60) + ' dk'; }
+        var rows = (j.people || []).map(function (p) {
+          return '<tr><td class="path">' + esc(p.path) + '</td><td>' + esc(p.dev) + '</td><td>' + esc(p.br) + ' · ' + esc(p.os) + '</td><td>' + esc(p.ulke) + '</td>' +
+            '<td class="r">' + dk(p.sure) + '</td><td class="r muted">' + dk(p.son) + ' önce</td></tr>';
+        }).join('');
+        setD(!j.n ? '<p class="muted small">Şu an kimse yok.</p>' :
+          '<div class="small">' + devs + '</div><div class="tw"><table class="small live"><thead><tr><th>Sayfa</th><th>Cihaz</th><th>Tarayıcı · sistem</th><th>Ülke</th><th class="r">Sitede</th><th class="r">Son sinyal</th></tr></thead><tbody>' + rows + '</tbody></table></div>');
       })
       .catch(function () { setN('?'); });
   }
