@@ -9,11 +9,11 @@ $on = notify_enabled();
   <h2>Telegram <span class="pill <?= $on ? 'ok' : 'bad' ?>"><?= $on ? 'ayarlı' : 'ayarlı değil' ?></span></h2>
   <?php if (!$on): ?>
   <ol class="steps">
-    <li>Telegram'da <b>@BotFather</b>'a yaz: <code>/newbot</code> → ad ver → verdiği <b>token</b>'ı kopyala.</li>
-    <li>Yeni botunla bir sohbet aç ve ona herhangi bir mesaj yaz.</li>
-    <li>Tarayıcıda <code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code> adresini aç; <code>"chat":{"id":…}</code> içindeki sayı <b>chat id</b>'dir.</li>
-    <li><code>admin/config.php</code>: <code>'TELEGRAM_BOT_TOKEN' => '…'</code>, <code>'TELEGRAM_CHAT_ID' => '…'</code></li>
+    <li>Telegram'da <b>@BotFather</b>'a yaz: <code>/newbot</code> → ad ver → verdiği <b>token</b>'ı <code>admin/config.php</code> → <code>'TELEGRAM_BOT_TOKEN' => '…'</code> satırına yaz.<?= cfg('TELEGRAM_BOT_TOKEN') ? ' <span class="pill ok">yapıldı</span>' : '' ?></li>
+    <li>Telegram'da botunu aç ve ona bir mesaj yaz (ör. <code>/start</code>).</li>
+    <li>Aşağıdaki <b>Sohbeti bul</b>'a bas: panel sohbet kimliğini bulup kaydeder ve deneme mesajı yollar.</li>
   </ol>
+  <?php if (cfg('TELEGRAM_BOT_TOKEN')): ?><div class="row"><?= form_open('tg_find') ?><button class="btn" type="submit">Sohbeti bul</button></form></div><?php endif ?>
   <?php endif ?>
   <div class="row wrap">
     <?= form_open('tg_test') ?><button class="btn" type="submit"<?= $on ? '' : ' disabled' ?>>Deneme mesajı gönder</button></form>

@@ -8,13 +8,14 @@ function adm_menu(): array
 {
     return [
         'Genel' => ['ozet' => 'Özet', 'trafik' => 'Trafik', 'google' => 'Google arama'],
+        'Oyunlar' => ['balon' => 'Balon Patlat', 'sohbet' => 'Canlı Sohbet'],
         'Site' => ['sistem' => 'Sistem', 'bildirim' => 'Bildirimler', 'notlar' => 'Notlar', 'ara' => 'Arama'],
     ];
 }
-/** Diğer yönetim sayfaları (ayrı uygulamalar). */
+/** Menünün altındaki dış bağlantılar. */
 function adm_links(): array
 {
-    return ['/balon/yonetim/' => 'Balon yönetimi', '/sohbet/yonetim/' => 'Sohbet yönetimi', '/' => 'Siteye git'];
+    return ['/' => 'Siteye git'];
 }
 function adm_views(): array { $v = []; foreach (adm_menu() as $items) $v += $items; return $v; }
 
@@ -135,7 +136,7 @@ function page_head(string $title, string $view = '', bool $menu = true): void
 <title><?= h($title) ?> · Yönetim</title>
 <link rel="icon" href="/favicon.svg">
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
-<link rel="stylesheet" href="./panel.css?v=4">
+<link rel="stylesheet" href="./panel.css?v=5">
 <script nonce="<?= h($n) ?>">try { localStorage.setItem('ok_admin_optout', '1'); } catch (e) {}</script>
 </head>
 <body>
@@ -165,11 +166,29 @@ function page_foot(): void
     ?>
 </main>
 <?= !empty($GLOBALS['adm_layout']) ? '</div>' : '' ?>
-<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=1"></script>
+<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=2"></script>
 </body>
 </html>
 <?php
 }
+/**
+ * Oyun yönetimleri (Balon, Sohbet) panelin içinde: mevcut yönetim sayfası aynı kökenden iframe'de açılır,
+ * API'nin beklediği 12 saatlik yönetim jetonunu panel üretir (ortak config: salt + admin_pass; imza API'dekiyle aynı),
+ * panel.js jetonu sessionStorage'a yazar, sonra iframe'i yükler. Böylece ikinci şifre sorulmaz.
+ */
+function embed_admin(string $title, string $src, string $storeKey, string $scope, string $siteUrl, string $siteLabel): void
+{
+    $c = db_config();
+    echo '<div class="row between"><h1>' . h($title) . '</h1><a href="' . h($siteUrl) . '" target="_blank" rel="noopener">' . h($siteLabel) . ' ↗</a></div>';
+    if (empty($c['admin_pass'])) {
+        echo '<div class="flash err">Oyun yönetimi kapalı: balon/api/config.php içinde <code>admin_pass</code> boş.</div>';
+        return;
+    }
+    $exp = time() + 12 * 3600;
+    $tok = $exp . '.' . hash_hmac('sha256', (string)$exp, ($c['salt'] ?? '') . '|' . $scope . '|' . $c['admin_pass']);
+    echo '<iframe class="embed" data-src="' . h($src) . '" data-key="' . h($storeKey) . '" data-tok="' . h($tok) . '" title="' . h($title) . ' yönetimi"></iframe>';
+}
+
 /** Görünümde hata kutusu (hata yutulmaz: mesaj ekranda ve günlükte). */
 function err_box(Throwable $e, string $what = ''): string
 {

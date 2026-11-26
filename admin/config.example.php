@@ -53,7 +53,8 @@ return [
     'BACKUP_KEEP' => 7,
     'BACKUP_SKIP_DATA' => ['stats_seen', 'stats_online', 'adm_login', 'bp_sessions', 'bp_logins', '*_sessions', '*_moves', '*_private', '*_chat', 'sh_presence', 'sh_radyo_dinleyen'],
 
-    // Telegram bildirimi (bos ise bildirim gonderilmez).
+    // Telegram bildirimi (token bos ise bildirim gonderilmez). CHAT_ID bos birakilabilir:
+    // bota bir mesaj yaz, panel > Bildirimler > "Sohbeti bul" kimligi bulup kaydeder.
     'TELEGRAM_BOT_TOKEN' => '',
     'TELEGRAM_CHAT_ID' => '',
 

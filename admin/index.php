@@ -78,6 +78,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 elseif ($r['total'] === 0) flash('ok', 'Denetlenecek adres yok: hepsi son 7 günde denetlendi (' . $r['skipped'] . ' adres).');
                 else flash('ok', $r['done'] . ' adres denetlendi. Bugün kullanılan kota: ' . inspect_quota_used() . '/' . (int)cfg('INSPECT_DAILY_QUOTA', 2000) . '.');
                 break;
+            case 'tg_find':
+                [$id, $why] = tg_find_chat();
+                if ($id === null) flash('err', $why);
+                else {
+                    [$ok, $err] = notify_now('okutan.org yönetim paneli bağlandı. Bildirimler bu sohbete gelecek.');
+                    flash($ok ? 'ok' : 'err', 'Sohbet bulundu' . ($why !== '' ? ' (' . $why . ')' : '') . ($ok ? '; deneme mesajı gönderildi.' : '; ama mesaj gönderilemedi: ' . $err));
+                }
+                break;
             case 'tg_test':
                 [$ok, $err] = notify_now('okutan.org yönetim paneli: deneme mesajı (' . date('d.m.Y H:i') . ')');
                 flash($ok ? 'ok' : 'err', $ok ? 'Deneme mesajı gönderildi.' : 'Gönderilemedi: ' . $err);

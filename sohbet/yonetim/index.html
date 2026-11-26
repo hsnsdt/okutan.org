@@ -8,6 +8,9 @@
 <link rel="icon" href="/sohbet/favicon-32.png" type="image/png">
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
 <script>(function(){try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
+<script>/* Bu yönetim artık /admin/ panelinin içinde açılır (tek giriş). Doğrudan açılırsa panele yönlenir; panelin içindeyse kendi başlığını gizler. */
+(function(){var inFrame=false;try{inFrame=window.self!==window.top&&window.top.location.pathname.indexOf('/admin/')===0}catch(e){}if(!inFrame){location.replace('/admin/?view=sohbet');return}document.documentElement.className+=' gomulu'})();</script>
+<style>.gomulu .top{display:none}.gomulu body{background:transparent}.gomulu .wrap{padding:8px 0 24px;grid-template-columns:minmax(0,1fr)}.gomulu .wrap>*,.gomulu .kpi{min-width:0}.gomulu .kpis{grid-template-columns:repeat(auto-fit,minmax(118px,1fr))!important}.gomulu .kpi b{overflow-wrap:anywhere}.gomulu svg{max-width:100%}.gomulu .b{overflow-x:auto}</style>
 <style>
 :root{--bg:#ebebe8;--block:#fff;--ink:#0e0e0e;--muted:#6a6a6a;--line:#dadad6;--accent:#2f6bff;--ok:#16a34a;--bad:#dc2626;--warn:#d97706;
   --sans:"Inter Tight",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;color-scheme:light}

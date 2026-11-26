@@ -25,6 +25,12 @@
   Require all denied
 </Files>
 
+# Google servis hesabı anahtarı gibi gizli JSON dosyaları yanlışlıkla web köküne yüklense bile indirilemesin
+# (asıl yerleri web kökü dışı: ~/okutan-ozel/).
+<FilesMatch "^(gsc-anahtar.*|gsc-key.*|.*service[-_]?account.*|okutan-panel-[0-9a-f]+)\.json$">
+  Require all denied
+</FilesMatch>
+
 # Özel 404 sayfası
 ErrorDocument 404 /404.html
 
