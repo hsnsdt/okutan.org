@@ -36,6 +36,7 @@ if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
 elseif (function_exists('litespeed_finish_request')) litespeed_finish_request();
 
 try {
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') exit; // HEAD (bağlantı önizlemesi, denetim) indirme değildir
     $ua = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
     if ($ua === '' || preg_match('~bot|crawl|spider|slurp|preview|headless|python|curl|wget|java/|okhttp|go-http|axios|scrapy|lighthouse|monitor~i', $ua)) exit;
     $metric = DOSYALAR[$f];
