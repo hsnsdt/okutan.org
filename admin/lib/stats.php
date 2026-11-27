@@ -77,7 +77,8 @@ function event_tr(string $metric): string
 {
     $e = substr($metric, 3);
     $fixed = ['engaged' => 'Etkin ziyaret (1 dk+ açık)', 'engaged5' => 'Uzun ziyaret (5 dk+ açık)', 'masa_davet' => 'Online masa davetiyle gelen',
-        'sohbet_giris' => 'Sohbete bağlandı', 'sohbet_yazdi' => 'Sohbette mesaj yazdı'];
+        'sohbet_giris' => 'Sohbete bağlandı', 'sohbet_yazdi' => 'Sohbette mesaj yazdı',
+        'indir_kelimeler' => 'Kelimeler APK indirildi', 'indir_kelimeler32' => 'Kelimeler 32-bit APK indirildi'];
     if (isset($fixed[$e])) return $fixed[$e];
     if (preg_match('~^(basla|bitir|masa|katil)_([a-z0-9]+)$~', $e, $m) && function_exists('game_name_of')) {
         return game_name_of($m[2]) . ': ' . ['basla' => 'oyun başladı', 'bitir' => 'oyun bitti', 'masa' => 'online masa açtı', 'katil' => 'masaya katıldı'][$m[1]];

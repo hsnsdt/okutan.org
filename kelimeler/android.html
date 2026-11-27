@@ -11,7 +11,7 @@
 <link rel="icon" href="img/favicon-64.png" type="image/png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <meta name="theme-color" content="#6c5ce7">
-<link rel="stylesheet" href="site.css?v=4">
+<link rel="stylesheet" href="site.css?v=5">
 <script src="lang.js"></script>
 <style>
   .dl-btn {
@@ -65,12 +65,13 @@
     bizim tarafımızdan imzalanmıştır, mağaza sürümüyle aynı oyundur ve aynı sunuculara bağlanır:
     hesabınız, puanlarınız, arkadaşlarınız olduğu gibi gelir.
   </p>
-  <a class="dl-btn" href="kelimeler.apk" download>
+  <a class="dl-btn" href="indir.php?f=kelimeler.apk" download="kelimeler.apk">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg>
     Kelimeler'i İndir (APK)
   </a>
+  <p class="dl-count" data-dl-count hidden></p>
   <p class="dl-meta">Sürüm 3.20.0 · 42 MB · Android 7.0 ve üzeri<br>SHA-256: <code>b787127b8a211728d88df6c8b91297f2c2b9fb0a780d2a6d1af8bcf53ac318b6</code></p>
-  <p class="dl-meta">"Uygulama yüklenmedi" diyen çok eski (32-bit) telefonlar için: <a href="kelimeler-32bit.apk" download>kelimeler-32bit.apk</a> (40 MB) · SHA-256: <code>f107c9227261db4e382c2566909d4b7adc13b1901a90adffa5d924b76ee361dd</code></p>
+  <p class="dl-meta">"Uygulama yüklenmedi" diyen çok eski (32-bit) telefonlar için: <a href="indir.php?f=kelimeler-32bit.apk" download="kelimeler-32bit.apk">kelimeler-32bit.apk</a> (40 MB) · SHA-256: <code>f107c9227261db4e382c2566909d4b7adc13b1901a90adffa5d924b76ee361dd</code></p>
 </div>
 
 <h2>Kurulum</h2>
@@ -135,12 +136,13 @@
     In the meantime you can install the Android app directly from here. The file is signed by us, it is the
     same game as the store build and connects to the same servers: your account, scores and friends carry over.
   </p>
-  <a class="dl-btn" href="kelimeler.apk" download>
+  <a class="dl-btn" href="indir.php?f=kelimeler.apk" download="kelimeler.apk">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg>
     Download Kelimeler (APK)
   </a>
+  <p class="dl-count" data-dl-count data-en hidden></p>
   <p class="dl-meta">Version 3.20.0 · 42 MB · Android 7.0+<br>SHA-256: <code>b787127b8a211728d88df6c8b91297f2c2b9fb0a780d2a6d1af8bcf53ac318b6</code></p>
-  <p class="dl-meta">For very old (32-bit) phones that say "App not installed": <a href="kelimeler-32bit.apk" download>kelimeler-32bit.apk</a> (40 MB) · SHA-256: <code>f107c9227261db4e382c2566909d4b7adc13b1901a90adffa5d924b76ee361dd</code></p>
+  <p class="dl-meta">For very old (32-bit) phones that say "App not installed": <a href="indir.php?f=kelimeler-32bit.apk" download="kelimeler-32bit.apk">kelimeler-32bit.apk</a> (40 MB) · SHA-256: <code>f107c9227261db4e382c2566909d4b7adc13b1901a90adffa5d924b76ee361dd</code></p>
 </div>
 
 <h2>Installation</h2>
@@ -205,5 +207,21 @@
   <span class="okutan-apps">© 2026 Okutan Apps · <a href="https://okutan.org/"><b>o</b>kutan.org</a></span>
 </footer>
 
+<script>
+/* İndirme sayacı: toplam indirme sayısı (kelimeler/indir.php; sayım sunucuda, kimlik tutulmaz). */
+(function () {
+  var els = document.querySelectorAll('[data-dl-count]');
+  if (!els.length || !window.fetch) return;
+  fetch('indir.php?say=1').then(function (r) { return r.json(); }).then(function (j) {
+    if (!j || !j.ok || !j.toplam) return;
+    for (var i = 0; i < els.length; i++) {
+      var en = els[i].hasAttribute('data-en');
+      els[i].textContent = en ? 'Downloaded ' + j.toplam.toLocaleString('en-US') + (j.toplam === 1 ? ' time' : ' times') + (j.bugun ? ' · ' + j.bugun + ' today' : '')
+                              : j.toplam.toLocaleString('tr-TR') + ' kez indirildi' + (j.bugun ? ' · bugün ' + j.bugun : '');
+      els[i].hidden = false;
+    }
+  }).catch(function () {});
+})();
+</script>
 </body>
 </html>

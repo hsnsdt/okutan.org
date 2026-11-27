@@ -10,6 +10,11 @@ $pct = fn($a, $b) => $b > 0 ? '%' . nf($a / $b * 100) : '—';
 <h1>Oyun istatistikleri</h1>
 <nav class="tabs" aria-label="Dönem"><?php foreach ([1 => 'Bugün', 7 => '7 gün', 30 => '30 gün'] as $k => $l): ?><a href="./?view=oyunlar&amp;gun=<?= $k ?>"<?= $k === $gun ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
 
+<section class="card"><div class="row between"><h2>Kelimeler (Android) indirmeleri</h2><a href="/kelimeler/android.html" target="_blank" rel="noopener">Sayfayı aç ↗</a></div>
+<?php try { echo downloads_html(true); } catch (Throwable $e) { echo err_box($e, 'İndirmeler okunamadı'); } ?>
+<p class="muted small">okutan.org/kelimeler/android.html'deki indirme düğmelerinden; botlar ve aynı kişinin 5 dakika içindeki tekrar tıklaması sayılmaz. Her indirme Telegram'a bildirilir (saatte en çok 30).</p>
+</section>
+
 <?php try { $ev = game_event_stats($from, $t); $sv = game_server_stats($gun);
   // Kartlar: son 14 gün sayfa görüntüleme eğilimi; dönem başlayan + önceki döneme göre değişim; en çok yükselen öne çıkar.
   $pfrom = day_add($from, -$gun); $pto = day_add($from, -1);

@@ -13,6 +13,28 @@ cron_main('uyari', function () {
     $msgs = [];
     $panel = site_url() . '/admin/';
 
+    // Kesinti: önemli adresler (HEALTH_URLS) üst üste 2 kontrolde açılmazsa "açılmıyor", düzelince "düzeldi" (tek seferlik takılma bildirilmez).
+    $down = (array)($st['down'] ?? []);   // url => ['n' => art arda hata, 'since' => ilk hata, 'sent' => bildirildi mi]
+    foreach (health_run() as $r) {
+        $u = $r['url'];
+        if ($r['ok']) {
+            if (!empty($down[$u]['sent'])) {
+                $dk = max(1, (int)round((time() - (int)$down[$u]['since']) / 60));
+                $msgs[] = '✅ Düzeldi: ' . $u . ' yeniden açılıyor (' . $dk . ' dk sürdü).';
+            }
+            unset($down[$u]);
+            continue;
+        }
+        $d = $down[$u] ?? ['n' => 0, 'since' => time(), 'sent' => false];
+        $d['n']++;
+        if ($d['n'] >= 2 && !$d['sent']) {
+            $msgs[] = '🔴 Açılmıyor: ' . $u . ' — ' . $r['why'] . ' (' . $d['n'] . ' kontroldür, ' . max(1, (int)round((time() - $d['since']) / 60)) . ' dk)';
+            $d['sent'] = true;
+        }
+        $down[$u] = $d;
+    }
+    $st['down'] = $down;
+
     $buttonMsgs = []; // [metin, düğmeler]: şikâyet başına ayrı mesaj, Telegram'dan tek dokunuşla gizle / sustur
     if (isset($t['sh_reports'])) {
         $last = (string)($st['rep_at'] ?? gmdate('Y-m-d H:i:s'));

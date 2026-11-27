@@ -353,3 +353,30 @@ function game_event_series(string $metric, string $from, string $to): array
     $s = st_series($metric, $from, $to);
     return array_map(fn($v) => [$v[1], null], $s);
 }
+
+// ---------------- Kelimeler Android indirmeleri (kelimeler/indir.php) ----------------
+function downloads_summary(): array
+{
+    $t = today();
+    $sum = function (string $from, string $to): array {
+        $r = row("SELECT COALESCE(SUM(n),0) n, COALESCE(SUM(CASE WHEN metric = 'dl_kelimeler32' THEN n ELSE 0 END),0) b32 FROM stats_daily WHERE metric IN ('dl_kelimeler','dl_kelimeler32') AND day BETWEEN ? AND ?", [$from, $to]);
+        return [(int)$r['n'], (int)$r['b32']];
+    };
+    $ser = [];
+    for ($d = day_add($t, -29); $d <= $t; $d = day_add($d, 1)) $ser[$d] = [0, null];
+    foreach (rows("SELECT day, SUM(n) n FROM stats_daily WHERE metric IN ('dl_kelimeler','dl_kelimeler32') AND day >= ? GROUP BY day", [day_add($t, -29)]) as $r) $ser[$r['day']][0] = (int)$r['n'];
+    $first = val("SELECT MIN(day) FROM stats_daily WHERE metric IN ('dl_kelimeler','dl_kelimeler32')");
+    return ['bugun' => $sum($t, $t), 'dun' => $sum(day_add($t, -1), day_add($t, -1)), 'g7' => $sum(day_add($t, -6), $t), 'p7' => $sum(day_add($t, -13), day_add($t, -7)),
+        'g30' => $sum(day_add($t, -29), $t), 'toplam' => $sum('2000-01-01', $t), 'ser' => $ser, 'ilk' => $first];
+}
+function downloads_html(bool $full): string
+{
+    $d = downloads_summary();
+    $s = '<div class="kpis k4">' . kpi('Bugün', nf($d['bugun'][0]) . ' ' . delta_html($d['bugun'][0], $d['dun'][0]), 'düne göre')
+        . kpi('Son 7 gün', nf($d['g7'][0]) . ' ' . delta_html($d['g7'][0], $d['p7'][0]), 'önceki 7 güne göre')
+        . kpi('Son 30 gün', nf($d['g30'][0]), $d['g30'][1] ? nf($d['g30'][1]) . ' tanesi 32-bit' : '32-bit yok')
+        . kpi('Toplam', nf($d['toplam'][0]), $d['ilk'] ? 'ilk indirme: ' . tr_date((string)$d['ilk']) : 'henüz indirme yok') . '</div>';
+    if ($full) $s .= bar_chart($d['ser'], 'Gün', 'İndirme', null, 'lbl_dm');
+    else $s .= spark(array_column($d['ser'], 0));
+    return $s;
+}

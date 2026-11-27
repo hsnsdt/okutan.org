@@ -12,7 +12,7 @@ cron_main('saglik', function () {
     $firstRun = !isset($state['fatals']);
 
     $issues = [];
-    foreach (health_run() as $r) if (!$r['ok']) $issues['h:' . $r['url']] = 'Sayfa sorunlu: ' . $r['url'] . ' — ' . $r['why'];
+    // Sayfa erişimi 15 dakikalık uyarı cron'unda (kesinti bildirimi); burada yalnızca yedek, cron ve PHP hataları.
     $bl = backup_list();
     if (!$bl) $issues['backup'] = 'Hiç yedek yok.';
     elseif ($bl[0]['time'] < time() - 26 * 3600) $issues['backup'] = 'Son yedek 26 saatten eski (' . date('d.m.Y H:i', $bl[0]['time']) . ').';

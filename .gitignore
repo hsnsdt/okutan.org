@@ -26,3 +26,5 @@ kelime-bulucu/veri/arama/
 assets/duyuru.json
 # Oyun testi anahtarı (CRON_KEY)
 tools/.oyun-testi.json
+# Dis site izleme (bot token, sohbet kimligi)
+tools/.site-izle.json

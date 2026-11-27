@@ -64,6 +64,9 @@ try {
   </section>
 </div>
 
+<section class="card" data-blok="indir" data-ad="Kelimeler indirmeleri"><div class="row between"><h2>Kelimeler (Android) indirmeleri</h2><a href="./?view=oyunlar">Ayrıntı</a></div>
+<?php try { echo downloads_html(false); } catch (Throwable $e) { echo err_box($e, 'İndirmeler okunamadı'); } ?></section>
+
 <section class="card" data-blok="akis" data-ad="Canlı akış"><div class="row between"><h2>Canlı akış</h2><span class="muted small">son olaylar · 10 sn'de bir</span></div><ul class="feed" id="feed"><li class="muted">Yükleniyor…</li></ul></section>
 
 <?php try {
