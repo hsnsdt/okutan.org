@@ -30,12 +30,13 @@ function tg_find_chat(): array
 }
 
 /** Hemen gönder. Dönüş: [başarılı mı, hata metni]. */
-function notify_now(string $text): array
+function notify_now(string $text, ?array $buttons = null): array
 {
     if (!notify_enabled()) return [false, cfg('TELEGRAM_BOT_TOKEN') ? 'Sohbet kimliği yok: bota bir mesaj yazıp Bildirimler ekranında "Sohbeti bul"a bas.' : 'TELEGRAM_BOT_TOKEN ayarlı değil (admin/config.php).'];
     $text = mb_substr($text, 0, 4000);
     [$code, $body, $err] = http_req('POST', 'https://api.telegram.org/bot' . cfg('TELEGRAM_BOT_TOKEN') . '/sendMessage',
-        http_build_query(['chat_id' => tg_chat_id(), 'text' => $text, 'disable_web_page_preview' => 'true']),
+        http_build_query(['chat_id' => tg_chat_id(), 'text' => $text, 'disable_web_page_preview' => 'true']
+            + ($buttons ? ['reply_markup' => json_encode(['inline_keyboard' => $buttons], JSON_UNESCAPED_UNICODE)] : [])),
         ['Content-Type: application/x-www-form-urlencoded'], 20);
     if (function_exists('db_ping')) { try { db_ping(); } catch (Throwable $e) { /* bağlantı yoksa sonraki sorgu raporlar */ } }
     $j = json_decode($body, true);
@@ -76,4 +77,34 @@ function notify_document(string $path, string $caption = ''): array
     $why = $err !== '' ? $err : ('HTTP ' . $code . (isset($j['description']) ? ': ' . $j['description'] : ''));
     adm_log('Telegram dosya gönderilemedi: ' . $why);
     return [false, $why];
+}
+
+/** Fotoğraf gönder (grafikli rapor). */
+function notify_photo(string $path, string $caption = ''): array
+{
+    if (!notify_enabled()) return [false, 'Telegram ayarlı değil.'];
+    $ch = curl_init('https://api.telegram.org/bot' . cfg('TELEGRAM_BOT_TOKEN') . '/sendPhoto');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 60, CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => ['chat_id' => tg_chat_id(), 'caption' => mb_substr($caption, 0, 1000), 'photo' => new CURLFile($path, 'image/png', basename($path))]]);
+    $res = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE); $err = $res === false ? curl_error($ch) : ''; curl_close($ch);
+    if (function_exists('db_ping')) { try { db_ping(); } catch (Throwable $e) { /* sonraki sorgu raporlar */ } }
+    $j = json_decode((string)$res, true);
+    return ($code === 200 && !empty($j['ok'])) ? [true, ''] : [false, $err !== '' ? $err : 'HTTP ' . $code . (isset($j['description']) ? ': ' . $j['description'] : '')];
+}
+/** Telegram düğmeleri (moderasyon) için webhook gizli anahtarı: CRON_KEY'den türetilir. */
+function tg_hook_secret(): string { return substr(hash('sha256', (string)cfg('CRON_KEY', '') . '|tg-hook|' . stats_salt()), 0, 40); }
+function tg_api(string $method, array $params): array
+{
+    [$code, $body, $err] = http_req('POST', 'https://api.telegram.org/bot' . cfg('TELEGRAM_BOT_TOKEN') . '/' . $method, json_encode($params, JSON_UNESCAPED_UNICODE), ['Content-Type: application/json'], 20);
+    $j = json_decode($body, true);
+    return ($code === 200 && !empty($j['ok'])) ? [true, ''] : [false, $err !== '' ? $err : 'HTTP ' . $code . (isset($j['description']) ? ': ' . $j['description'] : '')];
+}
+/** Telegram'a "düğmeye basılınca şu adrese haber ver" der (admin/telegram.php). */
+function tg_set_webhook(): array
+{
+    if (!notify_enabled()) return [false, 'Telegram ayarlı değil.'];
+    if (!cfg('CRON_KEY')) return [false, 'CRON_KEY ayarlı değil (gizli anahtar ondan türetilir).'];
+    $r = tg_api('setWebhook', ['url' => site_url() . '/admin/telegram.php', 'secret_token' => tg_hook_secret(), 'allowed_updates' => ['callback_query'], 'drop_pending_updates' => true]);
+    if ($r[0]) setting_set('tg_hook', now());
+    return $r;
 }

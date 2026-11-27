@@ -85,12 +85,13 @@ function vital_fmt(?float $v, string $m): string
     return $v >= 1000 ? nf($v / 1000, 1) . ' sn' : nf($v) . ' ms';
 }
 /** Sayfa grubu ve cihaza göre p75 + ölçüm sayısı. $dev boşsa hepsi. */
-function vitals(int $days, string $dev = ''): array
+function vitals(int $days, string $dev = '', ?string $from = null, ?string $to = null): array
 {
-    $from = day_add(today(), -($days - 1));
-    $sql = 'SELECT pg, metric, bin, SUM(n) n FROM stats_vital WHERE day >= ?' . ($dev !== '' ? ' AND dev = ?' : '') . ' GROUP BY pg, metric, bin';
+    $from ??= day_add(today(), -($days - 1));
+    $to ??= today();
+    $sql = 'SELECT pg, metric, bin, SUM(n) n FROM stats_vital WHERE day BETWEEN ? AND ?' . ($dev !== '' ? ' AND dev = ?' : '') . ' GROUP BY pg, metric, bin';
     $b = [];
-    foreach (rows($sql, $dev !== '' ? [$from, $dev] : [$from]) as $r) $b[$r['pg']][$r['metric']][(int)$r['bin']] = (int)$r['n'];
+    foreach (rows($sql, $dev !== '' ? [$from, $to, $dev] : [$from, $to]) as $r) $b[$r['pg']][$r['metric']][(int)$r['bin']] = (int)$r['n'];
     $out = []; $all = [];
     foreach ($b as $pg => $ms) {
         foreach ($ms as $m => $bins) {
@@ -268,4 +269,87 @@ function indexnow_send(array $urls): array
         ['Content-Type: application/json; charset=utf-8'], 30);
     try { db_ping(); } catch (Throwable $e) { /* sonraki sorgu raporlar */ }
     return [$code, $err !== '' ? $err : ($code >= 300 ? mb_substr($body, 0, 200) : '')];
+}
+
+/** Sayfa grubunun okunur adı: oyun adı ya da yol. */
+function page_label(string $pg): string
+{
+    foreach (GAMES as [$name, $path]) if (strpos($pg, $path) === 0) return $name;
+    if (strpos($pg, '/sohbet/') === 0) return 'Canlı Sohbet';
+    if (strpos($pg, '/kelime-bulucu/') === 0) return 'Kelime Bulucu';
+    return $pg;
+}
+
+// ---------------- Canlı akış ----------------
+function feed_rows(int $after = 0, int $limit = 30): array
+{
+    $rows = rows('SELECT id, at, kind, path, dev, br, cc, detail FROM stats_feed WHERE id > ? ORDER BY id DESC LIMIT ' . max(1, min(100, $limit)), [$after]);
+    $out = [];
+    foreach ($rows as $r) {
+        $t = $r['kind'] === 'ev' ? event_tr('ev_' . $r['detail']) : ($r['kind'] === 'err' ? 'JS hatası: ' . $r['detail'] : 'sayfa açtı' . (strpos($r['detail'], 'from:') === 0 ? ' (' . substr($r['detail'], 5) . ' üzerinden)' : ''));
+        $out[] = ['id' => (int)$r['id'], 'saat' => date('H:i:s', strtotime($r['at'])), 'kind' => $r['kind'], 'path' => $r['path'], 'ne' => $t,
+            'kim' => val_tr('dev', $r['dev']) . ' · ' . ($r['br'] ?: '—') . ' · ' . country_tr((string)$r['cc'])];
+    }
+    return $out;
+}
+
+// ---------------- Grafikli rapor resmi (GD) ----------------
+/** Son $days gün özetini PNG olarak çizer; dosya yolu döner (GD ya da yazı tipi yoksa null). */
+function report_png(int $days = 7): ?string
+{
+    $font = SITE_ROOT . '/kelime-bulucu/veri/font/Roboto-700.ttf';
+    $fontR = SITE_ROOT . '/kelime-bulucu/veri/font/Roboto-500.ttf';
+    if (!function_exists('imagecreatetruecolor') || !function_exists('imagettftext') || !is_file($font) || !is_file($fontR)) return null;
+    $W = 1000; $H = 560;
+    $im = imagecreatetruecolor($W, $H);
+    $bg = imagecolorallocate($im, 235, 235, 232); $card = imagecolorallocate($im, 255, 255, 255); $ink = imagecolorallocate($im, 14, 14, 14);
+    $mut = imagecolorallocate($im, 106, 106, 106); $acc = imagecolorallocate($im, 255, 90, 31); $soft = imagecolorallocate($im, 255, 201, 179);
+    $ok = imagecolorallocate($im, 21, 128, 61); $bad = imagecolorallocate($im, 194, 53, 43); $line = imagecolorallocate($im, 218, 218, 214);
+    imagefill($im, 0, 0, $bg);
+    $to = today(); $from = day_add($to, -($days - 1)); $pto = day_add($from, -1); $pfrom = day_add($pto, -($days - 1));
+    [$pv, $u] = st_sum('pv', $from, $to); [$ppv] = st_sum('pv', $pfrom, $pto);
+    imagettftext($im, 26, 0, 40, 62, $ink, $font, 'okutan.org');
+    imagettftext($im, 15, 0, 40, 92, $mut, $fontR, tr_date($from) . ' – ' . tr_date($to) . ' · son ' . $days . ' gün');
+    // KPI kartları
+    $gc = null; try { $gd = gsc_daily(); $gc = 0; foreach ($gd as $d => $v) if ($d >= $from) $gc += $v[0]; } catch (Throwable $e) {}
+    $kp = [['Görüntüleme', nf($pv), $ppv > 0 ? ($pv - $ppv) / $ppv : null], ['Tekil ziyaretçi', nf($u), null], ['Google tıklama', $gc === null ? '—' : nf($gc), null]];
+    foreach ($kp as $i => [$lbl, $val, $dl]) {
+        $x = 40 + $i * 310; imagefilledrectangle($im, $x, 120, $x + 290, 220, $card);
+        imagettftext($im, 13, 0, $x + 18, 148, $mut, $fontR, $lbl);
+        imagettftext($im, 30, 0, $x + 18, 194, $ink, $font, $val);
+        if ($dl !== null) imagettftext($im, 14, 0, $x + 18 + (int)(strlen($val) * 21), 194, $dl >= 0 ? $ok : $bad, $font, ($dl >= 0 ? '+' : '-') . '%' . nf(abs($dl * 100)));
+    }
+    // 14 günlük çubuk grafik
+    imagefilledrectangle($im, 40, 240, 960, 520, $card);
+    imagettftext($im, 14, 0, 58, 270, $ink, $font, 'Günlük görüntüleme (14 gün)');
+    $ser = st_series('pv', day_add($to, -13), $to);
+    $max = max(1, max(array_column($ser, 0)));
+    $i = 0; $bw = 840 / 14;
+    foreach ($ser as $d => [$n, $uu]) {
+        $x = 60 + $i * $bw; $h = (int)round($n / $max * 190);
+        imagefilledrectangle($im, (int)$x + 6, 480 - $h, (int)($x + $bw) - 6, 480, $soft);
+        $h2 = (int)round($uu / $max * 190); imagefilledrectangle($im, (int)$x + 6, 480 - $h2, (int)($x + $bw) - 6, 480, $acc);
+        if ($i % 2 === 0) imagettftext($im, 11, 0, (int)$x + 8, 502, $mut, $fontR, lbl_dm($d));
+        $i++;
+    }
+    imageline($im, 60, 480, 900, 480, $line);
+    imagettftext($im, 11, 0, 700, 270, $mut, $fontR, 'açık: görüntüleme · koyu: tekil');
+    $f = work_dir('durum') . '/rapor-' . date('Ymd-His') . '.png';
+    imagepng($im, $f);
+    imagedestroy($im);
+    return is_file($f) ? $f : null;
+}
+
+// ---------------- Oyun ayrıntısı ----------------
+function game_daily(string $path, string $from, string $to): array
+{
+    $ser = [];
+    for ($d = $from; $d <= $to; $d = day_add($d, 1)) $ser[$d] = [0, null];
+    foreach (rows("SELECT day, SUM(n) n FROM stats_dim WHERE dim = 'page' AND day BETWEEN ? AND ? AND val LIKE ? GROUP BY day", [$from, $to, $path . '%']) as $r) $ser[$r['day']][0] = (int)$r['n'];
+    return $ser;
+}
+function game_event_series(string $metric, string $from, string $to): array
+{
+    $s = st_series($metric, $from, $to);
+    return array_map(fn($v) => [$v[1], null], $s);
 }

@@ -40,7 +40,15 @@ function adm_links(): array
 {
     return ['/' => 'Siteye git'];
 }
-function adm_views(): array { $v = []; foreach (adm_menu() as $items) $v += $items; return $v; }
+function adm_views(): array { $v = []; foreach (adm_menu() as $items) $v += $items; return $v + ['oyun' => 'Oyun ayrıntısı', 'rapor' => 'Aylık rapor']; }
+/** Balon (scope 'admin') ve Sohbet ('sohbet-admin') API'lerinin beklediği 12 saatlik yönetim jetonu; API'deki imzayla aynı. */
+function game_admin_token(string $scope): ?string
+{
+    $c = db_config();
+    if (empty($c['admin_pass'])) return null;
+    $exp = time() + 12 * 3600;
+    return $exp . '.' . hash_hmac('sha256', (string)$exp, ($c['salt'] ?? '') . '|' . $scope . '|' . $c['admin_pass']);
+}
 
 function adm_is_https(): bool
 {
@@ -161,11 +169,18 @@ function login_try(string $pass): ?string
         catch (Throwable $e) { /* DB yok: zaten config şifresi geçerli */ }
     }
     session_regenerate_id(true);
+    if (twofa_begin()) return '__2fa__'; // ikinci adım bekleniyor (Telegram kodu ya da uygulama)
+    login_finalize();
+    return null;
+}
+/** Girişi tamamla (şifre ve gerekiyorsa ikinci adım doğrulandıktan sonra). */
+function login_finalize(): void
+{
+    session_regenerate_id(true);
     $_SESSION['pv'] = pass_ver();
     $_SESSION['adm'] = 1;
     $_SESSION['seen'] = time();
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
-    return null;
 }
 
 // ---- Sayfa iskeleti ----
@@ -187,7 +202,7 @@ function page_head(string $title, string $view = '', bool $menu = true): void
 <title><?= h($title) ?> · Yönetim</title>
 <link rel="icon" href="/favicon.svg">
 <link rel="stylesheet" href="/assets/fonts/fonts.css">
-<link rel="stylesheet" href="./panel.css?v=7">
+<link rel="stylesheet" href="./panel.css?v=8">
 <script nonce="<?= h($n) ?>">try { localStorage.setItem('ok_admin_optout', '1'); var t = localStorage.getItem('theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
 </head>
 <body>
@@ -218,7 +233,7 @@ function page_foot(): void
     ?>
 </main>
 <?= !empty($GLOBALS['adm_layout']) ? '</div>' : '' ?>
-<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=4"></script>
+<script nonce="<?= h(adm_nonce()) ?>" src="./panel.js?v=5"></script>
 </body>
 </html>
 <?php
@@ -236,8 +251,7 @@ function embed_admin(string $title, string $src, string $storeKey, string $scope
         echo '<div class="flash err">Oyun yönetimi kapalı: balon/api/config.php içinde <code>admin_pass</code> boş.</div>';
         return;
     }
-    $exp = time() + 12 * 3600;
-    $tok = $exp . '.' . hash_hmac('sha256', (string)$exp, ($c['salt'] ?? '') . '|' . $scope . '|' . $c['admin_pass']);
+    $tok = (string)game_admin_token($scope);
     echo '<iframe class="embed" data-src="' . h($src) . '" data-key="' . h($storeKey) . '" data-tok="' . h($tok) . '" title="' . h($title) . ' yönetimi"></iframe>';
 }
 

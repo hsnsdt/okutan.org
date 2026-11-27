@@ -24,3 +24,5 @@ kelime-bulucu/veri/onbellek/
 kelime-bulucu/veri/arama/
 # Site duyurusu: sunucuda yönetim paneli yazar
 assets/duyuru.json
+# Oyun testi anahtarı (CRON_KEY)
+tools/.oyun-testi.json

@@ -85,8 +85,17 @@ try {
         if ($from !== '' && $from[0] === '/' && !preg_match('~[\x00-\x1F]~', $from)) $dim('flow', mb_substr(path_group($from) . ' → ' . path_group($path), 0, 191));
         else $dim('entry', path_group($path));
         q('INSERT INTO stats_hour (day, hour, n) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE n = n + 1', [$day, (int)date('G')]);
+        $seg = (string)($j['v'] ?? '');
+        if ($seg === 'new' || $seg === 'ret') { $dim('seg', $seg); $count('seg_' . $seg); }
     }
     if ($ev !== '') $count('ev_' . $ev);
+    // Canlı akış (panel Özet): son olaylar; tablo 1000 satırda tutulur.
+    $feed = function (string $kind, string $detail = '') use ($path, $dev, $br, $cc): void {
+        q('INSERT INTO stats_feed (at, kind, path, dev, br, cc, detail) VALUES (?, ?, ?, ?, ?, ?, ?)', [now(), $kind, $path, $dev, $br, $cc, mb_substr($detail, 0, 191)]);
+    };
+    if ($t === 'pv') $feed('pv', (string)($j['r'] ?? '') !== '' ? 'from:' . mb_substr((string)$j['r'], 0, 60) : '');
+    if ($ev !== '' && !in_array($ev, ['engaged', 'engaged5'], true)) $feed('ev', $ev);
+    if (mt_rand(1, 50) === 1) { $mx = (int)val('SELECT COALESCE(MAX(id), 0) FROM stats_feed'); if ($mx > 1000) q('DELETE FROM stats_feed WHERE id < ?', [$mx - 1000]); }
     if ($t === 'wv') {
         $pg = path_group($path);
         foreach (VITAL_STEP as $m => $step) {
@@ -106,6 +115,8 @@ try {
             q('INSERT INTO stats_jserr (eh, msg, src, line, col, n, first_seen, last_seen, last_path, last_br, last_os, last_dev) VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?)
                ON DUPLICATE KEY UPDATE n = n + 1, last_seen = VALUES(last_seen), last_path = VALUES(last_path), last_br = VALUES(last_br), last_os = VALUES(last_os), last_dev = VALUES(last_dev)',
                 [$eh, $msg, $src, $ln, $col, now(), now(), $path, $br, $os, $dev]);
+            q('INSERT INTO stats_errh (day, hour, pg, n) VALUES (?, ?, ?, 1) ON DUPLICATE KEY UPDATE n = n + 1', [$day, (int)date('G'), path_group($path)]);
+            q('INSERT INTO stats_feed (at, kind, path, dev, br, cc, detail) VALUES (?, ?, ?, ?, ?, ?, ?)', [now(), 'err', $path, $dev, $br, $cc, mb_substr($msg, 0, 191)]);
         }
     }
     if ($t === 'pv' || $t === 'hb') {

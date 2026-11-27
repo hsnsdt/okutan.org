@@ -21,6 +21,67 @@
   function nState() { if (!ns) return; ns.textContent = !window.Notification ? 'Bu tarayıcı desteklemiyor.' : Notification.permission === 'granted' ? 'Açık ✓' : Notification.permission === 'denied' ? 'Tarayıcıda engellenmiş: site ayarlarından izin ver.' : 'Kapalı'; }
   if (nb) { nState(); nb.addEventListener('click', function () { if (window.Notification) Notification.requestPermission().then(nState); }); }
 
+  // Yazdırılabilir rapor
+  var pb = document.getElementById('printBtn');
+  if (pb) pb.addEventListener('click', function () { window.print(); });
+
+  // Özet düzeni: blokları gizle / sırala (localStorage "ozet_duzen"; aynı anahtarlı öğeler birlikte taşınır)
+  var bl = document.getElementById('bloklar');
+  if (bl) {
+    var keys = [], names = {};
+    Array.prototype.forEach.call(bl.querySelectorAll(':scope > [data-blok]'), function (e) { var k = e.getAttribute('data-blok'); if (keys.indexOf(k) < 0) keys.push(k); if (e.getAttribute('data-ad')) names[k] = e.getAttribute('data-ad'); });
+    var cfg = { order: keys.slice(), hidden: [] };
+    try { var sv = JSON.parse(localStorage.getItem('ozet_duzen') || 'null'); if (sv && sv.order) cfg = { order: sv.order.filter(function (k) { return keys.indexOf(k) >= 0; }).concat(keys.filter(function (k) { return sv.order.indexOf(k) < 0; })), hidden: sv.hidden || [] }; } catch (e) {}
+    var apply = function () {
+      cfg.order.forEach(function (k) { Array.prototype.forEach.call(bl.querySelectorAll(':scope > [data-blok="' + k + '"]'), function (e) { bl.appendChild(e); e.hidden = cfg.hidden.indexOf(k) >= 0; }); });
+      try { localStorage.setItem('ozet_duzen', JSON.stringify(cfg)); } catch (e) {}
+    };
+    var list = document.getElementById('duzenListe');
+    var draw = function () {
+      list.innerHTML = '';
+      cfg.order.forEach(function (k, i) {
+        var li = document.createElement('li');
+        var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = cfg.hidden.indexOf(k) < 0; cb.id = 'dz_' + k;
+        cb.addEventListener('change', function () { cfg.hidden = cfg.hidden.filter(function (x) { return x !== k; }); if (!cb.checked) cfg.hidden.push(k); apply(); });
+        var lb = document.createElement('label'); lb.htmlFor = cb.id; lb.textContent = names[k] || k;
+        var up = document.createElement('button'); up.type = 'button'; up.className = 'btn ghost small'; up.textContent = '↑'; up.setAttribute('aria-label', (names[k] || k) + ' yukarı'); up.disabled = i === 0;
+        var dn = document.createElement('button'); dn.type = 'button'; dn.className = 'btn ghost small'; dn.textContent = '↓'; dn.setAttribute('aria-label', (names[k] || k) + ' aşağı'); dn.disabled = i === cfg.order.length - 1;
+        up.addEventListener('click', function () { cfg.order.splice(i - 1, 0, cfg.order.splice(i, 1)[0]); apply(); draw(); });
+        dn.addEventListener('click', function () { cfg.order.splice(i + 1, 0, cfg.order.splice(i, 1)[0]); apply(); draw(); });
+        li.appendChild(cb); li.appendChild(lb); li.appendChild(up); li.appendChild(dn); list.appendChild(li);
+      });
+    };
+    apply();
+    var db = document.getElementById('duzenBtn'), dp = document.getElementById('duzenPanel');
+    if (db && dp) db.addEventListener('click', function () { dp.hidden = !dp.hidden; db.setAttribute('aria-expanded', String(!dp.hidden)); if (!dp.hidden) draw(); });
+    var rs = document.getElementById('duzenSifirla');
+    if (rs) rs.addEventListener('click', function () { cfg = { order: keys.slice(), hidden: [] }; apply(); draw(); });
+  }
+
+  // Canlı akış (Özet): yeni olaylar üste eklenir, en çok 40 satır
+  var feed = document.getElementById('feed');
+  if (feed) {
+    var lastId = 0, ftimer = null;
+    var esc2 = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+    var fload = function () {
+      fetch('./?ajax=feed&after=' + lastId, { cache: 'no-store', credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (j) {
+        if (!j || !j.ok) return;
+        if (lastId === 0) feed.innerHTML = j.rows.length ? '' : '<li class="muted">Henüz olay yok.</li>';
+        else if (j.rows.length && feed.querySelector('.muted')) feed.innerHTML = '';
+        j.rows.slice().reverse().forEach(function (r) {
+          var li = document.createElement('li'); li.className = 'f-' + r.kind;
+          li.innerHTML = '<span class="ft">' + esc2(r.saat) + '</span><span class="fp path">' + esc2(r.path) + '</span><span class="fn">' + esc2(r.ne) + '</span><span class="fk muted">' + esc2(r.kim) + '</span>';
+          feed.insertBefore(li, feed.firstChild);
+          lastId = Math.max(lastId, r.id);
+        });
+        while (feed.children.length > 40) feed.removeChild(feed.lastChild);
+      }).catch(function () {});
+    };
+    var fstart = function () { clearInterval(ftimer); fload(); ftimer = setInterval(function () { if (!document.hidden) fload(); }, 10000); };
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) fstart(); });
+    fstart();
+  }
+
   // Telefonda alt menü: açık ekranı görünür alana kaydır.
   var cur = document.querySelector('.side a[aria-current]');
   if (cur && window.matchMedia('(max-width: 860px)').matches) { try { cur.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {} }

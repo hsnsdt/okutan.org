@@ -21,6 +21,8 @@
   var pv = { t: 'pv', r: ref, l: (n.language || '').slice(0, 2).toLowerCase(), s: (q.get && q.get('utm_source') || '').toLowerCase().slice(0, 40) };
   if (q.get && q.get('masa')) pv.e = 'masa_davet';
   if (from && from !== location.pathname) pv.f = from.slice(0, 120); // site içi geçiş (yolculuk)
+  // Yeni / geri dönen: tarayıcıda yalnızca ilk ziyaretin ayı tutulur (kimlik değil); sunucuya yalnızca "new" ya da "ret" gider.
+  try { if (localStorage.getItem('ok_ilk')) pv.v = 'ret'; else { localStorage.setItem('ok_ilk', new Date().toISOString().slice(0, 7)); pv.v = 'new'; } } catch (e) {}
   send(pv);
 
   // Hız (Core Web Vitals, gerçek ziyaretçi): LCP, CLS ve INP (en yavaş etkileşim, yaklaşık). Sayfa gizlenince bir kez gider.

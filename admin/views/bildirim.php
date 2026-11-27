@@ -28,11 +28,19 @@ $on = notify_enabled();
   </ul>
 </section>
 <section class="card">
+  <h2>Telegram düğmeleri <span class="pill <?= setting_get('tg_hook', true) ? 'ok' : '' ?>"><?= setting_get('tg_hook', true) ? 'etkin' : 'kapalı' ?></span></h2>
+  <p class="small">Etkinken sohbet şikâyeti uyarılarında <b>🙈 Gizle</b> ve <b>🔇 60 dk sustur</b> düğmeleri çıkar; panele girmeden Telegram'dan müdahale edersin. Düğmeler yalnızca senin sohbetinden basılınca çalışır.</p>
+  <?= form_open('tg_hook') ?><button class="btn" type="submit"<?= notify_enabled() ? '' : ' disabled' ?>><?= setting_get('tg_hook', true) ? 'Yeniden etkinleştir' : 'Etkinleştir' ?></button></form>
+</section>
+<section class="card">
   <h2>Masaüstü bildirimi</h2>
   <p class="small">Panel bir sekmede açıkken yeni şikâyet, şüpheli skor ya da yeni JavaScript hatası olunca bu bilgisayarda bildirim çıkar; sekme başlığında sayı görünür (ör. "(2) Özet"). Panel kapalıyken Telegram uyarıları devam eder.</p>
   <div class="row"><button class="btn" type="button" id="notifBtn">Masaüstü bildirimlerini aç</button><span class="small muted" id="notifState"></span></div>
 </section>
-<section class="card"><h2>Aylık rapor önizlemesi <span class="muted small">(her ayın 1'i 09:00)</span></h2>
+<section class="card"><h2>Haftalık rapor resmi <span class="muted small">(Telegram'a metinden önce gider)</span></h2>
+  <img src="./?ajax=rapor_png" alt="Son 7 günün grafikli özeti" class="rapor-img" loading="lazy">
+</section>
+<section class="card"><div class="row between"><h2>Aylık rapor önizlemesi <span class="muted small">(her ayın 1'i 09:00)</span></h2><a class="btn ghost small" href="./?view=rapor">Yazdırılabilir rapor</a></div>
 <?php try { ?><pre class="code wrapline"><?= h(monthly_report()) ?></pre><?php } catch (Throwable $e) { echo err_box($e, 'Aylık rapor hazırlanamadı'); } ?>
 </section>
 <section class="card"><h2>Haftalık rapor önizlemesi</h2>

@@ -48,7 +48,7 @@ function backup_create(): array
     if (!$gz) throw new RuntimeException('Yedek dosyası açılamadı: ' . $part);
     $w = function (string $s) use ($gz, $part) { if (gzwrite($gz, $s) === false) throw new RuntimeException('Yedek dosyasına yazılamadı: ' . $part); };
     $w("-- okutan.org veritabanı yedeği\n-- " . date('c') . "\nSET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS = 0;\nSET time_zone = '+00:00';\nSET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';\n\n");
-    $total = 0;
+    $total = 0; $per = [];
     try {
         foreach ($tables as $t) {
             $qt = '`' . str_replace('`', '``', $t) . '`';
@@ -65,7 +65,7 @@ function backup_create(): array
                     else $vals[] = $pdo->quote((string)$v); // \n, \r, ' gibi karakterler kaçışlanır: her INSERT tek satır kalır
                 }
                 $line = '(' . implode(',', $vals) . ')';
-                $buf[] = $line; $len += strlen($line); $total++;
+                $buf[] = $line; $len += strlen($line); $total++; $per[$t] = ($per[$t] ?? 0) + 1;
                 if (count($buf) >= 200 || $len > 512000) { $w("INSERT INTO $qt VALUES " . implode(',', $buf) . ";\n"); $buf = []; $len = 0; }
             }
             $st->closeCursor();
@@ -84,7 +84,7 @@ function backup_create(): array
     // Eskileri sil (son N tut).
     $keep = max(1, (int)cfg('BACKUP_KEEP', 7));
     foreach (array_slice(backup_list(), $keep) as $old) @unlink($dir . '/' . $old['file']);
-    setting_set('backup_last', json_encode(['file' => $name, 'at' => now(), 'tables' => count($tables), 'rows' => $total, 'size' => filesize($file)]));
+    setting_set('backup_last', json_encode(['file' => $name, 'at' => now(), 'tables' => count($tables), 'rows' => $total, 'size' => filesize($file), 'per' => $per, 'list' => $tables]));
     return ['file' => $file, 'tables' => count($tables), 'rows' => $total, 'size' => filesize($file)];
 }
 
@@ -102,4 +102,57 @@ function backup_restore(string $file, PDO $pdo): int
     gzclose($gz);
     if (trim($stmt) !== '') throw new RuntimeException('Yedek dosyası yarım: son komut tamamlanmamış.');
     return $n;
+}
+
+/** Geri yükleme denemesi için veritabanı: RESTORE_TEST_DB, yoksa ana veritabanının öneki + "yedektest" (ör. launchsh_yedektest). */
+function restore_test_db(): string
+{
+    $c = db_config();
+    $main = (string)($c['db_name'] ?? '');
+    $def = (strpos($main, '_') !== false ? substr($main, 0, strpos($main, '_') + 1) : $main . '_') . 'yedektest';
+    return (string)cfg('RESTORE_TEST_DB', $def);
+}
+/**
+ * Son yedeği deneme veritabanına açar, tablo ve satır sayılarını yedek alınırkenkiyle karşılaştırır. Ana veritabanına ASLA dokunmaz.
+ * Dönüş: ['ok'=>bool, 'msg'=>metin]; sonuç adm_settings 'restore_last'.
+ */
+function restore_test(): array
+{
+    $c = db_config();
+    $target = restore_test_db();
+    $res = function (bool $ok, string $msg) { setting_set('restore_last', json_encode(['at' => now(), 'ok' => $ok, 'msg' => $msg], JSON_UNESCAPED_UNICODE)); return ['ok' => $ok, 'msg' => $msg]; };
+    if ($target === '' || $target === (string)$c['db_name']) return $res(false, 'Deneme veritabanı adı ana veritabanıyla aynı olamaz.');
+    $bl = backup_list();
+    if (!$bl) return $res(false, 'Denenecek yedek yok.');
+    $file = backup_dir() . '/' . $bl[0]['file'];
+    $meta = json_decode((string)(setting_get('backup_last', true) ?? ''), true) ?: [];
+    try {
+        $pdo = new PDO('mysql:host=' . ($c['db_host'] ?? 'localhost') . ';dbname=' . $target . ';charset=utf8mb4', (string)$c['db_user'], (string)$c['db_pass'],
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_NUM]);
+    } catch (Throwable $e) {
+        return $res(false, "Deneme veritabanına bağlanılamadı ($target): " . $e->getMessage() . ' — cPanel → MySQL Databases\'te bu veritabanını açıp aynı kullanıcıya bütün yetkileri ver.');
+    }
+    if ((string)$pdo->query('SELECT DATABASE()')->fetchColumn() === (string)$c['db_name']) return $res(false, 'Güvenlik: bağlanılan veritabanı ana veritabanı, durduruldu.');
+    $t0 = microtime(true);
+    try {
+        $pdo->exec('SET SESSION wait_timeout = 900');
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+        foreach ($pdo->query("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'")->fetchAll() as $r) $pdo->exec('DROP TABLE `' . str_replace('`', '``', $r[0]) . '`');
+        $n = backup_restore($file, $pdo);
+        $got = [];
+        foreach ($pdo->query("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'")->fetchAll() as $r) $got[$r[0]] = (int)$pdo->query('SELECT COUNT(*) FROM `' . str_replace('`', '``', $r[0]) . '`')->fetchColumn();
+        foreach (array_keys($got) as $tb) $pdo->exec('DROP TABLE `' . str_replace('`', '``', $tb) . '`'); // deneme verisi kalmasın
+    } catch (Throwable $e) {
+        db_ping();
+        return $res(false, 'Geri yükleme başarısız (' . $bl[0]['file'] . '): ' . $e->getMessage());
+    }
+    db_ping();
+    $bad = [];
+    if (!empty($meta['file']) && $meta['file'] === $bl[0]['file']) {
+        foreach ((array)($meta['list'] ?? []) as $tb) if (!array_key_exists($tb, $got)) $bad[] = "$tb yok";
+        foreach ((array)($meta['per'] ?? []) as $tb => $cnt) if (($got[$tb] ?? -1) !== (int)$cnt) $bad[] = "$tb: " . ($got[$tb] ?? 0) . "/$cnt satır";
+    }
+    $sure = round(microtime(true) - $t0, 1);
+    if ($bad) return $res(false, 'Yedek açıldı ama tutmayanlar var (' . $bl[0]['file'] . '): ' . implode(', ', array_slice($bad, 0, 8)));
+    return $res(true, 'Yedek sağlam: ' . $bl[0]['file'] . ' deneme veritabanına açıldı, ' . count($got) . ' tablo, ' . nf(array_sum($got)) . ' satır tuttu (' . $n . ' komut, ' . $sure . ' sn). Deneme tabloları silindi.');
 }

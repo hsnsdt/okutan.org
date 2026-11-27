@@ -230,6 +230,30 @@ textarea.mono { font-family: ui-monospace, Consolas, monospace; font-size: .8rem
 .toastprev b { color: #ff8a5c; }
 table.live td { white-space: nowrap; }
 
+/* Canlı akış */
+.feed { list-style: none; margin: 0; padding: 0; max-height: 360px; overflow-y: auto; }
+.feed li { display: grid; grid-template-columns: 64px minmax(0, 1.2fr) minmax(0, 1.4fr) minmax(0, 1.2fr); gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: .84rem; align-items: baseline; }
+.feed li.muted { display: block; }
+.feed .ft { font-variant-numeric: tabular-nums; color: var(--muted); }
+.feed li.f-ev .fn { color: var(--accent); font-weight: 800; }
+.feed li.f-err .fn { color: var(--err); font-weight: 800; }
+/* Özet düzenleyici */
+.duzen { list-style: none; margin: 0 0 10px; padding: 0; }
+.duzen li { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.duzen li label { flex: 1; margin: 0; font-weight: 700; }
+.duzen input[type=checkbox] { width: 18px; height: 18px; }
+img.rapor-img { width: 100%; max-width: 1000px; height: auto; border-radius: var(--radius-s); border: 1px solid var(--line); display: block; }
+/* Yazdırılabilir rapor */
+.rapor .rh { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+@media print {
+  .bar, .side, .noprint, .flash, details.tbl, .ctip { display: none !important; }
+  body { background: #fff; }
+  .main { padding: 0; max-width: none; }
+  .card, .kpi { box-shadow: none; break-inside: avoid; }
+  .grid2 { grid-template-columns: 1fr 1fr; }
+  a { color: inherit; }
+}
+
 /* Telefon: menü altta sabit, ikonlu */
 @media (max-width: 860px) {
   .layout { display: block; }
@@ -245,6 +269,8 @@ table.live td { white-space: nowrap; }
   .main { padding: 14px 16px 96px; }
   .grid2, .grid3 { grid-template-columns: minmax(0, 1fr); }
   .gcards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .feed li { grid-template-columns: 56px minmax(0, 1fr); }
+  .feed .fk { grid-column: 2; }
   .heat { grid-template-columns: 28px repeat(24, minmax(0, 1fr)); gap: 1px; }
   .kpis.k4, .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .strip > div:nth-child(3) { border-left: 0; }

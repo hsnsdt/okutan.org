@@ -2,10 +2,10 @@
 // Sistem: sağlık kontrolü, PHP hata günlüğü, veritabanı, yedekler, cron durumu, ayar anahtarları, önbellek.
 declare(strict_types=1);
 if (!defined('ADM_DIR')) exit; // yalnızca admin/index.php içinden
-$tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'jshata', 'veritabani', 'yedek'], true) ? $_GET['tab'] : 'genel';
+$tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'jshata', 'veritabani', 'yedek', 'denetim'], true) ? $_GET['tab'] : 'genel';
 ?>
 <h1>Sistem</h1>
-<nav class="tabs"><?php foreach (['genel' => 'Genel', 'hatalar' => 'PHP hataları', 'jshata' => 'JS hataları', 'veritabani' => 'Veritabanı', 'yedek' => 'Yedekler'] as $k => $l): ?><a href="./?view=sistem&amp;tab=<?= $k ?>"<?= $k === $tab ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
+<nav class="tabs"><?php foreach (['genel' => 'Genel', 'hatalar' => 'PHP hataları', 'jshata' => 'JS hataları', 'veritabani' => 'Veritabanı', 'yedek' => 'Yedekler', 'denetim' => 'Denetim kaydı'] as $k => $l): ?><a href="./?view=sistem&amp;tab=<?= $k ?>"<?= $k === $tab ? ' aria-current="page"' : '' ?>><?= h($l) ?></a><?php endforeach ?></nav>
 <?php foreach (path_warnings() as $w): ?><div class="flash err"><?= h($w) ?></div><?php endforeach ?>
 
 <?php if ($tab === 'genel'): ?>
@@ -15,6 +15,17 @@ $tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'jshata', 'veritabani',
 <div class="tw"><table class="small"><thead><tr><th>Adres</th><th class="r">HTTP</th><th class="r">Süre</th><th>Sonuç</th></tr></thead><tbody>
 <?php foreach ($hl['res'] as $r): ?><tr><td class="path"><?= h($r['url']) ?></td><td class="r"><?= (int)$r['code'] ?></td><td class="r"><?= nf($r['ms']) ?> ms</td><td><span class="pill <?= $r['ok'] ? 'ok' : 'bad' ?>"><?= $r['ok'] ? 'Sağlıklı' : 'Sorunlu' ?></span> <?= h($r['why']) ?></td></tr><?php endforeach ?>
 </tbody></table></div><?php endif; } catch (Throwable $e) { echo err_box($e, 'Sağlık sonucu okunamadı'); } ?>
+</section>
+
+<section class="card"><h2>Oyun testi <span class="muted small">(gerçek tarayıcıda, bilgisayardaki zamanlanmış görevden)</span></h2>
+<?php try { $e2 = json_decode((string)(setting_get('e2e_last', true) ?? ''), true); if (!$e2): ?>
+  <p class="muted">Henüz sonuç gelmedi. Bilgisayardaki "okutan oyun testi" görevi her gece çalışır; bilgisayar kapalıysa o gün atlanır. Elle: <code>node tools/oyun-testi.mjs</code></p>
+<?php else: ?>
+  <p class="muted small">Son test: <?= h(tr_ago($e2['at'])) ?> (<?= h(tr_date($e2['at'], true)) ?>)<?= strtotime($e2['at']) < time() - 3 * 86400 ? ' · <b class="errtxt">3 günden eski: bilgisayar kapalı mı?</b>' : '' ?></p>
+  <div class="tw"><table class="small"><thead><tr><th>Oyun</th><th>Sonuç</th><th class="r">Süre</th><th>Ayrıntı</th></tr></thead><tbody>
+  <?php foreach ($e2['res'] as $r): ?><tr class="<?= $r['ok'] ? '' : 'rowerr' ?>"><td><?= h(game_name_of($r['oyun'])) ?></td><td><span class="pill <?= $r['ok'] ? 'ok' : 'bad' ?>"><?= $r['ok'] ? 'çalışıyor' : 'BOZUK' ?></span></td><td class="r"><?= nf($r['ms']) ?> ms</td><td class="msg"><?= h($r['hata']) ?></td></tr><?php endforeach ?>
+  </tbody></table></div>
+<?php endif; } catch (Throwable $e) { echo err_box($e, 'Oyun testi okunamadı'); } ?>
 </section>
 
 <section class="card"><h2>Cron durumu</h2>
@@ -42,7 +53,19 @@ $tab = in_array($_GET['tab'] ?? '', ['genel', 'hatalar', 'jshata', 'veritabani',
 <li>Web kökü: <code><?= h(str_replace('\\', '/', SITE_ROOT)) ?></code></li><li>Gizli klasör: <code><?= h((string)(priv_dir() ?? '—')) ?></code><?= cfg('PRIVATE_DIR') ? '' : ' (otomatik)' ?></li></ul></section>
 </div>
 
-<?php elseif ($tab === 'jshata'):
+<?php elseif ($tab === 'denetim'):
+try { $au = rows('SELECT * FROM adm_audit ORDER BY id DESC LIMIT 200'); ?>
+<section class="card"><h2>Denetim kaydı <span class="muted small">(son 200; 400 gün saklanır)</span></h2>
+<?php if (!$au): ?><p class="muted">Henüz kayıt yok.</p><?php else: ?>
+<div class="tw"><table class="small"><thead><tr><th>Zaman</th><th>İşlem</th><th>Ayrıntı</th><th>Oturum</th><th>IP (özet)</th></tr></thead><tbody>
+<?php foreach ($au as $a): ?><tr class="<?= $a['ok'] ? '' : 'rowerr' ?>"><td class="nowrap"><?= h(date('d.m H:i:s', strtotime($a['at']))) ?></td><td><?= h(AUDIT_TR[$a['act']] ?? $a['act']) ?><?= $a['ok'] ? '' : ' <span class="pill bad">başarısız</span>' ?></td>
+<td class="msg"><?= h($a['detail']) ?></td><td><code><?= h($a['sess']) ?></code></td><td><code><?= h($a['ip']) ?></code></td></tr><?php endforeach ?>
+</tbody></table></div><?php endif ?>
+<p class="muted small">IP adresi açık tutulmaz; tuzlu özetin ilk 10 hanesi aynı bağlantıyı ayırt etmeye yeter.</p>
+</section>
+<?php } catch (Throwable $e) { echo err_box($e, 'Denetim kaydı okunamadı'); }
+
+elseif ($tab === 'jshata'):
 try { $je = js_errors(200); ?>
 <section class="card"><div class="row between"><h2>Ziyaretçilerin tarayıcısındaki JavaScript hataları</h2><a class="csv" href="./?csv=jshata">CSV</a></div>
 <p class="muted small">Yalnızca kendi dosyalarımızdan gelen hatalar (eklenti ve başka site hataları, ağ kopmaları sayılmaz); ziyaretçi başına sayfada en çok 5. Yeni hata türü 15 dakika içinde Telegram'a gelir.</p>
@@ -86,6 +109,11 @@ try { $bl = backup_list(); ?>
 <div class="tw"><table class="small"><thead><tr><th>Dosya</th><th>Tarih</th><th class="r">Boyut</th><th></th></tr></thead><tbody>
 <?php foreach ($bl as $b): ?><tr><td><code><?= h($b['file']) ?></code></td><td><?= h(date('d.m.Y H:i', $b['time'])) ?> <span class="muted">(<?= h(tr_ago(date('Y-m-d H:i:s', $b['time']))) ?>)</span></td><td class="r"><?= fmt_bytes((float)$b['size']) ?></td><td><a href="./?dl=<?= h(rawurlencode($b['file'])) ?>">İndir</a></td></tr><?php endforeach ?>
 </tbody></table></div><?php endif ?>
+<h3>Geri yükleme denemesi <span class="muted small">(her Pazar gecesi; deneme veritabanı <code><?= h(restore_test_db()) ?></code>)</span></h3>
+<?php $rl = json_decode((string)(setting_get('restore_last', true) ?? ''), true); ?>
+<p class="small"><?= $rl ? '<span class="pill ' . ($rl['ok'] ? 'ok' : 'bad') . '">' . ($rl['ok'] ? 'sağlam' : 'sorunlu') . '</span> ' . h(tr_ago($rl['at'])) . ': ' . h($rl['msg']) : '<span class="muted">Henüz denenmedi.</span>' ?></p>
+<?= form_open('restore_test', ['tab' => 'yedek']) ?><button class="btn ghost" type="submit">Şimdi dene</button></form>
+<p class="muted small">Son yedek ayrı bir deneme veritabanına açılır, tablo ve satır sayıları yedek alınırkenkiyle karşılaştırılır, sonra deneme tabloları silinir. Ana veritabanına dokunulmaz.</p>
 <details class="tbl"><summary>Geri yükleme</summary><p class="small">Geri yükleme yalnızca komut satırından yapılır (yanlışlıkla basılmasın diye panelde düğme yok): cPanel → Terminal:</p>
 <pre class="code">php <?= h(str_replace('\\', '/', ADM_DIR)) ?>/cron/geri-yukle.php okutan-YYYYMMDD-HHMMSS.sql.gz</pre></details>
 </section>

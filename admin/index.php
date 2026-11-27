@@ -12,6 +12,7 @@ require __DIR__ . '/lib/ziyaretci.php';
 require __DIR__ . '/lib/stats.php';
 require __DIR__ . '/lib/oyun.php';
 require __DIR__ . '/lib/analiz.php';
+require __DIR__ . '/lib/guvenlik.php';
 require __DIR__ . '/lib/google.php';
 require __DIR__ . '/lib/notify.php';
 require __DIR__ . '/lib/backup.php';
@@ -28,8 +29,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     if (!isset(adm_views()[$back])) $back = 'ozet';
     if (!csrf_ok()) { flash('err', 'Oturum doğrulaması başarısız (CSRF). Sayfayı yenileyip tekrar dene.'); redirect_to($back); }
     if ($act === 'login') {
-        $err = login_try((string)($_POST['pass'] ?? ''));
-        if ($err !== null) flash('err', $err);
+        try { $err = login_try((string)($_POST['pass'] ?? '')); }
+        catch (Throwable $e) { $err = $e->getMessage(); }
+        if ($err === null) audit('login');
+        elseif ($err === '__2fa__') flash('ok', twofa_mode() === 'telegram' ? "Telegram'a 6 haneli kod gönderildi." : 'Doğrulayıcı uygulamadaki 6 haneli kodu yaz.');
+        else { flash('err', $err); audit('login_fail', $err, false); }
+        redirect_to('ozet');
+    }
+    if ($act === 'login2') {
+        $err = twofa_finish((string)($_POST['code'] ?? ''));
+        if ($err === null) { login_finalize(); audit('login', 'iki aşamalı'); }
+        else { flash('err', $err); audit('login2_fail', $err, false); }
         redirect_to('ozet');
     }
     if ($act === 'hash') {
@@ -44,6 +54,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     try {
         switch ($act) {
             case 'logout':
+                audit('logout');
                 $_SESSION = [];
                 session_regenerate_id(true);
                 flash('ok', 'Çıkış yapıldı.');
@@ -127,6 +138,42 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 if ($code === 200 || $code === 202) flash('ok', count($urls) . ' adres IndexNow\'a bildirildi (HTTP ' . $code . '). Bing ve Yandex birkaç gün içinde tarar.');
                 else flash('err', 'IndexNow yanıtı: HTTP ' . $code . ($err !== '' ? ' — ' . $err : '') . '. 403 ise anahtar dosyası (kökteki ' . INDEXNOW_KEY . '.txt) sunucuda olmalı.');
                 break;
+            case 'twofa_tg':
+            case 'twofa_off':
+                if (!password_verify((string)($_POST['pass'] ?? ''), admin_hash())) { login_fail_add(); throw new RuntimeException('Şifre yanlış.'); }
+                if ($act === 'twofa_tg') {
+                    if (!notify_enabled()) throw new RuntimeException("Önce Telegram'ı kur (Bildirimler).");
+                    [$ok, $err] = notify_now('okutan.org yönetim: iki aşamalı giriş Telegram ile açıldı. Bundan sonra girişte buraya kod gelecek.');
+                    if (!$ok) throw new RuntimeException('Telegram mesajı gönderilemedi: ' . $err);
+                    setting_set('2fa_mode', 'telegram');
+                    flash('ok', "İki aşamalı giriş açık: girişte Telegram'a kod gelecek.");
+                    $act = 'twofa_on';
+                } else {
+                    setting_set('2fa_mode', ''); setting_del('totp_secret');
+                    flash('ok', 'İki aşamalı giriş kapatıldı.');
+                }
+                break;
+            case 'twofa_totp_start':
+                if (!password_verify((string)($_POST['pass'] ?? ''), admin_hash())) { login_fail_add(); throw new RuntimeException('Şifre yanlış.'); }
+                $_SESSION['totp_new'] = b32_encode(random_bytes(20));
+                flash('ok', 'Uygulamaya anahtarı ekle, sonra gösterdiği 6 haneli kodu yaz.');
+                break;
+            case 'twofa_totp_confirm':
+                $sec = (string)($_SESSION['totp_new'] ?? '');
+                if ($sec === '') throw new RuntimeException('Önce kurulumu başlat.');
+                if (!totp_verify($sec, (string)($_POST['code'] ?? ''))) throw new RuntimeException('Kod tutmadı; telefonun saatinin doğru olduğundan emin ol ve yeni kodu dene.');
+                setting_set('totp_secret', $sec); setting_set('2fa_mode', 'totp'); unset($_SESSION['totp_new']);
+                flash('ok', 'İki aşamalı giriş açık: girişte doğrulayıcı uygulamadaki kod sorulacak.');
+                $act = 'twofa_on';
+                break;
+            case 'tg_hook':
+                [$ok, $err] = tg_set_webhook();
+                flash($ok ? 'ok' : 'err', $ok ? 'Telegram düğmeleri etkin: uyarılardaki "Gizle / Sustur" düğmeleri artık çalışır.' : 'Etkinleştirilemedi: ' . $err);
+                break;
+            case 'restore_test':
+                $r = restore_test();
+                flash($r['ok'] ? 'ok' : 'err', $r['msg']);
+                break;
             case 'tg_find':
                 [$id, $why] = tg_find_chat();
                 if ($id === null) flash('err', $why);
@@ -140,6 +187,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 flash($ok ? 'ok' : 'err', $ok ? 'Deneme mesajı gönderildi.' : 'Gönderilemedi: ' . $err);
                 break;
             case 'report_send':
+                if (($png = report_png(7)) !== null) { notify_photo($png, 'okutan.org · son 7 gün'); @unlink($png); }
                 [$ok, $err] = notify_now(weekly_report());
                 flash($ok ? 'ok' : 'err', $ok ? 'Haftalık rapor gönderildi.' : 'Gönderilemedi: ' . $err);
                 break;
@@ -162,8 +210,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             default:
                 flash('err', 'Bilinmeyen eylem: ' . $act);
         }
+        audit($act, isset($_POST['id']) ? 'kayıt #' . (int)$_POST['id'] : ($act === 'duyuru_save' ? mb_substr((string)($_POST['text'] ?? ''), 0, 120) : ''));
     } catch (Throwable $e) {
         adm_log("act $act: " . get_class($e) . ': ' . $e->getMessage());
+        audit($act, mb_substr($e->getMessage(), 0, 200), false);
         flash('err', ($e instanceof GoogleError ? google_reason_tr($e) : $e->getMessage()));
     }
     redirect_to($back, array_filter(['tab' => (string)($_POST['tab'] ?? '')]));
@@ -213,6 +263,12 @@ if (isset($_GET['ajax'])) {
             unset($d);
             try { $o['alerts'] = alert_counts(); } catch (Throwable $e) { $o['alerts'] = null; }
             echo json_encode(['ok' => true] + $o, JSON_UNESCAPED_UNICODE);
+        } elseif ($_GET['ajax'] === 'feed') {
+            echo json_encode(['ok' => true, 'rows' => feed_rows(max(0, (int)($_GET['after'] ?? 0)), 25)], JSON_UNESCAPED_UNICODE);
+        } elseif ($_GET['ajax'] === 'rapor_png') {
+            $png = report_png(7);
+            if (!$png) { http_response_code(404); exit; }
+            header('Content-Type: image/png'); header('Cache-Control: no-store'); readfile($png); @unlink($png); exit;
         } else { http_response_code(404); echo '{"ok":false}'; }
     } catch (Throwable $e) {
         adm_log('ajax: ' . $e->getMessage());
@@ -226,6 +282,7 @@ if (isset($_GET['dl'])) {
     $name = basename((string)$_GET['dl']);
     $d = priv_dir('yedek');
     if (!$d || !preg_match('~^okutan-\d{8}-\d{6}\.sql\.gz$~', $name) || !is_file($d . '/' . $name)) { http_response_code(404); exit('Yedek bulunamadı.'); }
+    audit('backup_dl', $name);
     header('Content-Type: application/gzip');
     header('Content-Disposition: attachment; filename="' . $name . '"');
     header('Content-Length: ' . filesize($d . '/' . $name));
@@ -244,6 +301,10 @@ if (!adm_authed()) {
         echo '<p>Panel şifresi henüz ayarlı değil. Aşağıya bir şifre yaz; panel onun <b>hash</b>\'ini üretir (hiçbir yere kaydetmez). Çıkan satırı <code>admin/config.php</code> içine yapıştır.</p>';
         if ($hashOut) echo '<p>config.php içine:</p><pre class="code">\'ADMIN_PASS_HASH\' => \'' . h($hashOut) . '\',</pre>';
         echo form_open('hash') . '<label>Yeni şifre (en az 10 karakter)<input type="password" name="pass" minlength="10" required autocomplete="new-password"></label><button class="btn" type="submit">Hash üret</button></form></section>';
+    } elseif (!empty($_SESSION['pend']) && $_SESSION['pend']['at'] > time() - 300) {
+        echo '<section class="card narrow"><h1>İkinci adım</h1><p class="small">' . ($_SESSION['pend']['mode'] === 'telegram' ? "Telegram'a gelen 6 haneli kodu yaz." : 'Doğrulayıcı uygulamadaki (Google Authenticator, Microsoft Authenticator…) 6 haneli kodu yaz.') . '</p>'
+            . form_open('login2') . '<label>Kod<input name="code" inputmode="numeric" pattern="[0-9 ]{6,7}" maxlength="7" required autofocus autocomplete="one-time-code"></label><button class="btn" type="submit">Doğrula</button></form>'
+            . '<p class="muted small">Kod 5 dakika geçerli. Erişimini kaybettiysen: config.php → ADMIN_PASS_RESET.</p></section>';
     } else {
         echo '<section class="card narrow"><h1>Yönetim paneli</h1>' . form_open('login')
             . '<label>Şifre<input type="password" name="pass" required autofocus autocomplete="current-password"></label><button class="btn" type="submit">Giriş</button></form></section>';

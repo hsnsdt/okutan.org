@@ -58,17 +58,17 @@ test('giriş, CSRF, ekranlar ve canlı sayı', { skip: skipHttp }, async () => {
   let r = await post({ act: 'login', pass: PASS });
   assert.equal(r.status, 303);
   const html = await (await req('/admin/?view=ozet')).text();
-  assert.match(html, /<h1>Özet<\/h1>/, 'giriş başarısız');
+  assert.match(html, /<h1[^>]*>Özet<\/h1>/, 'giriş başarısız');
 
   // CSRF'siz POST yapılmaz
   r = await req('/admin/', { method: 'POST', body: new URLSearchParams({ act: 'note_add', text: 'csrf-yok' }) });
   assert.equal(r.status, 303);
   assert.match(await (await req('/admin/?view=notlar')).text(), /CSRF/);
 
-  for (const v of ['ozet', 'trafik', 'google', 'oyunlar', 'balon', 'sohbet', 'sistem', 'bildirim', 'notlar', 'ara&q=test', 'hesap']) {
+  for (const v of ['ozet', 'trafik', 'hiz', 'google', 'oyunlar', 'oyun&k=batak', 'balon', 'sohbet', 'sistem', 'sistem&tab=jshata', 'sistem&tab=denetim', 'duyuru', 'bildirim', 'notlar', 'ara&q=test', 'hesap', 'rapor']) {
     const t = await (await req('/admin/?view=' + v)).text();
     assert.doesNotMatch(t, /Fatal error|Ekran yüklenemedi/, v);
-    assert.match(t, /<h1>/, v);
+    assert.match(t, /<h1[^>]*>/, v);
   }
   const j = await (await req('/admin/?ajax=online')).json();
   assert.equal(j.ok, true);

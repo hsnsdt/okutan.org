@@ -10,6 +10,7 @@ require_once __DIR__ . '/ziyaretci.php';
 require_once __DIR__ . '/stats.php';
 require_once __DIR__ . '/oyun.php';
 require_once __DIR__ . '/analiz.php';
+require_once __DIR__ . '/guvenlik.php';
 require_once __DIR__ . '/google.php';
 require_once __DIR__ . '/notify.php';
 require_once __DIR__ . '/backup.php';

@@ -27,7 +27,7 @@ $pct = fn($a, $b) => $b > 0 ? '%' . nf($a / $b * 100) : '—';
 ?>
 <div class="gcards">
 <?php foreach ($cards as $k => $c): ?>
-  <a class="gcard<?= $k === $best && $c['g'] > 0 ? ' best' : '' ?>" href="<?= h($c['path']) ?>" target="_blank" rel="noopener">
+  <a class="gcard<?= $k === $best && $c['g'] > 0 ? ' best' : '' ?>" href="./?view=oyun&amp;k=<?= h($k) ?>&amp;gun=<?= max(7, $gun) ?>">
     <div class="gt"><b><?= h($c['name']) ?></b><?= $k === $best && $c['g'] > 0 ? '<span class="pill ok">en çok yükselen</span>' : '' ?><?= $c['aktif'] ? '<span class="pill">' . nf($c['aktif']) . ' masa şu an</span>' : '' ?></div>
     <div class="kv"><?= nf($c['pv']) ?> <?= delta_html($c['pv'], $c['ppv']) ?></div>
     <div class="ks">sayfa görüntüleme · <?= $c['start'] ? nf($c['start']) . ' kişi başladı' : 'başlayan yok' ?></div>
